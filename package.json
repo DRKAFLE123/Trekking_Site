@@ -13,6 +13,7 @@
     "@payloadcms/db-sqlite": "^3.84.1",
     "@payloadcms/next": "^3.0.0",
     "@payloadcms/richtext-lexical": "^3.84.1",
+    "cloudinary": "^2.10.0",
     "framer-motion": "^11.15.0",
     "leaflet": "^1.9.4",
     "mysql2": "^3.11.0",

@@ -1,7 +1,14 @@
 import { CollectionConfig } from 'payload';
+import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
 
 export const regions: CollectionConfig = {
   slug: 'regions',
+  access: {
+    read: () => true,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdmin,
+  },
   admin: {
     useAsTitle: 'name',
   },
@@ -23,7 +30,8 @@ export const regions: CollectionConfig = {
     },
     {
       name: 'coverImage',
-      type: 'text',
+      type: 'relationship',
+      relationTo: 'media',
     },
     {
       name: 'mapCenter',

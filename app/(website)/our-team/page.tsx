@@ -5,6 +5,8 @@ import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaAward } from "react-i
 import { TeamMember } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
+
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -50,10 +52,10 @@ export default async function TeamPage() {
               <div className="relative aspect-[4/5] bg-primary/10 w-full overflow-hidden">
                 {member.photo ? (
                   <Image
-                    src={member.photo}
+                    src={getMediaUrl(member.photo)}
                     alt={member.name}
                     fill
-                            className="object-cover"
+                    className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   />
                 ) : (

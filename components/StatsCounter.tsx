@@ -58,7 +58,7 @@ function CounterItem({ end, suffix, duration = 2000 }: CounterItemProps) {
   );
 }
 
-export default function StatsCounter() {
+export default function StatsCounter({ transparent = false }: { transparent?: boolean }) {
   const [showNo, setShowNo] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
 
@@ -83,9 +83,18 @@ export default function StatsCounter() {
   }, []);
 
   return (
-    <section ref={triggerRef} className="bg-[#1a3c2e] text-white border-y border-[#c8922a]/20 py-8 relative overflow-hidden">
+    <section 
+      ref={triggerRef} 
+      className={`${
+        transparent 
+          ? "bg-black/30 backdrop-blur-md border-t border-white/10 py-5" 
+          : "bg-[#1a3c2e] border-y border-[#c8922a]/20 py-8"
+      } text-white relative overflow-hidden w-full`}
+    >
       {/* Background overlay accent */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 pointer-events-none" />
+      {!transparent && (
+        <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 pointer-events-none" />
+      )}
       
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/10">
         

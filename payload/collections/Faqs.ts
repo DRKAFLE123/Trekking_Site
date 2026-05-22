@@ -1,7 +1,14 @@
 import { CollectionConfig } from 'payload';
+import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
 
 export const faqs: CollectionConfig = {
   slug: 'faqs',
+  access: {
+    read: () => true,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdmin,
+  },
   admin: {
     useAsTitle: 'question',
   },

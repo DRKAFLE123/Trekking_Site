@@ -1,0 +1,915 @@
+/* Custom Admin Styling for Nature Heaven Trek & Expedition */
+
+@layer payload-default {
+  :root {
+    --theme-bg: #0b140e;
+    --theme-elevation-0: #0b140e;
+    --theme-elevation-50: #101f16;
+    --theme-elevation-100: #162c1f;
+    --theme-elevation-150: #1d3b29;
+    --theme-elevation-200: #254a34;
+    --theme-elevation-300: #336648;
+    --theme-elevation-800: #ffffff;
+    --theme-text: #e2f4e8;
+    --theme-success-250: rgba(16,185,129,0.25);
+    --theme-success-500: #10b981;
+
+    /* Primary buttons & interactive state */
+    --theme-input-bg: #09120c;
+    --theme-input-border-color: #15803d;
+
+    /* Font family overrides */
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Playfair Display', Georgia, serif;
+  }
+}
+
+/* =====================================================================
+   LOGIN PAGE - Payload v3 selectors (covers all template variations)
+   ===================================================================== */
+
+/* Full page background - v3 uses template class on the wrapper */
+.template-minimal,
+body.login,
+[class*="template-minimal"],
+.login-template {
+  background: radial-gradient(circle at 50% 50%, #102619 0%, #050d08 100%) !important;
+  min-height: 100vh !important;
+}
+
+/* The outer page shell that Payload v3 wraps login in */
+html body {
+  background: #0b140e;
+}
+
+/* Login page form container - Payload v3 */
+.template-minimal__wrap,
+.login__wrap,
+[class*="template-minimal__wrap"] {
+  position: relative;
+  z-index: 10;
+  background: rgba(11, 20, 14, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6),
+              inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+  border-radius: 20px !important;
+  padding: 45px 35px !important;
+  width: 100% !important;
+  max-width: 450px !important;
+  margin: 0 auto !important;
+}
+
+.template-minimal__wrap:hover,
+.login__wrap:hover {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  box-shadow: 0 32px 80px rgba(16, 185, 129, 0.12),
+              inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Logo/brand area */
+.template-minimal__brand,
+.login__brand {
+  margin-bottom: 28px !important;
+  text-align: center !important;
+}
+
+/* Input fields - v3 */
+.template-minimal input[type="email"],
+.template-minimal input[type="password"],
+.template-minimal input[type="text"],
+.login__wrap input[type="email"],
+.login__wrap input[type="password"],
+.login__wrap input[type="text"] {
+  background: rgba(5, 10, 7, 0.8) !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  padding: 14px 18px !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+}
+
+.template-minimal input:focus,
+.login__wrap input:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2) !important;
+  background: rgba(5, 10, 7, 0.95) !important;
+  outline: none !important;
+}
+
+/* Labels */
+.template-minimal label,
+.login__wrap label {
+  color: #a7f3d0 !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+/* Submit button */
+.template-minimal button[type="submit"],
+.template-minimal .btn--style-primary,
+.login__wrap button[type="submit"],
+.login__wrap .btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 16px 28px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2) !important;
+  transition: all 0.3s ease !important;
+  width: 100% !important;
+  margin-top: 15px !important;
+}
+
+.template-minimal button[type="submit"]:hover,
+.template-minimal .btn--style-primary:hover,
+.login__wrap button[type="submit"]:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 28px rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Links */
+.template-minimal a,
+.login__wrap a {
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+}
+
+.template-minimal a:hover,
+.login__wrap a:hover {
+  color: #7dd3fc !important;
+  text-decoration: underline !important;
+}
+
+/* Field labels / field text color */
+.template-minimal .field-label,
+.template-minimal p,
+.template-minimal span:not(.btn__content) {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+
+body.login::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.05) 0%, transparent 60%),
+              radial-gradient(circle at center, rgba(245, 158, 11, 0.03) 0%, transparent 70%);
+  animation: bg-spin 50s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes bg-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Premium Glassmorphic Login Container card */
+.login__wrap {
+  position: relative;
+  z-index: 10;
+  background: rgba(11, 20, 14, 0.75) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+  border-radius: 20px !important;
+  padding: 45px 35px !important;
+  width: 100% !important;
+  max-width: 450px !important;
+  margin: 0 auto !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.login__wrap:hover {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  box-shadow: 0 32px 80px rgba(16, 185, 129, 0.12),
+              inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Brand logo margin */
+.login__brand {
+  margin-bottom: 30px !important;
+}
+
+/* Input Fields styling */
+.login__wrap input[type="email"],
+.login__wrap input[type="password"],
+.login__wrap input[type="text"] {
+  background: rgba(5, 10, 7, 0.8) !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  padding: 14px 18px !important;
+  font-size: 14px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.login__wrap input[type="email"]:focus,
+.login__wrap input[type="password"]:focus,
+.login__wrap input[type="text"]:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2) !important;
+  background: rgba(5, 10, 7, 0.95) !important;
+  outline: none !important;
+}
+
+/* Label styling */
+.login__wrap label {
+  color: #a7f3d0 !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 8px !important;
+}
+
+/* Custom styles for Submit Button */
+.login__wrap button[type="submit"],
+.login__wrap .btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 16px 28px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  width: 100% !important;
+  margin-top: 15px !important;
+}
+
+.login__wrap button[type="submit"]:hover,
+.login__wrap .btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 28px rgba(16, 185, 129, 0.35) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.login__wrap button[type="submit"]:active,
+.login__wrap .btn:active {
+  transform: translateY(0) !important;
+}
+
+/* Secondary Actions / Footnotes link styles */
+.login__wrap .form-footer, 
+.login__wrap .create-first-user__submit-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: 20px !important;
+}
+
+.login__wrap a {
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.login__wrap a:hover {
+  color: #7dd3fc !important;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.3) !important;
+  text-decoration: underline !important;
+}
+
+/* Premium Sidebar Account & Profile Customizations */
+.nav__account, .nav__user, [class*="nav__account"], [class*="nav__user"] {
+  background: rgba(22, 44, 31, 0.35) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.15) !important;
+  border-radius: 14px !important;
+  margin: 12px 16px !important;
+  padding: 12px 16px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.nav__account:hover, .nav__user:hover, [class*="nav__account"]:hover, [class*="nav__user"]:hover {
+  background: rgba(22, 44, 31, 0.75) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.08) !important;
+}
+
+/* High-fidelity circular avatar design in Sidebar */
+.nav__account-avatar, .nav__user-avatar, [class*="avatar"] {
+  border-radius: 50% !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.nav__account:hover [class*="avatar"], .nav__user:hover [class*="avatar"] {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45) !important;
+}
+
+/* Custom log-out links and icon states */
+.nav__log-out, [class*="nav__log-out"], [class*="logout"] {
+  color: #f87171 !important;
+  font-weight: 700 !important;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav__log-out:hover, [class*="nav__log-out"]:hover, [class*="logout"]:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Branded User Profile edit page layout enhancements */
+.account__form, .account {
+  background: rgba(11, 20, 14, 0.4) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.15) !important;
+  border-radius: 20px !important;
+  padding: 30px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ==========================================================================
+   Premium Glassmorphic Profile Dropdown & Modal Styles
+   ========================================================================== */
+
+/* Container and alignment */
+.profile-dropdown-container {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-body);
+}
+
+/* Dropdown Trigger Button */
+.profile-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(16, 185, 129, 0.08) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  padding: 6px 14px !important;
+  border-radius: 50px !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.profile-dropdown-trigger:hover {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
+}
+
+.profile-dropdown-trigger__avatar-wrap {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.profile-dropdown-trigger__avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+  transition: border-color 0.3s ease;
+}
+
+.profile-dropdown-trigger:hover .profile-dropdown-trigger__avatar {
+  border-color: #f59e0b;
+}
+
+.profile-dropdown-trigger__avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
+  border: 2px solid #10b981;
+}
+
+.profile-dropdown-trigger__badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  background-color: #10b981;
+  border: 1.5px solid #0b140e;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #10b981;
+}
+
+.profile-dropdown-trigger__name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-dropdown-trigger__chevron {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-dropdown-trigger__chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu Floating Card */
+.profile-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 280px;
+  background: rgba(11, 20, 14, 0.95) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.08) !important;
+  z-index: 99999;
+  overflow: hidden;
+  animation: dropdown-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+}
+
+@keyframes dropdown-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Dropdown Menu Header */
+.profile-dropdown-menu__header {
+  padding: 20px 20px 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-dropdown-menu__header-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+}
+
+.profile-dropdown-menu__header-avatar-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #f59e0b;
+}
+
+.profile-dropdown-menu__header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.profile-dropdown-menu__header-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-dropdown-menu__header-email {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-dropdown-menu__role-badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+.profile-dropdown-menu__role-badge.admin {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.profile-dropdown-menu__role-badge.editor {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.profile-dropdown-menu__role-badge.viewer {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.profile-dropdown-menu__divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0;
+}
+
+/* Menu Items */
+.profile-dropdown-menu__body, 
+.profile-dropdown-menu__footer {
+  padding: 6px;
+}
+
+.profile-dropdown-menu__item {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.profile-dropdown-menu__item:hover {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #ffffff !important;
+  transform: translateX(4px) !important;
+}
+
+.profile-dropdown-menu__item-icon {
+  font-size: 14px;
+  color: #10b981;
+  transition: color 0.2s ease;
+}
+
+.profile-dropdown-menu__item:hover .profile-dropdown-menu__item-icon {
+  color: #f59e0b;
+}
+
+.profile-dropdown-menu__item.sign-out {
+  color: #f87171 !important;
+}
+
+.profile-dropdown-menu__item.sign-out:hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+}
+
+.profile-dropdown-menu__item.sign-out .profile-dropdown-menu__item-icon {
+  color: #f87171;
+}
+
+.profile-dropdown-menu__item.sign-out:hover .profile-dropdown-menu__item-icon {
+  color: #ef4444;
+}
+
+/* ==========================================================================
+   Interactive Overlay Modals (Password & Avatar)
+   ========================================================================== */
+
+.profile-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(5, 10, 7, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  animation: overlay-fade-in 0.25s ease-out;
+}
+
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.profile-modal {
+  background: rgba(11, 20, 14, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8),
+              inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  animation: modal-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: 20px;
+}
+
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.profile-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-modal__header h3 {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.profile-modal__close-btn {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  padding: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.profile-modal__close-btn:hover {
+  color: #f87171 !important;
+  transform: rotate(90deg) !important;
+}
+
+.profile-modal__form {
+  padding: 26px;
+}
+
+/* Alert styles */
+.profile-modal__alert {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-modal__alert.error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.profile-modal__alert.success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.alert-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Form group styles */
+.profile-modal__form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-modal__form-group label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a7f3d0;
+}
+
+.profile-modal__form-group input {
+  background: rgba(5, 10, 7, 0.8) !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.25) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.profile-modal__form-group input:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18) !important;
+  background: rgba(5, 10, 7, 0.95) !important;
+  outline: none !important;
+}
+
+/* Avatar Preview UI in Modal */
+.profile-modal__avatar-preview-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 24px auto;
+  border-radius: 50%;
+}
+
+.profile-modal__avatar-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #10b981;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.profile-modal__avatar-preview-fallback {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #10b981;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.profile-modal__avatar-upload-trigger {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f59e0b !important;
+  border: 3px solid rgba(11, 20, 14, 0.95) !important;
+  color: #0b140e !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4) !important;
+  transition: all 0.25s ease !important;
+  padding: 0 !important;
+}
+
+.profile-modal__avatar-upload-trigger:hover {
+  background: #d97706 !important;
+  transform: scale(1.1) !important;
+}
+
+.profile-modal__upload-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* Modal Buttons Actions */
+.profile-modal__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.profile-modal__btn {
+  padding: 12px 20px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.profile-modal__btn.cancel {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.profile-modal__btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.profile-modal__btn.submit {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2) !important;
+}
+
+.profile-modal__btn.submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35) !important;
+}
+
+.profile-modal__btn.submit:disabled {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+

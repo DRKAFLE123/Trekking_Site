@@ -1,7 +1,14 @@
 import { CollectionConfig } from 'payload';
+import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
 
 export const teamMembers: CollectionConfig = {
   slug: 'teamMembers',
+  access: {
+    read: () => true,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdmin,
+  },
   admin: {
     useAsTitle: 'name',
   },
@@ -18,7 +25,8 @@ export const teamMembers: CollectionConfig = {
     },
     {
       name: 'photo',
-      type: 'text',
+      type: 'relationship',
+      relationTo: 'media',
     },
     {
       name: 'bio',

@@ -1,7 +1,14 @@
 import { CollectionConfig } from 'payload';
+import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
 
 export const testimonials: CollectionConfig = {
   slug: 'testimonials',
+  access: {
+    read: () => true,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdmin,
+  },
   admin: {
     useAsTitle: 'clientName',
   },
@@ -39,7 +46,8 @@ export const testimonials: CollectionConfig = {
     },
     {
       name: 'photo',
-      type: 'text',
+      type: 'relationship',
+      relationTo: 'media',
     },
   ],
 };

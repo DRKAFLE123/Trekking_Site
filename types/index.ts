@@ -105,6 +105,7 @@ export interface Trek {
   isBestSeller?: boolean;
   metaTitle?: string;
   metaDescription?: string;
+  groupDiscounts?: GroupDiscount[];
 }
 
 // Team Member Document
@@ -174,4 +175,93 @@ export interface BlogPost {
     duration: number;
     heroImage?: string; // Cloudinary public ID or URL
   }>;
+}
+
+// Group Discount Tier inside Trek
+export interface GroupDiscount {
+  id?: string;
+  minPersons: number;
+  maxPersons: number;
+  pricePerPerson: number;
+}
+
+// Departure Document
+export interface Departure {
+  id: string | number;
+  _id?: string;
+  trek: string | Trek;
+  startDate: string;
+  endDate: string;
+  availableSeats: number;
+  bookedSeats: number;
+  status: "available" | "limited" | "sold_out" | "cancelled";
+  priceOverride?: number;
+  isGuaranteed?: boolean;
+}
+
+// Traveler Detail inside Booking
+export interface Traveler {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  nationality: string;
+  gender: "male" | "female" | "other";
+  dob: string;
+  passportNumber?: string;
+  passportExpiry?: string;
+}
+
+// Booking Document
+export interface Booking {
+  id: string | number;
+  _id?: string;
+  bookingId: string;
+  trek: string | Trek;
+  departure?: string | Departure;
+  startDate: string;
+  endDate: string;
+  travelersCount: number;
+  travelers: Traveler[];
+  customerDetails: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    country: string;
+  };
+  basePrice: number;
+  discount?: number;
+  tax?: number;
+  totalPrice: number;
+  paymentType: "full" | "advance_10";
+  paymentStatus: "unpaid" | "partial" | "paid" | "refunded";
+  bookingStatus: "pending" | "confirmed" | "cancelled" | "completed";
+  adminRemarks?: string;
+}
+
+// Inquiry Document
+export interface Inquiry {
+  id: string | number;
+  _id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  country?: string;
+  trek: string | Trek;
+  startDate?: string;
+  travelers?: number;
+  message: string;
+  status: "new" | "contacted" | "resolved" | "closed";
+}
+
+// Payment Document
+export interface Payment {
+  id: string | number;
+  _id?: string;
+  booking: string | Booking;
+  paymentId: string;
+  amount: number;
+  method: "stripe" | "paypal" | "esewa" | "khalti" | "bank_transfer";
+  status: "pending" | "success" | "failed" | "refunded";
+  transactionDetails?: string;
 }

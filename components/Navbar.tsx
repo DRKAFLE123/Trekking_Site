@@ -80,9 +80,13 @@ export default function Navbar() {
   const navbarRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const [showNavbar, setShowNavbar] = useState(true);
+  const lastScrollYRef = useRef(0);
 
   // Regions data (unchanged)
   const [regions, setRegions] = useState<any[]>([]);
+  const [siteSettings, setSiteSettings] = useState<any>(null);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -93,15 +97,38 @@ export default function Navbar() {
         console.error("Error fetching navbar regions:", err);
       }
     }
+    async function fetchSettings() {
+      try {
+        const res = await fetch("/api/site-settings");
+        const data = await res.json();
+        setSiteSettings(data);
+      } catch (err) {
+        console.error("Failed to fetch site settings in Navbar:", err);
+      }
+    }
     fetchData();
+    fetchSettings();
   }, []);
 
-  // Scroll effect
+  // Scroll effect with direction tracking
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 80);
+
+      if (currentScrollY <= 80) {
+        setShowNavbar(true);
+      } else {
+        const lastScrollY = lastScrollYRef.current;
+        if (currentScrollY < lastScrollY) {
+          setShowNavbar(true); // scrolling up
+        } else if (currentScrollY > lastScrollY + 5) {
+          setShowNavbar(false); // scrolling down
+        }
+      }
+      lastScrollYRef.current = currentScrollY;
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -228,17 +255,19 @@ export default function Navbar() {
           {/* Center Email Block */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left md:pr-8">
             <span className="text-[11px] text-[#6b7280] leading-tight mb-0.5">Quick Questions? Email Us</span>
-            <a href="mailto:info@natureheaventrek.com" className="text-[12px] font-semibold text-[#1A6FBF] hover:text-[#4FA3E0] hover:underline">info@natureheaventrek.com</a>
+            <a href={`mailto:${siteSettings?.headerSettings?.quickEmail || "info@natureheaventrek.com"}`} className="text-[12px] font-semibold text-[#1A6FBF] hover:text-[#4FA3E0] hover:underline">{siteSettings?.headerSettings?.quickEmail || "info@natureheaventrek.com"}</a>
           </div>
 
           {/* Right Expert Card */}
           <div className="flex items-center gap-3">
-            <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold text-[13px] shadow-sm select-none">K</div>
+            <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold text-[13px] shadow-sm select-none">
+              {(siteSettings?.headerSettings?.expertName || "K")[0]}
+            </div>
             <div className="flex flex-col text-left">
-              <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert (Kafle)</span>
+              <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert ({siteSettings?.headerSettings?.expertName || "Kafle"})</span>
               <div className="flex items-center gap-1.5">
                 <div className="w-[14px] h-[14px] rounded-full bg-[#25D366] flex items-center justify-center text-white font-black text-[9px] leading-none select-none">W</div>
-                <a href="https://wa.me/9779851218358" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#1A6FBF] transition">+977 9851218358</a>
+                <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#1A6FBF] transition">{siteSettings?.headerSettings?.expertPhone || "+977 9851218358"}</a>
               </div>
             </div>
           </div>
@@ -246,7 +275,13 @@ export default function Navbar() {
       </div>
 
       {/* Sticky Nav */}
-      <nav className={`w-full relative z-50 transition-all duration-300 ${isScrolled ? "fixed top-0 left-0 right-0 bg-[#1a2e1f]/95 backdrop-blur-md shadow-xl py-2 border-b border-[#4FA3E0]/20" : "relative bg-[#1a2e1f] py-3"}`}>
+      <nav className={`transition-all duration-300 z-50 ${
+        isScrolled 
+          ? (pathname?.startsWith("/trips") || pathname?.startsWith("/booking"))
+            ? "hidden opacity-0 pointer-events-none"
+            : `fixed left-0 right-0 mx-auto w-[92%] max-w-5xl rounded-full bg-[#1a2e1f]/90 backdrop-blur-md shadow-2xl border border-white/10 py-1.5 px-3 transform transition-all duration-300 ${showNavbar ? "top-4 opacity-100 translate-y-0" : "-top-24 opacity-0 -translate-y-4 pointer-events-none"}`
+          : "w-full bg-[#1a2e1f] py-3"
+      }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center relative">
           {/* Small logo when scrolled */}
           <div className={`transition-all duration-300 ${isScrolled ? "opacity-100 block" : "opacity-0 hidden lg:hidden"}`}>
@@ -311,7 +346,7 @@ export default function Navbar() {
           {/* Right CTA & Mobile */}
           <div className="flex items-center gap-4 ml-auto lg:ml-0">
             <button onClick={() => setSearchOpen(true)} className="bg-[#4FA3E0] text-white font-bold px-5 py-2.5 rounded-[6px] text-xs uppercase tracking-wider hover:bg-[#4FA3E0]/90 transition-all duration-300 hidden sm:flex items-center gap-2 shadow-sm"><FaSearch className="h-3.5 w-3.5" /><span>Search Your Trip</span></button>
-            <button onClick={() => setMobileMenuOpen(true)} className={`lg:hidden p-2 text-bgOffWhite hover:text-[#4FA3E0] focus:outline-none ${isScrolled ? "block" : "hidden"}`} aria-label="Open Mobile Menu"><FaBars className="h-6 w-6" /></button>
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 text-bgOffWhite hover:text-[#4FA3E0] focus:outline-none block" aria-label="Open Mobile Menu"><FaBars className="h-6 w-6" /></button>
           </div>
         </div>
       </nav>
@@ -385,8 +420,8 @@ export default function Navbar() {
             </div>
             {/* Footer Contact */}
             <div className="flex flex-col gap-4 mt-12 pt-6 border-t border-white/10">
-              <a href="https://wa.me/9779851218358" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-green-650 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-sm transition duration-300"><FaWhatsapp className="h-5 w-5" /><span>WhatsApp Chat</span></a>
-              <div className="text-center text-xs text-white/50 flex flex-col gap-1"><span>Emergency 24/7 Support</span><a href="tel:+9779851218358" className="text-[#4FA3E0] font-bold hover:underline">+977 9851218358</a></div>
+              <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-green-650 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-sm transition duration-300"><FaWhatsapp className="h-5 w-5" /><span>WhatsApp Chat</span></a>
+              <div className="text-center text-xs text-white/50 flex flex-col gap-1"><span>Emergency 24/7 Support</span><a href={`tel:${(siteSettings?.headerSettings?.expertPhone || "9779851218358").replace(/[^0-9]/g, "")}`} className="text-[#4FA3E0] font-bold hover:underline">{siteSettings?.headerSettings?.expertPhone || "+977 9851218358"}</a></div>
             </div>
           </motion.div>
         </div>

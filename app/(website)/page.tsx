@@ -69,27 +69,27 @@ export default async function HomePage() {
   return (
     <div className="w-full">
       {/* 1. Hero Section */}
-      <section className="relative w-full h-[95vh] min-h-[600px] flex items-center justify-center bg-primary overflow-hidden">
+      <section className="relative w-full h-screen min-h-[650px] flex flex-col justify-between items-center bg-primary overflow-hidden">
         {/* Background video / overlay */}
         <div className="absolute inset-0 z-0">
           {/* Hero image as LCP fallback behind the video */}
           <Image
-  src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200"
-  alt="Everest Base Camp Hero"
-  fill
-  priority
-  className="object-cover object-center scale-105"
-  sizes="100vw"
-  style={{ zIndex: 0 }}
-/>
+            src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200"
+            alt="Everest Base Camp Hero"
+            fill
+            priority
+            className="object-cover object-center scale-105"
+            sizes="100vw"
+            style={{ zIndex: 0 }}
+          />
           {/* YouTube background video + animated gradient fallback */}
           <HeroVideo />
           {/* Dark overlay for text contrast */}
-           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-primary/70 pointer-events-none" style={{ zIndex: 10 }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/60 pointer-events-none" style={{ zIndex: 10 }} />
         </div>
 
         {/* Hero Content */}
-        <div className="max-w-7xl mx-auto px-6 relative z-20 text-center flex flex-col gap-6 text-bgOffWhite items-center">
+        <div className="max-w-7xl mx-auto px-6 relative z-20 text-center flex flex-col gap-6 text-bgOffWhite items-center grow justify-center">
           <FadeInUp delay={0.1}>
             <span className="inline-flex items-center gap-1.5 bg-secondary text-primary font-sans font-bold text-xs tracking-[0.2em] uppercase px-4 py-1.5 rounded-full border border-secondary/25 shadow-lg">
               🏔️ Nepal&apos;s #1 Private Trekking Company
@@ -130,17 +130,20 @@ export default async function HomePage() {
           </FadeInUp>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-bgOffWhite/60 animate-bounce">
-          <span className="text-[10px] tracking-[0.2em] uppercase font-bold">Scroll</span>
-          <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-            <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-          </svg>
+        {/* Bottom Elements */}
+        <div className="w-full relative z-20 flex flex-col items-center mt-6 shrink-0">
+          {/* Scroll Indicator */}
+          <div className="flex flex-col items-center gap-1 text-bgOffWhite/60 animate-bounce mb-4">
+            <span className="text-[10px] tracking-[0.2em] uppercase font-bold">Scroll</span>
+            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+            </svg>
+          </div>
+
+          {/* Stats Bar (Transparent Overlay) */}
+          <StatsCounter transparent={true} />
         </div>
       </section>
-
-      {/* 2. Stats Bar */}
-      <StatsCounter />
 
       {/* 3. Best Seller Treks */}
       <section className="py-24 px-6 bg-[#fcfbfa]">

@@ -4,12 +4,11 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { FaArrowLeft, FaCalendarAlt, FaUser, FaRegClock } from "react-icons/fa";
-// Data fetching handled via internal API routes
-// Query definitions moved to API layer
 import { BlogPost } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import { renderLexical } from "@/lib/lexical-renderer";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
 
 
 export const revalidate = 60; // Revalidate every minute
@@ -85,7 +84,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                 <div className="relative h-8 w-8 rounded-full overflow-hidden bg-primary/10 border border-secondary/25">
                   {blog.author.photo ? (
                     <Image
-                      src={blog.author.photo}
+                      src={getMediaUrl(blog.author.photo)}
                       alt={blog.author.name}
                       fill
                       className="object-cover"
@@ -134,7 +133,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         {blog.coverImage && (
           <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-secondary/15 shadow-lg mb-12">
             <Image
-              src={blog.coverImage}
+              src={getMediaUrl(blog.coverImage)}
               alt={blog.title}
               fill
               priority
@@ -160,7 +159,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                 <div className="relative h-20 w-20 rounded-full overflow-hidden bg-primary/10 border-2 border-secondary mx-auto">
                   {blog.author.photo ? (
                     <Image
-                      src={blog.author.photo}
+                      src={getMediaUrl(blog.author.photo)}
                       alt={blog.author.name}
                       fill
                       className="object-cover"
@@ -191,16 +190,17 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                 <div className="flex flex-col gap-4">
                   {blog.relatedTreks.map((relTrek, idx) => {
                     const price = relTrek.discountedPrice || relTrek.price;
+                    const trekHeroUrl = getMediaUrl(relTrek.heroImage);
                     return (
                       <Link
                         key={idx}
                         href={`/trips/${relTrek.slug}`}
                         className="group flex gap-3.5 hover:bg-bgOffWhite/30 p-2 rounded-xl transition duration-300 border border-transparent hover:border-secondary/15"
                       >
-                        {relTrek.heroImage && (
+                        {trekHeroUrl && (
                           <div className="relative h-16 w-20 rounded-lg overflow-hidden shrink-0 bg-primary/10">
                             <Image
-                              src={relTrek.heroImage}
+                              src={trekHeroUrl}
                               alt={relTrek.title}
                               fill
                               className="object-cover group-hover:scale-105 transition"

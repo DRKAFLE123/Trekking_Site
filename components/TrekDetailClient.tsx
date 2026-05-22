@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import {
   FaUsers,
   FaChevronDown,
@@ -19,10 +20,24 @@ import {
   FaWhatsapp,
   FaEnvelope,
   FaShieldAlt,
-  FaMedkit
+  FaMedkit,
+  FaUserFriends,
+  FaInfoCircle,
+  FaRegCalendarCheck,
+  FaCreditCard,
+  FaRegEye,
+  FaListUl,
+  FaRegCheckCircle,
+  FaMap,
+  FaHiking,
+  FaRegImage,
+  FaRegComments,
+  FaQuestionCircle,
+  FaPlay
 } from "react-icons/fa";
 import { Trek, Testimonial } from "@/types";
 import { renderLexical } from "@/lib/lexical-renderer";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
 import EnquiryModal from "./EnquiryModal";
 
 // Dynamically load TrekMap to bypass SSR issues with Leaflet
@@ -42,7 +57,7 @@ interface TrekDetailClientProps {
 }
 
 // ----------------------------------------------------
-// FALLBACK DATA FOR EVEREST BASE CAMP REPLICATION
+// FALLBACK DATA FOR PREMIUM SPECIFICATIONS
 // ----------------------------------------------------
 const EBC_FALLBACK = {
   highlights: [
@@ -340,18 +355,11 @@ const EBC_FALLBACK = {
   ]
 };
 
-const GROUP_PRICE_TIERS = [
-  { pax: "1 Pax", price: 1330, note: "Single Traveler" },
-  { pax: "2 - 3 Pax", price: 1280, note: "Small Group" },
-  { pax: "4 - 7 Pax", price: 1230, note: "Recommended Group" },
-  { pax: "8 - 13 Pax", price: 1180, note: "Standard Group" },
-  { pax: "14 - 21 Pax", price: 1150, note: "Large Group Discount" }
-];
-
 export default function TrekDetailClient({ trek, similarTreks, testimonials }: TrekDetailClientProps) {
+  const router = useRouter();
   const isEBC = trek.slug === "everest-base-camp-trek";
 
-  // Data selection: Fallback to EBC exact replicas if the fields are empty or EBC slug matches
+  // Data selection fallbacks
   const dayByDayItinerary = isEBC && (!trek.dayByDayItinerary || trek.dayByDayItinerary.length <= 2)
     ? EBC_FALLBACK.dayByDayItinerary
     : (trek.dayByDayItinerary || []);
@@ -371,113 +379,224 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
   const tripInfoList = EBC_FALLBACK.tripInfo;
   const packingChecklist = EBC_FALLBACK.packingChecklist;
 
-  const galleryList = trek.gallery?.map((g: any) => typeof g === "string" ? g : g?.image).filter(Boolean) || [
+  const galleryList = trek.gallery?.map((g: any) => {
+    const rawImage = typeof g === "string" ? g : g?.image;
+    return getMediaUrl(rawImage);
+  }).filter(Boolean) || [
     "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp",
     "https://cms.discoveryworldtrekking.com/media/8120/everest-base-camp-trek-map.webp",
     "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
   ];
 
+  // Dynamic Group Discount Tiers
+  const groupDiscounts = trek.groupDiscounts && trek.groupDiscounts.length > 0
+    ? trek.groupDiscounts
+    : [
+        { minPersons: 1, maxPersons: 1, pricePerPerson: trek.discountedPrice || trek.price },
+        { minPersons: 2, maxPersons: 3, pricePerPerson: Math.round((trek.discountedPrice || trek.price) * 0.96) },
+        { minPersons: 4, maxPersons: 7, pricePerPerson: Math.round((trek.discountedPrice || trek.price) * 0.92) },
+        { minPersons: 8, maxPersons: 13, pricePerPerson: Math.round((trek.discountedPrice || trek.price) * 0.88) },
+        { minPersons: 14, maxPersons: 25, pricePerPerson: Math.round((trek.discountedPrice || trek.price) * 0.84) },
+      ];
+
   // ----------------------------------------------------
   // INTERACTIVE STATES
   // ----------------------------------------------------
   const [activeSection, setActiveSection] = useState("overview");
+
+  // Scrollspy effect to highlight active section in sub-nav on scroll
+  useEffect(() => {
+    let isScrolling = false;
+    const handleScroll = () => {
+      if (isScrolling) return;
+      isScrolling = true;
+      requestAnimationFrame(() => {
+        const sections = ["overview", "dates", "video", "itinerary", "includes", "map", "packing", "info", "reviews", "faqs"];
+        const scrollPosition = window.scrollY + 140; // offset threshold for sticky header
+
+        for (const sectionId of sections) {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            const top = el.offsetTop;
+            const height = el.offsetHeight;
+            if (scrollPosition >= top && scrollPosition < top + height) {
+              setActiveSection(sectionId);
+              break;
+            }
+          }
+        }
+        isScrolling = false;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const [startDate, setStartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [dateStatus, setDateStatus] = useState<"none" | "guaranteed" | "limited" | "soldout">("none");
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
+  const [guests, setGuests] = useState(2);
   
-  // Itinerary accordions
+  // Itinerary & Info accordions
   const [openDays, setOpenDays] = useState<Record<number, boolean>>({ 1: true });
-  
-  // Packing checklist state
   const [packedItems, setPackedItems] = useState<Record<string, boolean>>({});
-  
-  // Trip Info accordions
   const [openInfo, setOpenInfo] = useState<Record<string, boolean>>({ Accommodations: true });
   
-  // Reviews Tab Switcher
+  // Reviews Tab
   const [activeReviewTab, setActiveReviewTab] = useState<"tripadvisor" | "google" | "facebook">("tripadvisor");
   const [expandedReviews, setExpandedReviews] = useState<Record<number, boolean>>({});
-
-  // Share dropdown
   const [showShare, setShowShare] = useState(false);
 
-  // References for sections (for spy scroll)
-  const secRefs = {
-    overview: useRef<HTMLDivElement>(null),
-    itinerary: useRef<HTMLDivElement>(null),
-    map: useRef<HTMLDivElement>(null),
-    includes: useRef<HTMLDivElement>(null),
-    gallery: useRef<HTMLDivElement>(null),
-    reviews: useRef<HTMLDivElement>(null),
+  // Live Departures Database State
+  const [departures, setDepartures] = useState<any[]>([]);
+  const [loadingDepartures, setLoadingDepartures] = useState(true);
+  const [selectedDeparture, setSelectedDeparture] = useState<any | null>(null);
+
+  // Calendar month state
+  const [currentMonthDate, setCurrentMonthDate] = useState<Date>(() => new Date());
+
+  const findDepartureForDate = (date: Date) => {
+    if (!departures || departures.length === 0) return null;
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${y}-${m}-${d}`;
+    
+    return departures.find((dep: any) => {
+      const depDate = new Date(dep.startDate);
+      const depY = depDate.getFullYear();
+      const depM = String(depDate.getMonth() + 1).padStart(2, '0');
+      const depD = String(depDate.getDate()).padStart(2, '0');
+      const depStr = `${depY}-${depM}-${depD}`;
+      return dateStr === depStr;
+    });
   };
 
-  // Group size stepper pricing calculation
-  const getUnitPriceForGuests = (guests: number) => {
-    if (guests === 1) return 1330;
-    if (guests <= 3) return 1280;
-    if (guests <= 7) return 1230;
-    if (guests <= 13) return 1180;
-    return 1150;
+  const selectDepartureFromCalendar = (dep: any) => {
+    setSelectedDeparture(dep);
+    setStartDate(dep.startDate);
+    setReturnDate(dep.endDate);
+    if (dep.status === 'sold_out') setDateStatus("soldout");
+    else if (dep.status === 'limited') setDateStatus("limited");
+    else if (dep.isGuaranteed) setDateStatus("guaranteed");
+    else setDateStatus("none");
   };
 
-  // Auto-calculate return date when departure date changes
+  const startYear = new Date().getFullYear();
+  const years = [startYear, startYear + 1, startYear + 2];
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  // Fetch Live departures from database API
   useEffect(() => {
+    async function fetchDepartures() {
+      try {
+        const res = await fetch(`/api/departures?slug=${trek.slug}`);
+        if (res.ok) {
+          const data = await res.json();
+          setDepartures(data.departures || []);
+        }
+      } catch (err) {
+        console.error("Error fetching departures:", err);
+      } finally {
+        setLoadingDepartures(false);
+      }
+    }
+    fetchDepartures();
+  }, [trek.slug]);
+
+  // Pricing calculations
+  const getUnitPriceForGuests = (paxCount: number) => {
+    const tier = groupDiscounts.find(d => paxCount >= d.minPersons && paxCount <= d.maxPersons);
+    return tier ? tier.pricePerPerson : (trek.discountedPrice || trek.price);
+  };
+
+  const paxPrice = getUnitPriceForGuests(guests);
+  const totalCost = paxPrice * guests;
+  const originalPricePP = trek.price || Math.round(paxPrice * 1.15);
+  const totalDiscount = (originalPricePP - paxPrice) * guests;
+
+  // Auto-calculate return date when custom departure date changes
+  useEffect(() => {
+    if (selectedDeparture) {
+      setStartDate(selectedDeparture.startDate);
+      setReturnDate(selectedDeparture.endDate);
+      if (selectedDeparture.status === 'sold_out') setDateStatus("soldout");
+      else if (selectedDeparture.status === 'limited') setDateStatus("limited");
+      else if (selectedDeparture.isGuaranteed) setDateStatus("guaranteed");
+      else setDateStatus("none");
+      return;
+    }
+
     if (!startDate) {
       setReturnDate("");
       setDateStatus("none");
       return;
     }
+
     const dep = new Date(startDate);
     const ret = new Date(dep);
     ret.setDate(dep.getDate() + (trek.duration || 14));
     
-    // Format return date
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
     setReturnDate(ret.toLocaleDateString('en-US', options));
 
-    // Dynamic Urgency/Sold Out states depending on departure date
+    // Dynamic Urgency/Sold Out states based on custom date modulo
     const day = dep.getDate();
-    if (day % 7 === 0) {
+    if (day % 9 === 0) {
       setDateStatus("soldout");
-    } else if (day % 3 === 0) {
+    } else if (day % 4 === 0) {
       setDateStatus("limited");
     } else {
       setDateStatus("guaranteed");
     }
-  }, [startDate, trek.duration]);
+  }, [startDate, selectedDeparture, trek.duration]);
 
-  // Scrollspy logic
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 180; // offset sticky navbar + spy bar
-      
-      const entries = Object.entries(secRefs);
-      for (let i = entries.length - 1; i >= 0; i--) {
-        const [key, ref] = entries[i];
-        if (ref.current && ref.current.offsetTop <= scrollPosition) {
-          setActiveSection(key);
-          break;
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const scrollToSection = (sectionKey: keyof typeof secRefs) => {
-    const target = secRefs[sectionKey].current;
+  const scrollToSection = (sectionKey: string) => {
+    setActiveSection(sectionKey);
+    const target = document.getElementById(sectionKey);
     if (target) {
-      const yOffset = -150; // Align nicely below header/navs
-      const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const yOffset = -60; // Offset to account for sticky sub-nav height
+      const y = target.getBoundingClientRect().top + window.scrollY + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
-      setActiveSection(sectionKey);
     }
   };
 
-  // Toggle itinerary days
+  const selectDepartureFromGrid = (dep: any) => {
+    setSelectedDeparture(dep);
+    setStartDate(dep.startDate);
+    // Smooth scroll to booking widget sidebar on select
+    const target = document.getElementById("booking-card-widget");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  // Navigates directly to the checkout flow
+  const handleProceedToBooking = () => {
+    if (!startDate || dateStatus === "soldout") {
+      router.push(`/booking/${trek.slug}?guests=${guests}`);
+      return;
+    }
+    const depParam = selectedDeparture ? `&departure=${selectedDeparture.id}` : "";
+    router.push(
+      `/booking/${trek.slug}?guests=${guests}&startDate=${startDate}&endDate=${returnDate}${depParam}`
+    );
+  };
+
+  // Checkbox helpers
+  const toggleChecklistItem = (item: string) => {
+    setPackedItems((prev) => ({ ...prev, [item]: !prev[item] }));
+  };
+
+  const totalChecklistItems = packingChecklist.reduce((acc, cat) => acc + cat.items.length, 0);
+  const totalPackedItems = Object.values(packedItems).filter(Boolean).length;
+  const packedPercentage = Math.round((totalPackedItems / totalChecklistItems) * 100) || 0;
+
+  // Toggle accordions
   const toggleDay = (dayNum: number) => {
     setOpenDays((prev) => ({ ...prev, [dayNum]: !prev[dayNum] }));
   };
@@ -492,22 +611,11 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
     setOpenDays({});
   };
 
-  // Packing list toggles
-  const toggleChecklistItem = (item: string) => {
-    setPackedItems((prev) => ({ ...prev, [item]: !prev[item] }));
-  };
-
-  // Packing progress calculation
-  const totalChecklistItems = packingChecklist.reduce((acc, cat) => acc + cat.items.length, 0);
-  const totalPackedItems = Object.values(packedItems).filter(Boolean).length;
-  const packedPercentage = Math.round((totalPackedItems / totalChecklistItems) * 100) || 0;
-
-  // Toggle guide details
   const toggleInfo = (title: string) => {
     setOpenInfo((prev) => ({ ...prev, [title]: !prev[title] }));
   };
 
-  // TripAdvisor mock reviews
+  // Reviews
   const reviewCards = {
     tripadvisor: [
       {
@@ -553,17 +661,121 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
     ]
   };
 
+  const renderCalendarGrid = (mDate: Date) => {
+    const year = mDate.getFullYear();
+    const month = mDate.getMonth();
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    
+    const blanks = Array(firstDayIndex).fill(null);
+    const days = Array.from({ length: totalDays }, (_, i) => i + 1);
+    
+    return (
+      <div className="flex flex-col gap-2">
+        {/* Month Header */}
+        <div className="text-center font-serif font-black text-xs text-[#1A1A2E] py-2 bg-slate-50 border border-slate-200/60 rounded-xl uppercase tracking-wider">
+          {months[month]} {year}
+        </div>
+        
+        {/* Week Days Headers */}
+        <div className="grid grid-cols-7 gap-1 text-center font-extrabold text-[9px] uppercase text-[#6B6B6B] border-b border-[#E5E5E5] pb-1.5 mt-1">
+          <span>Sun</span>
+          <span>Mon</span>
+          <span>Tue</span>
+          <span>Wed</span>
+          <span>Thu</span>
+          <span>Fri</span>
+          <span>Sat</span>
+        </div>
+        
+        {/* Days Grid */}
+        <div className="grid grid-cols-7 gap-1.5 mt-1.5">
+          {blanks.map((_, idx) => (
+            <div key={`blank-${idx}`} className="aspect-square"></div>
+          ))}
+          {days.map((day) => {
+            const date = new Date(year, month, day);
+            const dep = findDepartureForDate(date);
+            const isToday = new Date().toDateString() === date.toDateString();
+            
+            // Check status
+            const isSoldOut = dep?.status === "sold_out";
+            const isLimited = dep?.status === "limited";
+            const isSelected = selectedDeparture && 
+              new Date(selectedDeparture.startDate).toDateString() === date.toDateString();
+              
+            let cellStyle = "bg-slate-50 text-[#C5C5C5] cursor-default";
+            let clickHandler = undefined;
+            let displayElement = <span className="font-bold text-[11px]">{day}</span>;
+            
+            if (dep) {
+              if (isSoldOut) {
+                cellStyle = "bg-red-50 text-red-300 line-through cursor-not-allowed border border-red-100 flex flex-col items-center justify-center relative";
+                displayElement = (
+                  <div className="flex flex-col items-center justify-center">
+                    <span className="font-black text-[11px] text-red-400">{day}</span>
+                    <span className="text-[7px] text-red-500 font-extrabold leading-none mt-0.5">FULL</span>
+                  </div>
+                );
+              } else if (isLimited) {
+                cellStyle = `bg-amber-50 text-amber-900 border border-amber-200 hover:border-amber-400 cursor-pointer flex flex-col items-center justify-center relative transition shadow-sm ${
+                  isSelected ? "ring-2 ring-offset-1 ring-[#008CCF] bg-amber-100/80 scale-[1.03]" : ""
+                }`;
+                clickHandler = () => selectDepartureFromCalendar(dep);
+                displayElement = (
+                  <div className="flex flex-col items-center justify-center">
+                    <span className="font-black text-[11px]">{day}</span>
+                    <span className="text-[7px] text-amber-700 font-extrabold leading-none mt-0.5">{dep.availableSeats} LFT</span>
+                  </div>
+                );
+              } else {
+                // Available
+                cellStyle = `bg-emerald-50 text-emerald-950 border border-emerald-200 hover:border-emerald-500 cursor-pointer flex flex-col items-center justify-center relative transition shadow-sm ${
+                  isSelected ? "ring-2 ring-offset-1 ring-[#008CCF] bg-emerald-100/80 scale-[1.03]" : ""
+                }`;
+                clickHandler = () => selectDepartureFromCalendar(dep);
+                displayElement = (
+                  <div className="flex flex-col items-center justify-center">
+                    <span className="font-black text-[11px]">{day}</span>
+                    <span className="text-[7px] text-emerald-700 font-extrabold leading-none mt-0.5">GO</span>
+                  </div>
+                );
+              }
+            } else {
+              // Normal day (disabled / unavailable)
+              cellStyle = `bg-white text-slate-400 border border-slate-100/50 flex items-center justify-center aspect-square ${
+                isToday ? "border-slate-300 bg-slate-50/50" : ""
+              }`;
+            }
+            
+            return (
+              <button
+                key={`day-${day}`}
+                type="button"
+                disabled={!dep || isSoldOut}
+                onClick={clickHandler}
+                className={`aspect-square w-full rounded-xl flex items-center justify-center select-none transition ${cellStyle}`}
+              >
+                {displayElement}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-[#F8F7F4] text-[#3D3D3D] font-sans antialiased pb-16 lg:pb-0">
       {/* ----------------------------------------------------
-          1. HERO HEADER SECTION (50vh, Image Only)
+          1. HERO HEADER BANNER (50vh)
           ---------------------------------------------------- */}
-      <section className="relative w-full h-[50vh] bg-[#1A1A2E] overflow-hidden">
+      <section className="relative w-full h-[50vh] bg-[#1a2e1f] overflow-hidden">
         <Image
           src={
             isEBC
               ? "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
-              : trek.heroImage || "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
+              : getMediaUrl(trek.heroImage) || "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
           }
           alt={trek.title}
           fill
@@ -571,43 +783,39 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
           className="object-cover object-center"
           unoptimized
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30"></div>
       </section>
 
       {/* ----------------------------------------------------
-          2. BREADCRUMBS, BADGES & TITLE SECTION (White bg)
+          2. TITLE SECTION
           ---------------------------------------------------- */}
       <section className="bg-white border-b border-[#E5E5E5] py-8">
         <div className="max-w-[1240px] mx-auto px-6 flex flex-col gap-4">
-          {/* Breadcrumbs */}
           <div className="text-xs text-[#6B6B6B] flex items-center gap-1.5 font-semibold">
-            <Link href="/" className="hover:text-[#4FA3E0] transition">Home</Link>
+            <Link href="/" className="hover:text-[#2E7D32] transition">Home</Link>
             <span>/</span>
-            <Link href="/trips" className="hover:text-[#4FA3E0] transition">Trips</Link>
+            <Link href="/trips" className="hover:text-[#2E7D32] transition">Trips</Link>
             <span>/</span>
             <span className="text-[#1A1A2E] font-medium">{trek.title}</span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex flex-col gap-3">
-              {/* Region & Top Badges */}
               <div className="flex flex-wrap items-center gap-3">
-                <span className="bg-[#1A6FBF] text-white font-bold text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-md">
+                <span className="bg-[#1a2e1f] text-white font-bold text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-md">
                   {trek.region?.name || "Khumbu"} Region
                 </span>
                 {trek.isBestSeller && (
-                  <span className="bg-[#F5A623] text-[#1A1A2E] font-bold text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-md flex items-center gap-1">
+                  <span className="bg-[#F5A623] text-[#1a2e1f] font-bold text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-md flex items-center gap-1">
                     <FaStar className="text-[9px]" /> Best Seller
                   </span>
                 )}
               </div>
-
-              {/* Title */}
               <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-[1.1] text-[#1a2e1f]">
                 {trek.title}
               </h1>
             </div>
 
-            {/* Share & Download PDF Row */}
             <div className="flex items-center gap-3 relative shrink-0">
               <button
                 onClick={() => setShowShare(!showShare)}
@@ -641,14 +849,13 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
               )}
               <a
                 href="/why-us#packing"
-                className="bg-[#4FA3E0] hover:bg-[#3d92cf] text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
               >
                 <FaDownload /> PDF Brochure
               </a>
             </div>
           </div>
 
-          {/* TripAdvisor / rating row */}
           <div className="flex flex-wrap items-center gap-4 border-t border-[#E5E5E5] pt-4 mt-2">
             <div className="flex items-center gap-1 text-[#F5A623]">
               <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
@@ -656,7 +863,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
             </div>
             <span className="h-4 w-px bg-[#E5E5E5]"></span>
             <div className="flex items-center gap-1.5 text-xs text-[#6B6B6B]">
-              <span className="bg-emerald-600 text-white rounded px-1.5 py-0.5 text-[9px] font-bold">TripAdvisor</span>
+              <span className="bg-emerald-700 text-white rounded px-1.5 py-0.5 text-[9px] font-bold">TripAdvisor</span>
               <span>Certificate of Excellence</span>
             </div>
           </div>
@@ -664,28 +871,33 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
       </section>
 
       {/* ----------------------------------------------------
-          3. STICKY SECONDARY NAVIGATION SPY BAR
+          3. STICKY QUICK NAVIGATION BAR
           ---------------------------------------------------- */}
-      <nav className="sticky top-[56px] lg:top-[60px] bg-white border-b border-[#E5E5E5] shadow-sm z-40 overflow-x-auto scrollbar-none font-sans font-bold text-xs">
-        <div className="max-w-[1240px] mx-auto px-6 flex items-center justify-start gap-6">
+      <nav className="sticky top-0 bg-[#F1F3F5] border-b border-slate-200 shadow-md z-40 overflow-x-auto scrollbar-none font-sans font-bold text-xs transition-all duration-300">
+        <div className="max-w-[1240px] mx-auto flex items-center justify-start h-12">
           {[
-            { id: "overview", label: "Overview" },
-            { id: "itinerary", label: "Itinerary" },
-            { id: "map", label: "Map" },
-            { id: "includes", label: "Inclusions" },
-            { id: "gallery", label: "Gallery" },
-            { id: "reviews", label: "Reviews" },
+            { id: "overview", label: "Overview", icon: <FaRegEye className="text-sm shrink-0" /> },
+            { id: "dates", label: "Trip Dates", icon: <FaRegCalendarCheck className="text-sm shrink-0" /> },
+            { id: "video", label: "Video", icon: <FaPlay className="text-xs shrink-0" /> },
+            { id: "itinerary", label: "Itinerary", icon: <FaListUl className="text-sm shrink-0" /> },
+            { id: "includes", label: "Includes", icon: <FaRegCheckCircle className="text-sm shrink-0" /> },
+            { id: "map", label: "Map", icon: <FaMap className="text-sm shrink-0" /> },
+            { id: "packing", label: "Equipment", icon: <FaHiking className="text-sm shrink-0" /> },
+            { id: "info", label: "Trip Info", icon: <FaInfoCircle className="text-sm shrink-0" /> },
+            { id: "reviews", label: "Reviews", icon: <FaRegComments className="text-sm shrink-0" /> },
+            { id: "faqs", label: "FAQs", icon: <FaQuestionCircle className="text-sm shrink-0" /> },
           ].map((sec) => (
             <button
               key={sec.id}
               onClick={() => scrollToSection(sec.id as any)}
-              className={`py-4 px-1 border-b-[3px] transition-all whitespace-nowrap ${
+              className={`h-full flex items-center gap-2 px-5 transition-all duration-200 whitespace-nowrap border-r border-slate-200/80 last:border-r-0 select-none ${
                 activeSection === sec.id
-                  ? "border-[#4FA3E0] text-[#4FA3E0]"
-                  : "border-transparent text-[#6B6B6B] hover:text-[#4FA3E0]"
+                  ? "bg-[#1a2e1f] text-white font-black"
+                  : "text-slate-700 hover:bg-slate-200/60 hover:text-slate-900"
               }`}
             >
-              {sec.label}
+              {sec.icon}
+              <span>{sec.label}</span>
             </button>
           ))}
         </div>
@@ -720,540 +932,718 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
       {/* ----------------------------------------------------
           5. MAIN TWO-COLUMN CONTENT GRID
           ---------------------------------------------------- */}
-      <section className="max-w-[1240px] mx-auto px-6 py-12">
+      <section id="main-content-grid" className="max-w-[1240px] mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10 items-start">
           
           {/* LEFT COLUMN */}
-          <div className="flex flex-col gap-12 min-w-0">
+          <div className="flex flex-col gap-8 min-w-0">
             
             {/* Section 1: Overview */}
-            <div ref={secRefs.overview} className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
-                Trip Overview
-              </h2>
-              <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
-                {trek.overview ? (
-                  renderLexical(trek.overview)
-                ) : (
-                  <p>
-                    The Everest Base Camp Trek is a legendary journey that follows the footsteps of early mountaineers. Walking through pristine pine forests, crossing high suspension bridges, and experiencing the incredible hospitality of Sherpa villages, you will stand face-to-face with the world’s highest peak.
-                  </p>
-                )}
-              </div>
+            <div id="overview" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
+                    Trip Overview
+                  </h2>
+                  <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
+                    {trek.overview ? (
+                      renderLexical(trek.overview)
+                    ) : (
+                      <p>
+                        The Everest Base Camp Trek is a legendary journey that follows the footsteps of early mountaineers. Walking through pristine pine forests, crossing high suspension bridges, and experiencing the incredible hospitality of Sherpa villages, you will stand face-to-face with the world’s highest peak.
+                      </p>
+                    )}
+                  </div>
 
-              {/* Highlights */}
-              {highlightsList.length > 0 && (
-                <div className="bg-[#F8F7F4] border border-[#E5E5E5] rounded-2xl p-6 md:p-8 mt-4">
-                  <h3 className="font-serif text-lg md:text-xl font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
-                    🏆 Trek Highlights
-                  </h3>
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    {highlightsList.map((h, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs md:text-sm font-semibold text-[#3D3D3D]">
-                        <span className="text-[#4FA3E0] text-sm shrink-0">✓</span>
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Section 2: Detailed Itinerary */}
-            <div ref={secRefs.itinerary} className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-2">
-                  Detailed Itinerary
-                </h2>
-                <div className="flex items-center gap-3 text-xs font-bold text-[#4FA3E0]">
-                  <button onClick={expandAllDays} className="hover:underline">Expand All</button>
-                  <span className="h-3 w-px bg-[#E5E5E5]"></span>
-                  <button onClick={collapseAllDays} className="hover:underline">Collapse All</button>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-4 mt-2">
-                {dayByDayItinerary.map((day) => {
-                  const isOpen = !!openDays[day.day];
-
-                  return (
-                    <div
-                      key={day.day}
-                      className="border border-[#E5E5E5] rounded-xl overflow-hidden transition-all duration-300"
-                    >
-                      <button
-                        onClick={() => toggleDay(day.day)}
-                        className="w-full px-5 py-4 bg-white hover:bg-[#F8F7F4] flex items-center justify-between text-left focus:outline-none transition group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="bg-[#4FA3E0] text-white font-black font-sans text-xs px-2.5 py-1 rounded-md">
-                            DAY {day.day}
-                          </span>
-                          <span className="font-serif font-black text-sm md:text-base text-[#1A1A2E] group-hover:text-[#4FA3E0] transition duration-300">
-                            {day.title}
-                          </span>
-                        </div>
-                        <span className={`p-1 text-[#4FA3E0] transition-transform duration-300 ${
-                          isOpen ? "rotate-180" : ""
-                        }`}>
-                          <FaChevronDown />
-                        </span>
-                      </button>
-
-                      {isOpen && (
-                        <div className="px-5 py-5 bg-[#F8F7F4]/40 border-t border-[#E5E5E5] flex flex-col gap-4 animate-fade-in">
-                          <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">
-                            {day.description}
-                          </p>
-
-                          {/* Day specific images grid */}
-                          <div className="grid grid-cols-3 gap-2 mt-2">
-                            {[0, 1, 2].map((i) => (
-                              <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-[#E5E5E5] bg-[#1A1A2E]/5">
-                                <Image
-                                  src={galleryList[(day.day + i) % galleryList.length]}
-                                  alt={`Itinerary Day ${day.day} visual ${i + 1}`}
-                                  fill
-                                  sizes="30vw"
-                                  className="object-cover hover:scale-105 transition duration-300"
-                                  unoptimized
-                                />
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Stats footer row */}
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E5E5E5] text-[11px] text-[#6B6B6B] font-semibold uppercase tracking-wider">
-                            {day.altitude && (
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-[#4FA3E0]">📈</span>
-                                <span>Alt: <strong className="text-[#1A1A2E]">{day.altitude}m</strong></span>
-                              </div>
-                            )}
-                            {day.distance && (
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-[#4FA3E0]">📍</span>
-                                <span>Dist: <strong className="text-[#1A1A2E]">{day.distance}</strong></span>
-                              </div>
-                            )}
-                            {day.accommodation && (
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-[#4FA3E0]">🏨</span>
-                                <span>Sleep: <strong className="text-[#1A1A2E]">{day.accommodation}</strong></span>
-                              </div>
-                            )}
-                            {day.meals && (
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-[#4FA3E0]">🍛</span>
-                                <span>Meals: <strong className="text-[#1A1A2E]">{day.meals}</strong></span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Section 3: Route Map */}
-            <div ref={secRefs.map} className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
-                Trek Route Map
-              </h2>
-              {isEBC ? (
-                <div className="relative w-full aspect-[3/4] sm:aspect-square md:aspect-[4/3] rounded-xl overflow-hidden border border-[#E5E5E5]">
-                  <Image
-                    src="https://cms.discoveryworldtrekking.com/media/8120/everest-base-camp-trek-map.webp"
-                    alt="Everest Base Camp Trek Route Map"
-                    fill
-                    className="object-contain bg-slate-50"
-                    unoptimized
-                  />
-                </div>
-              ) : (
-                <div className="w-full">
-                  {trek.gpsCoordinates && trek.gpsCoordinates.length > 0 ? (
-                    <TrekMap waypoints={trek.gpsCoordinates} center={trek.region?.mapCenter} />
-                  ) : (
-                    <div className="h-[300px] bg-slate-100 rounded-xl flex items-center justify-center text-slate-500">
-                      No coordinates route mapped.
+                  {/* Highlights */}
+                  {highlightsList.length > 0 && (
+                    <div className="bg-[#F8F7F4] border border-[#E5E5E5] rounded-2xl p-6 md:p-8 mt-4">
+                      <h3 className="font-serif text-lg md:text-xl font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
+                        🏆 Trek Highlights
+                      </h3>
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                        {highlightsList.map((h, idx) => (
+                          <li key={idx} className="flex items-start gap-2.5 text-xs md:text-sm font-semibold text-[#3D3D3D]">
+                            <span className="text-[#2E7D32] text-sm shrink-0">✓</span>
+                            <span>{h}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
 
-            {/* Additional Non-tab Section: Experience Video */}
-            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
-                Himalayan Trek Experience Video
-              </h2>
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg group">
-                <iframe
-                  className="absolute inset-0 w-full h-full"
-                  src="https://www.youtube.com/embed/fAsw_vB3JpI?autoplay=0"
-                  title="Everest Base Camp Trek Video Experience"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
+                {/* Section 8: Photo Gallery (integrated at the bottom of Overview tab) */}
+                <div id="gallery" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
+                    Photo Gallery
+                  </h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {galleryList.map((img: string, idx: number) => (
+                      <div key={idx} className="relative aspect-square md:aspect-[4/3] rounded-xl overflow-hidden shadow-sm group bg-slate-100">
+                        <Image
+                          src={img}
+                          alt={`${trek.title} gallery image ${idx + 1}`}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 33vw"
+                          className="object-cover hover:scale-105 transition duration-300"
+                          unoptimized
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+            {/* Section 2: Trip Dates (Departure Calendar System) */}
+            <div id="dates" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <div className="border-b border-[#E5E5E5] pb-4">
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-2">
+                      🏔️ Upcoming fixed departures
+                    </h2>
+                    <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">
+                      Join a small guaranteed group (average 8–10 people) and share the adventure. Pricing includes premium guides.
+                    </p>
+                  </div>
+
+                  {loadingDepartures ? (
+                    <div className="flex flex-col items-center justify-center py-10 gap-3">
+                      <div className="w-10 h-10 border-4 border-t-[#2E7D32] border-[#E5E5E5] rounded-full animate-spin"></div>
+                      <span className="text-xs text-[#6B6B6B] font-bold">Scanning departures registry...</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-6">
+                      {/* Calendar Navigation Controls */}
+                      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 border border-slate-200/60 p-4 rounded-2xl">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCurrentMonthDate(prev => {
+                                const next = new Date(prev);
+                                next.setMonth(prev.getMonth() - 1);
+                                return next;
+                              });
+                            }}
+                            className="w-8 h-8 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 hover:border-[#2E7D32] flex items-center justify-center font-bold text-slate-700 transition shadow-sm cursor-pointer select-none"
+                          >
+                            &lt;
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCurrentMonthDate(prev => {
+                                const next = new Date(prev);
+                                next.setMonth(prev.getMonth() + 1);
+                                return next;
+                              });
+                            }}
+                            className="w-8 h-8 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 hover:border-[#2E7D32] flex items-center justify-center font-bold text-slate-700 transition shadow-sm cursor-pointer select-none"
+                          >
+                            &gt;
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          {/* Month dropdown */}
+                          <select
+                            value={currentMonthDate.getMonth()}
+                            onChange={(e) => {
+                              const m = parseInt(e.target.value);
+                              setCurrentMonthDate(prev => {
+                                const next = new Date(prev);
+                                next.setMonth(m);
+                                return next;
+                              });
+                            }}
+                            className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-1.5 text-xs font-bold text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] cursor-pointer"
+                          >
+                            {months.map((name, i) => (
+                              <option key={i} value={i}>{name}</option>
+                            ))}
+                          </select>
+
+                          {/* Year dropdown */}
+                          <select
+                            value={currentMonthDate.getFullYear()}
+                            onChange={(e) => {
+                              const y = parseInt(e.target.value);
+                              setCurrentMonthDate(prev => {
+                                const next = new Date(prev);
+                                next.setFullYear(y);
+                                return next;
+                              });
+                            }}
+                            className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-1.5 text-xs font-bold text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] cursor-pointer"
+                          >
+                            {years.map(y => (
+                              <option key={y} value={y}>{y}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Side-by-Side Month Grids */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Calendar Month 1 */}
+                        {renderCalendarGrid(currentMonthDate)}
+
+                        {/* Calendar Month 2 */}
+                        {(() => {
+                          const nextM = new Date(currentMonthDate);
+                          nextM.setMonth(currentMonthDate.getMonth() + 1);
+                          return renderCalendarGrid(nextM);
+                        })()}
+                      </div>
+
+                      {/* Legends & Helpers */}
+                      <div className="border-t border-[#E5E5E5] pt-4 flex flex-wrap justify-between items-center gap-4 text-[11px]">
+                        <div className="flex flex-wrap gap-4 font-semibold text-[#6B6B6B]">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[7px] text-emerald-700 font-extrabold font-sans">GO</span>
+                            <span>Available Departure</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 rounded-md bg-amber-50 border border-amber-200 flex items-center justify-center text-[7px] text-amber-700 font-extrabold font-sans">LFT</span>
+                            <span>Limited Seats</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 rounded-md bg-red-50 border border-red-100 flex items-center justify-center text-[7px] text-red-400 font-extrabold font-sans line-through">FULL</span>
+                            <span>Sold Out</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 rounded-md bg-white border border-slate-100 flex items-center justify-center text-[8px] text-slate-300 font-black">22</span>
+                            <span>No Departures</span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setIsEnquiryModalOpen(true)}
+                          className="text-[#008CCF] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                        >
+                          🗺️ Looking for custom private dates? Request Private Trek
+                        </button>
+                      </div>
+
+                      {/* Selected Booking Checkout Box */}
+                      <div className="mt-4 border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-sm transition-all duration-300 bg-[#F8F7F4]">
+                        {selectedDeparture ? (
+                          <div className="p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in">
+                            <div className="flex flex-col gap-1.5">
+                              <span className="bg-emerald-600 text-white font-bold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded self-start">
+                                Selected Departure Slot
+                              </span>
+                              <h4 className="font-serif font-black text-base text-[#1A1A2E] leading-tight">
+                                {new Date(startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} &mdash; {new Date(returnDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                              </h4>
+                              <div className="flex flex-wrap items-center gap-3 text-xs text-[#6B6B6B] font-semibold mt-1">
+                                <span className="flex items-center gap-1 text-[#2E7D32]">
+                                  ✓ Guaranteed departure
+                                </span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]"></span>
+                                <span>⏱️ {trek.duration} Days</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]"></span>
+                                <span className="text-[#1a3c2e] font-black">${selectedDeparture.priceOverride || paxPrice} USD / PP</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 shrink-0 flex-wrap sm:flex-nowrap">
+                              {/* Guests stepper inside dates section */}
+                              <div className="flex flex-col gap-1 bg-white border border-[#E5E5E5] rounded-xl px-3 py-1.5 shadow-sm">
+                                <span className="text-[8px] uppercase tracking-wider text-[#6B6B6B] font-black">Number of Guests</span>
+                                <div className="flex items-center gap-2 h-7 w-[100px]">
+                                  <button
+                                    type="button"
+                                    onClick={() => setGuests(Math.max(1, guests - 1))}
+                                    className="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded border border-slate-200 flex items-center justify-center font-bold text-xs cursor-pointer select-none"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="grow text-center text-xs font-black text-[#1A1A2E]">{guests}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setGuests(Math.min(30, guests + 1))}
+                                    className="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded border border-slate-200 flex items-center justify-center font-bold text-xs cursor-pointer select-none"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-col gap-1">
+                                <button
+                                  onClick={handleProceedToBooking}
+                                  className="bg-[#008CCF] hover:bg-[#0070A6] text-white font-black text-xs uppercase px-6 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-1.5 tracking-wider cursor-pointer select-none"
+                                >
+                                  Continue Booking <span className="text-base font-sans font-light leading-none">&rarr;</span>
+                                </button>
+                                <span className="text-[8.5px] text-[#6B6B6B] text-center font-medium">Advance deposit only ${Math.round(totalCost * 0.1)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-6 text-center flex flex-col items-center justify-center gap-3">
+                            <span className="text-2xl">📅</span>
+                            <div className="flex flex-col gap-1 max-w-[400px]">
+                              <h4 className="font-serif font-black text-sm text-[#1A1A2E]">
+                                Please Select Your Departure Date
+                              </h4>
+                              <p className="text-xs text-[#6B6B6B] leading-normal font-semibold">
+                                Browse the calendars above and click on any green or amber colored departure slot to view trip summary and proceed with your booking.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+            {/* Experience Video Section */}
+            <div id="video" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
+                    Himalayan Trek Experience Video
+                  </h2>
+                  <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg group">
+                    <iframe
+                      className="absolute inset-0 w-full h-full"
+                      src="https://www.youtube.com/embed/fAsw_vB3JpI?autoplay=0"
+                      title="Everest Base Camp Trek Video Experience"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+
+            {/* Section 3: Detailed Itinerary */}
+            <div id="itinerary" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-2">
+                      Detailed Itinerary
+                    </h2>
+                    <div className="flex items-center gap-3 text-xs font-bold text-[#2E7D32]">
+                      <button onClick={expandAllDays} className="hover:underline">Expand All</button>
+                      <span className="h-3 w-px bg-[#E5E5E5]"></span>
+                      <button onClick={collapseAllDays} className="hover:underline">Collapse All</button>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4 mt-2">
+                    {dayByDayItinerary.map((day) => {
+                      const isOpen = !!openDays[day.day];
+
+                      return (
+                        <div
+                          key={day.day}
+                          className="border border-[#E5E5E5] rounded-xl overflow-hidden transition-all duration-300 shadow-sm bg-white"
+                        >
+                          <button
+                            onClick={() => toggleDay(day.day)}
+                            className="w-full px-5 py-4 bg-white hover:bg-slate-50 flex items-center justify-between text-left focus:outline-none transition group"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="bg-[#2E7D32] text-white font-black font-sans text-xs px-2.5 py-1 rounded-md">
+                                DAY {day.day}
+                              </span>
+                              <span className="font-serif font-black text-sm md:text-base text-[#1A1A2E] group-hover:text-[#2E7D32] transition duration-300">
+                                {day.title}
+                              </span>
+                            </div>
+                            <span className={`p-1 text-[#2E7D32] transition-transform duration-300 ${
+                              isOpen ? "rotate-180" : ""
+                            }`}>
+                              <FaChevronDown />
+                            </span>
+                          </button>
+
+                          {isOpen && (
+                            <div className="px-5 py-5 bg-slate-50/50 border-t border-[#E5E5E5] flex flex-col gap-4 animate-fade-in">
+                              <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">
+                                {day.description}
+                              </p>
+
+                              {/* Day specific images grid */}
+                              <div className="grid grid-cols-3 gap-2 mt-2">
+                                {[0, 1, 2].map((i) => (
+                                  <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-[#E5E5E5] bg-[#1A1A2E]/5">
+                                    <Image
+                                      src={galleryList[(day.day + i) % galleryList.length]}
+                                      alt={`Itinerary Day ${day.day} visual ${i + 1}`}
+                                      fill
+                                      sizes="30vw"
+                                      className="object-cover hover:scale-105 transition duration-300"
+                                      unoptimized
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Stats footer row */}
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E5E5E5] text-[11px] text-[#6B6B6B] font-semibold uppercase tracking-wider">
+                                {day.altitude && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[#2E7D32]">📈</span>
+                                    <span>Alt: <strong className="text-[#1A1A2E]">{day.altitude}m</strong></span>
+                                  </div>
+                                )}
+                                {day.distance && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[#2E7D32]">📍</span>
+                                    <span>Dist: <strong className="text-[#1A1A2E]">{day.distance}</strong></span>
+                                  </div>
+                                )}
+                                {day.accommodation && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[#2E7D32]">🏨</span>
+                                    <span>Sleep: <strong className="text-[#1A1A2E]">{day.accommodation}</strong></span>
+                                  </div>
+                                )}
+                                {day.meals && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[#2E7D32]">🍛</span>
+                                    <span>Meals: <strong className="text-[#1A1A2E]">{day.meals}</strong></span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
 
             {/* Section 4: Inclusions & Exclusions */}
-            <div ref={secRefs.includes} className="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-24">
-              {/* Inclusions */}
-              <div className="bg-white rounded-2xl border border-green-200 p-6 md:p-8 flex flex-col gap-4 shadow-sm">
-                <h3 className="font-serif text-xl font-bold text-green-900 border-b border-green-100 pb-3 flex items-center gap-2">
-                  <span className="p-1 rounded-full bg-green-100 text-green-600"><FaCheck className="h-3 w-3" /></span>
-                  <span>Included in Cost</span>
-                </h3>
-                <ul className="flex flex-col gap-3">
-                  {inclusionsList.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-[#3D3D3D]">
-                      <span className="text-green-600 font-bold shrink-0 mt-0.5">✓</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div id="includes" className="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-24">
+                  <div className="bg-white rounded-2xl border border-green-200 p-6 md:p-8 flex flex-col gap-4 shadow-sm">
+                    <h3 className="font-serif text-xl font-bold text-green-900 border-b border-green-100 pb-3 flex items-center gap-2">
+                      <span className="p-1 rounded-full bg-green-100 text-green-600"><FaCheck className="h-3 w-3" /></span>
+                      <span>Included in Cost</span>
+                    </h3>
+                    <ul className="flex flex-col gap-3">
+                      {inclusionsList.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-[#3D3D3D]">
+                          <span className="text-green-600 font-bold shrink-0 mt-0.5">✓</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-              {/* Exclusions */}
-              <div className="bg-white rounded-2xl border border-red-200 p-6 md:p-8 flex flex-col gap-4 shadow-sm">
-                <h3 className="font-serif text-xl font-bold text-red-900 border-b border-red-100 pb-3 flex items-center gap-2">
-                  <span className="p-1 rounded-full bg-red-100 text-red-500"><FaTimes className="h-3 w-3" /></span>
-                  <span>Excluded from Cost</span>
-                </h3>
-                <ul className="flex flex-col gap-3">
-                  {exclusionsList.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-[#3D3D3D]">
-                      <span className="text-red-500 font-bold shrink-0 mt-0.5">✗</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Additional Non-tab Section: Packing Checklist */}
-            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6">
-              <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">
-                  Packing Checklist
-                </h2>
-                <div className="flex items-center gap-2 text-xs font-bold text-[#4FA3E0]">
-                  <span>Progress: {totalPackedItems}/{totalChecklistItems} packed ({packedPercentage}%)</span>
+                  <div className="bg-white rounded-2xl border border-red-200 p-6 md:p-8 flex flex-col gap-4 shadow-sm">
+                    <h3 className="font-serif text-xl font-bold text-red-900 border-b border-red-100 pb-3 flex items-center gap-2">
+                      <span className="p-1 rounded-full bg-red-100 text-red-500"><FaTimes className="h-3 w-3" /></span>
+                      <span>Excluded from Cost</span>
+                    </h3>
+                    <ul className="flex flex-col gap-3">
+                      {exclusionsList.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-[#3D3D3D]">
+                          <span className="text-red-500 font-bold shrink-0 mt-0.5">✗</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
 
-              {/* Progress bar */}
-              <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-green-500 transition-all duration-500"
-                  style={{ width: `${packedPercentage}%` }}
-                ></div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-2">
-                {packingChecklist.map((cat, idx) => (
-                  <div key={idx} className="flex flex-col gap-3">
-                    <h4 className="font-serif text-base font-bold text-[#1A1A2E] border-b border-[#E5E5E5] pb-1.5">
-                      {cat.category}
-                    </h4>
-                    <div className="flex flex-col gap-2">
-                      {cat.items.map((item, itemIdx) => {
-                        const isPacked = !!packedItems[item];
-                        return (
-                          <label
-                            key={itemIdx}
-                            className={`flex items-start gap-2.5 text-xs cursor-pointer p-1 rounded hover:bg-slate-50 select-none ${
-                              isPacked ? "text-[#6B6B6B] line-through font-medium" : "text-[#3D3D3D] font-semibold"
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isPacked}
-                              onChange={() => toggleChecklistItem(item)}
-                              className="mt-0.5 rounded accent-[#4FA3E0] cursor-pointer"
-                            />
-                            <span>{item}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Non-tab Section: Important Trip Information */}
-            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">
-                Important Trip Information
-              </h2>
-
-              <div className="flex flex-col gap-3">
-                {tripInfoList.map((info, idx) => {
-                  const isOpen = !!openInfo[info.title];
-                  return (
-                    <div
-                      key={idx}
-                      className="border border-[#E5E5E5] rounded-xl overflow-hidden transition-all"
-                    >
-                      <button
-                        onClick={() => toggleInfo(info.title)}
-                        className="w-full px-5 py-3.5 bg-slate-50 hover:bg-[#F8F7F4] flex items-center justify-between text-left focus:outline-none transition font-sans font-bold text-xs md:text-sm text-[#1A1A2E]"
-                      >
-                        <span>{idx + 1}. {info.title}</span>
-                        <span className={`text-[#4FA3E0] transition-transform ${isOpen ? "rotate-180" : ""}`}>
-                          <FaChevronDown />
-                        </span>
-                      </button>
-                      {isOpen && (
-                        <div className="px-5 py-4 bg-white border-t border-[#E5E5E5] text-xs md:text-sm text-[#3D3D3D] leading-relaxed animate-fade-in">
-                          {info.content}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Section 5: Gallery */}
-            <div ref={secRefs.gallery} className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
-                Photo Gallery
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {galleryList.map((img: string, idx: number) => (
-                  <div key={idx} className="relative aspect-square md:aspect-[4/3] rounded-xl overflow-hidden shadow-sm group bg-slate-100">
-                    <Image
-                      src={img}
-                      alt={`${trek.title} gallery image ${idx + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                      className="object-cover hover:scale-105 transition duration-300"
-                      unoptimized
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Section 6: Reviews */}
-            <div ref={secRefs.reviews} className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <div className="border-b border-[#E5E5E5] pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">
-                  Customer Reviews
-                </h2>
-
-                {/* Stars summary */}
-                <div className="flex items-center gap-1.5 text-xs text-[#6B6B6B] font-bold">
-                  <div className="flex text-[#F5A623] gap-0.5">
-                    <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-                  </div>
-                  <span>4.9/5 based on 320 reviews</span>
-                </div>
-              </div>
-
-              {/* Tab selectors */}
-              <div className="flex border-b border-[#E5E5E5] gap-2">
-                {[
-                  { id: "tripadvisor", label: "TripAdvisor Reviews", rating: "5.0 ★" },
-                  { id: "google", label: "Google Reviews", rating: "4.9 ★" },
-                  { id: "facebook", label: "Facebook Reviews", rating: "5.0 ★" }
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveReviewTab(tab.id as any)}
-                    className={`px-4 py-2 border-b-2 font-sans font-bold text-xs transition whitespace-nowrap focus:outline-none ${
-                      activeReviewTab === tab.id
-                        ? "border-[#4FA3E0] text-[#4FA3E0]"
-                        : "border-transparent text-[#6B6B6B] hover:text-[#4FA3E0]"
-                    }`}
-                  >
-                    {tab.label} <span className="ml-1 text-[9px] bg-slate-100 rounded px-1">{tab.rating}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Active reviews cards */}
-              <div className="flex flex-col gap-5 mt-4">
-                {reviewCards[activeReviewTab].map((rev, idx) => {
-                  const isExpanded = !!expandedReviews[idx];
-                  const rawText = rev.text;
-                  const textLimit = 220;
-                  const shouldTruncate = rawText.length > textLimit;
-                  const displayStr = shouldTruncate && !isExpanded ? `${rawText.substring(0, textLimit)}...` : rawText;
-
-                  return (
-                    <div key={idx} className="bg-slate-50 border border-[#E5E5E5] rounded-xl p-5 md:p-6 flex flex-col gap-2 shadow-sm hover:shadow transition duration-300">
-                      <div className="flex justify-between items-center flex-wrap gap-2">
-                        <div className="flex text-[#F5A623] gap-0.5 text-xs">
-                          {[...Array(rev.stars)].map((_, i) => (
-                            <FaStar key={i} />
-                          ))}
-                        </div>
-                        <span className="text-[10px] text-[#6B6B6B] font-bold uppercase tracking-wider">{rev.author} ({rev.country})</span>
-                      </div>
-                      <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{rev.title}</h4>
-                      <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">
-                        &ldquo;{displayStr}&rdquo;
-                      </p>
-                      {shouldTruncate && (
-                        <button
-                          onClick={() => setExpandedReviews((prev) => ({ ...prev, [idx]: !prev[idx] }))}
-                          className="text-xs font-bold text-[#4FA3E0] self-start hover:underline mt-1 focus:outline-none"
-                        >
-                          {isExpanded ? "Show Less" : "Read Full Review"}
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Additional Non-tab Section: FAQs */}
-            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">
-                Frequently Asked Questions
-              </h2>
-
-              <div className="flex flex-col gap-4">
-                {[
-                  {
-                    q: "What is the best time of year to trek to Everest Base Camp?",
-                    a: "The absolute best seasons are Spring (March to May) and Autumn (September to November). During these months, skies are typically clear, providing magnificent mountain vistas, and weather on the trail is relatively stable."
-                  },
-                  {
-                    q: "How difficult is the Everest Base Camp Trek?",
-                    a: "It is rated as hard/moderate. While it requires no technical climbing skills, you will walk 5 to 7 hours daily on rugged uphill and downhill trails. Physical conditioning, regular cardio exercises, and stair climbing preparations are highly recommended."
-                  },
-                  {
-                    q: "Is altitude sickness common, and how do you manage it?",
-                    a: "Altitude sickness (AMS) is a potential risk above 3,000 meters. Our 14-day itinerary includes two dedicated acclimatization rest days to help your body adapt. Guides monitor blood oxygen levels daily and carry emergency medication."
-                  },
-                  {
-                    q: "What training or physical fitness do I need?",
-                    a: "You need a good level of cardiovascular fitness. Try doing regular aerobic workouts like hiking, running, swimming, or cycling 3-4 times a week starting at least two months before your departure date."
-                  }
-                ].map((faq, idx) => (
-                  <div key={idx} className="flex flex-col gap-2 p-4 bg-[#F8F7F4] border border-[#E5E5E5] rounded-xl">
-                    <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{faq.q}</h4>
-                    <p className="text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/60 pt-2 mt-1">{faq.a}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Non-tab Section: Plan Departure Date Picker */}
-            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
-                Plan Your Departure Date
-              </h2>
-              <p className="text-xs md:text-sm text-[#6B6B6B] leading-relaxed">
-                Select your preferred start date below to check availability. All private departures are 100% customizable to your scheduling preferences.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#F8F7F4] border border-[#E5E5E5] p-6 rounded-2xl">
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-[#1A1A2E] uppercase flex items-center gap-1.5">
-                    <FaCalendarAlt className="text-[#4FA3E0]" /> Start Date
-                  </label>
-                  <input
-                    type="date"
-                    min={new Date().toISOString().split("T")[0]}
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="border border-[#E5E5E5] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#4FA3E0] cursor-pointer bg-white"
-                  />
-                </div>
-                
-                <div className="flex flex-col justify-center border-t md:border-t-0 md:border-l border-[#E5E5E5] pt-4 md:pt-0 md:pl-6">
-                  {returnDate ? (
-                    <div className="flex flex-col gap-1.5 animate-fade-in">
-                      <span className="text-[10px] uppercase font-bold text-[#6B6B6B]">Computed Return Date</span>
-                      <span className="text-base font-black text-[#1A1A2E]">{returnDate} ({trek.duration} Days)</span>
-                      
-                      {dateStatus === "soldout" && (
-                        <span className="text-red-600 text-xs font-black flex items-center gap-1 mt-1">
-                          ● Sold Out (Select another date)
-                        </span>
-                      )}
-                      {dateStatus === "limited" && (
-                        <span className="text-amber-600 text-xs font-black flex items-center gap-1 mt-1 animate-pulse">
-                          ⚠️ Limited Availability! Book soon
-                        </span>
-                      )}
-                      {dateStatus === "guaranteed" && (
-                        <span className="text-green-700 text-xs font-black flex items-center gap-1 mt-1">
-                          ✓ Guaranteed Departure (Available)
-                        </span>
-                      )}
+            {/* Section 5: Route Map */}
+            <div id="map" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
+                    Trek Route Map
+                  </h2>
+                  {isEBC ? (
+                    <div className="relative w-full aspect-[3/4] sm:aspect-square md:aspect-[4/3] rounded-xl overflow-hidden border border-[#E5E5E5]">
+                      <Image
+                        src="https://cms.discoveryworldtrekking.com/media/8120/everest-base-camp-trek-map.webp"
+                        alt="Everest Base Camp Trek Route Map"
+                        fill
+                        className="object-contain bg-slate-50"
+                        unoptimized
+                      />
                     </div>
                   ) : (
-                    <span className="text-xs text-[#6B6B6B] italic">
-                      Choose a start date to calculate trip return date.
-                    </span>
+                    <div className="w-full">
+                      {trek.gpsCoordinates && trek.gpsCoordinates.length > 0 ? (
+                        <TrekMap waypoints={trek.gpsCoordinates} center={trek.region?.mapCenter} />
+                      ) : (
+                        <div className="h-[300px] bg-slate-100 rounded-xl flex items-center justify-center text-slate-500">
+                          No coordinates route mapped.
+                        </div>
+                      )}
+                    </div>
                   )}
+                </div>
+
+            {/* Section 6: Equipment / Packing Checklist */}
+            <div id="packing" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">
+                      Required Equipment List
+                    </h2>
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#2E7D32]">
+                      <span>Progress: {totalPackedItems}/{totalChecklistItems} packed ({packedPercentage}%)</span>
+                    </div>
+                  </div>
+
+                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-green-500 transition-all duration-500"
+                      style={{ width: `${packedPercentage}%` }}
+                    ></div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-2">
+                    {packingChecklist.map((cat, idx) => (
+                      <div key={idx} className="flex flex-col gap-3">
+                        <h4 className="font-serif text-base font-bold text-[#1A1A2E] border-b border-[#E5E5E5] pb-1.5">
+                          {cat.category}
+                        </h4>
+                        <div className="flex flex-col gap-2">
+                          {cat.items.map((item, itemIdx) => {
+                            const isPacked = !!packedItems[item];
+                            return (
+                              <label
+                                key={itemIdx}
+                                className={`flex items-start gap-2.5 text-xs cursor-pointer p-1 rounded hover:bg-slate-50 select-none ${
+                                  isPacked ? "text-[#6B6B6B] line-through font-medium" : "text-[#3D3D3D] font-semibold"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isPacked}
+                                  onChange={() => toggleChecklistItem(item)}
+                                  className="mt-0.5 rounded accent-[#2E7D32] cursor-pointer"
+                                />
+                                <span>{item}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+            {/* Section 7: Important Trip Info */}
+            <div id="info" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">
+                    Important Trip Information
+                  </h2>
+
+                  <div className="flex flex-col gap-3">
+                    {tripInfoList.map((info, idx) => {
+                      const isOpen = !!openInfo[info.title];
+                      return (
+                        <div
+                          key={idx}
+                          className="border border-[#E5E5E5] rounded-xl overflow-hidden transition-all shadow-sm bg-white"
+                        >
+                          <button
+                            onClick={() => toggleInfo(info.title)}
+                            className="w-full px-5 py-3.5 bg-slate-50 hover:bg-[#F8F7F4] flex items-center justify-between text-left focus:outline-none transition font-sans font-bold text-xs md:text-sm text-[#1A1A2E]"
+                          >
+                            <span>{idx + 1}. {info.title}</span>
+                            <span className={`text-[#2E7D32] transition-transform ${isOpen ? "rotate-180" : ""}`}>
+                              <FaChevronDown />
+                            </span>
+                          </button>
+                          {isOpen && (
+                            <div className="px-5 py-4 bg-white border-t border-[#E5E5E5] text-xs md:text-sm text-[#3D3D3D] leading-relaxed animate-fade-in">
+                              {info.content}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+            {/* Section 9: Reviews */}
+            <div id="reviews" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <div className="border-b border-[#E5E5E5] pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">
+                      Customer Reviews
+                    </h2>
+                    <div className="flex items-center gap-1.5 text-xs text-[#6B6B6B] font-bold">
+                      <div className="flex text-[#F5A623] gap-0.5">
+                        <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
+                      </div>
+                      <span>4.9/5 based on 320 reviews</span>
+                    </div>
+                  </div>
+
+                  {/* Tab selectors */}
+                  <div className="flex border-b border-[#E5E5E5] gap-2 overflow-x-auto scrollbar-none">
+                    {[
+                      { id: "tripadvisor", label: "TripAdvisor Reviews", rating: "5.0 ★" },
+                      { id: "google", label: "Google Reviews", rating: "4.9 ★" },
+                      { id: "facebook", label: "Facebook Reviews", rating: "5.0 ★" }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveReviewTab(tab.id as any)}
+                        className={`px-4 py-2 border-b-2 font-sans font-bold text-xs transition whitespace-nowrap focus:outline-none ${
+                          activeReviewTab === tab.id
+                            ? "border-[#2E7D32] text-[#2E7D32]"
+                            : "border-transparent text-[#6B6B6B] hover:text-[#2E7D32]"
+                        }`}
+                      >
+                        {tab.label} <span className="ml-1 text-[9px] bg-slate-100 rounded px-1">{tab.rating}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Active reviews cards */}
+                  <div className="flex flex-col gap-5 mt-4">
+                    {reviewCards[activeReviewTab].map((rev, idx) => {
+                      const isExpanded = !!expandedReviews[idx];
+                      const rawText = rev.text;
+                      const textLimit = 220;
+                      const shouldTruncate = rawText.length > textLimit;
+                      const displayStr = shouldTruncate && !isExpanded ? `${rawText.substring(0, textLimit)}...` : rawText;
+
+                      return (
+                        <div key={idx} className="bg-slate-50 border border-[#E5E5E5] rounded-xl p-5 md:p-6 flex flex-col gap-2 shadow-sm hover:shadow transition duration-300">
+                          <div className="flex justify-between items-center flex-wrap gap-2">
+                            <div className="flex text-[#F5A623] gap-0.5 text-xs">
+                              {[...Array(rev.stars)].map((_, i) => (
+                                <FaStar key={i} />
+                              ))}
+                            </div>
+                            <span className="text-[10px] text-[#6B6B6B] font-bold uppercase tracking-wider">{rev.author} ({rev.country})</span>
+                          </div>
+                          <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{rev.title}</h4>
+                          <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">
+                            &ldquo;{displayStr}&rdquo;
+                          </p>
+                          {shouldTruncate && (
+                            <button
+                              onClick={() => setExpandedReviews((prev) => ({ ...prev, [idx]: !prev[idx] }))}
+                              className="text-xs font-bold text-[#2E7D32] self-start hover:underline mt-1 focus:outline-none"
+                            >
+                              {isExpanded ? "Show Less" : "Read Full Review"}
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+            {/* FAQs Section */}
+            <div id="faqs" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">
+                    Frequently Asked Questions
+                  </h2>
+
+                  <div className="flex flex-col gap-4">
+                    {[
+                      {
+                        q: "What is the best time of year to trek to Everest Base Camp?",
+                        a: "The absolute best seasons are Spring (March to May) and Autumn (September to November). During these months, skies are typically clear, providing magnificent mountain vistas, and weather on the trail is relatively stable."
+                      },
+                      {
+                        q: "How difficult is the Everest Base Camp Trek?",
+                        a: "It is rated as hard/moderate. While it requires no technical climbing skills, you will walk 5 to 7 hours daily on rugged uphill and downhill trails. Physical conditioning, regular cardio exercises, and stair climbing preparations are highly recommended."
+                      },
+                      {
+                        q: "Is altitude sickness common, and how do you manage it?",
+                        a: "Altitude sickness (AMS) is a potential risk above 3,000 meters. Our 14-day itinerary includes two dedicated acclimatization rest days to help your body adapt. Guides monitor blood oxygen levels daily and carry emergency medication."
+                      },
+                      {
+                        q: "What training or physical fitness do I need?",
+                        a: "You need a good level of cardiovascular fitness. Try doing regular aerobic workouts like hiking, running, swimming, or cycling 3-4 times a week starting at least two months before your departure date."
+                      }
+                    ].map((faq, idx) => (
+                      <div key={idx} className="flex flex-col gap-2 p-4 bg-[#F8F7F4] border border-[#E5E5E5] rounded-xl">
+                        <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{faq.q}</h4>
+                        <p className="text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/60 pt-2 mt-1">{faq.a}</p>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
 
-          </div>
-
-          {/* RIGHT COLUMN (Sticky Booking & Advisor Widgets) */}
-          <div className="flex flex-col gap-8 lg:sticky lg:top-[140px] w-full">
+            {/* RIGHT COLUMN (Sticky Booking & Advisor Widgets) */}
+            <div className="flex flex-col gap-8 lg:sticky lg:top-[64px] self-start h-fit w-full">
             
-            {/* BOOKING WIDGET */}
-            <div className="bg-white border border-[#E5E5E5] shadow-md rounded-2xl p-6 flex flex-col gap-6">
+            {/* BOOKING CARD WIDGET */}
+            <div id="booking-card-widget" className="relative bg-white border border-[#E5E5E5] shadow-lg rounded-2xl p-6 flex flex-col gap-5">
               
               {/* Cost Box */}
-              <div>
-                <span className="text-[10px] text-[#6B6B6B] uppercase tracking-wider font-bold block mb-1">
-                  Private departures pricing
-                </span>
-                <div className="flex items-baseline gap-1.5 flex-wrap">
-                  {trek.price && trek.discountedPrice && trek.discountedPrice < trek.price && (
-                    <span className="text-sm text-[#6B6B6B] line-through font-semibold">${trek.price}</span>
-                  )}
-                  <span className="text-3xl font-black text-[#1a3c2e] font-sans">${trek.discountedPrice || trek.price}</span>
-                  <span className="text-xs text-[#6B6B6B] font-bold">USD / Traveler</span>
-                </div>
-                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 mt-3 flex items-center gap-1.5 w-fit">
-                  <FaCheckCircle className="text-emerald-600 shrink-0" />
-                  <span>100% Private Trek</span>
-                </div>
-              </div>
+              {(() => {
+                const basePrice = trek.discountedPrice || trek.price;
+                const originalPrice = trek.price || Math.round(basePrice * 1.15);
+                const personSavings = originalPrice - basePrice;
 
-              {/* Duration/Difficulty Highlights Row */}
-              <div className="grid grid-cols-2 gap-3 border-t border-b border-[#E5E5E5] py-4 my-1 text-xs">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[#6B6B6B] font-medium">Duration:</span>
-                  <span className="font-bold text-[#1A1A2E]">{trek.duration} Days</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[#6B6B6B] font-medium">Difficulty:</span>
-                  <span className="font-bold text-[#1A1A2E] uppercase">{trek.difficulty}</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[#6B6B6B] font-medium">Max Altitude:</span>
-                  <span className="font-bold text-[#1A1A2E]">{trek.maxAltitude}m</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[#6B6B6B] font-medium">Group Size:</span>
-                  <span className="font-bold text-[#1A1A2E]">Private (1-20+)</span>
-                </div>
-              </div>
+                return (
+                  <div className="flex flex-col gap-4 relative">
+                    {/* Top right yellow/orange discount ribbon */}
+                    {personSavings > 0 && (
+                      <div className="absolute -top-6 -right-6 bg-[#FF9800] text-white font-extrabold text-[9px] uppercase px-3 py-1 rounded-tr-2xl rounded-bl-2xl shadow-sm z-10 select-none">
+                        SAVE ${personSavings} PP
+                      </div>
+                    )}
+                    
+                    <div>
+                      <span className="text-[10px] text-[#6B6B6B] uppercase tracking-wider font-extrabold block mb-1">
+                        Starting Price
+                      </span>
+                      <div className="flex items-baseline gap-1.5 flex-wrap">
+                        {originalPrice > basePrice && (
+                          <span className="text-sm text-[#6B6B6B] line-through font-semibold">${originalPrice}</span>
+                        )}
+                        <span className="text-3xl font-black text-[#1a3c2e] font-sans">${basePrice}</span>
+                        <span className="text-xs text-[#6B6B6B] font-bold">USD / PP</span>
+                      </div>
+                    </div>
 
-              {/* Buttons */}
-              <div className="flex flex-col gap-3">
+                    {/* Capsule pill for duration & cost */}
+                    <div className="bg-[#1a2e1f]/5 text-[#1a2e1f] font-bold text-xs px-3.5 py-2.5 rounded-xl border border-[#1a2e1f]/10 shadow-inner flex items-center justify-center gap-2">
+                      <span>⏱️ {trek.duration} Days</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#1a2e1f]/20"></span>
+                      <span>From ${basePrice} PP</span>
+                    </div>
+
+                    {/* Simplified Group-Size Discounts table */}
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[9px] font-extrabold uppercase text-[#6B6B6B] tracking-wider">Group Size Discounts</span>
+                      <div className="flex flex-col border border-[#E5E5E5] rounded-xl overflow-hidden text-[10px] bg-slate-50/20 shadow-inner">
+                        <div className="grid grid-cols-[1.5fr_1fr] bg-slate-50/80 font-bold border-b border-[#E5E5E5] p-2 text-[#6B6B6B] uppercase tracking-wider">
+                          <span>Persons</span>
+                          <span className="text-right">Price PP</span>
+                        </div>
+                        {groupDiscounts.slice(0, 4).map((tier, idx) => (
+                          <div
+                            key={idx}
+                            className="grid grid-cols-[1.5fr_1fr] p-2 border-b last:border-0 border-[#E5E5E5]/60 font-semibold text-[#3D3D3D]"
+                          >
+                            <span>
+                              {tier.minPersons === tier.maxPersons
+                                ? `${tier.minPersons} Person`
+                                : `${tier.minPersons}–${tier.maxPersons} Persons`}
+                            </span>
+                            <span className="text-right font-bold text-[#1a3c2e]">${tier.pricePerPerson}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Actions */}
+              <div className="flex flex-col gap-2.5 border-t border-[#E5E5E5] pt-4">
                 <button
+                  type="button"
+                  onClick={handleProceedToBooking}
+                  className="w-full bg-[#008CCF] hover:bg-[#0070A6] text-white font-bold py-3.5 rounded-xl transition duration-300 text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
+                >
+                  <FaRegCalendarCheck className="text-sm shrink-0" /> Book Now
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setIsEnquiryModalOpen(true)}
-                  className="w-full bg-[#4FA3E0] hover:bg-[#3d92cf] text-white font-bold py-3 rounded-xl border border-transparent transition duration-300 text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm animate-pulse"
+                  className="w-full bg-white hover:bg-[#F8F7F4] text-[#008CCF] border-2 border-[#008CCF] font-bold py-3 rounded-xl transition duration-300 text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                 >
                   Send Enquiry
                 </button>
@@ -1262,21 +1652,21 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                   href="https://wa.me/9779851218358"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition duration-300 shadow-sm"
+                  className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition duration-300 shadow-sm"
                 >
-                  <FaWhatsapp className="text-sm" /> WhatsApp Us
+                  <FaWhatsapp className="text-sm shrink-0" /> WhatsApp Us
                 </a>
               </div>
             </div>
 
-            {/* EXPERT ADVISOR PROFILE CARD */}
+            {/* EXPERT ADVISOR CARD */}
             <div className="bg-[#1a2e1f] text-white rounded-2xl shadow-md p-6 flex flex-col gap-4 border border-white/10">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#4FA3E0] to-[#1A6FBF] flex items-center justify-center text-white font-black text-lg shadow-md border-2 border-[#4FA3E0] shrink-0 select-none">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#2E7D32] to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-md border-2 border-green-500 shrink-0 select-none">
                   K
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase tracking-wider text-[#4FA3E0] font-bold">Expert Advisor</span>
+                  <span className="text-[9px] uppercase tracking-wider text-green-400 font-bold">Expert Advisor</span>
                   <h4 className="font-serif font-black text-base text-white">Kafle</h4>
                   <p className="text-[10px] text-white/60 font-semibold">Senior Himalayan Specialist</p>
                 </div>
@@ -1291,7 +1681,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                   href="https://wa.me/9779851218358"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold py-2.5 rounded-xl text-xs transition duration-300"
+                  className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 rounded-xl text-xs transition duration-300 shadow-sm"
                 >
                   <FaWhatsapp /> WhatsApp Specialist
                 </a>
@@ -1304,17 +1694,26 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
               </div>
             </div>
 
-            {/* SECURE & GUARANTEED INFO CARD */}
+            {/* SECURE & TRUST METRICS */}
             <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 flex flex-col gap-4 shadow-sm">
               <h4 className="font-serif text-sm font-bold text-[#1A1A2E] flex items-center gap-1.5">
-                <FaShieldAlt className="text-green-600" /> Secure & Guaranteed
+                <FaShieldAlt className="text-green-600" /> Secure Booking System
               </h4>
               <p className="text-[10px] md:text-xs text-[#6B6B6B] leading-relaxed">
-                Your booking is secured by Sectigo SSL encryption. We are associated with TAAN, NMA, KEEP, and licensed by the Government of Nepal.
+                Your checkout session is secure and encrypted by 256-bit SSL. Associated with TAAN, KEEP, NMA, and registered with Nepal Tourism Board.
               </p>
-              <div className="border-t border-[#E5E5E5] pt-3 flex items-center gap-2">
+              
+              {/* Payment Method Badges */}
+              <div className="border-t border-[#E5E5E5] pt-3 flex flex-wrap gap-2 items-center justify-center">
+                {['Stripe', 'PayPal', 'eSewa', 'Khalti', 'SWIFT'].map((name, i) => (
+                  <span key={i} className="text-[9px] bg-slate-100 text-[#6B6B6B] border border-[#E5E5E5] font-extrabold rounded px-2 py-0.5 shadow-sm">
+                    {name}
+                  </span>
+                ))}
+              </div>
+              <div className="border-t border-[#E5E5E5] pt-3 flex items-center gap-2 text-[10px] text-[#3D3D3D] font-bold">
                 <FaMedkit className="text-red-500 text-lg shrink-0" />
-                <span className="text-[10px] text-[#3D3D3D] font-bold">Helicopter Rescue & Oxygen cylinders provided on request.</span>
+                <span>Helicopter evacuation and oxygen safety setups verified.</span>
               </div>
             </div>
 
@@ -1333,7 +1732,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                     >
                       <div className="relative h-16 w-20 rounded-lg overflow-hidden shrink-0 bg-slate-100">
                         <Image
-                          src={simTrek.heroImage || "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"}
+                          src={getMediaUrl(simTrek.heroImage) || "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"}
                           alt={simTrek.title}
                           fill
                           className="object-cover group-hover:scale-105 transition duration-300"
@@ -1341,7 +1740,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                         />
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <h5 className="font-sans font-bold text-xs text-[#1A1A2E] truncate group-hover:text-[#4FA3E0] transition">
+                        <h5 className="font-sans font-bold text-xs text-[#1A1A2E] truncate group-hover:text-[#2E7D32] transition">
                           {simTrek.title}
                         </h5>
                         <span className="text-[10px] text-[#6B6B6B] mt-0.5">{simTrek.duration} Days</span>
@@ -1363,18 +1762,19 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
           ---------------------------------------------------- */}
       <div className="fixed bottom-0 left-0 w-full bg-white border-t border-[#E5E5E5] px-6 py-3.5 flex items-center justify-between z-40 lg:hidden shadow-2xl">
         <div className="flex flex-col">
-          <span className="text-[9px] text-[#6B6B6B] uppercase font-bold">Price from</span>
+          <span className="text-[9px] text-[#6B6B6B] uppercase font-bold">Guests: {guests} Pax</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-lg font-black text-[#1a3c2e]">${trek.discountedPrice || trek.price}</span>
-            <span className="text-[9px] text-[#6B6B6B] font-semibold">USD</span>
+            <span className="text-lg font-black text-[#1a3c2e]">${paxPrice}</span>
+            <span className="text-[9px] text-[#6B6B6B] font-semibold">USD / PP</span>
           </div>
         </div>
         
         <button
-          onClick={() => setIsEnquiryModalOpen(true)}
-          className="bg-[#4FA3E0] hover:bg-[#3d92cf] text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all duration-300"
+          onClick={handleProceedToBooking}
+          disabled={dateStatus === "soldout"}
+          className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all duration-300"
         >
-          Send Enquiry
+          {dateStatus === "soldout" ? "Sold Out" : "Book Trek"}
         </button>
       </div>
 

@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 import { BlogPost } from "@/types";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
+
 
 interface BlogsPageContentProps {
   blogs: BlogPost[];
@@ -85,10 +87,10 @@ export default function BlogsPageContent({ blogs }: BlogsPageContentProps) {
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-primary/10">
                 {blog.coverImage && (
                   <Image
-                    src={blog.coverImage}
+                    src={getMediaUrl(blog.coverImage)}
                     alt={blog.title}
                     fill
-                            className="object-cover group-hover:scale-105 transition duration-500"
+                    className="object-cover group-hover:scale-105 transition duration-500"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 )}

@@ -1,7 +1,14 @@
 import { CollectionConfig } from 'payload';
+import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
 
 export const treks: CollectionConfig = {
   slug: 'treks',
+  access: {
+    read: isAuthenticated,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdmin,
+  },
   admin: {
     useAsTitle: 'title',
   },
@@ -114,7 +121,8 @@ export const treks: CollectionConfig = {
     },
     {
       name: 'heroImage',
-      type: 'text',
+      type: 'relationship',
+      relationTo: 'media',
     },
     {
       name: 'gallery',
@@ -122,7 +130,8 @@ export const treks: CollectionConfig = {
       fields: [
         {
           name: 'image',
-          type: 'text',
+          type: 'relationship',
+          relationTo: 'media',
         },
       ],
     },
@@ -134,6 +143,15 @@ export const treks: CollectionConfig = {
         { name: 'lng', type: 'number', required: true },
         { name: 'label', type: 'text', required: true },
         { name: 'altitude', type: 'number' },
+      ],
+    },
+    {
+      name: 'groupDiscounts',
+      type: 'array',
+      fields: [
+        { name: 'minPersons', type: 'number', required: true },
+        { name: 'maxPersons', type: 'number', required: true },
+        { name: 'pricePerPerson', type: 'number', required: true },
       ],
     },
     {

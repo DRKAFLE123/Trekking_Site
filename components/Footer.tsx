@@ -134,7 +134,7 @@ export default function Footer() {
                 </div>
               </Link>
               <p className="text-xs text-white/85 leading-relaxed max-w-sm">
-                {siteName || "Nature Heaven Trekking & Expedition"} is a government-licensed, premier adventure operator in Nepal. We lead customized private trekking, peak climbing, and cultural tours across the Himalayas.
+                {siteSettings?.footerSettings?.bioText || `${siteName || "Nature Heaven Trekking & Expedition"} is a government-licensed, premier adventure operator in Nepal. We lead customized private trekking, peak climbing, and cultural tours across the Himalayas.`}
               </p>
             </div>
 
@@ -267,8 +267,13 @@ export default function Footer() {
                     <span>Head Office - Nepal:</span>
                   </h4>
                   <p className="text-xs text-white/90 pl-5 leading-relaxed">
-                    {contactInfo?.address || "Pakjonal Marga -16, Thamel, Kathmandu, Nepal"}
+                    {siteSettings?.footerSettings?.nepalHeadOfficeAddress || contactInfo?.address || "Pakjonal Marga -16, Thamel, Kathmandu, Nepal"}
                   </p>
+                  {siteSettings?.footerSettings?.nepalHeadOfficePhone && (
+                    <p className="text-xs text-white/70 pl-5 mt-0.5">
+                      Phone: {siteSettings.footerSettings.nepalHeadOfficePhone}
+                    </p>
+                  )}
                 </div>
 
                 {/* UK Branch Office */}
@@ -278,8 +283,13 @@ export default function Footer() {
                     <span>Branch Office - UK:</span>
                   </h4>
                   <p className="text-xs text-white/90 pl-5 leading-relaxed">
-                    London, United Kingdom
+                    {siteSettings?.footerSettings?.ukBranchOfficeAddress || "London, United Kingdom"}
                   </p>
+                  {siteSettings?.footerSettings?.ukBranchOfficePhone && (
+                    <p className="text-xs text-white/70 pl-5 mt-0.5">
+                      Phone: {siteSettings.footerSettings.ukBranchOfficePhone}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -625,7 +635,7 @@ export default function Footer() {
               All Rights Reserved.
             </p>
             <p className="text-[10px] text-white/30 mt-1">
-              Government Registration No. 4893. Bonded & insured through Everest Insurance. Authorized by Ministry of Tourism, Government of Nepal.
+              {siteSettings?.footerSettings?.governmentRegNo || "Government Registration No. 4893. Bonded & insured through Everest Insurance. Authorized by Ministry of Tourism, Government of Nepal."}
             </p>
           </div>
           <div className="md:max-w-md text-[10px] leading-relaxed text-white/40">

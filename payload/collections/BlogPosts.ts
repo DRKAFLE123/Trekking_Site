@@ -1,9 +1,22 @@
 import { CollectionConfig } from 'payload';
+import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
 
 export const blogPosts: CollectionConfig = {
   slug: 'blogPosts',
+  access: {
+    read: isAuthenticated,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdmin,
+  },
   admin: {
     useAsTitle: 'title',
+    preview: (doc) => {
+      if (doc && doc.slug) {
+        return `/blogs/preview/${doc.slug}`;
+      }
+      return '';
+    },
   },
   fields: [
     {
@@ -16,6 +29,29 @@ export const blogPosts: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Draft', value: 'draft' },
+        { label: 'Published', value: 'published' },
+      ],
+      required: true,
+      defaultValue: 'draft',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'tags',
+      type: 'array',
+      fields: [
+        {
+          name: 'tag',
+          type: 'text',
+        },
+      ],
     },
     {
       name: 'category',
@@ -39,7 +75,8 @@ export const blogPosts: CollectionConfig = {
     },
     {
       name: 'coverImage',
-      type: 'text',
+      type: 'relationship',
+      relationTo: 'media',
     },
     {
       name: 'excerpt',
@@ -55,6 +92,25 @@ export const blogPosts: CollectionConfig = {
       type: 'relationship',
       relationTo: 'treks',
       hasMany: true,
+    },
+    {
+      name: 'seo',
+      type: 'group',
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+        },
+        {
+          name: 'metaImage',
+          type: 'relationship',
+          relationTo: 'media',
+        },
+      ],
     },
   ],
 };

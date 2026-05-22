@@ -102,3 +102,22 @@ export default function cloudinaryLoader({
 
   return `https://res.cloudinary.com/${cloudName}/image/upload/${params}/${publicId}`;
 }
+
+/**
+ * Safely extracts a media URL from standard Payload media relationship fields
+ * which can either be a simple string (original/mock seed data) or a populated
+ * Media object (uploaded via dashboard).
+ */
+export function getMediaUrl(media: any): string {
+  if (!media) return '';
+  if (typeof media === 'string') return media;
+  if (typeof media === 'object') {
+    if (media.url) return media.url;
+    if (media.image) {
+      if (typeof media.image === 'string') return media.image;
+      if (typeof media.image === 'object' && media.image.url) return media.image.url;
+    }
+  }
+  return '';
+}
+

@@ -11,19 +11,53 @@ import { blogPosts } from './collections/BlogPosts';
 import { teamMembers } from './collections/TeamMembers';
 import { testimonials } from './collections/Testimonials';
 import { faqs } from './collections/Faqs';
+import { departures } from './collections/Departures';
+import { bookings } from './collections/Bookings';
+import { inquiries } from './collections/Inquiries';
+import { payments } from './collections/Payments';
+import { users } from './collections/Users';
+import { media } from './collections/Media';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 export default buildConfig({
   admin: {
-    // basic admin settings
+    user: users.slug,
+    title: 'Trekking Website',
+    importMap: {
+      baseDir: path.resolve(dirname, '..'),
+    },
+    components: {
+      graphics: {
+        Logo: '@components/payload/AdminHeaderLogo#AdminHeaderLogo',
+        Icon: '@/components/payload/Icon#Icon',
+      },
+    },
+    avatar: {
+      Component: '@components/payload/CustomAvatar#CustomAvatar',
+    },
   },
-  collections: [siteSettings, regions, treks, blogPosts, teamMembers, testimonials, faqs],
+  collections: [
+    users,
+    siteSettings,
+    regions,
+    treks,
+    blogPosts,
+    teamMembers,
+    testimonials,
+    faqs,
+    departures,
+    bookings,
+    inquiries,
+    payments,
+    media
+  ],
   db: sqliteAdapter({
     client: {
       url: process.env.DATABASE_URL || 'file:./payload.db',
     },
+    push: false,
   }),
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'change_this_secret_1234567890',
