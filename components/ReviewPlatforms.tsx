@@ -43,7 +43,7 @@ export default function ReviewPlatforms() {
             <span className="text-[#4FA3E0] uppercase font-bold text-xs tracking-[0.2em] mb-2 block">
               Trusted Worldwide
             </span>
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#1A2E44]">
+            <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#1a2e1f]">
               Our Travel Ratings
             </h3>
             <p className="text-xs text-charcoal/70 mt-1 font-sans">
@@ -60,7 +60,7 @@ export default function ReviewPlatforms() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="font-serif font-black text-lg text-[#1A2E44]">
+                    <span className="font-serif font-black text-lg text-[#1a2e1f]">
                       {platform.name}
                     </span>
                     <span className="text-xs font-bold bg-[#EEF5FB] text-[#1A6FBF] px-2 py-0.5 rounded-full">
@@ -69,7 +69,7 @@ export default function ReviewPlatforms() {
                   </div>
 
                   <div className="flex items-baseline gap-1.5 mb-1">
-                    <span className="text-3xl font-sans font-black text-[#1A2E44] tracking-tight">
+                    <span className="text-3xl font-sans font-black text-[#1a2e1f] tracking-tight">
                       {platform.rating}
                     </span>
                     <span className="text-xs text-charcoal/50">/{platform.maxRating}</span>

@@ -602,7 +602,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
               </div>
 
               {/* Title */}
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-[1.1] text-[#1A2E44]">
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-[1.1] text-[#1a2e1f]">
                 {trek.title}
               </h1>
             </div>
@@ -1270,7 +1270,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
             </div>
 
             {/* EXPERT ADVISOR PROFILE CARD */}
-            <div className="bg-[#1A2E44] text-white rounded-2xl shadow-md p-6 flex flex-col gap-4 border border-white/10">
+            <div className="bg-[#1a2e1f] text-white rounded-2xl shadow-md p-6 flex flex-col gap-4 border border-white/10">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#4FA3E0] to-[#1A6FBF] flex items-center justify-center text-white font-black text-lg shadow-md border-2 border-[#4FA3E0] shrink-0 select-none">
                   K

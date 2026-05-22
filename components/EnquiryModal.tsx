@@ -95,7 +95,7 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
             <div className="flex justify-between items-start border-b border-[#E5E5E5] pb-4">
               <div>
                 <span className="text-[10px] text-[#E84C1E] uppercase font-bold tracking-widest block mb-0.5">Himalayan Enquiry</span>
-                <h3 className="font-serif text-lg md:text-xl font-black text-[#1A2E44] leading-tight">
+                <h3 className="font-serif text-lg md:text-xl font-black text-[#1a2e1f] leading-tight">
                   {tripTitle}
                 </h3>
               </div>
@@ -112,7 +112,7 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
             {status === "success" ? (
               <div className="flex flex-col gap-5 text-center py-8">
                 <FaCheckCircle className="h-14 w-14 text-green-500 mx-auto" />
-                <h4 className="font-serif font-black text-xl text-[#1A2E44]">Booking Enquiry Sent!</h4>
+                <h4 className="font-serif font-black text-xl text-[#1a2e1f]">Booking Enquiry Sent!</h4>
                 <p className="text-sm text-[#3D3D3D] leading-relaxed bg-green-50 border border-green-200 p-4 rounded-xl">
                   {statusMsg}
                 </p>
@@ -130,57 +130,57 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-[#1A2E44] uppercase">Full Name *</label>
+                    <label className="text-[11px] font-bold text-[#1a2e1f] uppercase">Full Name *</label>
                     <input
                       type="text"
                       required
                       placeholder="Enter your name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1A2E44] focus:outline-none focus:border-[#E84C1E] transition"
+                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1a2e1f] focus:outline-none focus:border-[#E84C1E] transition"
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-[#1A2E44] uppercase">Email Address *</label>
+                    <label className="text-[11px] font-bold text-[#1a2e1f] uppercase">Email Address *</label>
                     <input
                       type="email"
                       required
                       placeholder="name@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1A2E44] focus:outline-none focus:border-[#E84C1E] transition"
+                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1a2e1f] focus:outline-none focus:border-[#E84C1E] transition"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-[#1A2E44] uppercase">Phone / WhatsApp</label>
+                    <label className="text-[11px] font-bold text-[#1a2e1f] uppercase">Phone / WhatsApp</label>
                     <input
                       type="tel"
                       placeholder="e.g. +1 (555) 000-0000"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1A2E44] focus:outline-none focus:border-[#E84C1E] transition"
+                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1a2e1f] focus:outline-none focus:border-[#E84C1E] transition"
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-[#1A2E44] uppercase">Start Date *</label>
+                    <label className="text-[11px] font-bold text-[#1a2e1f] uppercase">Start Date *</label>
                     <input
                       type="date"
                       required
                       min={new Date().toISOString().split("T")[0]}
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-3 py-2.5 text-xs text-[#1A2E44] focus:outline-none focus:border-[#E84C1E] cursor-pointer transition"
+                      className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-3 py-2.5 text-xs text-[#1a2e1f] focus:outline-none focus:border-[#E84C1E] cursor-pointer transition"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-[#1A2E44] uppercase">Number of Guests *</label>
+                  <label className="text-[11px] font-bold text-[#1a2e1f] uppercase">Number of Guests *</label>
                   <div className="flex items-center border border-[#E5E5E5] rounded-xl overflow-hidden bg-slate-50 h-[38px] max-w-[150px]">
                     <button
                       type="button"
@@ -189,7 +189,7 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
                     >
                       -
                     </button>
-                    <span className="grow text-center text-xs font-black text-[#1A2E44] select-none">{guests}</span>
+                    <span className="grow text-center text-xs font-black text-[#1a2e1f] select-none">{guests}</span>
                     <button
                       type="button"
                       onClick={() => setGuests(Math.min(30, guests + 1))}
@@ -201,13 +201,13 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-[#1A2E44] uppercase">Custom Message / Requirements</label>
+                  <label className="text-[11px] font-bold text-[#1a2e1f] uppercase">Custom Message / Requirements</label>
                   <textarea
                     rows={3}
                     placeholder="Describe any dietary needs, flight preferences, or customized duration demands..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2 text-xs text-[#1A2E44] focus:outline-none focus:border-[#E84C1E] resize-none transition"
+                    className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-2 text-xs text-[#1a2e1f] focus:outline-none focus:border-[#E84C1E] resize-none transition"
                   ></textarea>
                 </div>
 

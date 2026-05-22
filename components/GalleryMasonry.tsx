@@ -1,11 +1,12 @@
+"use client";
+
 import React, { useState } from 'react';
 import Masonry from 'react-masonry-css';
 import Image from 'next/image';
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 
-// Images are expected to live in public/gallery/ folder.
-// Import them statically – you can add more files here.
+// Images live in public/gallery/ folder.
 const images = [
   '/gallery/happy_face1.png',
   '/gallery/happy_face2.png',
@@ -35,7 +36,7 @@ export default function GalleryMasonry() {
 
   return (
     <section className="my-12 max-w-7xl mx-auto px-4">
-      <h2 className="text-3xl font-bold text-center mb-6 text-secondary">
+      <h2 className="text-3xl font-bold text-center mb-6 text-[#1a2e1f] font-serif">
         Happy Moments
       </h2>
       <Masonry
@@ -61,20 +62,12 @@ export default function GalleryMasonry() {
         ))}
       </Masonry>
 
-      {lightboxOpen && (
-        <Lightbox
-          mainSrc={images[photoIndex]}
-          nextSrc={images[(photoIndex + 1) % images.length]}
-          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setLightboxOpen(false)}
-          onMovePrevRequest={() =>
-            setPhotoIndex((photoIndex + images.length - 1) % images.length)
-          }
-          onMoveNextRequest={() =>
-            setPhotoIndex((photoIndex + 1) % images.length)
-          }
-        />
-      )}
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={photoIndex}
+        slides={images.map((src) => ({ src }))}
+      />
     </section>
   );
 }

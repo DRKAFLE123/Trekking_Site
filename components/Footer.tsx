@@ -456,7 +456,7 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/why-us" className="hover:text-secondary transition duration-300">
+                    <Link href="/gallery" className="hover:text-secondary transition duration-300">
                       Gallery
                     </Link>
                   </li>

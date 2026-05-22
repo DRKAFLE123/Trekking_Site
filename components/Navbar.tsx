@@ -216,7 +216,7 @@ export default function Navbar() {
               <Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-sans text-[13px] font-extrabold text-[#1A2E44] leading-none uppercase tracking-wide">Nature Heaven</span>
+              <span className="font-sans text-[13px] font-extrabold text-[#1a2e1f] leading-none uppercase tracking-wide">Nature Heaven</span>
               <span className="text-[9px] tracking-[0.05em] text-[#6b7280] uppercase font-semibold mt-0.5 leading-none">Trek & Expedition</span>
             </div>
           </Link>
@@ -234,7 +234,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold text-[13px] shadow-sm select-none">K</div>
             <div className="flex flex-col text-left">
-              <span className="text-[12px] font-bold text-[#1A2E44] leading-tight mb-0.5">Talk to an Expert (Kafle)</span>
+              <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert (Kafle)</span>
               <div className="flex items-center gap-1.5">
                 <div className="w-[14px] h-[14px] rounded-full bg-[#25D366] flex items-center justify-center text-white font-black text-[9px] leading-none select-none">W</div>
                 <a href="https://wa.me/9779851218358" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#1A6FBF] transition">+977 9851218358</a>
@@ -245,7 +245,7 @@ export default function Navbar() {
       </div>
 
       {/* Sticky Nav */}
-      <nav className={`w-full relative z-50 transition-all duration-300 ${isScrolled ? "fixed top-0 left-0 right-0 bg-[#1A2E44]/95 backdrop-blur-md shadow-xl py-2 border-b border-[#4FA3E0]/20" : "relative bg-[#1A2E44] py-3"}`}>
+      <nav className={`w-full relative z-50 transition-all duration-300 ${isScrolled ? "fixed top-0 left-0 right-0 bg-[#1a2e1f]/95 backdrop-blur-md shadow-xl py-2 border-b border-[#4FA3E0]/20" : "relative bg-[#1a2e1f] py-3"}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center relative">
           {/* Small logo when scrolled */}
           <div className={`transition-all duration-300 ${isScrolled ? "opacity-100 block" : "opacity-0 hidden lg:hidden"}`}>
@@ -317,7 +317,7 @@ export default function Navbar() {
 
       {/* Search Modal */}
       <AnimatePresence>{searchOpen && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#1A2E44]/95 z-50 flex items-center justify-center p-6">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#1a2e1f]/95 z-50 flex items-center justify-center p-6">
           <button onClick={() => setSearchOpen(false)} className="absolute top-6 right-6 text-bgOffWhite hover:text-[#4FA3E0] p-2 transition" aria-label="Close search"><FaTimes className="h-8 w-8" /></button>
           <div className="w-full max-w-2xl text-center flex flex-col gap-6">
             <h2 className="font-serif text-2xl md:text-4xl text-[#4FA3E0] font-black">Find Your Himalayan Adventure</h2>
@@ -333,7 +333,7 @@ export default function Navbar() {
       <AnimatePresence>{mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileMenuOpen(false)} className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
-          <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] bg-[#1A2E44]/95 backdrop-blur-lg border-l border-white/10 p-6 flex flex-col justify-between overflow-y-auto shadow-2xl z-50 text-white">
+          <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] bg-[#1a2e1f]/95 backdrop-blur-lg border-l border-white/10 p-6 flex flex-col justify-between overflow-y-auto shadow-2xl z-50 text-white">
             <div className="flex flex-col gap-8">
               {/* Header */}
               <div className="flex justify-between items-center pb-4 border-b border-white/10">
