@@ -160,7 +160,7 @@ export default function Navbar() {
     if (!link.dropdown && link.href) return pathname === link.href;
     if (link.key === "trips") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
     if (link.key === "info") return pathname.startsWith("/why-us");
-    if (link.key === "company") return ["/about-us", "/our-team", "/csr"].includes(pathname);
+    if (link.key === "company") return ["/about-us", "/our-team", "/gallery", "/csr"].includes(pathname);
     return false;
   };
 
@@ -190,6 +190,7 @@ export default function Navbar() {
       items: [
         { label: "About Us", href: "/about-us" },
         { label: "Our Sherpa Team", href: "/our-team" },
+        { label: "Photo Gallery", href: "/gallery" },
         { label: "CSR & Sustainability", href: "/csr" },
       ],
     },
