@@ -4,6 +4,7 @@ import { FaAward, FaCalendarAlt, FaUsers, FaShieldAlt, FaLeaf, FaSmile } from "r
 // Removed Sanity fetch – using internal API
 import { Trek, BlogPost, Faq, Testimonial, Region } from "@/types";
 import { getPayload } from "payload";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
 import config from "@/payload/payload.config";
 import TrekCard from "@/components/TrekCard";
 import StatsCounter from "@/components/StatsCounter";
@@ -13,7 +14,7 @@ import VideoGallery from "@/components/VideoGallery";
 import RegionGrid from "@/components/RegionGrid";
 import ReviewPlatforms from "@/components/ReviewPlatforms";
 import ExclusivePrivateTreks from "@/components/ExclusivePrivateTreks";
-import TestimonialMarquee from "@/components/TestimonialMarquee";
+import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 import UpcomingDepartures from "@/components/UpcomingDepartures";
 import FAQAccordion from "@/components/FAQAccordion";
 import Affiliations from "@/components/Affiliations";
@@ -38,7 +39,7 @@ export default async function HomePage() {
   const regionsRes = await payload.find({
     collection: 'regions',
     depth: 1,
-    limit: 6,
+    limit: 8,
   });
 
   const blogsRes = await payload.find({
@@ -51,19 +52,93 @@ export default async function HomePage() {
     depth: 1,
   });
 
-  const testimonialsRes = await payload.find({
-    collection: 'testimonials',
-    depth: 1,
+  const galleryRes = await payload.find({
+    collection: 'gallery',
+    depth: 2,
+    limit: 30,
+  });
+
+  const siteSettingsRes = await payload.find({
+    collection: 'siteSettings',
+    depth: 2,
+    limit: 1,
+    overrideAccess: true, // Needed for SSG prerender (no authenticated user context)
   });
 
   const bestSellers = bestSellersRes.docs as unknown as Trek[];
   const regions = regionsRes.docs as unknown as Region[];
   const blogs = blogsRes.docs as unknown as BlogPost[];
   const faqs = faqsRes.docs as unknown as Faq[];
-  const testimonials = testimonialsRes.docs as unknown as Testimonial[];
+  const galleryItems = galleryRes.docs as any[];
+  const siteSettings = siteSettingsRes.docs[0] as any;
+
+  // Configure hero fields dynamically from CMS with absolute default fallbacks
+  const heroHeadline = siteSettings?.heroHeadline || "Explore the Nepali Himalayas";
+  const heroSubheadline = siteSettings?.heroSubheadline || "Private. Personalized. Unforgettable.";
+  const heroVideoUrl = siteSettings?.heroVideoUrl || "/hero-bg.mp4";
+  
+  let heroImage = "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200";
+  if (siteSettings?.heroImage) {
+    const mediaUrl = getMediaUrl(siteSettings.heroImage);
+    if (mediaUrl) {
+      heroImage = mediaUrl;
+    }
+  }
+
+  // Set beautiful fallback images for database blogs that lack them
+  const processedBlogs = blogs.map((blog) => {
+    let coverImage = getMediaUrl(blog.coverImage);
+    if (!coverImage) {
+      if (blog.title.toLowerCase().includes("packing")) {
+        coverImage = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800";
+      } else {
+        coverImage = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800";
+      }
+    }
+    return {
+      ...blog,
+      coverImage,
+    };
+  });
+
+  const defaultBlogs = [
+    {
+      title: "Ultimate Guide to Everest Base Camp Altitude Adaptation",
+      category: "Trekking Guides",
+      coverImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800",
+      excerpt: "Acclimatization is key to a successful Everest trek. Learn how to climb high, sleep low, and pace yourself like a professional mountain guide.",
+      publishedAt: "2026-05-15T00:00:00.000Z",
+      readTime: "6 min read",
+      slug: "everest-base-camp-acclimatization-guide"
+    },
+    {
+      title: "Best Trekking Seasons in Nepal: When to Go",
+      category: "Travel Info",
+      coverImage: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800",
+      excerpt: "Should you trek in Spring or Autumn? We break down the weather patterns, trail crowds, and photography conditions for every season in the Himalayas.",
+      publishedAt: "2026-05-10T00:00:00.000Z",
+      readTime: "5 min read",
+      slug: "best-trekking-seasons-in-nepal"
+    },
+    {
+      title: "How to Choose Between Everest and Annapurna Circuits",
+      category: "Comparison",
+      coverImage: "https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=800",
+      excerpt: "Deciding between the two most iconic treks in the world? We compare the altitude profiles, tea house cultures, and scenery to help you choose.",
+      publishedAt: "2026-05-02T00:00:00.000Z",
+      readTime: "8 min read",
+      slug: "everest-vs-annapurna-circuit"
+    }
+  ];
+
+  const dbSlugs = new Set(processedBlogs.map(b => b.slug.toLowerCase()));
+  const mergedBlogs = [
+    ...processedBlogs,
+    ...defaultBlogs.filter(d => !dbSlugs.has(d.slug.toLowerCase()))
+  ];
 
   // Slice first 3 blogs for homepage preview
-  const featuredBlogs = blogs.slice(0, 3);
+  const featuredBlogs = mergedBlogs.slice(0, 3) as unknown as BlogPost[];
 
 
   return (
@@ -74,16 +149,17 @@ export default async function HomePage() {
         <div className="absolute inset-0 z-0">
           {/* Hero image as LCP fallback behind the video */}
           <Image
-            src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200"
+            src={heroImage}
             alt="Everest Base Camp Hero"
             fill
             priority
             className="object-cover object-center scale-105"
             sizes="100vw"
             style={{ zIndex: 0 }}
+            unoptimized
           />
           {/* YouTube background video + animated gradient fallback */}
-          <HeroVideo />
+          <HeroVideo videoUrl={heroVideoUrl} />
           {/* Dark overlay for text contrast */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/60 pointer-events-none" style={{ zIndex: 10 }} />
         </div>
@@ -98,13 +174,21 @@ export default async function HomePage() {
 
           <FadeInUp delay={0.2}>
             <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl font-black max-w-5xl leading-[1.1] tracking-tight">
-              Explore the <span className="text-secondary text-glow">Nepali Himalayas</span>
+              {heroHeadline.includes("Nepali Himalayas") ? (
+                <>
+                  {heroHeadline.split("Nepali Himalayas")[0]}
+                  <span className="text-secondary text-glow">Nepali Himalayas</span>
+                  {heroHeadline.split("Nepali Himalayas")[1]}
+                </>
+              ) : (
+                heroHeadline
+              )}
             </h1>
           </FadeInUp>
 
           <FadeInUp delay={0.3}>
             <p className="font-sans text-lg sm:text-xl md:text-2xl text-bgOffWhite/90 max-w-2xl font-light tracking-wide">
-              Private. Personalized. Unforgettable.
+              {heroSubheadline}
             </p>
           </FadeInUp>
 
@@ -192,11 +276,12 @@ export default async function HomePage() {
           {/* Left: Image Card */}
           <FadeInUp className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl border-4 border-secondary/10">
             <Image
-              src="/general/why_us_photo"
-              alt="Himalayan guides and trekkers"
+              src="/Manaslu-Circuit-Trek.jpg"
+              alt="Himalayan guides and trekkers on Manaslu Circuit"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
+              unoptimized
             />
             {/* Embedded Badge */}
             <div className="absolute bottom-6 left-6 right-6 bg-primary/90 backdrop-blur-md p-6 rounded-xl border border-secondary/20 flex gap-4 text-bgOffWhite">
@@ -306,8 +391,8 @@ export default async function HomePage() {
       {/* 8. Video Gallery */}
       <VideoGallery />
 
-      {/* 9. Testimonials Marquee */}
-      <TestimonialMarquee testimonials={testimonials} />
+      {/* 9. Photo Gallery (Happy Moments Masonry) */}
+      <PhotoGalleryMasonry items={galleryItems} />
 
       {/* 10. Upcoming Departures */}
       <UpcomingDepartures />

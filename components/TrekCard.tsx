@@ -49,19 +49,14 @@ export default function TrekCard({ trek }: TrekCardProps) {
     <div className="group bg-white rounded-xl overflow-hidden border border-secondary/10 shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
       {/* Image and Badges */}
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-primary/10 shrink-0">
-        {heroImage ? (
-          <Image
-            src={getMediaUrl(heroImage)}
-            alt={title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-110 transition duration-700"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-primary/40 font-serif">
-            Nature Heaven Trekking
-          </div>
-        )}
+        <Image
+          src={getMediaUrl(heroImage) || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=600"}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover group-hover:scale-110 transition duration-700"
+          unoptimized
+        />
         
         {/* Gradients */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>

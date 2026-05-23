@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { FaBars, FaTimes, FaWhatsapp, FaChevronDown, FaSearch, FaStar, FaClock, FaDollarSign, FaMapMarkerAlt } from "react-icons/fa";
+import { FaBars, FaTimes, FaWhatsapp, FaChevronDown, FaSearch, FaStar, FaClock, FaDollarSign, FaMapMarkerAlt, FaPaperPlane } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Trip data (extended)
@@ -86,6 +86,7 @@ export default function Navbar() {
   // Regions data (unchanged)
   const [regions, setRegions] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
+  const [treksCount, setTreksCount] = useState<number>(7);
 
   useEffect(() => {
     async function fetchData() {
@@ -106,8 +107,20 @@ export default function Navbar() {
         console.error("Failed to fetch site settings in Navbar:", err);
       }
     }
+    async function fetchTrips() {
+      try {
+        const res = await fetch("/api/trips");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setTreksCount(data.length);
+        }
+      } catch (err) {
+        console.error("Failed to fetch trips count in Navbar:", err);
+      }
+    }
     fetchData();
     fetchSettings();
+    fetchTrips();
   }, []);
 
   // Scroll effect with direction tracking
@@ -236,10 +249,10 @@ export default function Navbar() {
   return (
     <div ref={navbarRef} className="w-full z-40 relative">
       {/* Top Utility Bar */}
-      <div className={`w-full bg-white border-b-[0.5px] border-[#e5e5e5] py-[10px] px-[24px] transition-all duration-300 ${isScrolled ? "hidden" : "block"}`}>
+      <div className={`w-full bg-white border-b-[0.5px] border-[#e5e5e5] py-[8px] px-[24px] transition-all duration-300 ${isScrolled ? "hidden" : "block"}`}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           {/* Left Logo */}
-          <Link href="/" className="group flex items-center gap-2.5">
+          <Link href="/" className="group flex items-center gap-2.5 shrink-0">
             <div className="relative w-9 h-9 overflow-hidden bg-gray-50 rounded-lg p-0.5 border border-gray-200 shadow-inner transition group-hover:scale-105 shrink-0">
               <Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
             </div>
@@ -249,27 +262,99 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Spacer */}
-          <div className="hidden md:block flex-1" />
+          {/* Middle: Country Navigation Widgets (Styled in secondary Amber Gold) */}
+          <div className="flex items-center gap-4 md:gap-8 flex-wrap justify-center my-2 md:my-0">
+            {/* Nepal */}
+            <Link href="/countries/nepal" className="group flex items-center gap-2.5 px-2 py-1 rounded-xl hover:bg-gray-50 transition-all duration-300">
+              <div className="text-[#c8922a] group-hover:scale-110 transition duration-300 shrink-0">
+                <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 48 C 14 32, 50 32, 50 48 Z" fill="#fdfbf7" />
+                  <path d="M8 48 h 48" />
+                  <path d="M4 54 h 56" />
+                  <rect x="26" y="22" width="12" height="10" rx="1" fill="#fdfbf7" />
+                  <circle cx="30" cy="27" r="1.5" fill="currentColor" />
+                  <circle cx="34" cy="27" r="1.5" fill="currentColor" />
+                  <path d="M32 29 Q 32.5 30.5, 32 31" />
+                  <path d="M32 22 V 10" />
+                  <path d="M28 10 h 8" />
+                  <path d="M29 7 h 6" />
+                  <path d="M32 7 V 4" />
+                </svg>
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="font-sans text-[12px] font-bold uppercase tracking-wider text-[#1a2e1f] group-hover:text-[#c8922a] transition duration-200">Nepal</span>
+                <span className="text-[10px] text-[#6b7280] font-semibold leading-none mt-0.5">{treksCount} Trips</span>
+              </div>
+            </Link>
 
-          {/* Center Email Block */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left md:pr-8">
-            <span className="text-[11px] text-[#6b7280] leading-tight mb-0.5">Quick Questions? Email Us</span>
-            <a href={`mailto:${siteSettings?.headerSettings?.quickEmail || "info@natureheaventrek.com"}`} className="text-[12px] font-semibold text-[#1A6FBF] hover:text-[#4FA3E0] hover:underline">{siteSettings?.headerSettings?.quickEmail || "info@natureheaventrek.com"}</a>
+            {/* Tibet */}
+            <Link href="/countries/tibet" className="group flex items-center gap-2.5 px-2 py-1 rounded-xl hover:bg-gray-50 transition-all duration-300">
+              <div className="text-[#c8922a] group-hover:scale-110 transition duration-300 shrink-0">
+                <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 50 h 40" fill="#fdfbf7" />
+                  <path d="M16 50 L 18 38 h 28 L 50 50" />
+                  <path d="M18 38 C 16 38, 16 35, 18 35 h 28 C 50 35, 50 38, 48 38" />
+                  <path d="M22 35 L 24 24 h 16 L 42 35" fill="#fdfbf7" />
+                  <path d="M24 24 C 22 24, 22 21, 24 21 h 16 C 42 21, 42 24, 40 24" />
+                  <path d="M27 21 L 28 14 h 8 L 37 21" />
+                  <path d="M28 14 Q 32 8, 36 14 Z" />
+                  <path d="M32 8 V 4" />
+                </svg>
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="font-sans text-[12px] font-bold uppercase tracking-wider text-[#1a2e1f] group-hover:text-[#c8922a] transition duration-200">Tibet</span>
+                <span className="text-[10px] text-[#6b7280] font-semibold leading-none mt-0.5">1 Trips</span>
+              </div>
+            </Link>
+
+            {/* Bhutan */}
+            <Link href="/countries/bhutan" className="group flex items-center gap-2.5 px-2 py-1 rounded-xl hover:bg-gray-50 transition-all duration-300">
+              <div className="text-[#c8922a] group-hover:scale-110 transition duration-300 shrink-0">
+                <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 52 h 52" fill="#fdfbf7" />
+                  <path d="M10 52 L 14 30 h 36 L 54 52" />
+                  <line x1="20" y1="44" x2="20" y2="40" stroke="currentColor" />
+                  <line x1="32" y1="44" x2="32" y2="40" stroke="currentColor" />
+                  <line x1="44" y1="44" x2="44" y2="40" stroke="currentColor" />
+                  <path d="M18 30 h 28" />
+                  <path d="M18 24 h 28" />
+                  <path d="M16 24 C 14 24, 14 20, 18 20 h 28 C 50 20, 50 24, 48 24" fill="#fdfbf7" />
+                  <path d="M22 20 L 25 12 h 14 L 37 20" />
+                  <path d="M22 12 Q 32 6, 42 12 Z" />
+                  <path d="M32 6 V 2" />
+                </svg>
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="font-sans text-[12px] font-bold uppercase tracking-wider text-[#1a2e1f] group-hover:text-[#c8922a] transition duration-200">Bhutan</span>
+                <span className="text-[10px] text-[#6b7280] font-semibold leading-none mt-0.5">1 Trips</span>
+              </div>
+            </Link>
           </div>
 
-          {/* Right Expert Card */}
-          <div className="flex items-center gap-3">
-            <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold text-[13px] shadow-sm select-none">
-              {(siteSettings?.headerSettings?.expertName || "K")[0]}
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert ({siteSettings?.headerSettings?.expertName || "Kafle"})</span>
-              <div className="flex items-center gap-1.5">
-                <div className="w-[14px] h-[14px] rounded-full bg-[#25D366] flex items-center justify-center text-white font-black text-[9px] leading-none select-none">W</div>
-                <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#1A6FBF] transition">{siteSettings?.headerSettings?.expertPhone || "+977 9851218358"}</a>
+          {/* Right: Talk to Expert Card & Stepper CTA (Aligned dynamically) */}
+          <div className="flex items-center gap-6 justify-center shrink-0">
+            {/* Talk to Expert Card (Original beloved design!) */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold text-[13px] shadow-sm select-none">
+                {(siteSettings?.headerSettings?.expertName || "K")[0]}
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert ({siteSettings?.headerSettings?.expertName || "Kafle"})</span>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-[14px] h-[14px] rounded-full bg-[#25D366] flex items-center justify-center text-white font-black text-[9px] leading-none select-none">W</div>
+                  <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#c8922a] transition">{siteSettings?.headerSettings?.expertWhatsApp || "+977 9851218358"}</a>
+                </div>
               </div>
             </div>
+
+            {/* Plan Your Trip CTA Button (Styled in secondary gold) */}
+            <Link 
+              href="/plan-a-trip" 
+              className="border-2 border-[#c8922a] hover:bg-[#c8922a] text-[#c8922a] hover:text-white font-sans font-bold px-4 py-2 rounded-[6px] text-[12px] uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-sm"
+            >
+              <FaPaperPlane className="h-3.5 w-3.5" />
+              <span>Plan Your Trip</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -345,8 +430,14 @@ export default function Navbar() {
 
           {/* Right CTA & Mobile */}
           <div className="flex items-center gap-4 ml-auto lg:ml-0">
-            <button onClick={() => setSearchOpen(true)} className="bg-[#4FA3E0] text-white font-bold px-5 py-2.5 rounded-[6px] text-xs uppercase tracking-wider hover:bg-[#4FA3E0]/90 transition-all duration-300 hidden sm:flex items-center gap-2 shadow-sm"><FaSearch className="h-3.5 w-3.5" /><span>Search Your Trip</span></button>
-            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 text-bgOffWhite hover:text-[#4FA3E0] focus:outline-none block" aria-label="Open Mobile Menu"><FaBars className="h-6 w-6" /></button>
+            <button 
+              onClick={() => setSearchOpen(true)} 
+              className="group border-2 border-[#c8922a] hover:bg-[#c8922a] text-white hover:text-[#1a2e1f] font-sans font-bold px-4 py-2 rounded-[6px] text-[12px] uppercase tracking-wider transition-all duration-300 hidden sm:flex items-center gap-2 shadow-sm"
+            >
+              <FaSearch className="h-3.5 w-3.5 text-[#c8922a] group-hover:text-[#1a2e1f] transition-colors duration-300" />
+              <span>Search Your Trip</span>
+            </button>
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 text-bgOffWhite hover:text-[#c8922a] focus:outline-none block" aria-label="Open Mobile Menu"><FaBars className="h-6 w-6" /></button>
           </div>
         </div>
       </nav>
@@ -419,8 +510,16 @@ export default function Navbar() {
               </div>
             </div>
             {/* Footer Contact */}
-            <div className="flex flex-col gap-4 mt-12 pt-6 border-t border-white/10">
-              <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-green-650 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-sm transition duration-300"><FaWhatsapp className="h-5 w-5" /><span>WhatsApp Chat</span></a>
+            <div className="flex flex-col gap-3 mt-12 pt-6 border-t border-white/10">
+              <Link 
+                href="/plan-a-trip" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 border-2 border-[#ff7a00] hover:bg-[#ff7a00] text-[#ff7a00] hover:text-white font-sans font-bold py-2.5 rounded-xl text-sm transition duration-300"
+              >
+                <FaPaperPlane className="h-4 w-4" />
+                <span>Plan Your Trip</span>
+              </Link>
+              <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm transition duration-300"><FaWhatsapp className="h-5 w-5" /><span>WhatsApp Chat</span></a>
               <div className="text-center text-xs text-white/50 flex flex-col gap-1"><span>Emergency 24/7 Support</span><a href={`tel:${(siteSettings?.headerSettings?.expertPhone || "9779851218358").replace(/[^0-9]/g, "")}`} className="text-[#4FA3E0] font-bold hover:underline">{siteSettings?.headerSettings?.expertPhone || "+977 9851218358"}</a></div>
             </div>
           </motion.div>

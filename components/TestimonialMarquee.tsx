@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { FaStar, FaQuoteLeft } from "react-icons/fa";
 import { Testimonial } from "@/types";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
 
 interface TestimonialMarqueeProps {
   testimonials: Testimonial[];
@@ -17,6 +19,7 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
       rating: 5,
       reviewText: "Nature Heaven organized an incredible private trek to EBC. The guide was exceptionally knowledgeable, pacing was perfect, and the service was top notch! Highly recommend Kafle and his team.",
       trek: { title: "Everest Base Camp Trek" },
+      photo: "/gallery/happy_face1.png",
     },
     {
       clientName: "Emma Watson",
@@ -24,6 +27,7 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
       rating: 5,
       reviewText: "Fabulous experience doing the Annapurna Circuit. Pacing was carefully managed for acclimatization. The porter was super friendly and helpful. Will definitely return!",
       trek: { title: "Annapurna Circuit Trek" },
+      photo: "/gallery/happy_face2.png",
     },
     {
       clientName: "Hans Müller",
@@ -31,6 +35,7 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
       rating: 5,
       reviewText: "Everything was perfectly arranged from airport pickup to drop off. The private guide handled permits, lodges, and meals seamlessly. Safety was always their primary concern.",
       trek: { title: "Manaslu Circuit Trek" },
+      photo: "/gallery/happy_face3.png",
     },
     {
       clientName: "Sarah Jenkins",
@@ -38,6 +43,7 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
       rating: 5,
       reviewText: "Langtang valley was stunning. Booking a private tour with Nature Heaven was the best decision. Extremely personal service and attention to detail. Thank you Kafle!",
       trek: { title: "Langtang Valley Trek" },
+      photo: "/gallery/happy_face4.png",
     },
   ];
 
@@ -115,17 +121,35 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
 
               {/* Reviewer Details */}
               <div className="border-t border-gray-100 pt-4 mt-6 flex items-center justify-between">
-                <div>
-                  <h4 className="font-serif font-bold text-primary text-sm sm:text-base">
-                    {testimonial.clientName}
-                  </h4>
-                  <span className="text-[10px] sm:text-xs text-charcoal/50 uppercase tracking-wider font-sans font-medium">
-                    {testimonial.country}
-                  </span>
+                <div className="flex items-center gap-3">
+                  {/* Photo of client (Happy Face) */}
+                  {testimonial.photo ? (
+                    <div className="h-10 w-10 rounded-full overflow-hidden border border-secondary/20 relative bg-slate-50 shrink-0">
+                      <Image
+                        src={getMediaUrl(testimonial.photo) || "/gallery/happy_face1.png"}
+                        alt={testimonial.clientName}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-primary/10 border border-secondary/25 flex items-center justify-center font-bold text-primary font-serif shrink-0 uppercase text-sm">
+                      {testimonial.clientName.charAt(0)}
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <h4 className="font-serif font-bold text-primary text-sm sm:text-base">
+                      {testimonial.clientName}
+                    </h4>
+                    <span className="text-[10px] sm:text-xs text-charcoal/50 uppercase tracking-wider font-sans font-medium">
+                      {testimonial.country}
+                    </span>
+                  </div>
                 </div>
                 {testimonial.trek && (
-                  <span className="text-[10px] sm:text-xs bg-[#EEF5FB] text-[#1A6FBF] font-semibold font-sans px-2.5 py-1 rounded-full max-w-[150px] truncate">
-                    {testimonial.trek.title}
+                  <span className="text-[10px] sm:text-xs bg-[#EEF5FB] text-[#1A6FBF] font-semibold font-sans px-2.5 py-1 rounded-full max-w-[120px] truncate shrink-0">
+                    {testimonial.trek.title.split(" Trek")[0]}
                   </span>
                 )}
               </div>

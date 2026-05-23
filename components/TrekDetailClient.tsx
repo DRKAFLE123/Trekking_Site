@@ -359,6 +359,21 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
   const router = useRouter();
   const isEBC = trek.slug === "everest-base-camp-trek";
 
+  const [siteSettings, setSiteSettings] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch("/api/site-settings");
+        const data = await res.json();
+        setSiteSettings(data);
+      } catch (err) {
+        console.error("Failed to fetch site settings in TrekDetailClient:", err);
+      }
+    }
+    fetchSettings();
+  }, []);
+
   // Data selection fallbacks
   const dayByDayItinerary = isEBC && (!trek.dayByDayItinerary || trek.dayByDayItinerary.length <= 2)
     ? EBC_FALLBACK.dayByDayItinerary
@@ -379,13 +394,15 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
   const tripInfoList = EBC_FALLBACK.tripInfo;
   const packingChecklist = EBC_FALLBACK.packingChecklist;
 
-  const galleryList = trek.gallery?.map((g: any) => {
+  const computedGallery = (trek.gallery?.map((g: any) => {
     const rawImage = typeof g === "string" ? g : g?.image;
     return getMediaUrl(rawImage);
-  }).filter(Boolean) || [
-    "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp",
-    "https://cms.discoveryworldtrekking.com/media/8120/everest-base-camp-trek-map.webp",
-    "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
+  }).filter(Boolean) || []) as string[];
+
+  const galleryList = computedGallery.length > 0 ? computedGallery : [
+    "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200",
+    "https://images.unsplash.com/photo-1585016495481-91613a3ab1bc?q=80&w=800",
+    "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=800"
   ];
 
   // Dynamic Group Discount Tiers
@@ -980,7 +997,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                     {galleryList.map((img: string, idx: number) => (
                       <div key={idx} className="relative aspect-square md:aspect-[4/3] rounded-xl overflow-hidden shadow-sm group bg-slate-100">
                         <Image
-                          src={img}
+                          src={img || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200"}
                           alt={`${trek.title} gallery image ${idx + 1}`}
                           fill
                           sizes="(max-width: 768px) 50vw, 33vw"
@@ -1265,7 +1282,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                                 {[0, 1, 2].map((i) => (
                                   <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-[#E5E5E5] bg-[#1A1A2E]/5">
                                     <Image
-                                      src={galleryList[(day.day + i) % galleryList.length]}
+                                      src={galleryList[(day.day + i) % galleryList.length] || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200"}
                                       alt={`Itinerary Day ${day.day} visual ${i + 1}`}
                                       fill
                                       sizes="30vw"
@@ -1649,7 +1666,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                 </button>
 
                 <a
-                  href="https://wa.me/9779851218358"
+                  href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition duration-300 shadow-sm"
@@ -1663,11 +1680,11 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
             <div className="bg-[#1a2e1f] text-white rounded-2xl shadow-md p-6 flex flex-col gap-4 border border-white/10">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#2E7D32] to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-md border-2 border-green-500 shrink-0 select-none">
-                  K
+                  {(siteSettings?.headerSettings?.expertName || "Kafle")[0]}
                 </div>
                 <div>
                   <span className="text-[9px] uppercase tracking-wider text-green-400 font-bold">Expert Advisor</span>
-                  <h4 className="font-serif font-black text-base text-white">Kafle</h4>
+                  <h4 className="font-serif font-black text-base text-white">{siteSettings?.headerSettings?.expertName || "Kafle"}</h4>
                   <p className="text-[10px] text-white/60 font-semibold">Senior Himalayan Specialist</p>
                 </div>
               </div>
@@ -1678,7 +1695,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
 
               <div className="flex flex-col gap-2 mt-1">
                 <a
-                  href="https://wa.me/9779851218358"
+                  href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 rounded-xl text-xs transition duration-300 shadow-sm"
@@ -1686,7 +1703,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                   <FaWhatsapp /> WhatsApp Specialist
                 </a>
                 <a
-                  href="mailto:info@natureheaventrek.com"
+                  href={`mailto:${siteSettings?.headerSettings?.quickEmail || "info@natureheaventrek.com"}`}
                   className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-2.5 rounded-xl text-xs transition duration-300"
                 >
                   <FaEnvelope /> Email Consultation

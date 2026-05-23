@@ -10,6 +10,7 @@ import { treks } from './collections/Treks';
 import { blogPosts } from './collections/BlogPosts';
 import { teamMembers } from './collections/TeamMembers';
 import { testimonials } from './collections/Testimonials';
+import { gallery } from './collections/Gallery';
 import { faqs } from './collections/Faqs';
 import { departures } from './collections/Departures';
 import { bookings } from './collections/Bookings';
@@ -24,7 +25,6 @@ const dirname = path.dirname(filename);
 export default buildConfig({
   admin: {
     user: users.slug,
-    title: 'Trekking Website',
     importMap: {
       baseDir: path.resolve(dirname, '..'),
     },
@@ -46,6 +46,7 @@ export default buildConfig({
     blogPosts,
     teamMembers,
     testimonials,
+    gallery,
     faqs,
     departures,
     bookings,

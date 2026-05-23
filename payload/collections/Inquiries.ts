@@ -36,7 +36,7 @@ export const inquiries: CollectionConfig = {
       name: 'trek',
       type: 'relationship',
       relationTo: 'treks',
-      required: true,
+      required: false,
     },
     {
       name: 'startDate',

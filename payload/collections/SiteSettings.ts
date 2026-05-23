@@ -1,10 +1,10 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
+import { isAdmin, isAdminOrEditor } from '../access';
 
 export const siteSettings: CollectionConfig = {
   slug: 'siteSettings',
   access: {
-    read: isAuthenticated,
+    read: () => true, // Public read needed for SSG homepage
     create: isAdmin,
     update: isAdminOrEditor,
     delete: isAdmin,
@@ -25,6 +25,11 @@ export const siteSettings: CollectionConfig = {
     {
       name: 'heroVideoUrl',
       type: 'text',
+    },
+    {
+      name: 'heroImage',
+      type: 'relationship',
+      relationTo: 'media',
     },
     {
       name: 'heroHeadline',
@@ -104,6 +109,36 @@ export const siteSettings: CollectionConfig = {
         { name: 'ukBranchOfficeAddress', type: 'text', defaultValue: 'London, United Kingdom' },
         { name: 'ukBranchOfficePhone', type: 'text' },
         { name: 'governmentRegNo', type: 'text', defaultValue: 'Government Registration No. 4893. Bonded & insured through Everest Insurance. Authorized by Ministry of Tourism, Government of Nepal.' },
+      ],
+    },
+    {
+      name: 'videoGallery',
+      type: 'array',
+      label: 'Video Gallery (Homepage)',
+      admin: {
+        description: 'YouTube video IDs shown in the Himalayan Trek Experience section. Paste just the video ID (e.g. h1F7Tj2_H0Q) from the YouTube URL.',
+      },
+      fields: [
+        {
+          name: 'youtubeId',
+          type: 'text',
+          required: true,
+          label: 'YouTube Video ID',
+          admin: {
+            description: 'The part after ?v= in the YouTube URL. E.g. for youtube.com/watch?v=h1F7Tj2_H0Q, enter: h1F7Tj2_H0Q',
+          },
+        },
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+          label: 'Video Title',
+        },
+        {
+          name: 'trekName',
+          type: 'text',
+          label: 'Trek Name (shown as label)',
+        },
       ],
     },
   ],

@@ -34,6 +34,7 @@ export interface SiteSettings {
   siteName: string;
   logo?: string; // Cloudinary public ID or URL
   heroVideoUrl?: string;
+  heroImage?: string | any;
   heroHeadline: string;
   heroSubheadline?: string;
   stats?: SiteStats;

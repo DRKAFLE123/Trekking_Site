@@ -5,23 +5,46 @@ import Link from "next/link";
 import Image from "next/image";
 import { Region } from "@/types";
 import { motion } from "framer-motion";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
 
 interface RegionGridProps {
   regions: Region[];
 }
 
 export default function RegionGrid({ regions }: RegionGridProps) {
-  // Fallback regions if database is empty
+  // Fallback regions if database is empty - added Dolpo and Makalu Region
   const defaultRegions = [
-    { name: "Everest Region", slug: "everest-region", coverImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=600" },
-    { name: "Annapurna Region", slug: "annapurna-region", coverImage: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?q=80&w=600" },
-    { name: "Langtang Region", slug: "langtang-region", coverImage: "https://images.unsplash.com/photo-1627894481078-43d9972c49ee?q=80&w=600" },
-    { name: "Manaslu Region", slug: "manaslu-region", coverImage: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=600" },
-    { name: "Mustang Region", slug: "mustang-region", coverImage: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600" },
-    { name: "Kanchanjunga Region", slug: "kanchanjunga-region", coverImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=600" },
+    { name: "Everest Region", slug: "everest-region", coverImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=600", description: "Home to Mt. Everest and historic Sherpa villages." },
+    { name: "Annapurna Region", slug: "annapurna-region", coverImage: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?q=80&w=600", description: "Stunning diverse landscapes and rich Gurung culture." },
+    { name: "Langtang Region", slug: "langtang-region", coverImage: "https://images.unsplash.com/photo-1627894481078-43d9972c49ee?q=80&w=600", description: "Beautiful valley of glaciers nearest to Kathmandu." },
+    { name: "Manaslu Region", slug: "manaslu-region", coverImage: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=600", description: "Pristine, restricted wilderness trekking circuit." },
+    { name: "Mustang Region", slug: "mustang-region", coverImage: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600", description: "Arid high-altitude deserts and ancient caves." },
+    { name: "Kanchanjunga Region", slug: "kanchanjunga-region", coverImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=600", description: "Remote eastern giants bordering India." },
+    { name: "Dolpo Region", slug: "dolpo-region", coverImage: "https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=600", description: "Shey Phoksundo lake and ancient Tibetan culture." },
+    { name: "Makalu Region", slug: "makalu-region", coverImage: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600", description: "Home to the world's fifth highest peak and pristine wilderness." }
   ];
 
-  const displayRegions = regions && regions.length > 0 ? regions.slice(0, 6) : defaultRegions as unknown as Region[];
+  // Merge database regions and default fallback regions (preventing duplicate entries)
+  const dbSlugs = new Set((regions || []).map(r => r.slug.toLowerCase()));
+  const mergedRegions = [
+    ...(regions || []),
+    ...defaultRegions.filter(d => {
+      const cleanSlug = d.slug.toLowerCase().replace("-region", "");
+      return !dbSlugs.has(d.slug.toLowerCase()) && !dbSlugs.has(cleanSlug);
+    })
+  ];
+
+  const displayRegions = mergedRegions.slice(0, 8) as unknown as Region[];
+
+  // Safely resolve the coverImage strings for standard Next.js <Image> rendering
+  const resolvedRegions = displayRegions.map((region) => {
+    const rawImage = getMediaUrl(region.coverImage);
+    const coverImage = rawImage || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=600";
+    return {
+      ...region,
+      coverImage
+    };
+  });
 
   return (
     <section className="py-24 px-6 bg-white">
@@ -40,9 +63,9 @@ export default function RegionGrid({ regions }: RegionGridProps) {
           </p>
         </div>
 
-        {/* 3x2 Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayRegions.map((region, idx) => (
+        {/* 4-Column Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {resolvedRegions.map((region, idx) => (
             <Link
               key={region.slug || idx}
               href={`/regions/${region.slug}`}

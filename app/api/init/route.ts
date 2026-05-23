@@ -11,7 +11,7 @@ export async function GET() {
       initialized: true,
       message: "Database schema synchronized successfully." 
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("[Init API] Initialization error:", err);
     return NextResponse.json({ 
       error: err.message, 

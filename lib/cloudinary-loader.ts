@@ -75,10 +75,11 @@ export default function cloudinaryLoader({
     return unsplashMapping[src];
   }
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "demo";
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   
-  // If we are using the demo cloudName, return a placeholder instead of breaking
-  if (cloudName === "demo" || cloudName === "summit-trail-trekking") {
+  // No Cloudinary configured — src should have already been handled as a Payload CMS
+  // absolute URL above. If we reach here with no cloud name, return a generic fallback.
+  if (!cloudName) {
     return `https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=${width}`;
   }
 
