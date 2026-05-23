@@ -6,34 +6,34 @@ import VideoGalleryClient from "./VideoGalleryClient";
 // Default fallback videos (used when no videos are set in Admin → Site Settings)
 const DEFAULT_VIDEOS = [
   {
-    id: "h1F7Tj2_H0Q",
-    title: "Hiking 50 miles to Everest Base Camp",
+    id: "fAsw_vB3JpI",
+    title: "Hiking 50 Miles to Everest Base Camp",
     trekName: "Everest Base Camp Trek",
   },
   {
-    id: "5uV6xH7V69Q",
-    title: "Annapurna Circuit Trek: Nepal's Thorong La Pass",
+    id: "k7vY2y2UoKs",
+    title: "Annapurna Circuit Trek: Crossing Thorong La Pass (5,416m)",
     trekName: "Annapurna Circuit Trek",
   },
   {
-    id: "h1F7Tj2_H0Q",
-    title: "Walking Through the Himalayas | Taksindu to Gokyo Trek",
-    trekName: "EBC via Gokyo Lakes",
+    id: "f9N1oX1jK4w",
+    title: "Hiking Alone in Nepal: The Mardi Himal Trek",
+    trekName: "Mardi Himal Trek",
   },
   {
-    id: "5uV6xH7V69Q",
-    title: "The Annapurna Base Camp Trek - Amazing Annapurna",
-    trekName: "Annapurna Base Camp Trek",
-  },
-  {
-    id: "h1F7Tj2_H0Q",
-    title: "The Manaslu Circuit. Hiking Nepal's Most Underrated Trek",
+    id: "kYv9y_Ff37I",
+    title: "Hiking 100 Miles on the Manaslu Circuit Trek",
     trekName: "Manaslu Circuit Trek",
   },
   {
-    id: "5uV6xH7V69Q",
-    title: "Hiking Alone in Nepal (Mardi Himal Trek)",
-    trekName: "Mardi Himal Trek",
+    id: "B9_M2Jt_b6s",
+    title: "Walking Through the Himalayas: EBC & Gokyo Lakes",
+    trekName: "EBC via Gokyo Lakes",
+  },
+  {
+    id: "PYaviq4rFtQ",
+    title: "The Annapurna Base Camp Trek: Sanctuary & Machapuchare",
+    trekName: "Annapurna Base Camp Trek",
   },
 ];
 

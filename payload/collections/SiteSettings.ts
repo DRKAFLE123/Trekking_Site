@@ -141,5 +141,15 @@ export const siteSettings: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'top5Treks',
+      type: 'relationship',
+      relationTo: 'treks',
+      hasMany: true,
+      label: 'Top 5 Treks (Navbar)',
+      admin: {
+        description: 'Select the top 5 treks to display in the navbar dropdown under "Top 5 Treks".',
+      },
+    },
   ],
 };

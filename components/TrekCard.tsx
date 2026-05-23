@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaStar, FaRegClock, FaSignal, FaHiking } from "react-icons/fa";
+import { FaStar, FaRegClock, FaSignal, FaHiking, FaPlay, FaTimes } from "react-icons/fa";
 import { Trek } from "@/types";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
 
@@ -13,6 +13,7 @@ interface TrekCardProps {
 }
 
 export default function TrekCard({ trek }: TrekCardProps) {
+  const [videoOpen, setVideoOpen] = useState(false);
   const {
     title,
     slug,
@@ -24,6 +25,7 @@ export default function TrekCard({ trek }: TrekCardProps) {
     heroImage,
     isBestSeller,
     region,
+    youtubeVideoId,
   } = trek;
 
   // Render difficulty badge
@@ -57,6 +59,23 @@ export default function TrekCard({ trek }: TrekCardProps) {
           className="object-cover group-hover:scale-110 transition duration-700"
           unoptimized
         />
+
+        {/* Play Button Overlay */}
+        {youtubeVideoId && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setVideoOpen(true);
+            }}
+            className="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 cursor-pointer"
+            aria-label={`Play video for ${title}`}
+          >
+            <div className="w-14 h-14 rounded-full bg-white/95 text-primary hover:bg-secondary hover:text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 hover:scale-110 transition-all duration-300">
+              <FaPlay className="h-4 w-4 ml-1 fill-current" />
+            </div>
+          </button>
+        )}
         
         {/* Gradients */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
@@ -135,6 +154,37 @@ export default function TrekCard({ trek }: TrekCardProps) {
           </Link>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {videoOpen && youtubeVideoId && (
+        <div 
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-6"
+          onClick={() => setVideoOpen(false)}
+        >
+          <div 
+            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setVideoOpen(false)}
+              className="absolute top-4 right-4 bg-black/60 text-white hover:text-secondary p-2 rounded-full border border-white/25 transition-all duration-200 z-50 focus:outline-none cursor-pointer"
+              aria-label="Close video"
+            >
+              <FaTimes className="h-5 w-5" />
+            </button>
+
+            {/* YouTube Iframe */}
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&rel=0`}
+              title={`${title} Video`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

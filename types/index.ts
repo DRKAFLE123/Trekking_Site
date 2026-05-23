@@ -101,6 +101,7 @@ export interface Trek {
   inclusions?: string[];
   exclusions?: string[];
   heroImage?: string; // Cloudinary public ID or URL
+  youtubeVideoId?: string;
   gallery?: string[]; // Cloudinary public IDs or URLs
   gpsCoordinates?: GPSWaypoint[];
   isBestSeller?: boolean;

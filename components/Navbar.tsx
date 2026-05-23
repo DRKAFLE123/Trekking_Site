@@ -88,6 +88,31 @@ export default function Navbar() {
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [treksCount, setTreksCount] = useState<number>(7);
 
+  const getTop5Treks = () => {
+    if (siteSettings?.top5Treks && Array.isArray(siteSettings.top5Treks) && siteSettings.top5Treks.length > 0) {
+      return siteSettings.top5Treks.slice(0, 5).map((t: any) => {
+        if (typeof t === "object" && t !== null) {
+          return {
+            title: t.title,
+            slug: t.slug,
+            duration: t.duration || 14,
+            difficulty: t.difficulty || "moderate",
+            price: t.price || 1200,
+            discountedPrice: t.discountedPrice,
+          };
+        }
+        return null;
+      }).filter(Boolean);
+    }
+    return [
+      { title: "Everest Base Camp Trek", slug: "everest-base-camp-trek", duration: 14, difficulty: "hard", price: 1399 },
+      { title: "Annapurna Circuit Trek", slug: "annapurna-circuit-trek", duration: 14, difficulty: "hard", price: 1199 },
+      { title: "Manaslu Circuit Trek", slug: "manaslu-circuit-trek", duration: 16, difficulty: "hard", price: 1499 },
+      { title: "Langtang Valley Trek", slug: "langtang-valley-trek", duration: 8, difficulty: "moderate", price: 899 },
+      { title: "Mardi Himal Trek", slug: "mardi-himal-trek", duration: 5, difficulty: "moderate", price: 699 },
+    ];
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -425,7 +450,61 @@ export default function Navbar() {
               </div>
             ))}
             {/* Top 5 Treks */}
-            <Link href="/trips" className="flex items-center gap-1.5 font-sans font-bold text-[#4FA3E0] hover:text-[#4FA3E0]/80 py-3 border-b-[3px] border-transparent transition duration-300 text-[13px]"><FaStar className="h-3.5 w-3.5 text-[#4FA3E0] animate-pulse" /><span>Top 5 Treks</span></Link>
+            <div
+              className="relative"
+              onMouseEnter={() => handleMouseEnter("top5")}
+              onMouseLeave={handleMouseLeave}
+            >
+              <button
+                onClick={() => {
+                  if (closeTimeoutRef.current) {
+                    clearTimeout(closeTimeoutRef.current);
+                    closeTimeoutRef.current = null;
+                  }
+                  setActiveDropdown(activeDropdown === "top5" ? null : "top5");
+                }}
+                className={`flex items-center gap-1.5 font-sans font-bold text-[#4FA3E0] hover:text-[#4FA3E0]/80 py-3 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${
+                  activeDropdown === "top5" ? "border-[#4FA3E0]" : "border-transparent"
+                }`}
+              >
+                <FaStar className="h-3.5 w-3.5 text-[#4FA3E0] animate-pulse" />
+                <span>Top 5 Treks</span>
+                <FaChevronDown className={`h-3 w-3 text-[#4FA3E0] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
+              </button>
+
+              <AnimatePresence>
+                {activeDropdown === "top5" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 15 }}
+                    transition={{ duration: 0.2 }}
+                    onMouseEnter={() => handleMouseEnter("top5")}
+                    onMouseLeave={handleMouseLeave}
+                    className="absolute left-0 mt-1 min-w-[280px] bg-white border border-gray-150 shadow-2xl rounded-xl py-3 z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent"
+                  >
+                    <div className="px-5 py-1.5 border-b border-gray-100 mb-2">
+                      <span className="text-[10px] uppercase font-bold text-muted tracking-wider block font-sans">
+                        Recommended Treks
+                      </span>
+                    </div>
+                    {getTop5Treks().map((item: any) => (
+                      <Link
+                        key={item.slug}
+                        href={`/trips/${item.slug}`}
+                        onClick={closeDropdown}
+                        className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-[#EEF5FB] hover:text-[#1A6FBF] transition duration-300 border-l-[3px] border-transparent hover:border-[#1A6FBF]"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-bold text-primary transition duration-200">{item.title}</span>
+                          <span className="text-[10px] text-charcoal/50 mt-0.5 font-normal">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.discountedPrice || item.price} USD</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Right CTA & Mobile */}
@@ -506,7 +585,38 @@ export default function Navbar() {
                   </div>
                 ))}
                 {/* Top 5 Treks */}
-                <Link href="/trips" className="flex items-center gap-1.5 font-sans font-bold text-[#4FA3E0] hover:text-[#4FA3E0]/80 py-1.5 transition text-sm"><FaStar className="h-3.5 w-3.5 text-[#4FA3E0] animate-pulse" /><span>Top 5 Treks</span></Link>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => setActiveDropdown(activeDropdown === "top5" ? null : "top5")}
+                    className="flex items-center justify-between font-sans font-bold text-[#4FA3E0] text-left py-1.5 hover:text-[#4FA3E0]/80 focus:outline-none transition text-sm"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <FaStar className="h-3.5 w-3.5 text-[#4FA3E0] animate-pulse" />
+                      <span>Top 5 Treks</span>
+                    </div>
+                    <FaChevronDown className={`h-3 w-3 text-[#4FA3E0] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
+                  </button>
+                  <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === "top5" ? "max-h-[350px] opacity-100 py-1" : "max-h-0 opacity-0"}`}>
+                    <div className="flex flex-col gap-1.5 pl-4">
+                      {getTop5Treks().map((item: any) => (
+                        <Link
+                          key={item.slug}
+                          href={`/trips/${item.slug}`}
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            closeDropdown();
+                          }}
+                          className="text-xs font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2.5 rounded-lg transition"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-bold text-white">{item.title}</span>
+                            <span className="text-[9px] text-white/50 mt-0.5">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.discountedPrice || item.price} USD</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             {/* Footer Contact */}

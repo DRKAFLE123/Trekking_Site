@@ -155,6 +155,14 @@ export const treks: CollectionConfig = {
       ],
     },
     {
+      name: 'youtubeVideoId',
+      type: 'text',
+      label: 'YouTube Video ID',
+      admin: {
+        description: 'Optional YouTube video ID for this trek (e.g. fAsw_vB3JpI) used in detail page and trek cards.',
+      },
+    },
+    {
       name: 'isBestSeller',
       type: 'checkbox',
       defaultValue: false,
