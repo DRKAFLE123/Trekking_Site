@@ -4,13 +4,15 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   console.log("[Init API] Initializing Payload...");
-  const originalNodeEnv = process.env.NODE_ENV;
+  const env = process.env as any;
+  const envKey = "NODE_ENV";
+  const originalNodeEnv = env[envKey];
   try {
     // Temporarily set NODE_ENV to development so Drizzle adapter runs pushDevSchema
-    process.env.NODE_ENV = "development";
+    env[envKey] = "development";
     const payload = await getPayload({ config });
     // Restore original NODE_ENV immediately after initialization
-    process.env.NODE_ENV = originalNodeEnv;
+    env[envKey] = originalNodeEnv;
     console.log("[Init API] Payload initialized successfully!");
 
     // Check if any users exist in the database
@@ -54,7 +56,9 @@ export async function GET() {
     });
   } catch (err: any) {
     // Restore original NODE_ENV in case of error
-    process.env.NODE_ENV = originalNodeEnv;
+    const env = process.env as any;
+    const envKey = "NODE_ENV";
+    env[envKey] = originalNodeEnv;
     console.error("[Init API] Initialization error:", err);
     return NextResponse.json({ 
       error: err.message, 
