@@ -2,9 +2,10 @@ import { buildConfig } from 'payload';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
+import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 
-import { siteSettings } from './collections/SiteSettings';
+import { SiteSettings } from './collections/SiteSettings';
 import { regions } from './collections/Regions';
 import { treks } from './collections/Treks';
 import { blogPosts } from './collections/BlogPosts';
@@ -21,6 +22,9 @@ import { media } from './collections/Media';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+
+const dbUrl = process.env.DATABASE_URL || process.env.DATABASE_URI || '';
+const isPostgres = dbUrl.startsWith('postgres://') || dbUrl.startsWith('postgresql://');
 
 export default buildConfig({
   admin: {
@@ -40,7 +44,7 @@ export default buildConfig({
   },
   collections: [
     users,
-    siteSettings,
+    SiteSettings,
     regions,
     treks,
     blogPosts,
@@ -54,12 +58,19 @@ export default buildConfig({
     payments,
     media
   ],
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URL || 'file:./payload.db',
-    },
-    push: false,
-  }),
+  db: isPostgres
+    ? postgresAdapter({
+        pool: {
+          connectionString: dbUrl,
+        },
+        push: true,
+      })
+    : sqliteAdapter({
+        client: {
+          url: dbUrl || 'file:./payload.db',
+        },
+        push: true,
+      }),
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'change_this_secret_1234567890',
   typescript: {

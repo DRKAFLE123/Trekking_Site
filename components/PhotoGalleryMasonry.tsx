@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
@@ -16,6 +17,8 @@ interface GalleryItem {
 
 interface PhotoGalleryProps {
   items: GalleryItem[];
+  limit?: number;
+  showViewAll?: boolean;
 }
 
 // Fallback gallery for when the database gallery is empty
@@ -94,9 +97,11 @@ const FALLBACK_GALLERY: GalleryItem[] = [
   },
 ];
 
-export default function PhotoGalleryMasonry({ items }: PhotoGalleryProps) {
+export default function PhotoGalleryMasonry({ items, limit, showViewAll }: PhotoGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Use backend items if available, otherwise show beautiful fallback gallery
   const sourceItems = items && items.length > 0 ? items : FALLBACK_GALLERY;
@@ -112,13 +117,32 @@ export default function PhotoGalleryMasonry({ items }: PhotoGalleryProps) {
     };
   });
 
+  const displayItems = limit ? resolvedItems.slice(0, limit) : resolvedItems;
+
   const openLightbox = (idx: number) => {
     setPhotoIndex(idx);
     setLightboxOpen(true);
   };
 
+  const handleScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const scrollLeft = el.scrollLeft;
+    const children = Array.from(el.children);
+    let closestIndex = 0;
+    let minDiff = Infinity;
+    children.forEach((child, idx) => {
+      const diff = Math.abs((child as HTMLElement).offsetLeft - el.offsetLeft - scrollLeft);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = idx;
+      }
+    });
+    setActiveIndex(closestIndex);
+  };
+
   return (
-    <section className="py-24 px-6 bg-[#fcfbfa] overflow-hidden relative border-t border-secondary/10">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[#fcfbfa] overflow-hidden relative border-t border-secondary/10">
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
@@ -135,13 +159,87 @@ export default function PhotoGalleryMasonry({ items }: PhotoGalleryProps) {
           </p>
         </div>
 
-        {/* Pinterest-style Masonry Grid */}
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
-          {resolvedItems.map((item, idx) => (
+        {/* Swipeable Horizontal Slider on Mobile */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex sm:hidden overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 -mx-4 px-4"
+        >
+          {displayItems.map((item, idx) => (
             <div
               key={item.id || idx}
               onClick={() => openLightbox(idx)}
-              className="break-inside-avoid bg-white p-3 rounded-2xl border border-secondary/10 shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col justify-between"
+              className="w-[280px] shrink-0 snap-align-start bg-white p-3 rounded-2xl border border-secondary/10 shadow-sm flex flex-col justify-between cursor-pointer"
+            >
+              <div className="relative overflow-hidden rounded-xl aspect-[3/4] bg-slate-50">
+                <Image
+                  src={item.imageUrl}
+                  alt={item.title}
+                  fill
+                  className="object-cover rounded-xl"
+                  unoptimized
+                />
+                {/* Bottom text gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex flex-col justify-end p-4 text-white">
+                  <span className="text-[9px] uppercase tracking-wider text-secondary font-bold font-sans">
+                    {item.trek?.title?.split(" Trek")[0] || "Himalayan Expedition"}
+                  </span>
+                  <h4 className="font-serif font-bold text-xs mt-0.5 leading-snug">
+                    {item.title}
+                  </h4>
+                </div>
+              </div>
+              <div className="mt-3 px-1 flex flex-col gap-0.5">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="font-serif font-bold text-primary text-xs truncate max-w-[65%]">
+                    {item.title}
+                  </h4>
+                  {item.trek && item.trek.title && (
+                    <span className="text-[8px] bg-primary/5 border border-secondary/15 text-primary px-2 py-0.5 rounded-full font-sans font-semibold shrink-0 uppercase tracking-wide">
+                      {item.trek.title.split(" Trek")[0] || "Trek"}
+                    </span>
+                  )}
+                </div>
+                {item.caption && (
+                  <p className="text-[10px] text-charcoal/70 italic font-sans font-light leading-normal line-clamp-2 mt-1">
+                    &ldquo;{item.caption}&rdquo;
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Step-wise pagination dots (visible only on mobile) */}
+        <div className="flex justify-center gap-2 mt-2 mb-6 sm:hidden">
+          {displayItems.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                const el = scrollContainerRef.current;
+                if (el && el.children[idx]) {
+                  el.children[idx].scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "start",
+                  });
+                }
+              }}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                activeIndex === idx ? "w-8 bg-secondary" : "w-2 bg-secondary/30"
+              }`}
+              aria-label={`Go to photo ${idx + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Pinterest-style Masonry Grid (Hidden on Mobile) */}
+        <div className="hidden sm:block columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
+          {displayItems.map((item, idx) => (
+            <div
+              key={item.id || idx}
+              onClick={() => openLightbox(idx)}
+              className="break-inside-avoid bg-white p-3 rounded-2xl border border-secondary/10 shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col justify-between mb-6"
             >
               {/* Image wrapper */}
               <div className="relative overflow-hidden rounded-xl bg-slate-50">
@@ -187,12 +285,21 @@ export default function PhotoGalleryMasonry({ items }: PhotoGalleryProps) {
           ))}
         </div>
 
+        {/* View All Photos CTA Button (linked to full gallery page) */}
+        {showViewAll && (
+          <div className="text-center mt-12 relative z-10">
+            <Link href="/gallery" className="bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl inline-block hover:bg-secondary-light hover:scale-105 active:scale-95 transition-all duration-300 shadow-md">
+              View All Gallery
+            </Link>
+          </div>
+        )}
+
         {/* Immersive lightbox */}
         <Lightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
           index={photoIndex}
-          slides={resolvedItems.map((item) => ({
+          slides={displayItems.map((item) => ({
             src: item.imageUrl,
             title: item.title,
             description: item.caption,

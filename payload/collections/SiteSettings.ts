@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload';
 import { isAdmin, isAdminOrEditor } from '../access';
 
-export const siteSettings: CollectionConfig = {
+export const SiteSettings: CollectionConfig = {
   slug: 'siteSettings',
   access: {
     read: () => true, // Public read needed for SSG homepage

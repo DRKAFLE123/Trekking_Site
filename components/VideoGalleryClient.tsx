@@ -16,7 +16,7 @@ interface VideoGalleryClientProps {
 
 export default function VideoGalleryClient({ videos }: VideoGalleryClientProps) {
   return (
-    <section className="py-20 px-6 bg-white border-b border-secondary/10">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-white border-b border-secondary/10">
       <div className="max-w-7xl mx-auto">
 
         {/* Section Header */}
@@ -33,12 +33,12 @@ export default function VideoGalleryClient({ videos }: VideoGalleryClientProps) 
           </p>
         </div>
 
-        {/* Video Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Video Grid (Slider on mobile, standard grid on desktop) */}
+        <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
           {videos.map((vid, idx) => (
             <div
               key={idx}
-              className="bg-bgOffWhite rounded-xl overflow-hidden border border-secondary/10 shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full"
+              className="bg-bgOffWhite rounded-xl overflow-hidden border border-secondary/10 shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full w-[290px] md:w-auto shrink-0 snap-align-start"
             >
               {/* Lazy Embedded Player */}
               <div className="aspect-video w-full overflow-hidden bg-black relative shadow-inner">

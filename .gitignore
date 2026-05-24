@@ -44,3 +44,8 @@ next-env.d.ts
 
 # scratch scripts
 /scratch
+
+# deployments and zips
+*.zip
+/deploy.zip
+deploy.zip

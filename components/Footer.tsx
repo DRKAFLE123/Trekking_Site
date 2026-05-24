@@ -102,8 +102,8 @@ export default function Footer() {
           }}
         ></div>
 
-        {/* Dark subtle overlay for text readability */}
-        <div className="absolute inset-0 bg-black/10 pointer-events-none z-0"></div>
+        {/* Dark subtle overlay for text readability (gradient overlay, darker on mobile) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-black/25 md:from-black/25 md:via-black/15 md:to-black/5 pointer-events-none z-0"></div>
 
 
 

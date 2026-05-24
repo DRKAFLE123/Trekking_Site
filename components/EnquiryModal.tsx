@@ -213,7 +213,7 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
 
                 <div className="bg-[#1a3c2e] text-white p-4 rounded-xl flex items-center justify-between text-xs font-semibold mt-1">
                   <span className="text-white/80">Estimated Price ({guests} Pax):</span>
-                  <span className="text-[#4FA3E0] font-black text-sm font-sans">${calculateCost()} USD</span>
+                  <span className="text-secondary font-black text-sm font-sans">${calculateCost()} USD</span>
                 </div>
 
                 <button

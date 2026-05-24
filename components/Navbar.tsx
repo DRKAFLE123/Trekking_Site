@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { FaBars, FaTimes, FaWhatsapp, FaChevronDown, FaSearch, FaStar, FaClock, FaDollarSign, FaMapMarkerAlt, FaPaperPlane } from "react-icons/fa";
+import { FaBars, FaTimes, FaWhatsapp, FaChevronDown, FaSearch, FaStar, FaPaperPlane } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Trip data (extended)
@@ -273,8 +273,21 @@ export default function Navbar() {
 
   return (
     <div ref={navbarRef} className="w-full z-40 relative">
+      {/* Top green promo bar stripe (Visible on all viewports, scrolls off) */}
+      <div className="w-full bg-[#2ea44f] text-white py-2.5 px-4 text-center text-xs font-bold flex items-center justify-center gap-2 relative z-50">
+        <svg className="w-4 h-4 text-white animate-pulse shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        <span className="leading-snug">
+          Confirmed Booked Group, You Can Join for 2026 &amp; 2027
+        </span>
+        <Link href="/upcoming-departures" className="inline-block bg-white/20 hover:bg-white/30 text-white rounded px-2.5 py-0.5 text-[10px] sm:text-[11px] uppercase tracking-wider transition ml-1.5 border border-white/20 shrink-0">
+          Know More
+        </Link>
+      </div>
+
       {/* Top Utility Bar */}
-      <div className={`w-full bg-white border-b-[0.5px] border-[#e5e5e5] py-[8px] px-[24px] transition-all duration-300 ${isScrolled ? "hidden" : "block"}`}>
+      <div className={`w-full bg-white border-b-[0.5px] border-[#e5e5e5] py-[8px] px-[24px] transition-all duration-300 ${isScrolled ? "hidden" : "block"} hidden lg:block`}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           {/* Left Logo */}
           <Link href="/" className="group flex items-center gap-2.5 shrink-0">
@@ -393,13 +406,13 @@ export default function Navbar() {
           : "w-full bg-[#1a2e1f] py-3"
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center relative">
-          {/* Small logo when scrolled */}
-          <div className={`transition-all duration-300 ${isScrolled ? "opacity-100 block" : "opacity-0 hidden lg:hidden"}`}>
+          {/* Logo - Always visible on mobile, visible on desktop only when scrolled */}
+          <div className={`transition-all duration-300 ${isScrolled ? "opacity-100 block" : "opacity-100 block lg:opacity-0 lg:hidden"}`}>
             <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-7 h-7 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0">
+              <div className="relative w-8 h-8 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0">
                 <Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
               </div>
-              <span className="font-sans text-[11px] font-extrabold text-white uppercase tracking-wide">Nature Heaven</span>
+              <span className="font-sans text-[12px] font-extrabold text-white uppercase tracking-wide">Nature Heaven</span>
             </Link>
           </div>
 
@@ -411,9 +424,9 @@ export default function Navbar() {
                   <button onClick={() => {
                     if (closeTimeoutRef.current) { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }
                     setActiveDropdown(activeDropdown === link.key ? null : (link.key || null));
-                  }} className={`flex items-center gap-1 font-sans font-semibold text-white/95 hover:text-[#4FA3E0] py-3.5 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${isActive(link) ? "border-[#4FA3E0] text-[#4FA3E0]" : "border-transparent"}`}> {link.title}<FaChevronDown className={`h-3 w-3 text-[#4FA3E0] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
+                  }} className={`flex items-center gap-1 font-sans font-semibold text-white/95 hover:text-[#c8922a] py-3.5 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${isActive(link) ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}> {link.title}<FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
                 ) : (
-                  <Link href={link.href || "/"} className={`font-sans font-semibold text-white/95 hover:text-[#4FA3E0] py-3.5 border-b-[3px] transition duration-300 text-[13px] ${isActive(link) ? "border-[#4FA3E0] text-[#4FA3E0]" : "border-transparent"}`}>{link.title}</Link>
+                  <Link href={link.href || "/"} className={`font-sans font-semibold text-white/95 hover:text-[#c8922a] py-3.5 border-b-[3px] transition duration-300 text-[13px] ${isActive(link) ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}>{link.title}</Link>
                 )}
                 {/* Dropdown */}
                 {link.dropdown && (
@@ -424,7 +437,7 @@ export default function Navbar() {
                           {/* Left categories */}
                           <div className="w-60 flex flex-col gap-1 border-r border-[#e5e5e5] pr-6 shrink-0">
                             {categories.map((cat) => (
-                              <button key={cat} onClick={() => setActiveCategory(cat)} onMouseEnter={() => setActiveCategory(cat)} className={`w-full text-left px-4 py-2 rounded transition duration-200 text-[12.5px] font-sans font-semibold border-l-[3px] ${activeCategory === cat ? "bg-[#EEF5FB] border-[#1A6FBF] text-[#1A6FBF]" : "border-transparent text-charcoal/80 hover:bg-[#EEF5FB]/50 hover:text-[#1A6FBF]"}`}>{cat}</button>
+                              <button key={cat} onClick={() => setActiveCategory(cat)} onMouseEnter={() => setActiveCategory(cat)} className={`w-full text-left px-4 py-2 rounded transition duration-200 text-[12.5px] font-sans font-semibold border-l-[3px] ${activeCategory === cat ? "bg-secondary/10 border-secondary text-secondary-dark" : "border-transparent text-charcoal/80 hover:bg-secondary/5 hover:text-secondary-dark"}`}>{cat}</button>
                             ))}
                           </div>
                           {/* Right content */}
@@ -432,7 +445,7 @@ export default function Navbar() {
                             <div className="text-xs uppercase font-bold text-muted tracking-wider mb-4 border-b border-[#e5e5e5] pb-2 font-sans">{activeCategory} ({TRIP_DATA[activeCategory].length} Options)</div>
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3 font-sans">
                               {TRIP_DATA[activeCategory].map((trip) => (
-                                <Link key={trip.slug} href={`/trips/${trip.slug}`} onClick={closeDropdown} className="text-[12.5px] font-semibold text-charcoal/80 hover:bg-[#EEF5FB] hover:text-[#1A6FBF] px-3 py-2 rounded transition duration-200 block truncate">{trip.title}</Link>
+                                <Link key={trip.slug} href={`/trips/${trip.slug}`} onClick={closeDropdown} className="text-[12.5px] font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark px-3 py-2 rounded transition duration-200 block truncate">{trip.title}</Link>
                               ))}
                             </div>
                           </div>
@@ -440,7 +453,7 @@ export default function Navbar() {
                       ) : (
                         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 15 }} transition={{ duration: 0.2 }} onMouseEnter={() => link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave} className="absolute left-0 mt-1 min-w-[220px] bg-white border border-gray-150 shadow-2xl rounded-xl py-2 z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent">
                           {link.items && link.items.map((item) => (
-                            <Link key={item.label} href={item.href} onClick={closeDropdown} className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-[#EEF5FB] hover:text-[#1A6FBF] transition duration-300">{item.label}</Link>
+                            <Link key={item.label} href={item.href} onClick={closeDropdown} className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-300">{item.label}</Link>
                           ))}
                         </motion.div>
                       )
@@ -463,13 +476,13 @@ export default function Navbar() {
                   }
                   setActiveDropdown(activeDropdown === "top5" ? null : "top5");
                 }}
-                className={`flex items-center gap-1.5 font-sans font-bold text-[#4FA3E0] hover:text-[#4FA3E0]/80 py-3 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${
-                  activeDropdown === "top5" ? "border-[#4FA3E0]" : "border-transparent"
+                className={`flex items-center gap-1.5 font-sans font-bold text-[#c8922a] hover:text-[#c8922a]/80 py-3 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${
+                  activeDropdown === "top5" ? "border-[#c8922a]" : "border-transparent"
                 }`}
               >
-                <FaStar className="h-3.5 w-3.5 text-[#4FA3E0] animate-pulse" />
+                <FaStar className="h-3.5 w-3.5 text-[#c8922a] animate-pulse" />
                 <span>Top 5 Treks</span>
-                <FaChevronDown className={`h-3 w-3 text-[#4FA3E0] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
+                <FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
               </button>
 
               <AnimatePresence>
@@ -493,7 +506,7 @@ export default function Navbar() {
                         key={item.slug}
                         href={`/trips/${item.slug}`}
                         onClick={closeDropdown}
-                        className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-[#EEF5FB] hover:text-[#1A6FBF] transition duration-300 border-l-[3px] border-transparent hover:border-[#1A6FBF]"
+                        className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-300 border-l-[3px] border-transparent hover:border-secondary"
                       >
                         <div className="flex flex-col">
                           <span className="font-bold text-primary transition duration-200">{item.title}</span>
@@ -507,16 +520,45 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Right CTA & Mobile */}
-          <div className="flex items-center gap-4 ml-auto lg:ml-0">
+          {/* Right CTA & Mobile Quick Actions */}
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto lg:ml-0">
+            {/* Desktop Search Button */}
             <button 
               onClick={() => setSearchOpen(true)} 
-              className="group border-2 border-[#c8922a] hover:bg-[#c8922a] text-white hover:text-[#1a2e1f] font-sans font-bold px-4 py-2 rounded-[6px] text-[12px] uppercase tracking-wider transition-all duration-300 hidden sm:flex items-center gap-2 shadow-sm"
+              className="group border-2 border-[#c8922a] hover:bg-[#c8922a] text-white hover:text-[#1a2e1f] font-sans font-bold px-4 py-2 rounded-[6px] text-[12px] uppercase tracking-wider transition-all duration-300 hidden lg:flex items-center gap-2 shadow-sm"
             >
               <FaSearch className="h-3.5 w-3.5 text-[#c8922a] group-hover:text-[#1a2e1f] transition-colors duration-300" />
               <span>Search Your Trip</span>
             </button>
-            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 text-bgOffWhite hover:text-[#c8922a] focus:outline-none block" aria-label="Open Mobile Menu"><FaBars className="h-6 w-6" /></button>
+
+            {/* Mobile/Tablet WhatsApp CTA */}
+            <a 
+              href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="lg:hidden p-1.5 text-[#25D366] hover:scale-105 transition-transform duration-200"
+              aria-label="Chat on WhatsApp"
+            >
+              <FaWhatsapp className="h-5.5 w-5.5" />
+            </a>
+
+            {/* Mobile/Tablet Search trigger */}
+            <button 
+              onClick={() => setSearchOpen(true)} 
+              className="lg:hidden p-1.5 text-white hover:text-[#c8922a] hover:scale-105 transition duration-200"
+              aria-label="Search trips"
+            >
+              <FaSearch className="h-4.5 w-4.5" />
+            </button>
+
+            {/* Mobile Hamburger menu */}
+            <button 
+              onClick={() => setMobileMenuOpen(true)} 
+              className="lg:hidden p-1.5 text-white hover:text-[#c8922a] focus:outline-none block" 
+              aria-label="Open Mobile Menu"
+            >
+              <FaBars className="h-5.5 w-5.5" />
+            </button>
           </div>
         </div>
       </nav>
@@ -524,12 +566,12 @@ export default function Navbar() {
       {/* Search Modal */}
       <AnimatePresence>{searchOpen && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#1a2e1f]/95 z-50 flex items-center justify-center p-6">
-          <button onClick={() => setSearchOpen(false)} className="absolute top-6 right-6 text-bgOffWhite hover:text-[#4FA3E0] p-2 transition" aria-label="Close search"><FaTimes className="h-8 w-8" /></button>
+          <button onClick={() => setSearchOpen(false)} className="absolute top-6 right-6 text-bgOffWhite hover:text-[#c8922a] p-2 transition" aria-label="Close search"><FaTimes className="h-8 w-8" /></button>
           <div className="w-full max-w-2xl text-center flex flex-col gap-6">
-            <h2 className="font-serif text-2xl md:text-4xl text-[#4FA3E0] font-black">Find Your Himalayan Adventure</h2>
+            <h2 className="font-serif text-2xl md:text-4xl text-[#c8922a] font-black">Find Your Himalayan Adventure</h2>
             <form onSubmit={handleSearchSubmit} className="relative w-full">
-              <input type="text" placeholder="Type trek name, region or difficulty..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/10 border-2 border-[#4FA3E0]/35 text-white rounded-2xl py-4 pl-6 pr-16 text-lg focus:outline-none focus:border-[#4FA3E0] placeholder-white/40" autoFocus />
-              <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 bg-[#4FA3E0] text-white p-3 rounded-xl hover:scale-105 active:scale-95 transition" aria-label="Submit search"><FaSearch className="h-5 w-5" /></button>
+              <input type="text" placeholder="Type trek name, region or difficulty..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/10 border-2 border-[#c8922a]/35 text-white rounded-2xl py-4 pl-6 pr-16 text-lg focus:outline-none focus:border-[#c8922a] placeholder-white/40" autoFocus />
+              <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 bg-[#c8922a] text-white p-3 rounded-xl hover:scale-105 active:scale-95 transition" aria-label="Submit search"><FaSearch className="h-5 w-5" /></button>
             </form>
           </div>
         </motion.div>
@@ -547,7 +589,7 @@ export default function Navbar() {
                   <div className="relative w-7 h-7 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0"><Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized /></div>
                   <span className="font-sans text-xs font-bold text-white uppercase tracking-wider">Nature Heaven</span>
                 </div>
-                <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-bgOffWhite hover:text-[#4FA3E0] focus:outline-none" aria-label="Close Mobile Menu"><FaTimes className="h-6 w-6" /></button>
+                <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-bgOffWhite hover:text-[#c8922a] focus:outline-none" aria-label="Close Mobile Menu"><FaTimes className="h-6 w-6" /></button>
               </div>
               {/* Mobile Links */}
               <div className="flex flex-col gap-5">
@@ -555,16 +597,16 @@ export default function Navbar() {
                   <div key={link.title} className="flex flex-col gap-2">
                     {link.dropdown ? (
                       <>
-                        <button onClick={() => setActiveDropdown(activeDropdown === link.key ? null : (link.key || null))} className="flex items-center justify-between font-sans font-bold text-bgOffWhite text-left py-1.5 hover:text-[#4FA3E0] focus:outline-none transition text-sm"><span>{link.title}</span><FaChevronDown className={`h-3 w-3 text-[#4FA3E0] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
-                        <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === link.key ? "max-h-[450px] opacity-100 py-1" : "max-h-0 opacity-0"}`}>
+                        <button onClick={() => setActiveDropdown(activeDropdown === link.key ? null : (link.key || null))} className="flex items-center justify-between font-sans font-bold text-bgOffWhite text-left py-1.5 hover:text-[#c8922a] focus:outline-none transition text-sm"><span>{link.title}</span><FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
+                        <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === link.key ? "max-h-none opacity-100 py-1" : "max-h-0 opacity-0"}`}>
                           {link.key === "trips" ? (
                             <div className="flex flex-col gap-3 py-1 pl-1">
-                              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
+                              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory font-sans">
                                 {categories.map((cat) => (
-                                  <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap snap-align-start transition ${activeCategory === cat ? "bg-[#4FA3E0] text-white" : "bg-white/10 text-white/80 hover:bg-white/15"}`}>{cat}</button>
+                                  <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap snap-align-start transition ${activeCategory === cat ? "bg-[#c8922a] text-white" : "bg-white/10 text-white/80 hover:bg-white/15"}`}>{cat}</button>
                                 ))}
                               </div>
-                              <div className="flex flex-col gap-1 max-h-[220px] overflow-y-auto pr-1">
+                              <div className="flex flex-col gap-1 pr-1">
                                 {TRIP_DATA[activeCategory].map((trip) => (
                                   <Link key={trip.slug} href={`/trips/${trip.slug}`} onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} className="text-xs font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2.5 rounded-lg transition">{trip.title}</Link>
                                 ))}
@@ -573,14 +615,14 @@ export default function Navbar() {
                           ) : (
                             <div className="flex flex-col gap-2 pl-4">
                               {link.items?.map((item) => (
-                                <Link key={item.label} href={item.href} onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} className="text-xs font-semibold text-bgOffWhite/70 hover:text-[#4FA3E0] transition py-1">{item.label}</Link>
+                                <Link key={item.label} href={item.href} onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} className="text-xs font-semibold text-bgOffWhite/70 hover:text-[#c8922a] transition py-1">{item.label}</Link>
                               ))}
                             </div>
                           )}
                         </div>
                       </>
                     ) : (
-                      <Link href={link.href || "/"} className="font-sans font-bold text-bgOffWhite py-1.5 hover:text-[#4FA3E0] transition text-sm">{link.title}</Link>
+                      <Link href={link.href || "/"} className="font-sans font-bold text-bgOffWhite py-1.5 hover:text-[#c8922a] transition text-sm">{link.title}</Link>
                     )}
                   </div>
                 ))}
@@ -588,16 +630,16 @@ export default function Navbar() {
                 <div className="flex flex-col gap-2">
                   <button
                     onClick={() => setActiveDropdown(activeDropdown === "top5" ? null : "top5")}
-                    className="flex items-center justify-between font-sans font-bold text-[#4FA3E0] text-left py-1.5 hover:text-[#4FA3E0]/80 focus:outline-none transition text-sm"
+                    className="flex items-center justify-between font-sans font-bold text-[#c8922a] text-left py-1.5 hover:text-[#c8922a]/80 focus:outline-none transition text-sm"
                   >
                     <div className="flex items-center gap-1.5">
-                      <FaStar className="h-3.5 w-3.5 text-[#4FA3E0] animate-pulse" />
+                      <FaStar className="h-3.5 w-3.5 text-[#c8922a] animate-pulse" />
                       <span>Top 5 Treks</span>
                     </div>
-                    <FaChevronDown className={`h-3 w-3 text-[#4FA3E0] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
+                    <FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
                   </button>
-                  <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === "top5" ? "max-h-[350px] opacity-100 py-1" : "max-h-0 opacity-0"}`}>
-                    <div className="flex flex-col gap-1.5 pl-4">
+                  <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === "top5" ? "max-h-none opacity-100 py-1" : "max-h-0 opacity-0"}`}>
+                    <div className="flex flex-col gap-1.5 pl-4 font-sans">
                       {getTop5Treks().map((item: any) => (
                         <Link
                           key={item.slug}
@@ -624,13 +666,13 @@ export default function Navbar() {
               <Link 
                 href="/plan-a-trip" 
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 border-2 border-[#ff7a00] hover:bg-[#ff7a00] text-[#ff7a00] hover:text-white font-sans font-bold py-2.5 rounded-xl text-sm transition duration-300"
+                className="flex items-center justify-center gap-2 border-2 border-[#c8922a] hover:bg-[#c8922a] text-[#c8922a] hover:text-white font-sans font-bold py-2.5 rounded-xl text-sm transition duration-300"
               >
                 <FaPaperPlane className="h-4 w-4" />
                 <span>Plan Your Trip</span>
               </Link>
               <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm transition duration-300"><FaWhatsapp className="h-5 w-5" /><span>WhatsApp Chat</span></a>
-              <div className="text-center text-xs text-white/50 flex flex-col gap-1"><span>Emergency 24/7 Support</span><a href={`tel:${(siteSettings?.headerSettings?.expertPhone || "9779851218358").replace(/[^0-9]/g, "")}`} className="text-[#4FA3E0] font-bold hover:underline">{siteSettings?.headerSettings?.expertPhone || "+977 9851218358"}</a></div>
+              <div className="text-center text-xs text-white/50 flex flex-col gap-1"><span>Emergency 24/7 Support</span><a href={`tel:${(siteSettings?.headerSettings?.expertPhone || "9779851218358").replace(/[^0-9]/g, "")}`} className="text-[#c8922a] font-bold hover:underline">{siteSettings?.headerSettings?.expertPhone || "+977 9851218358"}</a></div>
             </div>
           </motion.div>
         </div>

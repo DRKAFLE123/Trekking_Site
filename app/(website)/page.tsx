@@ -18,7 +18,7 @@ import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 import UpcomingDepartures from "@/components/UpcomingDepartures";
 import FAQAccordion from "@/components/FAQAccordion";
 import Affiliations from "@/components/Affiliations";
-import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/FramerWrap";
+import { FadeInUp } from "@/components/FramerWrap";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -166,14 +166,14 @@ export default async function HomePage() {
 
         {/* Hero Content */}
         <div className="max-w-7xl mx-auto px-6 relative z-20 text-center flex flex-col gap-6 text-bgOffWhite items-center grow justify-center">
-          <FadeInUp delay={0.1}>
+          <FadeInUp delay={0.1} className="hidden md:block">
             <span className="inline-flex items-center gap-1.5 bg-secondary text-primary font-sans font-bold text-xs tracking-[0.2em] uppercase px-4 py-1.5 rounded-full border border-secondary/25 shadow-lg">
               🏔️ Nepal&apos;s #1 Private Trekking Company
             </span>
           </FadeInUp>
 
           <FadeInUp delay={0.2}>
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl font-black max-w-5xl leading-[1.1] tracking-tight">
+            <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl font-black max-w-5xl leading-[1.1] tracking-tight">
               {heroHeadline.includes("Nepali Himalayas") ? (
                 <>
                   {heroHeadline.split("Nepali Himalayas")[0]}
@@ -186,7 +186,7 @@ export default async function HomePage() {
             </h1>
           </FadeInUp>
 
-          <FadeInUp delay={0.3}>
+          <FadeInUp delay={0.3} className="hidden md:block">
             <p className="font-sans text-lg sm:text-xl md:text-2xl text-bgOffWhite/90 max-w-2xl font-light tracking-wide">
               {heroSubheadline}
             </p>
@@ -198,7 +198,7 @@ export default async function HomePage() {
           </FadeInUp>
 
           {/* Quick CTAs */}
-          <FadeInUp delay={0.5} className="flex flex-col sm:flex-row items-center gap-4 mt-2">
+          <FadeInUp delay={0.5} className="hidden md:flex flex-col sm:flex-row items-center gap-4 mt-2">
             <Link
               href="/trips"
               className="w-full sm:w-auto bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-105 active:scale-95 transition-all duration-300"
@@ -215,7 +215,7 @@ export default async function HomePage() {
         </div>
 
         {/* Bottom Elements */}
-        <div className="w-full relative z-20 flex flex-col items-center mt-6 shrink-0">
+        <div className="hidden md:flex w-full relative z-20 flex flex-col items-center mt-6 shrink-0">
           {/* Scroll Indicator */}
           <div className="flex flex-col items-center gap-1 text-bgOffWhite/60 animate-bounce mb-4">
             <span className="text-[10px] tracking-[0.2em] uppercase font-bold">Scroll</span>
@@ -230,7 +230,7 @@ export default async function HomePage() {
       </section>
 
       {/* 3. Best Seller Treks */}
-      <section className="py-24 px-6 bg-[#fcfbfa]">
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-[#fcfbfa]">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -246,14 +246,14 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* Cards Grid */}
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Cards Grid (Slider on mobile, grid on desktop) */}
+          <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
             {bestSellers.map((trek: Trek, index: number) => (
-              <StaggerItem key={trek._id || index}>
+              <div key={trek._id || index} className="w-[290px] sm:w-auto shrink-0 snap-align-start flex">
                 <TrekCard trek={trek} />
-              </StaggerItem>
+              </div>
             ))}
-          </StaggerContainer>
+          </div>
 
           <div className="text-center mt-12">
             <Link
@@ -271,7 +271,7 @@ export default async function HomePage() {
       <RegionGrid regions={regions} />
 
       {/* 5. Why Choose Us (Split Layout) */}
-      <section className="py-24 px-6 bg-white border-y border-secondary/15">
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-white border-y border-secondary/15">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Image Card */}
           <FadeInUp className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl border-4 border-secondary/10">
@@ -392,13 +392,13 @@ export default async function HomePage() {
       <VideoGallery />
 
       {/* 9. Photo Gallery (Happy Moments Masonry) */}
-      <PhotoGalleryMasonry items={galleryItems} />
+      <PhotoGalleryMasonry items={galleryItems} limit={6} showViewAll={true} />
 
       {/* 10. Upcoming Departures */}
       <UpcomingDepartures />
 
       {/* 11. Blog Preview Grid */}
-      <section className="py-24 px-6 bg-white border-t border-b border-secondary/10">
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-white border-t border-b border-secondary/10">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -414,12 +414,12 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Grid (Slider on mobile, grid on desktop) */}
+          <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
             {featuredBlogs.map((blog: BlogPost, idx: number) => (
               <div
                 key={blog._id || idx}
-                className="group flex flex-col bg-bgOffWhite rounded-xl overflow-hidden border border-secondary/10 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
+                className="group flex flex-col bg-bgOffWhite rounded-xl overflow-hidden border border-secondary/10 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 w-[290px] sm:w-auto shrink-0 snap-align-start"
               >
                 {/* Cover image */}
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-primary/10">
@@ -482,7 +482,7 @@ export default async function HomePage() {
       </section>
 
       {/* 12. FAQ Accordion */}
-      <section className="py-24 px-6 bg-[#fcfbfa]">
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-[#fcfbfa]">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">

@@ -35,12 +35,12 @@ export default function ReviewPlatforms() {
   ];
 
   return (
-    <section className="bg-[#EEF5FB] border-y border-[#4FA3E0]/15 py-12 px-6">
+    <section className="bg-secondary/5 border-y border-secondary/15 py-12 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
           {/* Left Text */}
           <div className="text-center lg:text-left shrink-0">
-            <span className="text-[#4FA3E0] uppercase font-bold text-xs tracking-[0.2em] mb-2 block">
+            <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-2 block">
               Trusted Worldwide
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#1a2e1f]">
@@ -56,14 +56,14 @@ export default function ReviewPlatforms() {
             {platforms.map((platform, idx) => (
               <div
                 key={idx}
-                className="bg-white p-6 rounded-xl shadow-sm border border-[#4FA3E0]/10 flex flex-col justify-between hover:shadow-md hover:border-[#4FA3E0]/30 transition duration-300"
+                className="bg-white p-6 rounded-xl shadow-sm border border-secondary/10 flex flex-col justify-between hover:shadow-md hover:border-secondary/30 transition duration-300"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-serif font-black text-lg text-[#1a2e1f]">
                       {platform.name}
                     </span>
-                    <span className="text-xs font-bold bg-[#EEF5FB] text-[#1A6FBF] px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-bold bg-secondary/10 text-secondary px-2 py-0.5 rounded-full">
                       {platform.badgeText}
                     </span>
                   </div>

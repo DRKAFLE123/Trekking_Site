@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { FaRunning, FaUserShield, FaCalendarCheck, FaHotel, FaUserCheck } from "react-icons/fa";
 
@@ -33,8 +33,28 @@ export default function ExclusivePrivateTreks() {
     },
   ];
 
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const scrollLeft = el.scrollLeft;
+    const children = Array.from(el.children);
+    let closestIndex = 0;
+    let minDiff = Infinity;
+    children.forEach((child, idx) => {
+      const diff = Math.abs((child as HTMLElement).offsetLeft - el.offsetLeft - scrollLeft);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = idx;
+      }
+    });
+    setActiveIndex(closestIndex);
+  };
+
   return (
-    <section className="py-24 px-6 bg-primary text-bgOffWhite relative overflow-hidden">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-primary text-bgOffWhite relative overflow-hidden">
       {/* Background Accent Rings */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
@@ -54,12 +74,16 @@ export default function ExclusivePrivateTreks() {
           </p>
         </div>
 
-        {/* 5-Column Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        {/* 5-Column Grid (Slider on mobile, standard grid on desktop) */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 lg:grid lg:grid-cols-5 lg:gap-6 -mx-4 px-4 lg:mx-0 lg:px-0"
+        >
           {usps.map((usp, idx) => (
             <div
               key={idx}
-              className="bg-[#10251c] border border-secondary/15 p-6 rounded-2xl text-center hover:border-secondary hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="bg-[#10251c] border border-secondary/15 p-6 rounded-2xl text-center hover:border-secondary hover:shadow-xl transition-all duration-300 flex flex-col justify-between w-[260px] lg:w-auto shrink-0 snap-align-start"
             >
               <div>
                 <div className="h-12 w-12 bg-secondary/10 border border-secondary/20 flex items-center justify-center rounded-xl mx-auto mb-5">
@@ -73,6 +97,29 @@ export default function ExclusivePrivateTreks() {
                 USP Feature 0{idx + 1}
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Step-wise pagination dots (visible only on mobile/tablet) */}
+        <div className="flex justify-center gap-2 mt-4 lg:hidden">
+          {usps.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                const el = scrollContainerRef.current;
+                if (el && el.children[idx]) {
+                  el.children[idx].scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "start",
+                  });
+                }
+              }}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                activeIndex === idx ? "w-8 bg-secondary" : "w-2 bg-secondary/30"
+              }`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
           ))}
         </div>
 

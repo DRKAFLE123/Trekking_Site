@@ -24,15 +24,15 @@ export default function HeroSearch() {
   return (
     <form
       onSubmit={handleSearch}
-      className="w-full max-w-4xl mx-auto bg-white/95 backdrop-blur-md border border-secondary/20 shadow-2xl rounded-2xl md:rounded-full p-2.5 transition focus-within:border-secondary flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-2"
+      className="w-full max-w-4xl mx-auto bg-white/95 backdrop-blur-md border border-secondary/20 shadow-2xl rounded-full p-1.5 md:p-2.5 transition focus-within:border-secondary flex flex-row items-center gap-2"
     >
       {/* Inputs Wrapper with Dividers */}
-      <div className="flex-1 flex flex-col md:flex-row items-stretch md:items-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
+      <div className="flex-1 flex flex-row items-center divide-x divide-gray-200 min-w-0">
         {/* 1. Destination Search */}
-        <div className="flex-1 flex items-center gap-3 px-4 py-3 md:py-2">
-          <FaMapMarkerAlt className="text-secondary h-4.5 w-4.5 shrink-0" />
+        <div className="flex-1 flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 min-w-0">
+          <FaMapMarkerAlt className="text-secondary h-4 w-4 md:h-4.5 md:w-4.5 shrink-0" />
           <div className="flex-1 flex flex-col items-start min-w-0">
-            <label className="text-[10px] uppercase font-bold text-muted tracking-wider leading-none mb-1">
+            <label className="hidden sm:block text-[9px] md:text-[10px] uppercase font-bold text-muted tracking-wider leading-none mb-1">
               Where to?
             </label>
             <input
@@ -40,13 +40,13 @@ export default function HeroSearch() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search Trip (e.g. Everest)"
-              className="w-full bg-transparent text-charcoal placeholder-muted focus:outline-none text-sm font-semibold"
+              className="w-full bg-transparent text-charcoal placeholder-muted focus:outline-none text-xs md:text-sm font-semibold"
             />
           </div>
         </div>
 
-        {/* 2. Duration Dropdown */}
-        <div className="w-full md:w-56 flex items-center gap-3 px-4 py-3 md:py-2">
+        {/* 2. Duration Dropdown (Hidden on mobile) */}
+        <div className="hidden md:flex w-56 items-center gap-3 px-4 py-2">
           <FaClock className="text-secondary h-4.5 w-4.5 shrink-0" />
           <div className="flex-1 flex flex-col items-start min-w-0">
             <label className="text-[10px] uppercase font-bold text-muted tracking-wider leading-none mb-1">
@@ -68,8 +68,8 @@ export default function HeroSearch() {
           </div>
         </div>
 
-        {/* 3. Budget Dropdown */}
-        <div className="w-full md:w-56 flex items-center gap-3 px-4 py-3 md:py-2">
+        {/* 3. Budget Dropdown (Hidden on mobile) */}
+        <div className="hidden md:flex w-56 items-center gap-3 px-4 py-2">
           <FaDollarSign className="text-secondary h-4.5 w-4.5 shrink-0" />
           <div className="flex-1 flex flex-col items-start min-w-0">
             <label className="text-[10px] uppercase font-bold text-muted tracking-wider leading-none mb-1">
@@ -95,11 +95,11 @@ export default function HeroSearch() {
       {/* 4. Search CTA Button */}
       <button
         type="submit"
-        className="bg-primary hover:bg-secondary text-bgOffWhite hover:text-primary font-bold py-3.5 px-8 rounded-xl md:rounded-full border border-primary hover:border-secondary flex items-center justify-center gap-2 text-sm uppercase tracking-wider transition-all duration-300 shrink-0 shadow-md hover:shadow-xl active:scale-95"
+        className="bg-primary hover:bg-secondary text-bgOffWhite hover:text-primary font-bold py-2 md:py-3.5 px-3.5 md:px-8 rounded-full border border-primary hover:border-secondary flex items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-wider transition-all duration-300 shrink-0 shadow-md hover:shadow-xl active:scale-95"
         aria-label="Search"
       >
         <FaSearch className="h-3.5 w-3.5" />
-        <span>Search</span>
+        <span className="hidden md:inline">Search</span>
       </button>
     </form>
   );

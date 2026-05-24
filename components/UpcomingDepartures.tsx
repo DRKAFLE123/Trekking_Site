@@ -39,7 +39,7 @@ export default function UpcomingDepartures() {
   ];
 
   return (
-    <section className="py-24 px-6 bg-white border-y border-secondary/15">
+    <section id="upcoming" className="py-16 md:py-24 px-4 md:px-6 bg-white border-y border-secondary/15">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
@@ -55,12 +55,12 @@ export default function UpcomingDepartures() {
           </p>
         </div>
 
-        {/* Departures Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Departures Grid (Slider on mobile, standard grid on desktop) */}
+        <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
           {departures.map((dep, idx) => (
             <div
               key={idx}
-              className="bg-[#fcfbfa] border border-secondary/10 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden"
+              className="bg-[#fcfbfa] border border-secondary/10 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden w-[290px] md:w-auto shrink-0 snap-align-start"
             >
               {/* Promo Badge */}
               <div className="absolute top-4 right-4 bg-red-500 text-white font-sans font-bold text-xs px-3 py-1 rounded-full shadow-md animate-pulse">
