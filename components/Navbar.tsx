@@ -224,7 +224,7 @@ export default function Navbar() {
   const isActive = (link: any) => {
     if (!link.dropdown && link.href) return pathname === link.href;
     if (link.key === "trips") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
-    if (link.key === "info") return pathname.startsWith("/why-us");
+    if (link.key === "info") return ["/why-us", "/visa-info", "/travel-insurance", "/packing-list", "/faqs"].some(p => pathname.startsWith(p));
     if (link.key === "company") return ["/about-us", "/our-team", "/gallery", "/csr"].includes(pathname);
     return false;
   };
@@ -242,10 +242,10 @@ export default function Navbar() {
       key: "info",
       items: [
         { label: "Why Choose Us", href: "/why-us" },
-        { label: "Visa Info", href: "/why-us#visa-info" },
-        { label: "Travel Insurance", href: "/why-us#insurance" },
-        { label: "Packing List", href: "/why-us#packing" },
-        { label: "FAQs", href: "/why-us#faq" },
+        { label: "Visa Info", href: "/visa-info" },
+        { label: "Travel Insurance", href: "/travel-insurance" },
+        { label: "Packing List", href: "/packing-list" },
+        { label: "FAQs", href: "/faqs" },
       ],
     },
     {

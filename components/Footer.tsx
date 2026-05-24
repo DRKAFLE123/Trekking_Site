@@ -371,35 +371,35 @@ export default function Footer() {
                 </ul>
               </div>
 
-              {/* TRAVEL GUIDE */}
+              {/* TRAVEL INFO */}
               <div className="flex flex-col gap-4">
                 <h4 className="text-xs uppercase font-bold tracking-wider text-secondary border-b border-secondary/20 pb-1.5">
-                  Travel Guide
+                  Travel Info
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
                   <li>
-                    <Link href="/regions/everest" className="hover:text-secondary transition duration-300">
-                      Everest Travel Guide
+                    <Link href="/why-us" className="hover:text-secondary transition duration-300">
+                      Why Choose Us
                     </Link>
                   </li>
                   <li>
-                    <Link href="/regions/annapurna" className="hover:text-secondary transition duration-300">
-                      Annapurna Travel Guide
+                    <Link href="/visa-info" className="hover:text-secondary transition duration-300">
+                      Nepal Visa Info
                     </Link>
                   </li>
                   <li>
-                    <Link href="/regions/manaslu" className="hover:text-secondary transition duration-300">
-                      Manaslu Travel Guide
+                    <Link href="/travel-insurance" className="hover:text-secondary transition duration-300">
+                      Travel Insurance
                     </Link>
                   </li>
                   <li>
-                    <Link href="/regions/langtang" className="hover:text-secondary transition duration-300">
-                      Langtang Travel Guide
+                    <Link href="/packing-list" className="hover:text-secondary transition duration-300">
+                      Packing List
                     </Link>
                   </li>
                   <li>
-                    <Link href="/regions/mustang" className="hover:text-secondary transition duration-300">
-                      Mustang Travel Guide
+                    <Link href="/faqs" className="hover:text-secondary transition duration-300">
+                      FAQs
                     </Link>
                   </li>
                 </ul>

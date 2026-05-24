@@ -3,9 +3,6 @@ import config from "@/payload/payload.config";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  return NextResponse.json({
-    url: process.env.DATABASE_URI || process.env.DATABASE_URL || "not found"
-  });
   console.log("[Init API] Initializing Payload...");
   const env = process.env as any;
   const envKey = "NODE_ENV";

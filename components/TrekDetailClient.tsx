@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 import {
   FaUsers,
   FaChevronDown,
@@ -421,6 +423,26 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
   // ----------------------------------------------------
   const [activeSection, setActiveSection] = useState("overview");
 
+  // Hero photo gallery lightbox
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Mobile carousel index
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const touchStartX = useRef<number>(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) setCarouselIndex((p) => (p + 1) % heroImages.length);
+      else setCarouselIndex((p) => (p - 1 + heroImages.length) % heroImages.length);
+    }
+  };
+
   // Scrollspy effect to highlight active section in sub-nav on scroll
   useEffect(() => {
     let isScrolling = false;
@@ -782,61 +804,190 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
     );
   };
 
+  // Build hero gallery: up to 5 images; first is always the cover/hero
+  const heroImages = (() => {
+    const cover = isEBC
+      ? "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
+      : getMediaUrl(trek.heroImage) || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200";
+    const extras = galleryList.filter((g) => g !== cover);
+    return [cover, ...extras].slice(0, 5);
+  })();
+
+  const extraHeroImages = [
+    "https://images.unsplash.com/photo-1585016495481-91613a3ab1bc?q=80&w=800",
+    "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=800",
+    "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?q=80&w=800",
+    "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=800",
+  ];
+
+  // Ensure we always have 5 images
+  while (heroImages.length < 5) {
+    heroImages.push(extraHeroImages[(heroImages.length - 1) % extraHeroImages.length]);
+  }
+
+  // All gallery images for lightbox
+  const allLightboxImages = [...heroImages, ...galleryList.filter((g) => !heroImages.includes(g))].map((src) => ({ src }));
+
   return (
     <div className="bg-[#F8F7F4] text-[#3D3D3D] font-sans antialiased pb-16 lg:pb-0">
+      {/* Lightbox overlay */}
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={lightboxIndex}
+        slides={allLightboxImages}
+        on={{ view: ({ index }) => setLightboxIndex(index) }}
+      />
+
       {/* ----------------------------------------------------
-          1. HERO HEADER BANNER (50vh)
+          1. HERO PHOTO GALLERY (Split Grid on Desktop, Carousel on Mobile)
           ---------------------------------------------------- */}
-      <section className="relative w-full h-[50vh] bg-[#1a2e1f] overflow-hidden">
-        <Image
-          src={
-            isEBC
-              ? "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
-              : getMediaUrl(trek.heroImage) || "https://cms.discoveryworldtrekking.com/media/7484/sunrise-on-the-top-of-mount-everest.webp"
-          }
-          alt={trek.title}
-          fill
-          priority
-          className="object-cover object-center"
-          unoptimized
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30"></div>
+      <section className="relative w-full bg-[#1a2e1f] overflow-hidden">
+
+        {/* ===== DESKTOP: Split Photo Grid (hidden on mobile) ===== */}
+        <div className="hidden md:grid md:grid-cols-[60fr_40fr] gap-1 h-[72vh] max-h-[620px]">
+
+          {/* Left: Large Main Cover Photo */}
+          <div
+            className="relative overflow-hidden cursor-pointer group"
+            onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+          >
+            <Image
+              src={heroImages[0]}
+              alt={`${trek.title} - Main Photo`}
+              fill
+              priority
+              className="object-cover object-center transition duration-700 group-hover:scale-105"
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* Right: 2x2 Grid of smaller photos */}
+          <div className="grid grid-cols-2 grid-rows-2 gap-1">
+            {heroImages.slice(1, 5).map((img, idx) => (
+              <div
+                key={idx}
+                className="relative overflow-hidden cursor-pointer group"
+                onClick={() => { setLightboxIndex(idx + 1); setLightboxOpen(true); }}
+              >
+                <Image
+                  src={img}
+                  alt={`${trek.title} photo ${idx + 2}`}
+                  fill
+                  className="object-cover object-center transition duration-700 group-hover:scale-110"
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition duration-300" />
+              </div>
+            ))}
+          </div>
+
+          {/* "View All Photos" floating button */}
+          <button
+            onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+            className="absolute bottom-5 right-5 z-20 bg-white/95 backdrop-blur-sm hover:bg-white text-[#1a2e1f] font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transition hover:scale-105 active:scale-95 border border-white/50"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            View All Photos ({allLightboxImages.length})
+          </button>
+        </div>
+
+        {/* ===== MOBILE: Swipe Carousel (visible on mobile only) ===== */}
+        <div
+          className="relative md:hidden h-[55vw] min-h-[260px] max-h-[400px] overflow-hidden select-none"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {heroImages.map((img, idx) => (
+            <div
+              key={idx}
+              className={`absolute inset-0 transition-opacity duration-500 ${
+                idx === carouselIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+              onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
+            >
+              <Image
+                src={img}
+                alt={`${trek.title} photo ${idx + 1}`}
+                fill
+                priority={idx === 0}
+                className="object-cover object-center"
+                unoptimized
+              />
+            </div>
+          ))}
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-20" />
+
+          {/* Dot pagination */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex gap-1.5">
+            {heroImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => { e.stopPropagation(); setCarouselIndex(idx); }}
+                className={`rounded-full transition-all duration-300 ${
+                  idx === carouselIndex ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Photo count badge */}
+          <button
+            onClick={() => { setLightboxIndex(carouselIndex); setLightboxOpen(true); }}
+            className="absolute bottom-3 right-3 z-30 bg-black/50 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {allLightboxImages.length} Photos
+          </button>
+        </div>
       </section>
 
       {/* ----------------------------------------------------
           2. TITLE SECTION
           ---------------------------------------------------- */}
-      <section className="bg-white border-b border-[#E5E5E5] py-8">
-        <div className="max-w-[1240px] mx-auto px-6 flex flex-col gap-4">
-          <div className="text-xs text-[#6B6B6B] flex items-center gap-1.5 font-semibold">
+      <section className="bg-white border-b border-[#E5E5E5] py-6 md:py-8">
+        <div className="max-w-[1240px] mx-auto px-4 md:px-6 flex flex-col gap-4">
+          {/* Breadcrumb */}
+          <div className="text-xs text-[#6B6B6B] flex items-center gap-1.5 font-semibold flex-wrap">
             <Link href="/" className="hover:text-[#2E7D32] transition">Home</Link>
-            <span>/</span>
+            <span className="text-[#D0D0D0]">/</span>
             <Link href="/trips" className="hover:text-[#2E7D32] transition">Trips</Link>
-            <span>/</span>
-            <span className="text-[#1A1A2E] font-medium">{trek.title}</span>
+            <span className="text-[#D0D0D0]">/</span>
+            <span className="text-[#1A1A2E] font-medium truncate max-w-[200px]">{trek.title}</span>
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
             <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="bg-[#1a2e1f] text-white font-bold text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-md">
+              {/* Tags */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bg-[#1a2e1f] text-white font-bold text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-full">
                   {trek.region?.name || "Khumbu"} Region
                 </span>
                 {trek.isBestSeller && (
-                  <span className="bg-[#F5A623] text-[#1a2e1f] font-bold text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-md flex items-center gap-1">
+                  <span className="bg-gradient-to-r from-[#F5A623] to-[#e8950f] text-white font-bold text-[10px] tracking-[0.12em] uppercase px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
                     <FaStar className="text-[9px]" /> Best Seller
                   </span>
                 )}
+                <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-[10px] tracking-[0.12em] uppercase px-3 py-1 rounded-full">
+                  {trek.duration} Days
+                </span>
               </div>
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-[1.1] text-[#1a2e1f]">
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-[1.05] text-[#1a2e1f]">
                 {trek.title}
               </h1>
             </div>
 
-            <div className="flex items-center gap-3 relative shrink-0">
+            <div className="flex items-center gap-2.5 relative shrink-0">
               <button
                 onClick={() => setShowShare(!showShare)}
-                className="bg-white hover:bg-slate-50 border border-[#E5E5E5] px-4 py-2 rounded-lg text-xs font-bold text-[#1A1A2E] transition flex items-center gap-1.5 shadow-sm"
+                className="bg-white hover:bg-slate-50 border border-[#E5E5E5] px-3.5 py-2 rounded-xl text-xs font-bold text-[#1A1A2E] transition flex items-center gap-1.5 shadow-sm hover:shadow"
               >
                 <FaShareAlt /> Share
               </button>
@@ -865,24 +1016,33 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                 </div>
               )}
               <a
-                href="/why-us#packing"
-                className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                href="/packing-list"
+                className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:shadow-md"
               >
                 <FaDownload /> PDF Brochure
               </a>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 border-t border-[#E5E5E5] pt-4 mt-2">
-            <div className="flex items-center gap-1 text-[#F5A623]">
-              <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-              <span className="text-[#1A1A2E] text-xs font-bold ml-1">5.0 / 5.0 (420 Reviews)</span>
+          {/* Rating strip */}
+          <div className="flex flex-wrap items-center gap-4 border-t border-[#F0F0F0] pt-4 mt-1">
+            <div className="flex items-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <FaStar key={i} className="text-[#F5A623] text-sm" />
+              ))}
+              <span className="text-[#1A1A2E] text-xs font-bold ml-1.5">5.0</span>
+              <span className="text-[#6B6B6B] text-xs font-semibold ml-0.5">(420 Reviews)</span>
             </div>
             <span className="h-4 w-px bg-[#E5E5E5]"></span>
             <div className="flex items-center gap-1.5 text-xs text-[#6B6B6B]">
-              <span className="bg-emerald-700 text-white rounded px-1.5 py-0.5 text-[9px] font-bold">TripAdvisor</span>
-              <span>Certificate of Excellence</span>
+              <span className="bg-emerald-700 text-white rounded-full px-2.5 py-0.5 text-[9px] font-bold">TripAdvisor</span>
+              <span className="font-semibold">Certificate of Excellence</span>
             </div>
+            <span className="h-4 w-px bg-[#E5E5E5]"></span>
+            <span className="text-xs text-[#6B6B6B] font-semibold flex items-center gap-1">
+              <span className="text-[#2E7D32]" aria-hidden>🏔️</span>
+              Max altitude: <strong className="text-[#1A1A2E] ml-1">{trek.maxAltitude?.toLocaleString()}m</strong>
+            </span>
           </div>
         </div>
       </section>
