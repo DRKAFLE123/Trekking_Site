@@ -4,8 +4,13 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   console.log("[Init API] Initializing Payload...");
+  const originalNodeEnv = process.env.NODE_ENV;
   try {
+    // Temporarily set NODE_ENV to development so Drizzle adapter runs pushDevSchema
+    process.env.NODE_ENV = "development";
     const payload = await getPayload({ config });
+    // Restore original NODE_ENV immediately after initialization
+    process.env.NODE_ENV = originalNodeEnv;
     console.log("[Init API] Payload initialized successfully!");
 
     // Check if any users exist in the database
@@ -48,6 +53,8 @@ export async function GET() {
         : "Database schema synchronized successfully. Admin user already exists." 
     });
   } catch (err: any) {
+    // Restore original NODE_ENV in case of error
+    process.env.NODE_ENV = originalNodeEnv;
     console.error("[Init API] Initialization error:", err);
     return NextResponse.json({ 
       error: err.message, 
