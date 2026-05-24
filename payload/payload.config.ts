@@ -23,8 +23,9 @@ import { media } from './collections/Media';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-const dbUrl = process.env.DATABASE_URL || process.env.DATABASE_URI || '';
-const isPostgres = dbUrl.startsWith('postgres://') || dbUrl.startsWith('postgresql://');
+const rawDbUrl = process.env.DATABASE_URL || process.env.DATABASE_URI || '';
+const dbUrl = rawDbUrl.trim().replace(/^["']|["']$/g, '');
+const isPostgres = dbUrl.toLowerCase().startsWith('postgres://') || dbUrl.toLowerCase().startsWith('postgresql://');
 
 export default buildConfig({
   admin: {
