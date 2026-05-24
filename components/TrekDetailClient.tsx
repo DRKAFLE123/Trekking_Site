@@ -359,7 +359,7 @@ const EBC_FALLBACK = {
 
 export default function TrekDetailClient({ trek, similarTreks, testimonials }: TrekDetailClientProps) {
   const router = useRouter();
-  const isEBC = trek.slug === "everest-base-camp-trek";
+  const isEBC = trek.slug === "everest-base-camp-trek" || trek.slug === "everest-base-camp-trek-14" || trek.slug === "everest-base-camp-trek-12" || trek.slug?.startsWith("everest-base-camp-");
 
   const [siteSettings, setSiteSettings] = useState<any>(null);
 

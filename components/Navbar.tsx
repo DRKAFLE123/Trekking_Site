@@ -427,9 +427,7 @@ export default function Navbar() {
       {/* Sticky Nav */}
       <nav className={`transition-all duration-300 z-50 ${
         isScrolled 
-          ? (pathname?.startsWith("/trips") || pathname?.startsWith("/booking"))
-            ? "hidden opacity-0 pointer-events-none"
-            : `fixed left-0 right-0 mx-auto w-[92%] max-w-5xl rounded-full bg-[#1a2e1f]/90 backdrop-blur-md shadow-2xl border border-white/10 py-1.5 px-3 transform transition-all duration-300 ${showNavbar ? "top-4 opacity-100 translate-y-0" : "-top-24 opacity-0 -translate-y-4 pointer-events-none"}`
+          ? `fixed left-0 right-0 mx-auto w-[92%] max-w-5xl rounded-full bg-[#1a2e1f]/90 backdrop-blur-md shadow-2xl border border-white/10 py-1.5 px-3 transform transition-all duration-300 ${showNavbar ? "top-4 opacity-100 translate-y-0" : "-top-24 opacity-0 -translate-y-4 pointer-events-none"}`
           : "w-full bg-[#1a2e1f] py-3"
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center relative">
