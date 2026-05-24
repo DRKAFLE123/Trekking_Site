@@ -1,3 +1,4 @@
+// Deploy trigger: database config updates
 import { buildConfig } from 'payload';
 import path from 'path';
 import { fileURLToPath } from 'url';
