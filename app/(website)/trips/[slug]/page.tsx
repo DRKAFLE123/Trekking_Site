@@ -14,15 +14,20 @@ interface TripDetailPageProps {
 
 // Generate static params for all treks to pre-render pages
 export async function generateStaticParams() {
-  const payload = await getPayload({ config });
-  const res = await payload.find({
-    collection: "treks",
-    limit: 200,
-    depth: 0,
-  });
-  return res.docs.map((trek: any) => ({
-    slug: trek.slug,
-  }));
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "treks",
+      limit: 200,
+      depth: 0,
+    });
+    return res.docs.map((trek: any) => ({
+      slug: trek.slug,
+    }));
+  } catch (err: any) {
+    console.warn("[Trips Page] generateStaticParams bypassed (normal for a fresh database during build):", err.message);
+    return [];
+  }
 }
 
 // Generate dynamic metadata for SEO
