@@ -247,6 +247,33 @@ export default function Navbar() {
         { label: "Packing List", href: "/packing-list" },
         { label: "FAQs", href: "/faqs" },
       ],
+      megaItems: [
+        // Column 1
+        [
+          { label: "Travel Guide for Nepal", href: "/why-us", icon: "🗺️" },
+          { label: "Why Travel to Nepal?", href: "/why-us", icon: "🏔️" },
+          { label: "Regions in Nepal", href: "/trips", icon: "📍" },
+          { label: "Attractions in Nepal", href: "/trips", icon: "✨" },
+          { label: "Guides Mandatory for Trekkers", href: "/faqs#guides", icon: "👨‍🦯" },
+          { label: "Accommodation in Nepal", href: "/faqs#accommodation", icon: "🏨" },
+          { label: "Altitude Acclimatization", href: "/faqs#altitude", icon: "⛰️" },
+          { label: "Getting to Nepal & Visas", href: "/visa-info", icon: "✈️" },
+          { label: "Private Treks in Nepal", href: "/plan-a-trip", icon: "🎿" },
+        ],
+        // Column 2
+        [
+          { label: "Currency & Payments", href: "/faqs#currency", icon: "💳" },
+          { label: "Facts About Mt. Everest", href: "/trips/everest-base-camp-trek", icon: "🏔️" },
+          { label: "Food and Beverages", href: "/faqs#food", icon: "🍛" },
+          { label: "Safety While Travelling", href: "/travel-insurance", icon: "🛡️" },
+          { label: "Transportation in Nepal", href: "/faqs#transport", icon: "🚌" },
+          { label: "Travel Insurance", href: "/travel-insurance", icon: "🔒" },
+          { label: "Trekking Permits & Fees", href: "/faqs#permits", icon: "📋" },
+          { label: "Weather & Climate", href: "/faqs#weather", icon: "🌤️" },
+          { label: "What to Do Before Coming", href: "/packing-list", icon: "📦" },
+          { label: "When to Come to Nepal?", href: "/faqs#season", icon: "📅" },
+        ],
+      ],
     },
     {
       title: "Company",
@@ -450,6 +477,70 @@ export default function Navbar() {
                             </div>
                           </div>
                         </motion.div>
+                      ) : link.key === "info" && (link as any).megaItems ? (
+                        // ===== TRAVEL INFO MEGA DROPDOWN =====
+                        <motion.div
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 15 }}
+                          transition={{ duration: 0.2 }}
+                          onMouseEnter={() => link.key && handleMouseEnter(link.key)}
+                          onMouseLeave={handleMouseLeave}
+                          className="absolute left-1/2 -translate-x-1/2 mt-1 w-[600px] bg-white border border-gray-200 shadow-2xl rounded-2xl z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent"
+                        >
+                          {/* Header */}
+                          <div className="bg-[#1a2e1f] px-5 py-3 flex items-center justify-between">
+                            <span className="text-xs font-bold text-[#c8922a] uppercase tracking-[0.15em]">Nepal Travel Information</span>
+                            <Link href="/why-us" onClick={closeDropdown} className="text-[10px] text-white/60 hover:text-[#c8922a] font-semibold transition">
+                              View All →
+                            </Link>
+                          </div>
+                          {/* 2-column grid */}
+                          <div className="grid grid-cols-2 divide-x divide-gray-100">
+                            {((link as any).megaItems as { label: string; href: string; icon: string }[][]).map((col, ci) => (
+                              <div key={ci} className="flex flex-col py-2">
+                                {col.map((item) => (
+                                  <Link
+                                    key={item.label}
+                                    href={item.href}
+                                    onClick={closeDropdown}
+                                    className="flex items-center gap-2.5 px-4 py-2.5 font-sans text-[12.5px] font-semibold text-[#3D3D3D] hover:bg-[#c8922a]/8 hover:text-[#1a2e1f] transition duration-200 group"
+                                  >
+                                    <span className="text-sm w-5 text-center shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
+                                    <span className="leading-tight">{item.label}</span>
+                                  </Link>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                          {/* Footer CTA strip */}
+                          <div className="border-t border-gray-100 px-5 py-3 bg-gray-50/80 flex items-center justify-between gap-3">
+                            <div className="flex gap-2 flex-wrap">
+                              {[
+                                { label: "Visa Info", href: "/visa-info" },
+                                { label: "Insurance", href: "/travel-insurance" },
+                                { label: "Packing List", href: "/packing-list" },
+                                { label: "FAQs", href: "/faqs" },
+                              ].map((q) => (
+                                <Link
+                                  key={q.label}
+                                  href={q.href}
+                                  onClick={closeDropdown}
+                                  className="text-[10px] font-bold text-[#1a2e1f] bg-white border border-gray-200 hover:border-[#c8922a] hover:text-[#c8922a] px-2.5 py-1 rounded-full transition duration-200"
+                                >
+                                  {q.label}
+                                </Link>
+                              ))}
+                            </div>
+                            <Link
+                              href="/contact-us"
+                              onClick={closeDropdown}
+                              className="text-[10px] font-bold bg-[#c8922a] hover:bg-[#b07820] text-white px-3 py-1.5 rounded-full transition duration-200 shrink-0"
+                            >
+                              Ask an Expert
+                            </Link>
+                          </div>
+                        </motion.div>
                       ) : (
                         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 15 }} transition={{ duration: 0.2 }} onMouseEnter={() => link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave} className="absolute left-0 mt-1 min-w-[220px] bg-white border border-gray-150 shadow-2xl rounded-xl py-2 z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent">
                           {link.items && link.items.map((item) => (
@@ -611,6 +702,20 @@ export default function Navbar() {
                                   <Link key={trip.slug} href={`/trips/${trip.slug}`} onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} className="text-xs font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2.5 rounded-lg transition">{trip.title}</Link>
                                 ))}
                               </div>
+                            </div>
+                          ) : link.key === "info" && (link as any).megaItems ? (
+                            <div className="flex flex-col gap-0.5 pl-2">
+                              {((link as any).megaItems as { label: string; href: string; icon: string }[][]).flat().map((item) => (
+                                <Link
+                                  key={item.label}
+                                  href={item.href}
+                                  onClick={() => { setMobileMenuOpen(false); closeDropdown(); }}
+                                  className="flex items-center gap-2.5 text-xs font-semibold text-white/75 hover:text-[#c8922a] transition py-1.5 px-2 rounded-lg hover:bg-white/5"
+                                >
+                                  <span className="text-sm w-4 text-center shrink-0">{item.icon}</span>
+                                  <span>{item.label}</span>
+                                </Link>
+                              ))}
                             </div>
                           ) : (
                             <div className="flex flex-col gap-2 pl-4">
