@@ -8,14 +8,18 @@ import PlanTripForm from "./PlanTripForm";
 export const revalidate = 60; // Revalidate every minute
 
 export default async function PlanATripPage() {
-  const payload = await getPayload({ config });
-  const treksRes = await payload.find({
-    collection: "treks",
-    depth: 1,
-    limit: 100,
-  });
-
-  const treks = treksRes.docs as unknown as Trek[];
+  let treks: Trek[] = [];
+  try {
+    const payload = await getPayload({ config });
+    const treksRes = await payload.find({
+      collection: "treks",
+      depth: 1,
+      limit: 100,
+    });
+    treks = treksRes.docs as unknown as Trek[];
+  } catch (err: any) {
+    console.warn("[Plan A Trip Page] Failed to fetch treks (relation may not exist yet during build):", err.message);
+  }
 
   return (
     <div className="w-full min-h-screen bg-bgOffWhite flex flex-col items-center">

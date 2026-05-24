@@ -33,63 +33,76 @@ export async function generateStaticParams() {
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: TripDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const payload = await getPayload({ config });
-  const res = await payload.find({
-    collection: "treks",
-    where: { slug: { equals: slug } },
-    depth: 1,
-  });
-  const trek = (res.docs[0] || null) as unknown as Trek | null;
-  if (!trek) {
-    return { title: "Trip Not Found | Nature Heaven Trekking & Expedition" };
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "treks",
+      where: { slug: { equals: slug } },
+      depth: 1,
+    });
+    const trek = (res.docs[0] || null) as unknown as Trek | null;
+    if (!trek) {
+      return { title: "Trip Not Found | Nature Heaven Trekking & Expedition" };
+    }
+    return {
+      title: trek.metaTitle || `${trek.title} - ${trek.duration} Days | Nature Heaven Trekking & Expedition`,
+      description:
+        trek.metaDescription ||
+        `Join our private, customizable ${trek.duration}-day ${trek.title}. Guided by native Sherpa experts with optimized adaptation schedules.`,
+    };
+  } catch (err: any) {
+    return {
+      title: "Nature Heaven Trekking & Expedition",
+    };
   }
-  return {
-    title: trek.metaTitle || `${trek.title} - ${trek.duration} Days | Nature Heaven Trekking & Expedition`,
-    description:
-      trek.metaDescription ||
-      `Join our private, customizable ${trek.duration}-day ${trek.title}. Guided by native Sherpa experts with optimized adaptation schedules.`,
-  };
 }
 
 export default async function TripDetailPage({ params }: TripDetailPageProps) {
   const { slug } = await params;
-  const payload = await getPayload({ config });
-  
-  const res = await payload.find({
-    collection: "treks",
-    where: { slug: { equals: slug } },
-    depth: 1,
-  });
-  const trek = (res.docs[0] || null) as unknown as Trek | null;
+  let trek: Trek | null = null;
+  let similarTreks: Trek[] = [];
+  let displayTestimonials: Testimonial[] = [];
+
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "treks",
+      where: { slug: { equals: slug } },
+      depth: 1,
+    });
+    trek = (res.docs[0] || null) as unknown as Trek | null;
+
+    if (trek) {
+      // Fetch similar treks (same region, exclude current trek) in parallel with testimonials
+      const [allTreksRes, testimonialsRes] = await Promise.all([
+        payload.find({
+          collection: "treks",
+          depth: 1,
+        }),
+        payload.find({
+          collection: "testimonials",
+          depth: 1,
+        })
+      ]);
+
+      const allTreks = allTreksRes.docs as unknown as Trek[];
+      similarTreks = allTreks
+        .filter((t) => t.region?.slug === trek!.region?.slug && t.slug !== trek!.slug)
+        .slice(0, 3);
+
+      const testimonials = testimonialsRes.docs as unknown as Testimonial[];
+      const relatedTestimonials = testimonials
+        .filter((t) => t.trek?.slug === trek!.slug)
+        .slice(0, 3);
+      displayTestimonials = relatedTestimonials.length > 0 ? relatedTestimonials : testimonials.slice(0, 3);
+    }
+  } catch (err: any) {
+    console.warn("[Trip Detail Page] Failed to query trip details:", err.message);
+  }
+
   if (!trek) {
     notFound();
   }
-
-  // Fetch similar treks (same region, exclude current trek)
-  const allTreksRes = await payload.find({
-    collection: "treks",
-    depth: 1,
-  });
-  const allTreks = allTreksRes.docs as unknown as Trek[];
-  
-  const similarTreks = allTreks
-    .filter((t) => t.region?.slug === trek.region?.slug && t.id !== trek.id)
-    .slice(0, 2);
-
-  // Fetch testimonials for reviews footer
-  const testimonialsRes = await payload.find({
-    collection: "testimonials",
-    depth: 1,
-  });
-  const testimonials = testimonialsRes.docs as unknown as Testimonial[];
-
-  // Filter testimonials that completed this specific trek
-  const relatedTestimonials = testimonials
-    .filter((t) => t.trek?.slug === trek.slug)
-    .slice(0, 3);
-
-  // Fallback to general testimonials if no specific reviews found
-  const displayTestimonials = relatedTestimonials.length > 0 ? relatedTestimonials : testimonials.slice(0, 3);
 
   // Schema: Breadcrumbs
   const breadcrumbSchema = {

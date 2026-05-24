@@ -19,35 +19,46 @@ interface BlogDetailPageProps {
 
 export async function generateMetadata({ params }: BlogDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const payload = await getPayload({ config });
-  const res = await payload.find({
-    collection: "blogPosts",
-    where: { slug: { equals: slug } },
-    depth: 1,
-  });
-  const blog = (res.docs[0] || null) as unknown as BlogPost | null;
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "blogPosts",
+      where: { slug: { equals: slug } },
+      depth: 1,
+    });
+    const blog = (res.docs[0] || null) as unknown as BlogPost | null;
 
-  if (!blog) {
+    if (!blog) {
+      return {
+        title: "Article Not Found | Nature Heaven Trekking & Expedition",
+      };
+    }
+
     return {
-      title: "Article Not Found | Nature Heaven Trekking & Expedition",
+      title: `${blog.title} | Nature Heaven Chronicles`,
+      description: blog.excerpt,
+    };
+  } catch (err: any) {
+    return {
+      title: "Nature Heaven Chronicles | Nature Heaven Trekking & Expedition",
     };
   }
-
-  return {
-    title: `${blog.title} | Nature Heaven Chronicles`,
-    description: blog.excerpt,
-  };
 }
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug } = await params;
-  const payload = await getPayload({ config });
-  const res = await payload.find({
-    collection: "blogPosts",
-    where: { slug: { equals: slug } },
-    depth: 1,
-  });
-  const blog = (res.docs[0] || null) as unknown as BlogPost | null;
+  let blog: BlogPost | null = null;
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "blogPosts",
+      where: { slug: { equals: slug } },
+      depth: 1,
+    });
+    blog = (res.docs[0] || null) as unknown as BlogPost | null;
+  } catch (err: any) {
+    console.warn("[Blog Detail Page] Failed to query blog details:", err.message);
+  }
 
   if (!blog) {
     notFound();

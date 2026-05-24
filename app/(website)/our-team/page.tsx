@@ -16,12 +16,17 @@ export const metadata: Metadata = {
 };
 
 export default async function TeamPage() {
-  const payload = await getPayload({ config });
-  const response = await payload.find({
-    collection: "teamMembers",
-    depth: 2,
-  });
-  const team = response.docs as unknown as TeamMember[];
+  let team: TeamMember[] = [];
+  try {
+    const payload = await getPayload({ config });
+    const response = await payload.find({
+      collection: "teamMembers",
+      depth: 2,
+    });
+    team = response.docs as unknown as TeamMember[];
+  } catch (err: any) {
+    console.warn("[Team Page] Failed to fetch team members (relation may not exist yet during build):", err.message);
+  }
 
   return (
     <div className="bg-[#fcfbfa] min-h-screen pt-24 md:pt-32 pb-16">

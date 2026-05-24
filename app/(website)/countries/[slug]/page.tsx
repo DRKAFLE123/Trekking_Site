@@ -70,27 +70,29 @@ export default async function CountryPage({ params }: { params: Params }) {
     notFound();
   }
 
-  // Fetch treks from database
-  const payload = await getPayload({ config });
-  const treksRes = await payload.find({
-    collection: "treks",
-    depth: 1,
-    limit: 100,
-  });
-
-  const allTreks = treksRes.docs as unknown as Trek[];
-
-  // For Nepal, list all treks (since all seeded treks are in Nepal)
-  // For Tibet & Bhutan, they are customized, so we show custom builder
+  // Fetch treks and site settings from database safely
+  let allTreks: Trek[] = [];
+  let siteSettings: any = null;
+  try {
+    const payload = await getPayload({ config });
+    const [treksRes, siteSettingsRes] = await Promise.all([
+      payload.find({
+        collection: "treks",
+        depth: 1,
+        limit: 100,
+      }),
+      payload.find({
+        collection: "siteSettings",
+        depth: 1,
+        limit: 1,
+      })
+    ]);
+    allTreks = treksRes.docs as unknown as Trek[];
+    siteSettings = siteSettingsRes.docs[0] as any;
+  } catch (err: any) {
+    console.warn("[Country Page] Failed to query database:", err.message);
+  }
   const countryTreks = slug.toLowerCase() === "nepal" ? allTreks : [];
-
-  // Fetch Site Settings for WhatsApp details
-  const siteSettingsRes = await payload.find({
-    collection: "siteSettings",
-    depth: 1,
-    limit: 1,
-  });
-  const siteSettings = siteSettingsRes.docs[0] as any;
   const whatsappNum = siteSettings?.headerSettings?.expertWhatsApp || "9779851218358";
   const formattedWhatsapp = whatsappNum.replace(/[^0-9]/g, "");
 

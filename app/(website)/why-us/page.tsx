@@ -16,12 +16,17 @@ export const metadata: Metadata = {
 };
 
 export default async function WhyUsPage() {
-  const payload = await getPayload({ config });
-  const response = await payload.find({
-    collection: "faqs",
-    depth: 1,
-  });
-  const faqs: Faq[] = response.docs as unknown as Faq[];
+  let faqs: Faq[] = [];
+  try {
+    const payload = await getPayload({ config });
+    const response = await payload.find({
+      collection: "faqs",
+      depth: 1,
+    });
+    faqs = response.docs as unknown as Faq[];
+  } catch (err: any) {
+    console.warn("[WhyUs Page] Failed to fetch FAQs (relation may not exist yet during build):", err.message);
+  }
 
   return (
     <div className="bg-[#fcfbfa] min-h-screen pt-24 md:pt-32 pb-16">

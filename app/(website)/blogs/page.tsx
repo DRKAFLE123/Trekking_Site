@@ -13,12 +13,17 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogsPage() {
-  const payload = await getPayload({ config });
-  const res = await payload.find({
-    collection: "blogPosts",
-    depth: 1,
-  });
-  const blogs: BlogPost[] = res.docs as unknown as BlogPost[];
+  let blogs: BlogPost[] = [];
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "blogPosts",
+      depth: 1,
+    });
+    blogs = res.docs as unknown as BlogPost[];
+  } catch (err: any) {
+    console.warn("[Blogs Page] Failed to fetch blogs (relation may not exist yet during build):", err.message);
+  }
 
   return (
     <div className="pt-24 md:pt-32 bg-[#fcfbfa] min-h-screen">

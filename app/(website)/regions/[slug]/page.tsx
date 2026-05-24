@@ -19,51 +19,65 @@ interface RegionDetailPageProps {
 
 export async function generateMetadata({ params }: RegionDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const payload = await getPayload({ config });
-  const res = await payload.find({
-    collection: "regions",
-    where: { slug: { equals: slug } },
-    depth: 1,
-  });
-  const region = (res.docs[0] || null) as unknown as Region | null;
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "regions",
+      where: { slug: { equals: slug } },
+      depth: 1,
+    });
+    const region = (res.docs[0] || null) as unknown as Region | null;
 
-  if (!region) {
+    if (!region) {
+      return {
+        title: "Region Not Found | Nature Heaven Trekking & Expedition",
+      };
+    }
+
     return {
-      title: "Region Not Found | Nature Heaven Trekking & Expedition",
+      title: `${region.name} Region Trekking | Nature Heaven Trekking & Expedition`,
+      description:
+        region.description ||
+        `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`,
+    };
+  } catch (err: any) {
+    return {
+      title: "Region Trekking | Nature Heaven Trekking & Expedition",
     };
   }
-
-  return {
-    title: `${region.name} Region Trekking | Nature Heaven Trekking & Expedition`,
-    description:
-      region.description ||
-      `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`,
-  };
 }
 
 export default async function RegionDetailPage({ params }: RegionDetailPageProps) {
   const { slug } = await params;
-  const payload = await getPayload({ config });
-  const res = await payload.find({
-    collection: "regions",
-    where: { slug: { equals: slug } },
-    depth: 1,
-  });
-  const region = (res.docs[0] || null) as unknown as Region | null;
+  let region: Region | null = null;
+  let treks: Trek[] = [];
+
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "regions",
+      where: { slug: { equals: slug } },
+      depth: 1,
+    });
+    region = (res.docs[0] || null) as unknown as Region | null;
+
+    if (region) {
+      treks = region.treks || [];
+      if (!treks || treks.length === 0) {
+        const resAll = await payload.find({
+          collection: "treks",
+          depth: 1,
+        });
+        const allTreks = resAll.docs as unknown as Trek[];
+        treks = allTreks.filter((t) => t.region?.slug === region!.slug);
+      }
+    }
+  } catch (err: any) {
+    console.warn("[Region Detail Page] Failed to query region detail:", err.message);
+  }
 
   if (!region) {
     notFound();
-  }
-
-  // Resolve treks in fallback mode
-  let treks = region.treks || [];
-  if (!treks || treks.length === 0) {
-    const resAll = await payload.find({
-      collection: "treks",
-      depth: 1,
-    });
-    const allTreks = resAll.docs as unknown as Trek[];
-    treks = allTreks.filter((t) => t.region?.slug === region.slug);
   }
 
   return (

@@ -23,54 +23,61 @@ import { FadeInUp } from "@/components/FramerWrap";
 export const revalidate = 60; // Revalidate every minute
 
 export default async function HomePage() {
-  const payload = await getPayload({ config });
-  
-  const bestSellersRes = await payload.find({
-    collection: 'treks',
-    where: {
-      isBestSeller: {
-        equals: true,
-      },
-    },
-    depth: 1,
-    limit: 6, // Limit best sellers to exactly 6 as requested
-  });
+  let bestSellers: Trek[] = [];
+  let regions: Region[] = [];
+  let blogs: BlogPost[] = [];
+  let faqs: Faq[] = [];
+  let galleryItems: any[] = [];
+  let siteSettings: any = null;
 
-  const regionsRes = await payload.find({
-    collection: 'regions',
-    depth: 1,
-    limit: 8,
-  });
+  try {
+    const payload = await getPayload({ config });
+    const [bestSellersRes, regionsRes, blogsRes, faqsRes, galleryRes, siteSettingsRes] = await Promise.all([
+      payload.find({
+        collection: 'treks',
+        where: {
+          isBestSeller: {
+            equals: true,
+          },
+        },
+        depth: 1,
+        limit: 6, // Limit best sellers to exactly 6 as requested
+      }),
+      payload.find({
+        collection: 'regions',
+        depth: 1,
+        limit: 8,
+      }),
+      payload.find({
+        collection: 'blogPosts',
+        depth: 1,
+      }),
+      payload.find({
+        collection: 'faqs',
+        depth: 1,
+      }),
+      payload.find({
+        collection: 'gallery',
+        depth: 2,
+        limit: 30,
+      }),
+      payload.find({
+        collection: 'siteSettings',
+        depth: 2,
+        limit: 1,
+        overrideAccess: true, // Needed for SSG prerender (no authenticated user context)
+      })
+    ]);
 
-  const blogsRes = await payload.find({
-    collection: 'blogPosts',
-    depth: 1,
-  });
-
-  const faqsRes = await payload.find({
-    collection: 'faqs',
-    depth: 1,
-  });
-
-  const galleryRes = await payload.find({
-    collection: 'gallery',
-    depth: 2,
-    limit: 30,
-  });
-
-  const siteSettingsRes = await payload.find({
-    collection: 'siteSettings',
-    depth: 2,
-    limit: 1,
-    overrideAccess: true, // Needed for SSG prerender (no authenticated user context)
-  });
-
-  const bestSellers = bestSellersRes.docs as unknown as Trek[];
-  const regions = regionsRes.docs as unknown as Region[];
-  const blogs = blogsRes.docs as unknown as BlogPost[];
-  const faqs = faqsRes.docs as unknown as Faq[];
-  const galleryItems = galleryRes.docs as any[];
-  const siteSettings = siteSettingsRes.docs[0] as any;
+    bestSellers = bestSellersRes.docs as unknown as Trek[];
+    regions = regionsRes.docs as unknown as Region[];
+    blogs = blogsRes.docs as unknown as BlogPost[];
+    faqs = faqsRes.docs as unknown as Faq[];
+    galleryItems = galleryRes.docs as any[];
+    siteSettings = siteSettingsRes.docs[0] as any;
+  } catch (err: any) {
+    console.warn("[Home Page] Failed to query database collections (relation may not exist yet during build):", err.message);
+  }
 
   // Configure hero fields dynamically from CMS with absolute default fallbacks
   const heroHeadline = siteSettings?.heroHeadline || "Explore the Nepali Himalayas";

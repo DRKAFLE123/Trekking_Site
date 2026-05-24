@@ -14,19 +14,25 @@ export const metadata: Metadata = {
 };
 
 export default async function TripsPage() {
-  const payload = await getPayload({ config });
-  const [treksRes, regionsRes] = await Promise.all([
-    payload.find({
-      collection: "treks",
-      depth: 1,
-    }),
-    payload.find({
-      collection: "regions",
-      depth: 1,
-    }),
-  ]);
-  const treks = treksRes.docs as unknown as Trek[];
-  const regions = regionsRes.docs as unknown as Region[];
+  let treks: Trek[] = [];
+  let regions: Region[] = [];
+  try {
+    const payload = await getPayload({ config });
+    const [treksRes, regionsRes] = await Promise.all([
+      payload.find({
+        collection: "treks",
+        depth: 1,
+      }),
+      payload.find({
+        collection: "regions",
+        depth: 1,
+      }),
+    ]);
+    treks = treksRes.docs as unknown as Trek[];
+    regions = regionsRes.docs as unknown as Region[];
+  } catch (err: any) {
+    console.warn("[Trips Page] Failed to fetch treks/regions (relation may not exist yet during build):", err.message);
+  }
 
   return (
     <Suspense fallback={<div className="pt-24 md:pt-32 bg-[#fcfbfa] min-h-screen flex items-center justify-center"><span className="text-xl">Loading trips...</span></div>}>

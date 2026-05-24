@@ -5,16 +5,19 @@ import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 export const revalidate = 60;
 
 export default async function GalleryPage() {
-  const payload = await getPayload({ config });
-
-  const galleryRes = await payload.find({
-    collection: "gallery",
-    depth: 2,
-    limit: 50,
-    overrideAccess: true,
-  });
-
-  const galleryItems = galleryRes.docs as any[];
+  let galleryItems: any[] = [];
+  try {
+    const payload = await getPayload({ config });
+    const galleryRes = await payload.find({
+      collection: "gallery",
+      depth: 2,
+      limit: 50,
+      overrideAccess: true,
+    });
+    galleryItems = galleryRes.docs as any[];
+  } catch (err: any) {
+    console.warn("[Gallery Page] Failed to fetch gallery (relation may not exist yet during build):", err.message);
+  }
 
   return (
     <div className="min-h-screen bg-[#fcfbfa]">
