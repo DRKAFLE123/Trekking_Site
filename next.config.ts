@@ -31,6 +31,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverMinification: false,
+  },
 };
 
 export default withPayload(nextConfig);
