@@ -15,17 +15,21 @@ export async function GET() {
     env[envKey] = originalNodeEnv;
     console.log("[Init API] Payload initialized successfully!");
 
-    // Check if any users exist in the database
+    // Check if the specific admin user exists
     const usersResult = await payload.find({
       collection: "users",
-      limit: 1,
+      where: {
+        email: {
+          equals: "admin@natureheaventrek.com",
+        },
+      },
     });
 
-    let seeded = false;
+    let seeded = true;
     let seededData: { email: string; name: string; role: string } | null = null;
 
     if (usersResult.totalDocs === 0) {
-      console.log("[Init API] No users found. Seeding default admin user...");
+      console.log("[Init API] Admin user not found. Creating default admin...");
       const seededUser = await payload.create({
         collection: "users",
         data: {
@@ -35,7 +39,6 @@ export async function GET() {
           role: "admin",
         },
       });
-      seeded = true;
       seededData = {
         email: seededUser.email,
         name: seededUser.name,
@@ -43,16 +46,27 @@ export async function GET() {
       };
       console.log("[Init API] Default admin user created successfully!");
     } else {
-      console.log("[Init API] Users already exist. Skipping seed.");
+      console.log("[Init API] Admin user exists. Forcing password reset...");
+      const updatedUser = await payload.update({
+        collection: "users",
+        id: usersResult.docs[0].id,
+        data: {
+          password: "AdminPassword123!",
+        },
+      });
+      seededData = {
+        email: updatedUser.email,
+        name: updatedUser.name,
+        role: updatedUser.role as string,
+      };
+      console.log("[Init API] Admin password reset successfully!");
     }
 
     return NextResponse.json({ 
       initialized: true,
       seeded,
       seededUser: seededData,
-      message: seeded 
-        ? "Database schema synchronized and default admin user seeded successfully." 
-        : "Database schema synchronized successfully. Admin user already exists." 
+      message: "Database schema synchronized and admin password forcefully reset to AdminPassword123!" 
     });
   } catch (err: any) {
     // Restore original NODE_ENV in case of error
