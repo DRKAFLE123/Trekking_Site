@@ -224,8 +224,8 @@ export default function Navbar() {
   const isActive = (link: any) => {
     if (!link.dropdown && link.href) return pathname === link.href;
     if (link.key === "trips") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
-    if (link.key === "info") return ["/why-us", "/visa-info", "/travel-insurance", "/packing-list", "/faqs"].some(p => pathname.startsWith(p));
-    if (link.key === "company") return ["/about-us", "/our-team", "/gallery", "/csr"].includes(pathname);
+    if (link.key === "info") return ["/why-us", "/visa-info", "/travel-insurance", "/packing-list", "/faqs", "/private-treks"].some(p => pathname.startsWith(p));
+    if (link.key === "company") return ["/about-us", "/our-team", "/gallery", "/video-gallery", "/csr"].includes(pathname);
     return false;
   };
 
@@ -258,7 +258,7 @@ export default function Navbar() {
           { label: "Accommodation in Nepal", href: "/faqs#accommodation", icon: "🏨" },
           { label: "Altitude Acclimatization", href: "/faqs#altitude", icon: "⛰️" },
           { label: "Getting to Nepal & Visas", href: "/visa-info", icon: "✈️" },
-          { label: "Private Treks in Nepal", href: "/plan-a-trip", icon: "🎿" },
+          { label: "Private Treks in Nepal", href: "/private-treks", icon: "🎿" },
         ],
         // Column 2
         [
@@ -283,6 +283,7 @@ export default function Navbar() {
         { label: "About Us", href: "/about-us" },
         { label: "Our Sherpa Team", href: "/our-team" },
         { label: "Photo Gallery", href: "/gallery" },
+        { label: "Video Gallery", href: "/video-gallery" },
         { label: "CSR & Sustainability", href: "/csr" },
       ],
     },

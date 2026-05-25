@@ -19,6 +19,7 @@ import {
 export default function Footer() {
   const pathname = usePathname();
   const [siteSettings, setSiteSettings] = useState<any>(null);
+  const [regions, setRegions] = useState<any[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -35,7 +36,19 @@ export default function Footer() {
         console.error("Failed to fetch site settings", err);
       }
     }
+    async function fetchRegions() {
+      try {
+        const res = await fetch("/api/regions");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setRegions(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch regions in Footer:", err);
+      }
+    }
     fetchData();
+    fetchRegions();
   }, []);
 
   const { siteName, contactInfo, socialLinks, affiliations, emergencyNumbers } = siteSettings || {};
@@ -309,31 +322,47 @@ export default function Footer() {
                   Top 5 Treks
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-                  <li>
-                    <Link href="/trips/everest-base-camp-trek" className="hover:text-secondary transition duration-300">
-                      Everest Base Camp Trek
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/trips/annapurna-circuit-trek" className="hover:text-secondary transition duration-300">
-                      Annapurna Circuit Trek
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/trips/ebc-via-gokyo-lakes" className="hover:text-secondary transition duration-300">
-                      EBC via Gokyo Lakes
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/trips/annapurna-base-camp-trek" className="hover:text-secondary transition duration-300">
-                      Annapurna Base Camp Trek
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/trips/manaslu-circuit-trek" className="hover:text-secondary transition duration-300">
-                      Manaslu Circuit Trek
-                    </Link>
-                  </li>
+                  {siteSettings?.top5Treks && Array.isArray(siteSettings.top5Treks) && siteSettings.top5Treks.length > 0 ? (
+                    siteSettings.top5Treks.slice(0, 5).map((t: any, idx: number) => {
+                      const trekObj = typeof t === "object" && t !== null ? t : null;
+                      if (!trekObj) return null;
+                      return (
+                        <li key={idx}>
+                          <Link href={`/trips/${trekObj.slug}`} className="hover:text-secondary transition duration-300">
+                            {trekObj.title}
+                          </Link>
+                        </li>
+                      );
+                    })
+                  ) : (
+                    <>
+                      <li>
+                        <Link href="/trips/everest-base-camp-trek-14" className="hover:text-secondary transition duration-300">
+                          Everest Base Camp Trek
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/trips/annapurna-circuit-14" className="hover:text-secondary transition duration-300">
+                          Annapurna Circuit Trek
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/trips/everest-base-camp-gokyo-lakes-15" className="hover:text-secondary transition duration-300">
+                          EBC via Gokyo Lakes
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/trips/annapurna-base-camp-10" className="hover:text-secondary transition duration-300">
+                          Annapurna Base Camp Trek
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/trips/manaslu-circuit-16" className="hover:text-secondary transition duration-300">
+                          Manaslu Circuit Trek
+                        </Link>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
 
@@ -343,31 +372,43 @@ export default function Footer() {
                   Popular Regions
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-                  <li>
-                    <Link href="/regions/everest" className="hover:text-secondary transition duration-300">
-                      Everest Region
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/regions/annapurna" className="hover:text-secondary transition duration-300">
-                      Annapurna Region
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/regions/manaslu" className="hover:text-secondary transition duration-300">
-                      Manaslu Region
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/regions/langtang" className="hover:text-secondary transition duration-300">
-                      Langtang Region
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/regions/mustang" className="hover:text-secondary transition duration-300">
-                      Mustang Region
-                    </Link>
-                  </li>
+                  {regions && regions.length > 0 ? (
+                    regions.slice(0, 5).map((r: any, idx: number) => (
+                      <li key={idx}>
+                        <Link href={`/regions/${r.slug}`} className="hover:text-secondary transition duration-300">
+                          {r.name} Region
+                        </Link>
+                      </li>
+                    ))
+                  ) : (
+                    <>
+                      <li>
+                        <Link href="/regions/everest" className="hover:text-secondary transition duration-300">
+                          Everest Region
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/regions/annapurna" className="hover:text-secondary transition duration-300">
+                          Annapurna Region
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/regions/manaslu" className="hover:text-secondary transition duration-300">
+                          Manaslu Region
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/regions/langtang" className="hover:text-secondary transition duration-300">
+                          Langtang Region
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/regions/mustang" className="hover:text-secondary transition duration-300">
+                          Mustang Region
+                        </Link>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
 

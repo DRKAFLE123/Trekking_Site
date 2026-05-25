@@ -24,12 +24,12 @@ export default function RegionGrid({ regions }: RegionGridProps) {
   ];
 
   // Merge database regions and default fallback regions (preventing duplicate entries)
-  const dbSlugs = new Set((regions || []).map(r => r.slug.toLowerCase()));
+  const dbSlugs = new Set((regions || []).map(r => (r.slug || "").toLowerCase()));
   const mergedRegions = [
     ...(regions || []),
     ...defaultRegions.filter(d => {
-      const cleanSlug = d.slug.toLowerCase().replace("-region", "");
-      return !dbSlugs.has(d.slug.toLowerCase()) && !dbSlugs.has(cleanSlug);
+      const cleanSlug = (d.slug || "").toLowerCase().replace("-region", "");
+      return !dbSlugs.has((d.slug || "").toLowerCase()) && !dbSlugs.has(cleanSlug);
     })
   ];
 

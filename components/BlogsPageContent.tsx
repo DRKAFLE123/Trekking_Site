@@ -18,16 +18,19 @@ export default function BlogsPageContent({ blogs }: BlogsPageContentProps) {
 
   // Extract unique categories dynamically
   const categories = useMemo(() => {
-    const cats = new Set(blogs.map((b) => b.category));
+    const cats = new Set(blogs.map((b) => b.category).filter(Boolean));
     return ["All", ...Array.from(cats)];
   }, [blogs]);
 
   // Filtered blogs
   const filteredBlogs = useMemo(() => {
     return blogs.filter((blog) => {
+      const titleLower = (blog.title || "").toLowerCase();
+      const excerptLower = (blog.excerpt || "").toLowerCase();
+      const searchLower = searchQuery.toLowerCase().trim();
       const matchesSearch =
-        blog.title.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        blog.excerpt.toLowerCase().includes(searchQuery.toLowerCase().trim());
+        titleLower.includes(searchLower) ||
+        excerptLower.includes(searchLower);
       const matchesCategory = selectedCategory === "All" || blog.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });

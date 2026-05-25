@@ -7,11 +7,26 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const trekSlug = searchParams.get("slug");
 
-    if (!trekSlug) {
-      return NextResponse.json({ error: "Trek slug is required" }, { status: 400 });
-    }
-
     const payload = await getPayload({ config });
+
+    if (!trekSlug) {
+      const todayStr = new Date().toISOString().split("T")[0];
+      const departuresRes = await payload.find({
+        collection: "departures",
+        sort: "startDate",
+        depth: 2,
+        limit: 15,
+        where: {
+          startDate: {
+            greater_than_equal: todayStr,
+          },
+          status: {
+            not_equals: 'cancelled',
+          },
+        },
+      });
+      return NextResponse.json({ departures: departuresRes.docs }, { status: 200 });
+    }
 
     // Find the trek
     const trekRes = await payload.find({

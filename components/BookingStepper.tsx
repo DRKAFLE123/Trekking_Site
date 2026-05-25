@@ -130,9 +130,68 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   const [bookingResponse, setBookingResponse] = useState<any>(null);
   const [stepError, setStepError] = useState<string | null>(null);
 
+  const [siteSettings, setSiteSettings] = useState<any>(null);
+
+  const getActivePaymentMethods = () => {
+    const methods = [];
+    const settings = siteSettings?.paymentSettings;
+
+    if (!siteSettings) {
+      return [
+        { id: "stripe", label: "Credit Card" },
+        { id: "paypal", label: "PayPal" },
+        { id: "bank_transfer", label: "SWIFT Bank" }
+      ];
+    }
+
+    if (settings?.enableStripe !== false) {
+      methods.push({ id: "stripe", label: "Credit Card" });
+    }
+    if (settings?.enablePaypal !== false) {
+      methods.push({ id: "paypal", label: "PayPal" });
+    }
+    if (settings?.enableLocalWallets === true) {
+      methods.push({ id: "esewa", label: "eSewa" });
+      methods.push({ id: "khalti", label: "Khalti" });
+    }
+    if (settings?.enableBankTransfer !== false) {
+      methods.push({ id: "bank_transfer", label: "SWIFT Bank" });
+    }
+
+    return methods;
+  };
+
   // ----------------------------------------------------
   // EFFECTS
   // ----------------------------------------------------
+
+  // Fetch site settings
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch("/api/site-settings");
+        if (res.ok) {
+          const data = await res.json();
+          setSiteSettings(data);
+        }
+      } catch (err) {
+        console.error("Error fetching site settings in BookingStepper:", err);
+      }
+    }
+    fetchSettings();
+  }, []);
+
+  // Filter and auto-select payment methods based on settings
+  useEffect(() => {
+    const active = getActivePaymentMethods();
+    if (active.length > 0) {
+      const isStillActive = active.some(m => m.id === paymentMethod);
+      if (!isStillActive) {
+        setPaymentMethod(active[0].id as any);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [siteSettings]);
   
   // Fetch Departures
   useEffect(() => {
@@ -1290,13 +1349,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                 </h4>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                  {[
-                    { id: "stripe", label: "Credit Card" },
-                    { id: "paypal", label: "PayPal" },
-                    { id: "esewa", label: "eSewa" },
-                    { id: "khalti", label: "Khalti" },
-                    { id: "bank_transfer", label: "SWIFT Bank" }
-                  ].map((m) => {
+                  {getActivePaymentMethods().map((m) => {
                     const isSelected = paymentMethod === m.id;
                     return (
                       <button

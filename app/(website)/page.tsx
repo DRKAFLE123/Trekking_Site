@@ -96,7 +96,8 @@ export default async function HomePage() {
   const processedBlogs = blogs.map((blog) => {
     let coverImage = getMediaUrl(blog.coverImage);
     if (!coverImage) {
-      if (blog.title.toLowerCase().includes("packing")) {
+      const titleLower = (blog.title || "").toLowerCase();
+      if (titleLower.includes("packing")) {
         coverImage = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800";
       } else {
         coverImage = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800";
@@ -138,10 +139,10 @@ export default async function HomePage() {
     }
   ];
 
-  const dbSlugs = new Set(processedBlogs.map(b => b.slug.toLowerCase()));
+  const dbSlugs = new Set(processedBlogs.map(b => (b.slug || "").toLowerCase()));
   const mergedBlogs = [
     ...processedBlogs,
-    ...defaultBlogs.filter(d => !dbSlugs.has(d.slug.toLowerCase()))
+    ...defaultBlogs.filter(d => !dbSlugs.has((d.slug || "").toLowerCase()))
   ];
 
   // Slice first 3 blogs for homepage preview
@@ -256,7 +257,7 @@ export default async function HomePage() {
           {/* Cards Grid (Slider on mobile, grid on desktop) */}
           <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
             {bestSellers.map((trek: Trek, index: number) => (
-              <div key={trek._id || index} className="w-[290px] sm:w-auto shrink-0 snap-align-start flex">
+              <div key={trek._id || index} className="w-[290px] md:w-full shrink-0 snap-align-start flex flex-col">
                 <TrekCard trek={trek} />
               </div>
             ))}
@@ -291,11 +292,11 @@ export default async function HomePage() {
               unoptimized
             />
             {/* Embedded Badge */}
-            <div className="absolute bottom-6 left-6 right-6 bg-primary/90 backdrop-blur-md p-6 rounded-xl border border-secondary/20 flex gap-4 text-bgOffWhite">
-              <span className="text-4xl text-secondary">🏆</span>
+            <div className="absolute bottom-2 left-2 right-2 md:bottom-6 md:left-6 md:right-6 bg-primary/90 backdrop-blur-md p-2 md:p-6 rounded-xl border border-secondary/20 flex gap-1.5 md:gap-4 text-bgOffWhite items-center md:items-start">
+              <span className="text-lg md:text-4xl text-secondary shrink-0">🏆</span>
               <div>
-                <h4 className="font-serif font-bold text-lg">100% Native Sherpa Crew</h4>
-                <p className="text-xs text-bgOffWhite/80 mt-1">Our guides are licensed, altitude-first-aid certified local mountain heroes.</p>
+                <h4 className="font-serif font-bold text-[10px] md:text-lg leading-tight">100% Native Sherpa Crew</h4>
+                <p className="hidden md:block text-xs text-bgOffWhite/80 mt-1">Our guides are licensed, altitude-first-aid certified local mountain heroes.</p>
               </div>
             </div>
           </FadeInUp>

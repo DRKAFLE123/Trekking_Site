@@ -22,8 +22,11 @@ import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997e
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { CustomAvatar as CustomAvatar_fa663cea947baa70c7600128b68f007e } from '@components/payload/CustomAvatar'
-import { Icon as Icon_6f14b747d7d9d385f91171711bbf7132 } from '@/components/payload/Icon'
+import { Icon as Icon_de14fae400a34f23367164b41d4042ed } from '@components/payload/Icon'
 import { AdminHeaderLogo as AdminHeaderLogo_0220b9ced08e14c8e98bdad5447cc02f } from '@components/payload/AdminHeaderLogo'
+import { BeforeDashboard as BeforeDashboard_3f666bbcf70b561e62ee48acfb9c6798 } from '@components/payload/BeforeDashboard'
+import { BeforeLogin as BeforeLogin_856baca5e0bda4894c0f25b52170bc5d } from '@components/payload/BeforeLogin'
+import { BeforeNav as BeforeNav_45a63ed8361e2e1b7818747869787b51 } from '@components/payload/BeforeNav'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -52,7 +55,10 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@components/payload/CustomAvatar#CustomAvatar": CustomAvatar_fa663cea947baa70c7600128b68f007e,
-  "@/components/payload/Icon#Icon": Icon_6f14b747d7d9d385f91171711bbf7132,
+  "@components/payload/Icon#Icon": Icon_de14fae400a34f23367164b41d4042ed,
   "@components/payload/AdminHeaderLogo#AdminHeaderLogo": AdminHeaderLogo_0220b9ced08e14c8e98bdad5447cc02f,
+  "@components/payload/BeforeDashboard#BeforeDashboard": BeforeDashboard_3f666bbcf70b561e62ee48acfb9c6798,
+  "@components/payload/BeforeLogin#BeforeLogin": BeforeLogin_856baca5e0bda4894c0f25b52170bc5d,
+  "@components/payload/BeforeNav#BeforeNav": BeforeNav_45a63ed8361e2e1b7818747869787b51,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

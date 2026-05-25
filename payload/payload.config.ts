@@ -37,8 +37,11 @@ export default buildConfig({
     components: {
       graphics: {
         Logo: '@components/payload/AdminHeaderLogo#AdminHeaderLogo',
-        Icon: '@/components/payload/Icon#Icon',
+        Icon: '@components/payload/Icon#Icon',
       },
+      beforeLogin: ['@components/payload/BeforeLogin#BeforeLogin'],
+      beforeDashboard: ['@components/payload/BeforeDashboard#BeforeDashboard'],
+      beforeNav: ['@components/payload/BeforeNav#BeforeNav'],
     },
     avatar: {
       Component: '@components/payload/CustomAvatar#CustomAvatar',

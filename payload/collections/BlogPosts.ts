@@ -17,6 +17,16 @@ export const blogPosts: CollectionConfig = {
       }
       return '';
     },
+    livePreview: {
+      url: ({ data }) => data?.slug ? `/blogs/preview/${data.slug}` : '',
+    },
+  },
+  versions: {
+    drafts: {
+      autosave: {
+        interval: 1500, // Autosave every 1.5 seconds of inactivity
+      },
+    },
   },
   fields: [
     {
@@ -37,7 +47,7 @@ export const blogPosts: CollectionConfig = {
         { label: 'Draft', value: 'draft' },
         { label: 'Published', value: 'published' },
       ],
-      required: true,
+      required: false,
       defaultValue: 'draft',
       admin: {
         position: 'sidebar',
@@ -46,6 +56,9 @@ export const blogPosts: CollectionConfig = {
     {
       name: 'tags',
       type: 'array',
+      admin: {
+        position: 'sidebar',
+      },
       fields: [
         {
           name: 'tag',
@@ -57,26 +70,41 @@ export const blogPosts: CollectionConfig = {
       name: 'category',
       type: 'text',
       required: true,
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'author',
       type: 'relationship',
       relationTo: 'teamMembers',
       required: true,
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'publishedAt',
       type: 'date',
       required: true,
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'readTime',
       type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'coverImage',
       type: 'relationship',
       relationTo: 'media',
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'excerpt',
@@ -92,10 +120,16 @@ export const blogPosts: CollectionConfig = {
       type: 'relationship',
       relationTo: 'treks',
       hasMany: true,
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'seo',
       type: 'group',
+      admin: {
+        position: 'sidebar',
+      },
       fields: [
         {
           name: 'metaTitle',

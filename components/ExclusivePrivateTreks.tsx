@@ -125,7 +125,7 @@ export default function ExclusivePrivateTreks() {
 
         <div className="text-center mt-14">
           <Link
-            href="/why-us"
+            href="/private-treks"
             className="bg-secondary text-primary font-bold px-8 py-4 rounded-xl inline-block hover:bg-secondary-light hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg"
           >
             Learn More About Private Treks

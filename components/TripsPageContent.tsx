@@ -69,7 +69,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
       const q = searchQuery.toLowerCase().trim();
       result = result.filter(
         (trek) =>
-          trek.title.toLowerCase().includes(q) ||
+          (trek.title || "").toLowerCase().includes(q) ||
           trek.highlights?.some((h) => 
             (typeof h === "string" ? h : (h as any)?.highlight || "").toLowerCase().includes(q)
           )
@@ -83,7 +83,10 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
     // 3. Region Filter
     if (selectedRegions.length > 0) {
-      result = result.filter((trek) => selectedRegions.includes(trek.region.slug));
+      result = result.filter((trek) => {
+        const regionSlug = trek.region?.slug || "";
+        return selectedRegions.includes(regionSlug);
+      });
     }
 
     // 4. Duration Filter

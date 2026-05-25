@@ -156,7 +156,7 @@ html body {
 /* Field labels / field text color */
 .template-minimal .field-label,
 .template-minimal p,
-.template-minimal span:not(.btn__content) {
+.template-minimal span:not(.btn__content):not(.brand-title):not(.brand-subtitle) {
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
@@ -316,14 +316,14 @@ body.login::before {
 }
 
 /* High-fidelity circular avatar design in Sidebar */
-.nav__account-avatar, .nav__user-avatar, [class*="avatar"] {
+.nav__account-avatar, .nav__user-avatar, .profile-dropdown-trigger__avatar, .profile-dropdown-trigger__avatar-fallback, .profile-dropdown-menu__header-avatar, .profile-dropdown-menu__header-avatar-fallback, .user-menu__avatar {
   border-radius: 50% !important;
   border: 2px solid #10b981 !important;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.3) !important;
   transition: all 0.3s ease !important;
 }
 
-.nav__account:hover [class*="avatar"], .nav__user:hover [class*="avatar"] {
+.nav__account:hover .nav__account-avatar, .nav__account:hover .nav__user-avatar, .nav__account:hover .profile-dropdown-trigger__avatar, .nav__account:hover .user-menu__avatar, .nav__user:hover .nav__account-avatar, .nav__user:hover .nav__user-avatar, .nav__user:hover .profile-dropdown-trigger__avatar, .nav__user:hover .user-menu__avatar {
   border-color: #f59e0b !important;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.45) !important;
 }
@@ -369,19 +369,19 @@ body.login::before {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(16, 185, 129, 0.08) !important;
-  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  background: rgba(200, 146, 42, 0.08) !important;
+  border: 1px solid rgba(200, 146, 42, 0.2) !important;
   padding: 6px 14px !important;
   border-radius: 50px !important;
-  color: #ffffff !important;
+  color: #1a2e1f !important;
   cursor: pointer !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .profile-dropdown-trigger:hover {
-  background: rgba(16, 185, 129, 0.18) !important;
-  border-color: rgba(245, 158, 11, 0.5) !important;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
+  background: rgba(200, 146, 42, 0.15) !important;
+  border-color: rgba(200, 146, 42, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(200, 146, 42, 0.1) !important;
 }
 
 .profile-dropdown-trigger__avatar-wrap {
@@ -396,28 +396,28 @@ body.login::before {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #10b981;
-  box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+  border: 2px solid #c8922a;
+  box-shadow: 0 0 6px rgba(200, 146, 42, 0.3);
   transition: border-color 0.3s ease;
 }
 
 .profile-dropdown-trigger:hover .profile-dropdown-trigger__avatar {
-  border-color: #f59e0b;
+  border-color: #a07218;
 }
 
 .profile-dropdown-trigger__avatar-fallback {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #1a2e1f 0%, #0b140e 100%) !important;
+  color: #c8922a !important;
   font-size: 11px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   letter-spacing: 0.05em;
-  border: 2px solid #10b981;
+  border: 2px solid #c8922a !important;
 }
 
 .profile-dropdown-trigger__badge {
@@ -426,10 +426,10 @@ body.login::before {
   right: 0;
   width: 9px;
   height: 9px;
-  background-color: #10b981;
+  background-color: #c8922a;
   border: 1.5px solid #0b140e;
   border-radius: 50%;
-  box-shadow: 0 0 4px #10b981;
+  box-shadow: 0 0 4px #c8922a;
 }
 
 .profile-dropdown-trigger__name {
@@ -440,11 +440,12 @@ body.login::before {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #1a2e1f !important;
 }
 
 .profile-dropdown-trigger__chevron {
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #c8922a !important;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -911,5 +912,785 @@ body.login::before {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* ============================================================
+   NATURE HEAVEN PREMIUM OVERRIDES (STRAPI CMS INSPIRATION)
+   ============================================================ */
+
+/* 1. Light, Clean Card on Dark Rotating Background for Login */
+.template-minimal__wrap,
+[class*="template-minimal__wrap"],
+.login__wrap {
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(200, 146, 42, 0.3) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  color: #1a2e1f !important;
+}
+
+.template-minimal__wrap label,
+.login__wrap label {
+  color: #1a2e1f !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+}
+
+.template-minimal__wrap input[type="email"],
+.template-minimal__wrap input[type="password"],
+.template-minimal__wrap input[type="text"],
+.login__wrap input[type="email"],
+.login__wrap input[type="password"],
+.login__wrap input[type="text"] {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1a2e1f !important;
+}
+
+.template-minimal__wrap input:focus,
+.login__wrap input:focus {
+  border-color: #c8922a !important;
+  box-shadow: 0 0 0 3px rgba(200, 146, 42, 0.15) !important;
+}
+
+.template-minimal__wrap a,
+.login__wrap a {
+  color: #c8922a !important;
+}
+
+.template-minimal__wrap a:hover,
+.login__wrap a:hover {
+  color: #a07218 !important;
+  text-shadow: none !important;
+}
+
+/* 2. Strapi-style 2-Column Document Editor Layout & Sticky Sidebar */
+.collection-edit__form, 
+[class*="collection-edit__form"],
+form.form {
+  max-width: 100% !important;
+}
+
+@media (min-width: 1200px) {
+  /* Document view layout - force 2 columns: main editor left, sidebar right */
+  .doc-view__main,
+  [class*="doc-view__main"],
+  .collection-edit__main,
+  .doc-view__content,
+  .form-submit {
+    display: grid !important;
+    grid-template-columns: 1fr 340px !important;
+    gap: 32px !important;
+    align-items: start !important;
+  }
+  
+  /* Sidebar sticky style */
+  .doc-view__sidebar,
+  [class*="doc-view__sidebar"],
+  .collection-edit__sidebar {
+    position: sticky !important;
+    top: 90px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+  }
+}
+
+/* 3. Premium Strapi-style Collection List Tables & Controls */
+
+/* Outer card container for tables */
+.list-controls, 
+[class*="list-controls"],
+.collection-list__wrap,
+.table {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+  overflow: hidden !important;
+  margin-bottom: 24px !important;
+}
+
+/* Style table headings */
+table thead th,
+[class*="table"] thead th {
+  background-color: #f8fafc !important;
+  color: #334155 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 14px 16px !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+}
+
+/* Table body cells styling */
+table tbody td,
+[class*="table"] tbody td {
+  padding: 14px 16px !important;
+  font-size: 13px !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  vertical-align: middle !important;
+}
+
+/* Clean row hover micro-animation */
+table tbody tr,
+[class*="table"] tbody tr {
+  transition: background-color 0.2s ease !important;
+}
+
+table tbody tr:hover,
+[class*="table"] tbody tr:hover {
+  background-color: #f0fbf4 !important; /* Soft nature green tint on hover */
+  cursor: pointer !important;
+}
+
+/* Search input controls */
+.search-input,
+[class*="search-input"] input {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 8px 14px !important;
+  font-size: 13px !important;
+  transition: all 0.25s ease !important;
+  color: #1e293b !important;
+}
+
+.search-input:focus,
+[class*="search-input"] input:focus {
+  border-color: #c8922a !important;
+  box-shadow: 0 0 0 3px rgba(200, 146, 42, 0.12) !important;
+  outline: none !important;
+}
+
+/* 4. Beautiful Status Badge Pills */
+/* Target cell classes that display 'status' */
+td.cell-status,
+td[class*="cell-status"],
+td[class*="cell-postsStatus"] {
+  font-weight: 600 !important;
+}
+
+/* Add custom pill classes inside status cell */
+td.cell-status span,
+td[class*="cell-status"] span,
+td[class*="cell-postsStatus"] span {
+  display: inline-block !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 9999px !important;
+  text-align: center !important;
+}
+
+/* Target elements matching values */
+td.cell-status span:empty::after,
+td[class*="cell-status"] span:empty::after {
+  content: 'Draft';
+}
+
+/* General design for buttons inside admin */
+.btn, 
+.button,
+[class*="btn"],
+[class*="button"] {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn:hover,
+[class*="btn"]:hover {
+  transform: translateY(-1px) !important;
+}
+
+.btn:active,
+[class*="btn"]:active {
+  transform: translateY(0) !important;
+}
+
+/* ============================================================
+   NATURE HEAVEN CUSTOM HIGHLIGHTS & AVATAR READABILITY
+   ============================================================ */
+
+/* Golden username in the header */
+.user-menu,
+[class*="user-menu"],
+.account-button,
+[class*="account-button"],
+.nav__user,
+.nav__account,
+[class*="nav__user"],
+[class*="nav__account"] {
+  color: #c8922a !important;
+  font-weight: 700 !important;
+}
+
+.user-menu__name,
+[class*="user-name"],
+[class*="user-menu__label"],
+.nav__account-name,
+.nav__user-name {
+  color: #c8922a !important;
+  font-weight: 700 !important;
+}
+
+/* High contrast avatar letter inside the green circle on the right */
+.user-menu__avatar,
+[class*="user-menu__avatar"],
+.nav__account-avatar,
+.nav__user-avatar,
+.profile-dropdown-trigger__avatar,
+.profile-dropdown-trigger__avatar-fallback,
+.profile-dropdown-menu__header-avatar,
+.profile-dropdown-menu__header-avatar-fallback {
+  background: #1a2e1f !important;
+  border: 2px solid #c8922a !important;
+  color: #c8922a !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(200, 146, 42, 0.25) !important;
+}
+
+/* Active Sidebar Navigation Item Highlight */
+.nav-group a[class*="active"],
+.nav-group a[aria-current="page"],
+[class*="nav-group"] a[class*="active"],
+[class*="nav-group"] a[aria-current="page"],
+.nav a[class*="active"],
+.nav a[aria-current="page"],
+.sidebar a[aria-current="page"],
+.sidebar a[class*="active"],
+.nav-link[class*="active"],
+[class*="nav-link"][class*="active"] {
+  color: #c8922a !important;
+  background: rgba(200, 146, 42, 0.12) !important;
+  border-left: 3px solid #c8922a !important;
+  font-weight: 800 !important;
+  padding-left: 18px !important;
+}
+
+/* Non-Floating Bulk Action Styles (Top-Right List Toolbar) */
+div.select-all,
+div[class*="select-all"],
+.collection-list__select-all,
+div[class*="select-all__wrap"],
+div[class*="select-actions"],
+.select-actions,
+div[class*="bulk-actions"],
+.bulk-actions {
+  position: static !important;
+  transform: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Style selected items count text inside the toolbar */
+div[class*="select-all"] span,
+div.select-all span,
+.collection-list__select-all span,
+.select-actions [class*="label"],
+.select-actions span,
+[class*="select-actions"] span,
+.bulk-actions span {
+  color: #626c64 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  margin-right: 6px !important;
+  display: inline-block !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+/* Style Edit & Delete buttons and select links to make them small, clean, adjusted pills */
+div[class*="select-all"] button,
+div.select-all button,
+.collection-list__select-all button,
+div[class*="select-all"] .btn,
+div.select-all .btn,
+.collection-list__select-all .btn,
+div[class*="select-all"] a,
+div.select-all a,
+.collection-list__select-all a,
+div[class*="select-actions"] button,
+div[class*="select-actions"] a,
+.select-actions button,
+.select-actions a,
+div[class*="bulk-actions"] button,
+div[class*="bulk-actions"] a,
+.bulk-actions button,
+.bulk-actions a {
+  background: #ffffff !important;
+  color: #1a2e1f !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  padding: 4px 10px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  margin: 0 2px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  box-shadow: none !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+div[class*="select-all"] button:hover,
+div.select-all button:hover,
+.collection-list__select-all button:hover,
+div[class*="select-all"] a:hover,
+div.select-all a:hover,
+.collection-list__select-all a:hover,
+div[class*="select-actions"] button:hover,
+div[class*="select-actions"] a:hover,
+.select-actions button:hover,
+.select-actions a:hover,
+div[class*="bulk-actions"] button:hover,
+div[class*="bulk-actions"] a:hover,
+.bulk-actions button:hover,
+.bulk-actions a:hover {
+  background: #f8fafc !important;
+  border-color: #c8922a !important;
+  color: #c8922a !important;
+  transform: translateY(-0.5px) !important;
+}
+
+/* Specific Delete Button - Red Danger Pill */
+div[class*="select-all"] button[class*="delete"],
+div.select-all button[class*="delete"],
+.collection-list__select-all button[class*="delete"],
+div[class*="select-all"] [class*="delete-many"],
+div.select-all [class*="delete-many"],
+.collection-list__select-all [class*="delete-many"],
+div[class*="select-actions"] button[class*="delete"],
+.select-actions button[class*="delete"],
+div[class*="bulk-actions"] button[class*="delete"],
+.bulk-actions button[class*="delete"] {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border: 1px solid #ef4444 !important;
+}
+
+div[class*="select-all"] [class*="delete-many"]:hover,
+.collection-list__select-all [class*="delete-many"]:hover,
+div[class*="select-actions"] button[class*="delete"]:hover,
+div[class*="select-actions"] a[class*="delete"]:hover,
+.select-actions button[class*="delete"]:hover,
+.select-actions a[class*="delete"]:hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2) !important;
+  transform: translateY(-0.5px) !important;
+}
+
+/* ============================================================
+   PREMIUM MODALS & BUTTON DECORATIONS (GOLD & FOREST GREEN)
+   ============================================================ */
+
+/* Center and align custom confirmation modals perfectly */
+.modal,
+[class*="modal"]:not([class*="modal__content"]):not([class*="confirm-modal"]):not([class*="confirm-modal__content"]) {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.15) !important; /* Very light dimming so background page is highly visible */
+  backdrop-filter: blur(1px) !important; /* Tiny, elegant blur */
+  -webkit-backdrop-filter: blur(1px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 999999 !important;
+}
+
+.confirm-modal,
+div[class*="confirm-modal"],
+[class*="modal__content"],
+.modal__content {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important; /* Lighter border */
+  border-radius: 8px !important;
+  padding: 20px 24px !important; /* Compact padding */
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important; /* Clean premium shadow */
+  color: #1a2e1f !important;
+  width: 100% !important;
+  max-width: 350px !important; /* Small alert-type width */
+  min-width: 280px !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  animation: modal-slide-up 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.confirm-modal__content,
+[class*="confirm-modal__content"],
+.confirm-modal__actions,
+[class*="confirm-modal__actions"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.confirm-modal__actions,
+[class*="confirm-modal__actions"] {
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: 4px !important;
+}
+
+/* Hide overlapping watermark background texts completely for premium clean look */
+.confirm-modal__watermark,
+[class*="confirm-modal"] [class*="watermark"],
+.modal [class*="watermark"],
+[class*="modal"] [class*="watermark"],
+[class*="confirm-modal"]::before,
+[class*="confirm-modal"]::after,
+.modal::before,
+.modal::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+/* Reset all title positions inside the modal to be standard block elements */
+.modal__content h2,
+[class*="modal__content"] h2,
+.modal__content h3,
+[class*="modal__content"] h3,
+[class*="confirm-modal"] h3,
+.modal__content p,
+[class*="modal__content"] p,
+[class*="confirm-modal"] p {
+  position: relative !important;
+  transform: none !important;
+  left: auto !important;
+  top: auto !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+.modal__content h2,
+[class*="modal__content"] h2,
+.modal__content h3,
+[class*="modal__content"] h3,
+[class*="confirm-modal"] h3 {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 800 !important;
+  color: #1a2e1f !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.modal__content p,
+[class*="modal__content"] p,
+[class*="confirm-modal"] p {
+  color: #626c64 !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+/* Confirm/Cancel Modal button styles - Small and clear */
+.modal__content button,
+[class*="modal__content"] button,
+[class*="confirm-modal"] button,
+.confirm-modal__actions button {
+  border-radius: 4px !important;
+  padding: 4px 10px !important;
+  font-weight: 700 !important;
+  font-size: 10px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin: 0 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  box-shadow: none !important;
+}
+
+.modal__content button[class*="cancel"],
+[class*="modal__content"] button[class*="cancel"],
+.confirm-modal__actions button[class*="cancel"] {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.modal__content button[class*="cancel"]:hover,
+[class*="modal__content"] button[class*="cancel"]:hover,
+.confirm-modal__actions button[class*="cancel"]:hover {
+  background: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+.modal__content button[class*="confirm"],
+.modal__content button[class*="delete"],
+[class*="modal__content"] button[class*="confirm"],
+[class*="modal__content"] button[class*="delete"],
+[class*="confirm-modal"] button[class*="confirm"],
+.confirm-modal__actions button[class*="confirm"] {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border: 1px solid #ef4444 !important;
+}
+
+.modal__content button[class*="confirm"]:hover,
+.modal__content button[class*="delete"]:hover,
+[class*="modal__content"] button[class*="confirm"]:hover,
+[class*="modal__content"] button[class*="delete"]:hover,
+.confirm-modal__actions button[class*="confirm"]:hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  transform: translateY(-0.5px) !important;
+}
+
+/* Ensure absolute vertical alignment on all elements in all select/bulk toolbars */
+.select-actions,
+[class*="select-actions"],
+.bulk-actions,
+[class*="bulk-actions"],
+div.select-all,
+div[class*="select-all"],
+.collection-list__select-all,
+div[class*="select-all__wrap"],
+[class*="select-all"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  vertical-align: middle !important;
+  gap: 8px !important;
+  position: static !important;
+  transform: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.select-actions a,
+.select-actions button,
+.select-actions span,
+[class*="select-actions"] a,
+[class*="select-actions"] button,
+[class*="select-actions"] span,
+.bulk-actions a,
+.bulk-actions button,
+.bulk-actions span,
+[class*="bulk-actions"] a,
+[class*="bulk-actions"] button,
+[class*="bulk-actions"] span,
+div.select-all a,
+div.select-all button,
+div.select-all span,
+div[class*="select-all"] a,
+div[class*="select-all"] button,
+div[class*="select-all"] span,
+.collection-list__select-all a,
+.collection-list__select-all button,
+.collection-list__select-all span,
+[class*="select-all"] a,
+[class*="select-all"] button,
+[class*="select-all"] span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  margin: 0 2px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  box-sizing: border-box !important;
+}
+
+/* Create New / Add primary buttons - Keep at default position with beautiful decoration */
+.collection-list a[href*="/create"],
+[class*="collection-list"] a[href*="/create"],
+[class*="list-controls"] a[href*="/create"],
+[class*="list-header"] a[href*="/create"],
+a[class*="create-new"],
+a[class*="btn--style-primary"][href*="/create"] {
+  background: #1a2e1f !important;
+  color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-size: 10px !important;
+  padding: 4px 10px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  box-sizing: border-box !important;
+}
+
+.collection-list a[href*="/create"]:hover,
+[class*="collection-list"] a[href*="/create"]:hover,
+[class*="list-controls"] a[href*="/create"]:hover,
+a[class*="create-new"]:hover {
+  background: #254a34 !important;
+  border-color: #cbd5e1 !important;
+  color: #ffffff !important;
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+/* Compact and elegant inline edit/title links inside collection tables */
+table tbody td a,
+[class*="table"] tbody td a {
+  color: #1a2e1f !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  border-bottom: 1.5px dotted transparent !important;
+}
+
+table tbody td a:hover,
+[class*="table"] tbody td a:hover {
+  color: #c8922a !important;
+  border-bottom-color: #c8922a !important;
+}
+
+/* Add/Create/Publish primary action buttons decoration - Normal Views */
+.btn--style-primary,
+[class*="btn--style-primary"],
+[class*="create-new"],
+a[href*="/create"],
+button[type="submit"],
+.form-submit button[type="submit"] {
+  background: linear-gradient(135deg, #1a2e1f 0%, #101c13 100%) !important;
+  color: #ffffff !important;
+  border: 1.5px solid #c8922a !important;
+  border-radius: 24px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  font-size: 11px !important;
+  padding: 8px 18px !important;
+  box-shadow: 0 4px 10px rgba(26, 46, 31, 0.15) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn--style-primary:hover,
+[class*="btn--style-primary"]:hover,
+a[href*="/create"]:hover,
+button[type="submit"]:hover {
+  background: linear-gradient(135deg, #c8922a 0%, #a07218 100%) !important;
+  color: #1a2e1f !important;
+  border-color: #1a2e1f !important;
+  box-shadow: 0 6px 14px rgba(200, 146, 42, 0.25) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* Secondary action buttons decoration (Save Draft, custom edits) */
+.btn--style-secondary,
+[class*="btn--style-secondary"],
+[class*="save-draft"],
+button[id*="save-draft"] {
+  background: #ffffff !important;
+  color: #1a2e1f !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 24px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-size: 10px !important;
+  padding: 7px 16px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn--style-secondary:hover,
+[class*="btn--style-secondary"]:hover,
+[class*="save-draft"]:hover {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #000000 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Danger/Delete action buttons decoration */
+.btn--style-danger,
+[class*="btn--style-danger"],
+[class*="delete"],
+button[class*="delete"] {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #ef4444 !important;
+  border-radius: 24px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-size: 10px !important;
+  padding: 7px 16px !important;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn--style-danger:hover,
+[class*="btn--style-danger"]:hover,
+button[class*="delete"]:hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 6px 14px rgba(220, 38, 38, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
+
+
+
 
 

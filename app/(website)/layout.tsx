@@ -34,8 +34,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${playfair.variable} scroll-smooth`}
+      suppressHydrationWarning
     >
-      <body className="font-sans bg-bgOffWhite text-charcoal min-h-screen flex flex-col">
+      <body className="font-sans bg-bgOffWhite text-charcoal min-h-screen flex flex-col" suppressHydrationWarning>
         <Navbar />
         <main className="grow">{children}</main>
         <Footer />

@@ -151,5 +151,36 @@ export const SiteSettings: CollectionConfig = {
         description: 'Select the top 5 treks to display in the navbar dropdown under "Top 5 Treks".',
       },
     },
+    {
+      name: 'paymentSettings',
+      type: 'group',
+      label: 'Payment Gateway Toggles',
+      fields: [
+        {
+          name: 'enableStripe',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Enable Stripe Credit Card',
+        },
+        {
+          name: 'enablePaypal',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Enable PayPal Gateway',
+        },
+        {
+          name: 'enableLocalWallets',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Enable Local Wallets (eSewa, Khalti)',
+        },
+        {
+          name: 'enableBankTransfer',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Enable Bank SWIFT Wire Transfer',
+        },
+      ],
+    },
   ],
 };

@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: BlogPreviewPageProps): Promis
     collection: "blogPosts",
     where: { slug: { equals: slug } },
     depth: 2,
+    draft: true, // Enable draft query for live preview
   });
   const blog = (res.docs[0] || null) as unknown as BlogPost | null;
 
@@ -47,6 +48,7 @@ export default async function BlogPreviewPage({ params }: BlogPreviewPageProps) 
     collection: "blogPosts",
     where: { slug: { equals: slug } },
     depth: 2,
+    draft: true, // Enable draft query for live preview
   });
   const blog = (res.docs[0] || null) as unknown as BlogPost | null;
 
