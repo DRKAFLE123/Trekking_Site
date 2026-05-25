@@ -25,7 +25,7 @@ export async function GET() {
       },
     });
 
-    let seeded = true;
+    const seeded = true;
     let seededData: { email: string; name: string; role: string } | null = null;
 
     if (usersResult.totalDocs === 0) {
