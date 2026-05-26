@@ -4,17 +4,23 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FaChevronRight, FaInfoCircle, FaMapMarkerAlt, FaHeadset, FaEnvelope } from "react-icons/fa";
 import { renderLexical } from "@/lib/lexical-renderer";
+import { getPayload } from "payload";
+import config from "@/payload/payload.config";
 
 async function getPageData(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/pages/${slug}`, {
-      next: { revalidate: 60 },
+    const payload = await getPayload({ config });
+    const result = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: {
+          equals: slug,
+        },
+      },
+      depth: 2,
     });
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error(`Failed to fetch page data: ${res.status}`);
-    }
-    return res.json();
+    if (result.docs.length === 0) return null;
+    return result.docs[0];
   } catch (error) {
     console.error("Error in getPageData:", error);
     return null;
@@ -23,12 +29,15 @@ async function getPageData(slug: string) {
 
 async function getPagesList() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/pages?limit=20`, {
-      next: { revalidate: 3600 },
+    const payload = await getPayload({ config });
+    const result = await payload.find({
+      collection: 'pages',
+      limit: 20,
+      depth: 0,
     });
-    if (!res.ok) return [];
-    return res.json();
+    return result.docs;
   } catch (error) {
+    console.error("Error in getPagesList:", error);
     return [];
   }
 }
