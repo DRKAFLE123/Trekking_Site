@@ -247,12 +247,20 @@ export const ProfileDropdown: React.FC = () => {
   };
 
   return (
-    <div className="profile-dropdown-container" ref={dropdownRef}>
+    <div 
+      className="profile-dropdown-container" 
+      ref={dropdownRef}
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* Profile Trigger button */}
       <button 
         type="button"
         className="profile-dropdown-trigger"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
         aria-label="User profile menu"
       >
         <div className="profile-dropdown-trigger__avatar-wrap">

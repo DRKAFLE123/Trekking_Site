@@ -224,7 +224,11 @@ export const CustomAvatar: React.FC = () => {
   };
 
   return (
-    <div className="profile-dropdown-container" ref={dropdownRef}>
+    <div 
+      className="profile-dropdown-container" 
+      ref={dropdownRef}
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* Hidden File Input for Instant Upload */}
       <input 
         type="file"
@@ -238,7 +242,11 @@ export const CustomAvatar: React.FC = () => {
       <button 
         type="button"
         className="profile-dropdown-trigger"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
         aria-label="User profile menu"
       >
         <div className="profile-dropdown-trigger__avatar-wrap">
