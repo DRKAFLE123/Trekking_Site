@@ -121,7 +121,7 @@ export const treks: CollectionConfig = {
     },
     {
       name: 'heroImage',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
     },
     {
@@ -130,7 +130,7 @@ export const treks: CollectionConfig = {
       fields: [
         {
           name: 'image',
-          type: 'relationship',
+          type: 'upload',
           relationTo: 'media',
         },
       ],

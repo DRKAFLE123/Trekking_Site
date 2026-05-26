@@ -28,7 +28,7 @@ export const SiteSettings: CollectionConfig = {
     },
     {
       name: 'heroImage',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
     },
     {
@@ -85,7 +85,7 @@ export const SiteSettings: CollectionConfig = {
       type: 'array',
       fields: [
         { name: 'name', type: 'text' },
-        { name: 'logo', type: 'relationship', relationTo: 'media' },
+        { name: 'logo', type: 'upload', relationTo: 'media' },
         { name: 'url', type: 'text' },
       ],
     },

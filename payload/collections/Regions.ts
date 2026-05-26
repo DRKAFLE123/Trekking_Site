@@ -30,7 +30,7 @@ export const regions: CollectionConfig = {
     },
     {
       name: 'coverImage',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
     },
     {

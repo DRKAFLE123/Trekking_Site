@@ -25,7 +25,7 @@ export const teamMembers: CollectionConfig = {
     },
     {
       name: 'photo',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
     },
     {

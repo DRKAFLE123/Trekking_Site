@@ -21,7 +21,7 @@ export const gallery: CollectionConfig = {
     },
     {
       name: 'image',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
       required: true,
     },

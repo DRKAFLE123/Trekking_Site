@@ -37,7 +37,7 @@ export const users: CollectionConfig = {
     },
     {
       name: 'avatar',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
       admin: {
         description: 'Upload a custom profile picture.',

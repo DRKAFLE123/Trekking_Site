@@ -100,7 +100,7 @@ export const blogPosts: CollectionConfig = {
     },
     {
       name: 'coverImage',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
       admin: {
         position: 'sidebar',
@@ -141,7 +141,7 @@ export const blogPosts: CollectionConfig = {
         },
         {
           name: 'metaImage',
-          type: 'relationship',
+          type: 'upload',
           relationTo: 'media',
         },
       ],

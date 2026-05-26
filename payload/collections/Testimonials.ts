@@ -46,7 +46,7 @@ export const testimonials: CollectionConfig = {
     },
     {
       name: 'photo',
-      type: 'relationship',
+      type: 'upload',
       relationTo: 'media',
     },
   ],
