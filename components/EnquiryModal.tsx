@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaTimes, FaCheckCircle, FaExclamationCircle, FaLock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface EnquiryModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [statusMsg, setStatusMsg] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const calculateCost = () => {
     let unitPrice = defaultPrice;
@@ -31,6 +33,12 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!recaptchaToken) {
+      setStatus("error");
+      setStatusMsg("Please complete the reCAPTCHA validation.");
+      return;
+    }
+    
     setStatus("loading");
     setStatusMsg("");
 
@@ -48,6 +56,7 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
           message: message ? `${message}${phone ? ` (Phone: ${phone})` : ""}` : `Standard booking query. Phone: ${phone || "N/A"}`,
           tripTitle,
           totalCost,
+          recaptchaToken,
         }),
       });
 
@@ -216,9 +225,17 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
                   <span className="text-secondary font-black text-sm font-sans">${calculateCost()} USD</span>
                 </div>
 
+                {/* ReCAPTCHA */}
+                <div className="flex justify-center my-1">
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
+                    onChange={(token) => setRecaptchaToken(token)}
+                  />
+                </div>
+
                 <button
                   type="submit"
-                  disabled={status === "loading"}
+                  disabled={status === "loading" || !recaptchaToken}
                   className="w-full bg-[#E84C1E] hover:bg-[#C03A12] text-white font-bold py-3.5 rounded-xl border border-transparent transition duration-300 text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-[0.98] disabled:opacity-50 mt-2"
                 >
                   <span>{status === "loading" ? "Submitting Request..." : "Send Secure Enquiry"}</span>

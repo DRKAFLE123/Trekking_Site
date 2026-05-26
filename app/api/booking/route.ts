@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { verifyRecaptcha } from "@/lib/recaptcha";
+import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
 
 // Helper to generate a random uppercase alphanumeric string
 function generateBookingId(trekSlug: string): string {
@@ -13,6 +15,13 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const payload = await getPayload({ config });
+
+    // Verify reCAPTCHA
+    const { recaptchaToken } = body;
+    const isHuman = await verifyRecaptcha(recaptchaToken);
+    if (!isHuman) {
+      return NextResponse.json({ error: "reCAPTCHA verification failed. Please try again." }, { status: 400 });
+    }
 
     // ----------------------------------------------------
     // INQUIRY FLOW (If travelers array is missing or empty)
@@ -73,6 +82,50 @@ export async function POST(request: Request) {
 
       console.log(`[INQUIRY SAVED TO DATABASE] ID: ${inquiry.id}`);
 
+      // Send Emails
+      const adminEmail = process.env.CONTACT_EMAIL;
+      if (adminEmail) {
+        await sendEmail({
+          to: adminEmail,
+          replyTo: email,
+          subject: `New Trek Inquiry: ${tripTitle}`,
+          html: getPremiumEmailTemplate(
+            "Trek Inquiry",
+            `New Inquiry for ${tripTitle}`,
+            `
+            <table class="data-table">
+              <tbody>
+                <tr><th>Name</th><td>${name}</td></tr>
+                <tr><th>Email</th><td>${email}</td></tr>
+                <tr><th>Travelers</th><td>${guests || 1}</td></tr>
+                <tr><th>Start Date</th><td>${date || 'Flexible'}</td></tr>
+              </tbody>
+            </table>
+            <div class="info-box">
+              <p><strong>Message:</strong></p>
+              <p style="white-space: pre-wrap; color: #3D3D3D;">${message || 'Standard inquiry.'}</p>
+            </div>
+            `,
+            email
+          ),
+        });
+
+        await sendEmail({
+          to: email,
+          subject: `Your Inquiry for ${tripTitle} - Nature Heaven Treks`,
+          html: getPremiumEmailTemplate(
+            "Trek Inquiry",
+            `Hello ${name},`,
+            `
+            <p>Thank you for your interest in the <strong>${tripTitle}</strong>.</p>
+            <p>We have received your inquiry and our team is reviewing your requirements. We will get back to you with a detailed response shortly.</p>
+            <br />
+            <p>Best regards,<br/><strong>The Nature Heaven Treks Team</strong></p>
+            `
+          ),
+        });
+      }
+
       return NextResponse.json(
         { message: "Enquiry submitted successfully.", inquiryId: inquiry.id },
         { status: 200 }
@@ -95,13 +148,20 @@ export async function POST(request: Request) {
       tax,
       totalPrice,
       paymentType,
-      paymentMethod,
-      paymentId
+      paymentMethod: rawPaymentMethod,
+      paymentId: rawPaymentId
     } = body;
+
+    const paymentMethod = paymentType === "pay_later" ? null : rawPaymentMethod;
+    const paymentId = paymentType === "pay_later" ? null : rawPaymentId;
 
     // Validate checkout data
     if (!trekSlug || !startDate || !endDate || !travelers || !customerDetails || !totalPrice) {
       return NextResponse.json({ error: "Missing required checkout specifications" }, { status: 400 });
+    }
+
+    if (paymentType !== "pay_later" && !paymentMethod) {
+      return NextResponse.json({ error: "Missing payment method" }, { status: 400 });
     }
 
     // Find the trek
@@ -137,9 +197,9 @@ export async function POST(request: Request) {
         tax: tax || 0,
         totalPrice,
         paymentType,
-        paymentStatus: paymentMethod === "bank_transfer" ? "unpaid" : "paid",
-        bookingStatus: paymentMethod === "bank_transfer" ? "pending" : "confirmed",
-        adminRemarks: `System checkout via website using ${paymentMethod.toUpperCase()}`,
+        paymentStatus: paymentType === "pay_later" || paymentMethod === "bank_transfer" ? "unpaid" : "paid",
+        bookingStatus: paymentType === "pay_later" || paymentMethod === "bank_transfer" ? "pending" : "confirmed",
+        adminRemarks: paymentType === "pay_later" ? "System checkout via website (Book Now, Pay Later - 0%)" : `System checkout via website using ${paymentMethod?.toUpperCase()} with ${paymentType}`,
       },
     });
 
@@ -151,9 +211,9 @@ export async function POST(request: Request) {
         data: {
           booking: booking.id,
           paymentId: paymentId || `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
-          amount: paymentType === "advance_10" ? Math.round(totalPrice * 0.1) : totalPrice,
+          amount: paymentType === "pay_later" ? 0 : (paymentType === "advance_10" ? Math.round(totalPrice * 0.1) : totalPrice),
           method: paymentMethod,
-          status: paymentMethod === "bank_transfer" ? "pending" : "success",
+          status: (paymentMethod === "bank_transfer" || paymentType === "pay_later") ? "pending" : "success",
           transactionDetails: JSON.stringify({
             checkoutTime: new Date().toISOString(),
             paymentType,
@@ -202,6 +262,55 @@ export async function POST(request: Request) {
       Payment Method: ${paymentMethod}
       Total Paid: $${paymentRecord ? paymentRecord.amount : 0} USD
     `);
+
+    // Send Emails
+    const adminEmail = process.env.CONTACT_EMAIL;
+    if (adminEmail) {
+      await sendEmail({
+        to: adminEmail,
+        replyTo: customerDetails.email,
+        subject: `New Booking Created: ${bookingId} for ${trek.title}`,
+        html: getPremiumEmailTemplate(
+          "New Trek Booking",
+          `New Booking: ${bookingId}`,
+          `
+          <table class="data-table">
+            <tbody>
+              <tr><th>Trek</th><td>${trek.title}</td></tr>
+              <tr><th>Customer</th><td>${customerDetails.firstName} ${customerDetails.lastName}</td></tr>
+              <tr><th>Email</th><td>${customerDetails.email}</td></tr>
+              <tr><th>Dates</th><td>${startDate} to ${endDate}</td></tr>
+              <tr><th>Travelers</th><td>${travelersCount}</td></tr>
+              <tr><th>Payment Method</th><td>${paymentMethod}</td></tr>
+              <tr><th>Total Price</th><td>$${totalPrice}</td></tr>
+            </tbody>
+          </table>
+          `,
+          customerDetails.email
+        ),
+      });
+
+      await sendEmail({
+        to: customerDetails.email,
+        subject: `Booking Confirmation: ${trek.title} - ${bookingId}`,
+        html: getPremiumEmailTemplate(
+          "Booking Confirmation",
+          `Hello ${customerDetails.firstName},`,
+          `
+          <p>Thank you for booking with Nature Heaven Treks!</p>
+          <p>Your booking for <strong>${trek.title}</strong> has been received.</p>
+          <div class="info-box">
+            <p><strong>Booking Reference:</strong> ${bookingId}</p>
+            <p><strong>Dates:</strong> ${startDate} to ${endDate}</p>
+            <p><strong>Travelers:</strong> ${travelersCount}</p>
+          </div>
+          <p>We will contact you shortly with further details and preparation instructions.</p>
+          <br />
+          <p>Best regards,<br/><strong>The Nature Heaven Treks Team</strong></p>
+          `
+        ),
+      });
+    }
 
     return NextResponse.json({
       success: true,

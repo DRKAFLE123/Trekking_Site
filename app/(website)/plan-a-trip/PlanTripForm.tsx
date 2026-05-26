@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { FaCheckCircle, FaExclamationCircle, FaPaperPlane, FaUserFriends, FaCalendarAlt, FaChevronRight, FaChevronLeft, FaHiking, FaCompass } from "react-icons/fa";
 import { Trek } from "@/types";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface PlanTripFormProps {
   treks: Trek[];
@@ -31,6 +32,7 @@ export default function PlanTripForm({ treks }: PlanTripFormProps) {
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -66,6 +68,12 @@ export default function PlanTripForm({ treks }: PlanTripFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!recaptchaToken) {
+      setStatus("error");
+      setStatusMessage("Please complete the reCAPTCHA validation.");
+      return;
+    }
+
     setStatus("loading");
 
     // Formulate a beautiful, highly detailed message for Kafle and the team containing all custom specs!
@@ -93,10 +101,11 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
       travelers: formData.travelers,
       trek: formData.trek || undefined,
       message: customMessage,
+      recaptchaToken,
     };
 
     try {
-      const response = await fetch("/api/inquiries", {
+      const response = await fetch("/api/plan-trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payloadData),
@@ -523,14 +532,20 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
                   <FaChevronRight className="h-3 w-3" />
                 </button>
               ) : (
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary transition flex items-center gap-2 text-xs uppercase tracking-wider shadow-lg disabled:opacity-50"
-                >
-                  <FaPaperPlane className="h-3.5 w-3.5 animate-pulse" />
-                  <span>{status === "loading" ? "Designing Plan..." : "Submit Travel Plan"}</span>
-                </button>
+                <div className="flex flex-col gap-4 items-end">
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
+                    onChange={(token) => setRecaptchaToken(token)}
+                  />
+                  <button
+                    type="submit"
+                    disabled={status === "loading" || !recaptchaToken}
+                    className="bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary transition flex items-center gap-2 text-xs uppercase tracking-wider shadow-lg disabled:opacity-50"
+                  >
+                    <FaPaperPlane className="h-3.5 w-3.5 animate-pulse" />
+                    <span>{status === "loading" ? "Designing Plan..." : "Submit Travel Plan"}</span>
+                  </button>
+                </div>
               )}
             </div>
 

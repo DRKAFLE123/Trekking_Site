@@ -224,7 +224,7 @@ export default function Navbar() {
   const isActive = (link: any) => {
     if (!link.dropdown && link.href) return pathname === link.href;
     if (link.key === "trips") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
-    if (link.key === "info") return ["/why-us", "/visa-info", "/travel-insurance", "/packing-list", "/faqs", "/private-treks"].some(p => pathname.startsWith(p));
+    if (link.key === "info") return pathname.startsWith("/travel-info") || pathname.startsWith("/faqs");
     if (link.key === "company") return ["/about-us", "/our-team", "/gallery", "/video-gallery", "/csr"].includes(pathname);
     return false;
   };
@@ -241,37 +241,37 @@ export default function Navbar() {
       dropdown: true,
       key: "info",
       items: [
-        { label: "Why Choose Us", href: "/why-us" },
-        { label: "Visa Info", href: "/visa-info" },
-        { label: "Travel Insurance", href: "/travel-insurance" },
-        { label: "Packing List", href: "/packing-list" },
+        { label: "Travel Guide for Nepal", href: "/travel-info/travel-guide-for-nepal" },
+        { label: "Why Travel to Nepal?", href: "/travel-info/why-travel-to-nepal" },
+        { label: "Regions in Nepal", href: "/travel-info/regions-in-nepal" },
+        { label: "Travel Insurance", href: "/travel-info/travel-insurance" },
         { label: "FAQs", href: "/faqs" },
       ],
       megaItems: [
         // Column 1
         [
-          { label: "Travel Guide for Nepal", href: "/why-us", icon: "🗺️" },
-          { label: "Why Travel to Nepal?", href: "/why-us", icon: "🏔️" },
-          { label: "Regions in Nepal", href: "/trips", icon: "📍" },
-          { label: "Attractions in Nepal", href: "/trips", icon: "✨" },
-          { label: "Guides Mandatory for Trekkers", href: "/faqs#guides", icon: "👨‍🦯" },
-          { label: "Accommodation in Nepal", href: "/faqs#accommodation", icon: "🏨" },
-          { label: "Altitude Acclimatization", href: "/faqs#altitude", icon: "⛰️" },
-          { label: "Getting to Nepal & Visas", href: "/visa-info", icon: "✈️" },
-          { label: "Private Treks in Nepal", href: "/private-treks", icon: "🎿" },
+          { label: "Travel Guide for Nepal", href: "/travel-info/travel-guide-for-nepal", icon: "🗺️" },
+          { label: "Why Travel to Nepal?", href: "/travel-info/why-travel-to-nepal", icon: "🏔️" },
+          { label: "Regions in Nepal", href: "/travel-info/regions-in-nepal", icon: "📍" },
+          { label: "Attractions in Nepal", href: "/travel-info/attractions-in-nepal", icon: "✨" },
+          { label: "Guides Mandatory for Trekkers", href: "/travel-info/guides-mandatory-for-trekkers", icon: "👨‍🦯" },
+          { label: "Accommodation in Nepal", href: "/travel-info/accommodation-in-nepal", icon: "🏨" },
+          { label: "Altitude Acclimatization", href: "/travel-info/altitude-acclimatization", icon: "⛰️" },
+          { label: "Getting to Nepal & Visas", href: "/travel-info/getting-to-nepal-and-visas", icon: "✈️" },
+          { label: "Private Treks in Nepal", href: "/travel-info/private-treks-in-nepal", icon: "🎿" },
         ],
         // Column 2
         [
-          { label: "Currency & Payments", href: "/faqs#currency", icon: "💳" },
-          { label: "Facts About Mt. Everest", href: "/trips/everest-base-camp-trek", icon: "🏔️" },
-          { label: "Food and Beverages", href: "/faqs#food", icon: "🍛" },
-          { label: "Safety While Travelling", href: "/travel-insurance", icon: "🛡️" },
-          { label: "Transportation in Nepal", href: "/faqs#transport", icon: "🚌" },
-          { label: "Travel Insurance", href: "/travel-insurance", icon: "🔒" },
-          { label: "Trekking Permits & Fees", href: "/faqs#permits", icon: "📋" },
-          { label: "Weather & Climate", href: "/faqs#weather", icon: "🌤️" },
-          { label: "What to Do Before Coming", href: "/packing-list", icon: "📦" },
-          { label: "When to Come to Nepal?", href: "/faqs#season", icon: "📅" },
+          { label: "Currency & Payments", href: "/travel-info/currency-and-payments", icon: "💳" },
+          { label: "Facts About Mt. Everest", href: "/travel-info/facts-about-mt-everest", icon: "🏔️" },
+          { label: "Food and Beverages", href: "/travel-info/food-and-beverages", icon: "🍛" },
+          { label: "Safety While Travelling", href: "/travel-info/safety-while-travelling", icon: "🛡️" },
+          { label: "Transportation in Nepal", href: "/travel-info/transportation-in-nepal", icon: "🚌" },
+          { label: "Travel Insurance", href: "/travel-info/travel-insurance", icon: "🔒" },
+          { label: "Trekking Permits & Fees", href: "/travel-info/trekking-permits-and-fees", icon: "📋" },
+          { label: "Weather & Climate", href: "/travel-info/weather-and-climate", icon: "🌤️" },
+          { label: "What to Do Before Coming", href: "/travel-info/what-to-do-before-coming", icon: "📦" },
+          { label: "When to Come to Nepal?", href: "/travel-info/when-to-come-to-nepal", icon: "📅" },
         ],
       ],
     },
@@ -516,9 +516,9 @@ export default function Navbar() {
                           <div className="border-t border-gray-100 px-5 py-3 bg-gray-50/80 flex items-center justify-between gap-3">
                             <div className="flex gap-2 flex-wrap">
                               {[
-                                { label: "Visa Info", href: "/visa-info" },
-                                { label: "Insurance", href: "/travel-insurance" },
-                                { label: "Packing List", href: "/packing-list" },
+                                { label: "Visa Info", href: "/travel-info/getting-to-nepal-and-visas" },
+                                { label: "Insurance", href: "/travel-info/travel-insurance" },
+                                { label: "Packing List", href: "/travel-info/what-to-do-before-coming" },
                                 { label: "FAQs", href: "/faqs" },
                               ].map((q) => (
                                 <Link

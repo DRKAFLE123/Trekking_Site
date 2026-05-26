@@ -20,6 +20,7 @@ import { inquiries } from './collections/Inquiries';
 import { payments } from './collections/Payments';
 import { users } from './collections/Users';
 import { media } from './collections/Media';
+import { Pages } from './collections/Pages';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -61,7 +62,8 @@ export default buildConfig({
     bookings,
     inquiries,
     payments,
-    media
+    media,
+    Pages
   ],
   db: isPostgres
     ? postgresAdapter({

@@ -15,6 +15,7 @@ import {
   FaWhatsapp,
   FaLock
 } from "react-icons/fa";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -25,6 +26,7 @@ export default function Footer() {
   const [submitting, setSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [statusType, setStatusType] = useState<"success" | "error" | "">("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -56,13 +58,19 @@ export default function Footer() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+    if (!recaptchaToken) {
+      setStatusType("error");
+      setStatusMessage("Please complete the reCAPTCHA validation.");
+      return;
+    }
+    
     setSubmitting(true);
     setStatusMessage("");
     try {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ name, email, recaptchaToken }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -175,9 +183,9 @@ export default function Footer() {
                   />
                   <button
                     type="submit"
-                    className="text-white hover:text-secondary hover:scale-105 active:scale-95 transition ml-2"
+                    className="text-white hover:text-secondary hover:scale-105 active:scale-95 transition ml-2 disabled:opacity-50"
                     aria-label="Subscribe"
-                    disabled={submitting}
+                    disabled={submitting || !recaptchaToken}
                   >
                     <span className="border border-white/30 hover:border-secondary rounded-full p-1.5 flex items-center justify-center">
                       <svg
@@ -197,6 +205,13 @@ export default function Footer() {
                   </button>
                 </div>
               </form>
+              <div className="flex w-full max-w-md my-1">
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
+                  onChange={(token) => setRecaptchaToken(token)}
+                  theme="dark"
+                />
+              </div>
               {statusMessage && (
                 <p className={`text-xs ${statusType === "success" ? "text-green-400" : "text-red-400"}`}>
                   {statusMessage}
@@ -560,7 +575,7 @@ export default function Footer() {
               {/* Visa Badge */}
               <div className="bg-white border border-gray-200 rounded px-2.5 py-1.5 flex items-center justify-center hover:bg-gray-50 transition h-[26px]">
                 <svg className="h-3 w-10 text-[#1a1f71] fill-current" viewBox="0 0 100 32">
-                  <path d="M40.7 2.3l-5.6 24.3h-4.8l3-12.8c-.8-1.5-2.2-2.3-4.2-2.3-3.6 0-7 3.5-7 7.7 0 3.7 2.5 5.7 5.7 5.7 1.8 0 3.5-1 4.5-2.3l-.3 1.8h4.4l5.6-24.4h-6.3zm19.8 11.2c-.2-3.1-2.9-4.8-6.1-4.8-5.3 0-8.9 3.5-8.9 8.2 0 4.8 3.5 8 8.6 8 3.5 0 6-1.5 7-4.1l-4.1-1.7c-.5 1-1.4 1.8-2.8 1.8-2 0-3.6-1.4-3.6-3.7h10.1c.1-.8.2-1.8.2-2.7 border-box;z-index: 1; overflow: visible;--color: #fff;fill: currentColor;m40.7 2.3zm-5.8 4.3c1.5 0 2.5.9 2.5 2.5 0 1.5-1 2.5-2.5 2.5s-2.5-1-2.5-2.5c0-1.6 1-2.5 2.5-2.5zM15 2.3L2 26.6h5l2.7-7.2h8.6l1 7.2h5L15 2.3zm-4.3 13.6L14 7l3.3 8.9h-6.6zm70.6-13.6h-5c-1.5 0-2.5 1-2.8 2.5l-8.6 21.8h5l2-5h7.6l1.3 5h4.6L81.3 2.3zm-6.2 15.6l2.3-7.2 2.3 7.2h-4.6z" />
+                  <path d="M40.7 2.3l-5.6 24.3h-4.8l3-12.8c-.8-1.5-2.2-2.3-4.2-2.3-3.6 0-7 3.5-7 7.7 0 3.7 2.5 5.7 5.7 5.7 1.8 0 3.5-1 4.5-2.3l-.3 1.8h4.4l5.6-24.4h-6.3zm19.8 11.2c-.2-3.1-2.9-4.8-6.1-4.8-5.3 0-8.9 3.5-8.9 8.2 0 4.8 3.5 8 8.6 8 3.5 0 6-1.5 7-4.1l-4.1-1.7c-.5 1-1.4 1.8-2.8 1.8-2 0-3.6-1.4-3.6-3.7h10.1c.1-.8.2-1.8.2-2.7m-20.9-10.4c1.5 0 2.5.9 2.5 2.5 0 1.5-1 2.5-2.5 2.5s-2.5-1-2.5-2.5c0-1.6 1-2.5 2.5-2.5zM15 2.3L2 26.6h5l2.7-7.2h8.6l1 7.2h5L15 2.3zm-4.3 13.6L14 7l3.3 8.9h-6.6zm70.6-13.6h-5c-1.5 0-2.5 1-2.8 2.5l-8.6 21.8h5l2-5h7.6l1.3 5h4.6L81.3 2.3zm-6.2 15.6l2.3-7.2 2.3 7.2h-4.6z" />
                 </svg>
               </div>
 

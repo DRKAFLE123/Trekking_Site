@@ -18,6 +18,7 @@ import {
   FaInfoCircle,
   FaExclamationCircle
 } from "react-icons/fa";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface GroupDiscount {
   minPersons: number;
@@ -116,7 +117,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   const [passportDocs, setPassportDocs] = useState<Record<number, string>>({});
 
   // Payment Options (Step 3)
-  const [paymentType, setPaymentType] = useState<"full" | "advance_10">("full");
+  const [paymentType, setPaymentType] = useState<"full" | "advance_10" | "pay_later">("full");
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal" | "esewa" | "khalti" | "bank_transfer">("stripe");
   
   // Gateways inputs
@@ -129,6 +130,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [bookingResponse, setBookingResponse] = useState<any>(null);
   const [stepError, setStepError] = useState<string | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const [siteSettings, setSiteSettings] = useState<any>(null);
 
@@ -328,7 +330,12 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   const discountTotal = (originalPricePP - paxPrice) * guestsCount;
   const taxTotal = Math.round((totalBasePrice + addonsTotal) * 0.05); // 5% tourism fee
   const totalPrice = totalBasePrice + addonsTotal + taxTotal;
-  const paymentDueNow = paymentType === "advance_10" ? Math.round(totalPrice * 0.1) : totalPrice;
+  
+  const advancePercentage = siteSettings?.paymentSettings?.advancePaymentPercentage ?? 10;
+  const enablePayLater = siteSettings?.paymentSettings?.enableBookNowPayLater !== false;
+  const advanceAmount = Math.round(totalPrice * (advancePercentage / 100));
+
+  const paymentDueNow = paymentType === "pay_later" ? 0 : (paymentType === "advance_10" ? advanceAmount : totalPrice);
 
   // Form validations for each stepper with descriptive error messaging
   const validateStep = (shouldSetError = true): boolean => {
@@ -393,6 +400,8 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       return true;
     }
     if (currentStep === 3) {
+      if (paymentType === "pay_later") return true;
+
       if (paymentMethod === "stripe") {
         const cleanCard = creditCard.number.replace(/\s+/g, '');
         if (cleanCard.length < 15) {
@@ -468,6 +477,11 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       return;
     }
 
+    if (!recaptchaToken) {
+      setStepError("Please complete the reCAPTCHA validation.");
+      return;
+    }
+
     setSubmitting(true);
 
     // Map Lead contact full name into firstName/lastName for API compatibility
@@ -513,7 +527,8 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       paymentType,
       paymentMethod,
       paymentId: `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
-      adminRemarks: `Checkout via website booking stepper. Emergency Phone: ${contactInfo.emergencyPhone}. Flight Arrival: ${contactInfo.flightArrivalDate || 'None'}. Flight Departure: ${contactInfo.flightDepartureDate || 'None'}`
+      adminRemarks: `Checkout via website booking stepper. Emergency Phone: ${contactInfo.emergencyPhone}. Flight Arrival: ${contactInfo.flightArrivalDate || 'None'}. Flight Departure: ${contactInfo.flightDepartureDate || 'None'}`,
+      recaptchaToken
     };
 
     try {
@@ -736,7 +751,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
             </div>
 
             <div className="flex justify-between py-3 font-black text-sm bg-green-50 border border-green-200 px-4 rounded-xl text-green-900 mt-2">
-              <span>Amount Paid Now ({paymentType === "advance_10" ? "10% Deposit" : "100% Full"}):</span>
+              <span>Amount Paid Now ({paymentType === "pay_later" ? "0% Pay Later" : (paymentType === "advance_10" ? `${advancePercentage}% Deposit` : "100% Full")}):</span>
               <span>${paymentDueNow} USD</span>
             </div>
           </div>
@@ -750,7 +765,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
             </p>
             <div className="grid grid-cols-2 gap-2.5 font-semibold text-[11px] text-[#1A1A2E] bg-white border border-[#E5E5E5] p-4 rounded-xl font-mono mt-1">
               <span>Account Holder Name:</span>
-              <strong>Summit Trail Trekking Pvt. Ltd.</strong>
+              <strong>Nature Heaven Treks Pvt. Ltd.</strong>
               <span>Bank Name:</span>
               <strong>Global IME Bank Nepal</strong>
               <span>Account Number:</span>
@@ -1319,34 +1334,60 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                     </div>
                   </label>
 
-                  <label
-                    onClick={() => setPaymentType("advance_10")}
-                    className={`border p-4 rounded-xl cursor-pointer transition flex items-start gap-3 select-none ${
-                      paymentType === "advance_10"
-                        ? "border-green-300 bg-white shadow-sm ring-2 ring-[#2E7D32]/25"
-                        : "border-[#E5E5E5] bg-white hover:bg-slate-50"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      checked={paymentType === "advance_10"}
-                      readOnly
-                      className="mt-1 accent-[#2E7D32] h-4 w-4 cursor-pointer"
-                    />
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-xs font-black text-[#1a2e1f]">Pay 10% Advance Deposit</span>
-                      <span className="text-[9px] text-[#6B6B6B] font-semibold">Reserve spots today, settle remaining 90% in Kathmandu</span>
-                      <span className="text-xs text-[#2E7D32] font-black mt-2">${paymentDueNow} USD due</span>
-                    </div>
-                  </label>
+                  {advancePercentage > 0 && (
+                    <label
+                      onClick={() => setPaymentType("advance_10")}
+                      className={`border p-4 rounded-xl cursor-pointer transition flex items-start gap-3 select-none ${
+                        paymentType === "advance_10"
+                          ? "border-green-300 bg-white shadow-sm ring-2 ring-[#2E7D32]/25"
+                          : "border-[#E5E5E5] bg-white hover:bg-slate-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        checked={paymentType === "advance_10"}
+                        readOnly
+                        className="mt-1 accent-[#2E7D32] h-4 w-4 cursor-pointer"
+                      />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-xs font-black text-[#1a2e1f]">Pay {advancePercentage}% Advance Deposit</span>
+                        <span className="text-[9px] text-[#6B6B6B] font-semibold">Reserve spots today, settle remaining {100 - advancePercentage}% in Kathmandu</span>
+                        <span className="text-xs text-[#2E7D32] font-black mt-2">${advanceAmount} USD due</span>
+                      </div>
+                    </label>
+                  )}
+
+                  {enablePayLater && (
+                    <label
+                      onClick={() => setPaymentType("pay_later")}
+                      className={`border p-4 rounded-xl cursor-pointer transition flex items-start gap-3 select-none ${
+                        paymentType === "pay_later"
+                          ? "border-green-300 bg-white shadow-sm ring-2 ring-[#2E7D32]/25"
+                          : "border-[#E5E5E5] bg-white hover:bg-slate-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        checked={paymentType === "pay_later"}
+                        readOnly
+                        className="mt-1 accent-[#2E7D32] h-4 w-4 cursor-pointer"
+                      />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-xs font-black text-[#1a2e1f]">Book Now, Pay Later (0%)</span>
+                        <span className="text-[9px] text-[#6B6B6B] font-semibold">Submit a credit booking request subject to approval</span>
+                        <span className="text-xs text-[#2E7D32] font-black mt-2">$0 USD due today</span>
+                      </div>
+                    </label>
+                  )}
                 </div>
               </div>
 
               {/* Gateway Methods List */}
-              <div className="flex flex-col gap-4 border-t border-[#E5E5E5] pt-5">
-                <h4 className="font-serif text-sm font-black text-[#1a2e1f] uppercase tracking-wide">
-                  Choose Payment Method
-                </h4>
+              {paymentType !== "pay_later" && (
+                <div className="flex flex-col gap-4 border-t border-[#E5E5E5] pt-5">
+                  <h4 className="font-serif text-sm font-black text-[#1a2e1f] uppercase tracking-wide">
+                    Choose Payment Method
+                  </h4>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   {getActivePaymentMethods().map((m) => {
@@ -1473,6 +1514,15 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                   )}
                 </div>
               </div>
+            )}
+
+              {/* ReCAPTCHA */}
+              <div className="flex justify-center mt-5 mb-2">
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
+                  onChange={(token) => setRecaptchaToken(token)}
+                />
+              </div>
 
               {/* Submit triggers */}
               <div className="border-t border-[#E5E5E5] pt-5 flex items-center justify-between mt-2 print:hidden">
@@ -1484,22 +1534,22 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                   <FaArrowLeft className="text-[10px]" /> Back
                 </button>
 
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold px-8 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg disabled:opacity-50 active:scale-[0.98] transition"
-                >
-                  {submitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Locking Seat Registry...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaLock className="text-[10px]" /> Secure Reserve & Pay
-                    </>
-                  )}
-                </button>
+                {/* Final Submit Button */}
+                <div className="pt-4 border-t border-[#E5E5E5]">
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-[#E84C1E] hover:bg-[#d14118] text-white font-black py-4 rounded-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition disabled:opacity-70"
+                  >
+                    {submitting ? (
+                      <span className="flex items-center gap-2"><span className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full"></span> Processing...</span>
+                    ) : (
+                      <>
+                        <FaLock className="text-white/80" /> {paymentType === "pay_later" ? "Submit Booking Request" : "Confirm & Pay Now"}
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </form>
           )}
@@ -1623,7 +1673,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
             <div className="flex justify-between font-black py-2.5 border-t border-b border-white/10 my-1 text-white/95 items-baseline">
               <div className="flex flex-col">
                 <span className="uppercase text-[9px] text-white/60 font-extrabold">Paid / Due Now:</span>
-                <span className="text-[10px] text-green-400 font-bold">{paymentType === "advance_10" ? "10% Advance Deposit" : "100% Full Payment"}</span>
+                <span className="text-[10px] text-green-400 font-bold">{paymentType === "pay_later" ? "0% Credit Booking" : (paymentType === "advance_10" ? "10% Advance Deposit" : "100% Full Payment")}</span>
               </div>
               <span className="text-base text-green-400 font-mono font-black">${paymentDueNow} USD</span>
             </div>

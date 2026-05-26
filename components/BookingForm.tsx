@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { FaCalendarAlt, FaUsers, FaLock, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface BookingFormProps {
   price: number;
@@ -20,6 +21,7 @@ export default function BookingForm({ price, discountedPrice, tripTitle }: Booki
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const unitPrice = discountedPrice || price;
   const originalPrice = price;
@@ -37,6 +39,12 @@ export default function BookingForm({ price, discountedPrice, tripTitle }: Booki
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!recaptchaToken) {
+      setStatus("error");
+      setStatusMessage("Please complete the reCAPTCHA validation.");
+      return;
+    }
+    
     setStatus("loading");
 
     try {
@@ -47,6 +55,7 @@ export default function BookingForm({ price, discountedPrice, tripTitle }: Booki
           ...formData,
           tripTitle,
           totalCost,
+          recaptchaToken,
         }),
       });
 
@@ -184,10 +193,18 @@ export default function BookingForm({ price, discountedPrice, tripTitle }: Booki
             </div>
           )}
 
+          {/* ReCAPTCHA */}
+          <div className="flex justify-center my-1">
+            <ReCAPTCHA
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
+              onChange={(token) => setRecaptchaToken(token)}
+            />
+          </div>
+
           {/* Submit */}
           <button
             type="submit"
-            disabled={status === "loading"}
+            disabled={status === "loading" || !recaptchaToken}
             className="w-full bg-secondary text-primary font-bold py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-[1.02] active:scale-95 transition-all duration-300 text-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <span>{status === "loading" ? "Submitting..." : "Send Enquiry Request"}</span>

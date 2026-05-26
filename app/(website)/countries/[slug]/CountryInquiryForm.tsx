@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaCheckCircle, FaExclamationCircle, FaPaperPlane } from "react-icons/fa";
 import { Trek } from "@/types";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface CountryInquiryFormProps {
   countryName: string;
@@ -23,6 +24,7 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -34,13 +36,19 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!recaptchaToken) {
+      setStatus("error");
+      setStatusMessage("Please complete the reCAPTCHA validation.");
+      return;
+    }
+    
     setStatus("loading");
 
     try {
-      const response = await fetch("/api/inquiries", {
+      const response = await fetch("/api/plan-trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
 
       const data = await response.json();
@@ -190,10 +198,18 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
             ></textarea>
           </div>
 
+          {/* ReCAPTCHA */}
+          <div className="flex justify-center my-1">
+            <ReCAPTCHA
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
+              onChange={(token) => setRecaptchaToken(token)}
+            />
+          </div>
+
           {/* Submit */}
           <button
             type="submit"
-            disabled={status === "loading"}
+            disabled={status === "loading" || !recaptchaToken}
             className="w-full bg-secondary text-primary font-bold py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-[1.01] transition-all duration-300 text-xs flex items-center justify-center gap-2 disabled:opacity-50 mt-1"
           >
             <FaPaperPlane className="h-3 w-3" />

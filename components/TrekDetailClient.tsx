@@ -218,7 +218,7 @@ const EBC_FALLBACK = {
     "First aid kit carried by the guide, including pulse oximeter",
     "All government taxes, office service charges, and VAT",
     "Down jacket and sleeping bag rental (if required, returned after trek)",
-    "Summit Trail Trekking duffel bag and completion certificate"
+    "Nature Heaven Treks duffel bag and completion certificate"
   ],
   exclusions: [
     "International airfare and airport departure taxes",

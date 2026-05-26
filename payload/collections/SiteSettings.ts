@@ -180,6 +180,21 @@ export const SiteSettings: CollectionConfig = {
           defaultValue: true,
           label: 'Enable Bank SWIFT Wire Transfer',
         },
+        {
+          name: 'enableBookNowPayLater',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Enable Book Now, Pay Later (0% Down)',
+        },
+        {
+          name: 'advancePaymentPercentage',
+          type: 'number',
+          defaultValue: 10,
+          label: 'Advance Payment Percentage (%)',
+          admin: {
+            description: 'Set to 0 to completely hide the Advance Deposit option.',
+          },
+        },
       ],
     },
   ],

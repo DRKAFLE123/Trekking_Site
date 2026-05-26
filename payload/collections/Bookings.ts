@@ -111,7 +111,8 @@ export const bookings: CollectionConfig = {
       type: 'select',
       options: [
         { label: 'Full Payment', value: 'full' },
-        { label: '10% Advance Deposit', value: 'advance_10' },
+        { label: 'Advance Deposit', value: 'advance_10' },
+        { label: 'Book Now, Pay Later (0%)', value: 'pay_later' },
       ],
       required: true,
       defaultValue: 'full',
