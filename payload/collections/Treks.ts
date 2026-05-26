@@ -10,6 +10,7 @@ export const treks: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Trekking & Operations',
     useAsTitle: 'title',
   },
   fields: [

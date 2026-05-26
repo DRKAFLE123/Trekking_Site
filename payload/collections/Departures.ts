@@ -10,6 +10,7 @@ export const departures: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Trekking & Operations',
     useAsTitle: 'startDate',
     defaultColumns: ['startDate', 'endDate', 'trek', 'availableSeats', 'bookedSeats', 'status'],
   },

@@ -10,6 +10,7 @@ export const blogPosts: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Website Content',
     useAsTitle: 'title',
     preview: (doc) => {
       if (doc && doc.slug) {
@@ -102,9 +103,6 @@ export const blogPosts: CollectionConfig = {
       name: 'coverImage',
       type: 'upload',
       relationTo: 'media',
-      admin: {
-        position: 'sidebar',
-      },
     },
     {
       name: 'excerpt',
@@ -120,16 +118,10 @@ export const blogPosts: CollectionConfig = {
       type: 'relationship',
       relationTo: 'treks',
       hasMany: true,
-      admin: {
-        position: 'sidebar',
-      },
     },
     {
       name: 'seo',
       type: 'group',
-      admin: {
-        position: 'sidebar',
-      },
       fields: [
         {
           name: 'metaTitle',

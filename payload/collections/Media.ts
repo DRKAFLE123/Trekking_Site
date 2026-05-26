@@ -76,6 +76,9 @@ const uploadToCloudinary: CollectionAfterChangeHook = async ({
 
 export const media: CollectionConfig = {
   slug: 'media',
+  admin: {
+    group: 'System Admin',
+  },
   upload: {
     staticDir: 'public/uploads',
     imageSizes: [

@@ -10,6 +10,7 @@ export const faqs: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Website Content',
     useAsTitle: 'question',
   },
   fields: [

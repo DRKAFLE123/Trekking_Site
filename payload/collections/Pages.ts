@@ -5,7 +5,7 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
-    group: 'Content',
+    group: 'Website Content',
   },
   access: {
     read: () => true,

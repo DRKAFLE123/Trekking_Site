@@ -10,6 +10,7 @@ export const inquiries: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Sales & Bookings',
     useAsTitle: 'name',
     defaultColumns: ['name', 'email', 'trek', 'startDate', 'status'],
   },

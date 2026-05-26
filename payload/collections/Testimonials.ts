@@ -10,6 +10,7 @@ export const testimonials: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Website Content',
     useAsTitle: 'clientName',
   },
   fields: [

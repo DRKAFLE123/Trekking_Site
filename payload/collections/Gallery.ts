@@ -10,6 +10,7 @@ export const gallery: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Website Content',
     useAsTitle: 'title',
     defaultColumns: ['title', 'caption', 'trek', 'createdAt'],
   },

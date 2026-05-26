@@ -10,6 +10,7 @@ export const bookings: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Sales & Bookings',
     useAsTitle: 'bookingId',
     defaultColumns: ['bookingId', 'trek', 'travelersCount', 'totalPrice', 'paymentStatus', 'bookingStatus'],
     listSearchableFields: [

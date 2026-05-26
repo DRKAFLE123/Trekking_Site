@@ -10,6 +10,7 @@ export const teamMembers: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Website Content',
     useAsTitle: 'name',
   },
   fields: [

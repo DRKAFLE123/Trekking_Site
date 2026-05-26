@@ -10,6 +10,7 @@ export const regions: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'Trekking & Operations',
     useAsTitle: 'name',
   },
   fields: [

@@ -10,6 +10,7 @@ export const SiteSettings: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    group: 'System Admin',
     useAsTitle: 'siteName',
   },
   fields: [

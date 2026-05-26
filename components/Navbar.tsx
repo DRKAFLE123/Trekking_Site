@@ -450,7 +450,7 @@ export default function Navbar() {
                   <button onClick={() => {
                     if (closeTimeoutRef.current) { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }
                     setActiveDropdown(activeDropdown === link.key ? null : (link.key || null));
-                  }} className={`flex items-center gap-1 font-sans font-semibold text-white/95 hover:text-[#c8922a] py-3.5 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${isActive(link) ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}> {link.title}<FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
+                  }} className={`flex items-center gap-1 font-sans font-semibold text-white/95 hover:text-[#c8922a] py-3.5 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${isActive(link) || activeDropdown === link.key ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}> {link.title}<FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
                 ) : (
                   <Link href={link.href || "/"} className={`font-sans font-semibold text-white/95 hover:text-[#c8922a] py-3.5 border-b-[3px] transition duration-300 text-[13px] ${isActive(link) ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}>{link.title}</Link>
                 )}
@@ -503,9 +503,9 @@ export default function Navbar() {
                                     key={item.label}
                                     href={item.href}
                                     onClick={closeDropdown}
-                                    className="flex items-center gap-2.5 px-4 py-2.5 font-sans text-[12.5px] font-semibold text-[#3D3D3D] hover:bg-[#c8922a]/8 hover:text-[#1a2e1f] transition duration-200 group"
+                                    className="flex items-center gap-2.5 px-4 py-2.5 font-sans text-[12.5px] font-semibold text-[#3D3D3D] hover:bg-[#c8922a]/15 hover:text-[#1a2e1f] hover:translate-x-1 transition-all duration-200 group"
                                   >
-                                    <span className="text-sm w-5 text-center shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
+                                    <span className="text-sm w-5 text-center shrink-0 group-hover:scale-125 transition-transform duration-200">{item.icon}</span>
                                     <span className="leading-tight">{item.label}</span>
                                   </Link>
                                 ))}
