@@ -10,15 +10,28 @@ export const inquiries: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
-    group: 'Sales & Bookings',
+    group: 'Enquiries & Leads',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'trek', 'startDate', 'status'],
+    defaultColumns: ['type', 'name', 'email', 'trek', 'status', 'createdAt'],
+    listSearchableFields: ['name', 'email', 'phone', 'subject', 'message'],
   },
   fields: [
     {
+      name: 'type',
+      type: 'select',
+      options: [
+        { label: '📩 Contact Enquiry', value: 'contact' },
+        { label: '🗺️ Plan a Trip', value: 'plan_trip' },
+        { label: '🎒 Booking Enquiry', value: 'booking_enquiry' },
+        { label: '📰 Newsletter Subscriber', value: 'newsletter' },
+        { label: '🌍 Country Inquiry', value: 'country_inquiry' },
+      ],
+      required: true,
+      defaultValue: 'contact',
+    },
+    {
       name: 'name',
       type: 'text',
-      required: true,
     },
     {
       name: 'email',
@@ -31,6 +44,10 @@ export const inquiries: CollectionConfig = {
     },
     {
       name: 'country',
+      type: 'text',
+    },
+    {
+      name: 'subject',
       type: 'text',
     },
     {
@@ -51,7 +68,6 @@ export const inquiries: CollectionConfig = {
     {
       name: 'message',
       type: 'textarea',
-      required: true,
     },
     {
       name: 'status',

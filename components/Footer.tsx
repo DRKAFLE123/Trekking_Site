@@ -15,7 +15,6 @@ import {
   FaWhatsapp,
   FaLock
 } from "react-icons/fa";
-import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -26,7 +25,15 @@ export default function Footer() {
   const [submitting, setSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [statusType, setStatusType] = useState<"success" | "error" | "">("");
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
+  const footerAssociations = [
+    { name: "TAAN", logo: "/taan.webp", url: "https://www.taan.org.np" },
+    { name: "NMA", logo: "/nma.webp", url: "https://www.nepalmountaineering.org" },
+    { name: "NTB", logo: "/ntb.webp", url: "https://nepaltourismboard.gov.np" },
+    { name: "KEEP", logo: "/keep.webp", url: "https://www.keepnepal.org" },
+    { name: "GOV", logo: "/nepal-gov.webp", url: "https://www.nepal.gov.np" },
+    { name: "HRA", logo: "/himalayan-rescue-association.webp", url: "https://www.himalayanrescue.org.np" }
+  ];
 
   useEffect(() => {
     async function fetchData() {
@@ -58,11 +65,6 @@ export default function Footer() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    if (!recaptchaToken) {
-      setStatusType("error");
-      setStatusMessage("Please complete the reCAPTCHA validation.");
-      return;
-    }
     
     setSubmitting(true);
     setStatusMessage("");
@@ -70,7 +72,7 @@ export default function Footer() {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, recaptchaToken }),
+        body: JSON.stringify({ name, email }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -112,19 +114,22 @@ export default function Footer() {
     <div className="w-full relative z-10 font-sans">
       {/* 1. Main Mountain Section */}
       <section
-        className="relative bg-no-repeat bg-cover bg-bottom pt-[180px] md:pt-[380px] lg:pt-[600px] pb-8 md:pb-12 lg:pb-16 text-white overflow-hidden"
-        style={{ backgroundImage: "url('/footer-new-bg.webp')" }}
+        className="relative bg-no-repeat bg-cover pt-[180px] md:pt-[380px] lg:pt-[600px] pb-8 md:pb-12 lg:pb-16 text-white overflow-hidden"
+        style={{ 
+          backgroundImage: "url('/footernewimage1.png')",
+          backgroundPosition: "65% top"
+        }}
       >
-        {/* Top smooth blend gradient from page background to transparent */}
+        {/* Top smooth blend gradient from page background through ivory, champagne, and golden amber to transparent */}
         <div
-          className="absolute top-0 left-0 w-full h-36 md:h-48 lg:h-64 pointer-events-none z-10"
+          className="absolute top-0 left-0 w-full h-24 md:h-36 lg:h-48 pointer-events-none z-10"
           style={{
-            backgroundImage: `linear-gradient(to bottom, ${blendColor} 0%, transparent 100%)`,
+            backgroundImage: `linear-gradient(to bottom, ${blendColor} 0%, rgba(255, 253, 249, 0.9) 25%, rgba(246, 236, 205, 0.65) 50%, rgba(223, 167, 59, 0.35) 75%, transparent 100%)`,
           }}
         ></div>
 
         {/* Dark subtle overlay for text readability (gradient overlay, darker on mobile) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-black/25 md:from-black/25 md:via-black/15 md:to-black/5 pointer-events-none z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/75 to-black/95 md:from-transparent md:via-black/55 md:to-black/90 pointer-events-none z-0"></div>
 
 
 
@@ -147,21 +152,21 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-serif text-lg font-black text-secondary-light tracking-wide group-hover:text-white transition duration-300 leading-none">
-                    {siteName ? siteName.split(" & ")[0].toUpperCase() : "NATURE HEAVEN"}
+                    {((siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "NATURE HEAVEN").toUpperCase()}
                   </span>
-                  <span className="text-[9px] tracking-[0.25em] text-secondary/70 group-hover:text-white uppercase font-sans font-bold mt-1">
-                    Trek & Expedition
+                  <span className="text-[9px] tracking-[0.25em] text-secondary-light/90 group-hover:text-white uppercase font-sans font-bold mt-1">
+                    Trekking &amp; Expedition
                   </span>
                 </div>
               </Link>
               <p className="text-xs text-white/85 leading-relaxed max-w-sm">
-                {siteSettings?.footerSettings?.bioText || `${siteName || "Nature Heaven Trekking & Expedition"} is a government-licensed, premier adventure operator in Nepal. We lead customized private trekking, peak climbing, and cultural tours across the Himalayas.`}
+                {siteSettings?.footerSettings?.bioText || `${siteName || "Nature Heaven Trekking"} is a government-licensed, premier adventure operator in Nepal. We lead customized private trekking, peak climbing, and cultural tours across the Himalayas.`}
               </p>
             </div>
-
+ 
             {/* Center: Newsletter Subscription */}
             <div className="flex flex-col gap-4 w-full">
-              <h3 className="text-sm uppercase font-bold tracking-wider text-secondary pt-2.5">
+              <h3 className="text-sm uppercase font-bold tracking-wider text-secondary-light pt-2.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
                 Subscribe our Newsletter
               </h3>
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-stretch gap-2.5 mt-1 w-full max-w-md">
@@ -170,9 +175,9 @@ export default function Footer() {
                   placeholder="Your Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-white/5 border border-white/20 rounded px-3 py-2.5 text-xs text-white placeholder-white/50 focus:outline-none focus:border-secondary sm:w-[140px] grow transition"
+                  className="bg-black/35 border border-white/25 rounded px-3 py-2.5 text-xs text-white placeholder-white/50 focus:outline-none focus:border-secondary-light sm:w-[140px] grow transition"
                 />
-                <div className="flex items-center bg-white/5 border border-white/20 rounded px-3 py-2.5 focus-within:border-secondary grow transition">
+                <div className="flex items-center bg-black/35 border border-white/25 rounded px-3 py-2.5 focus-within:border-secondary-light grow transition">
                   <input
                     type="email"
                     placeholder="Email Address"
@@ -185,7 +190,7 @@ export default function Footer() {
                     type="submit"
                     className="text-white hover:text-secondary hover:scale-105 active:scale-95 transition ml-2 disabled:opacity-50"
                     aria-label="Subscribe"
-                    disabled={submitting || !recaptchaToken}
+                    disabled={submitting}
                   >
                     <span className="border border-white/30 hover:border-secondary rounded-full p-1.5 flex items-center justify-center">
                       <svg
@@ -205,47 +210,19 @@ export default function Footer() {
                   </button>
                 </div>
               </form>
-              <div className="flex w-full max-w-md my-1">
-                <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
-                  onChange={(token) => setRecaptchaToken(token)}
-                  theme="dark"
-                />
-              </div>
               {statusMessage && (
                 <p className={`text-xs ${statusType === "success" ? "text-green-400" : "text-red-400"}`}>
                   {statusMessage}
                 </p>
               )}
-              <p className="text-[10px] text-white/50 italic leading-relaxed max-w-sm">
-                This site is protected by reCAPTCHA and the Google{" "}
-                <a
-                  href="https://policies.google.com/privacy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-secondary"
-                >
-                  Privacy Policy
-                </a>{" "}
-                and{" "}
-                <a
-                  href="https://policies.google.com/terms"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-secondary"
-                >
-                  Terms of Service
-                </a>{" "}
-                apply.
-              </p>
             </div>
 
             {/* Right: Emergency SOS & Address / Office Contact */}
             <div className="flex flex-col gap-3 text-white">
               {/* Emergency SOS */}
               <div>
-                <h4 className="text-sm uppercase font-bold tracking-wider text-secondary pt-2.5 flex items-center gap-1.5">
-                  <FaPhoneAlt className="h-3.5 w-3.5 text-secondary/80" />
+                <h4 className="text-sm uppercase font-bold tracking-wider text-secondary-light pt-2.5 flex items-center gap-1.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
+                  <FaPhoneAlt className="h-3.5 w-3.5 text-secondary-light/95" />
                   <span>Emergency SOS (24/7):</span>
                 </h4>
                 <div className="mt-1 flex flex-col gap-1 text-xs text-white/90 pl-5">
@@ -266,8 +243,8 @@ export default function Footer() {
 
               {/* Email */}
               <div>
-                <h4 className="text-sm uppercase font-bold tracking-wider text-secondary flex items-center gap-1.5">
-                  <FaEnvelope className="h-3.5 w-3.5 text-secondary/80" />
+                <h4 className="text-sm uppercase font-bold tracking-wider text-secondary-light flex items-center gap-1.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
+                  <FaEnvelope className="h-3.5 w-3.5 text-secondary-light/95" />
                   <span>Email:</span>
                 </h4>
                 <div className="mt-1 flex flex-col gap-1 text-xs text-white/90 pl-5">
@@ -290,8 +267,8 @@ export default function Footer() {
               <div className="space-y-3">
                 {/* Nepal Head Office */}
                 <div>
-                  <h4 className="text-sm uppercase font-bold tracking-wider text-secondary flex items-center gap-1.5">
-                    <FaMapMarkerAlt className="h-3.5 w-3.5 text-secondary/80" />
+                  <h4 className="text-sm uppercase font-bold tracking-wider text-secondary-light flex items-center gap-1.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
+                    <FaMapMarkerAlt className="h-3.5 w-3.5 text-secondary-light/95" />
                     <span>Head Office - Nepal:</span>
                   </h4>
                   <p className="text-xs text-white/90 pl-5 leading-relaxed">
@@ -303,11 +280,11 @@ export default function Footer() {
                     </p>
                   )}
                 </div>
-
+ 
                 {/* UK Branch Office */}
                 <div>
-                  <h4 className="text-sm uppercase font-bold tracking-wider text-secondary flex items-center gap-1.5">
-                    <FaMapMarkerAlt className="h-3.5 w-3.5 text-secondary/80" />
+                  <h4 className="text-sm uppercase font-bold tracking-wider text-secondary-light flex items-center gap-1.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
+                    <FaMapMarkerAlt className="h-3.5 w-3.5 text-secondary-light/95" />
                     <span>Branch Office - UK:</span>
                   </h4>
                   <p className="text-xs text-white/90 pl-5 leading-relaxed">
@@ -333,7 +310,7 @@ export default function Footer() {
               
               {/* TOP 5 TREKS */}
               <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary border-b border-secondary/20 pb-1.5">
+                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
                   Top 5 Treks
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
@@ -383,7 +360,7 @@ export default function Footer() {
 
               {/* POPULAR REGIONS */}
               <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary border-b border-secondary/20 pb-1.5">
+                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
                   Popular Regions
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
@@ -429,7 +406,7 @@ export default function Footer() {
 
               {/* TRAVEL INFO */}
               <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary border-b border-secondary/20 pb-1.5">
+                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
                   Travel Info
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
@@ -463,7 +440,7 @@ export default function Footer() {
 
               {/* COMPANY */}
               <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary border-b border-secondary/20 pb-1.5">
+                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
                   Company
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
@@ -497,7 +474,7 @@ export default function Footer() {
 
               {/* USEFUL LINKS */}
               <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary border-b border-secondary/20 pb-1.5">
+                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
                   Useful Links
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-xs text-white/80">
@@ -556,86 +533,80 @@ export default function Footer() {
       </section>
 
     {/* 2. Lower Payments, Associations, Social Media Band */}
-    <section className="bg-white py-8 relative z-10 text-gray-700">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-between text-center md:text-left">
+    <section className="bg-white py-8 relative z-10 text-gray-700 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-between text-center md:text-left">
           
           {/* We Accept Column */}
-          <div className="flex flex-col gap-2.5 items-center md:items-start">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">
+          <div className="flex flex-col gap-2 items-center md:items-start">
+            <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
               We Accept
             </span>
-            <div className="flex flex-wrap items-center gap-3.5 justify-center md:justify-start">
+            <div 
+              className="flex flex-nowrap items-center gap-2 justify-center md:justify-start overflow-x-auto md:overflow-x-visible w-full max-w-full pb-1 md:pb-0 scrollbar-none"
+              style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+            >
               
-              {/* Secures Badge */}
-              <div className="border border-green-200 bg-green-50 rounded px-2 py-1 flex items-center gap-1 text-[8.5px] text-green-700 font-bold font-sans">
+              {/* Sectigo Badge */}
+              <div className="border border-green-200 bg-green-50/80 rounded-md px-2 flex items-center gap-1 text-[8px] text-green-700 font-extrabold font-sans h-[26px] shrink-0 shadow-sm">
                 <FaLock className="h-2 w-2 text-green-600" />
                 <span>SECURED BY SECTIGO</span>
               </div>
 
-              {/* Visa Badge */}
-              <div className="bg-white border border-gray-200 rounded px-2.5 py-1.5 flex items-center justify-center hover:bg-gray-50 transition h-[26px]">
-                <svg className="h-3 w-10 text-[#1a1f71] fill-current" viewBox="0 0 100 32">
-                  <path d="M40.7 2.3l-5.6 24.3h-4.8l3-12.8c-.8-1.5-2.2-2.3-4.2-2.3-3.6 0-7 3.5-7 7.7 0 3.7 2.5 5.7 5.7 5.7 1.8 0 3.5-1 4.5-2.3l-.3 1.8h4.4l5.6-24.4h-6.3zm19.8 11.2c-.2-3.1-2.9-4.8-6.1-4.8-5.3 0-8.9 3.5-8.9 8.2 0 4.8 3.5 8 8.6 8 3.5 0 6-1.5 7-4.1l-4.1-1.7c-.5 1-1.4 1.8-2.8 1.8-2 0-3.6-1.4-3.6-3.7h10.1c.1-.8.2-1.8.2-2.7m-20.9-10.4c1.5 0 2.5.9 2.5 2.5 0 1.5-1 2.5-2.5 2.5s-2.5-1-2.5-2.5c0-1.6 1-2.5 2.5-2.5zM15 2.3L2 26.6h5l2.7-7.2h8.6l1 7.2h5L15 2.3zm-4.3 13.6L14 7l3.3 8.9h-6.6zm70.6-13.6h-5c-1.5 0-2.5 1-2.8 2.5l-8.6 21.8h5l2-5h7.6l1.3 5h4.6L81.3 2.3zm-6.2 15.6l2.3-7.2 2.3 7.2h-4.6z" />
-                </svg>
+              {/* PayPal */}
+              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[48px] relative shrink-0 p-1 shadow-sm">
+                <Image src="/paypal.svg" alt="PayPal" fill className="object-contain p-0.5" unoptimized />
               </div>
 
-              {/* Mastercard Badge */}
-              <div className="bg-white border border-gray-200 rounded px-2.5 py-1 flex items-center justify-center hover:bg-gray-50 transition h-[26px]">
-                <div className="flex items-center gap-1">
-                  <div className="flex -space-x-1">
-                    <div className="w-3 h-3 rounded-full bg-[#EB001B]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#F79E1B] opacity-90"></div>
-                  </div>
-                  <span className="text-[8.5px] font-bold text-gray-800 font-sans tracking-tight">Mastercard</span>
-                </div>
+              {/* Mastercard */}
+              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[40px] relative shrink-0 p-0.5 shadow-sm">
+                <Image src="/mastercard.svg" alt="Mastercard" fill className="object-contain" unoptimized />
               </div>
 
-              {/* UnionPay Badge */}
-              <div className="bg-white border border-gray-200 rounded px-2 py-1.5 flex items-center justify-center hover:bg-gray-50 transition h-[26px] text-sky-700 font-bold font-sans text-[8px] italic tracking-tight">
-                UnionPay
+              {/* SWIFT */}
+              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[44px] relative shrink-0 p-0.5 shadow-sm">
+                <Image src="/swift.svg" alt="SWIFT Transfer" fill className="object-contain" unoptimized />
               </div>
 
-              {/* AMEX Badge */}
-              <div className="bg-[#007cc3] text-white text-[8px] font-black tracking-widest px-2 py-1.5 rounded font-sans h-[26px] flex items-center">
-                AMEX
+              {/* Visa */}
+              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[40px] relative shrink-0 p-0.5 shadow-sm">
+                <Image src="/visa.svg" alt="Visa" fill className="object-contain" unoptimized />
               </div>
 
             </div>
           </div>
 
           {/* We are associated with Column */}
-          <div className="flex flex-col gap-2.5 items-center md:items-center">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">
+          <div className="flex flex-col gap-2 items-center md:items-center">
+            <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
               We are associated with
             </span>
-            <div className="flex flex-wrap items-center gap-2 justify-center md:justify-center">
-              {affiliations && affiliations.length > 0 ? (
-                affiliations.map((aff: { url: string; name: string }, idx: number) => (
-                  <a
-                    key={idx}
-                    href={aff.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="border border-gray-200 rounded px-2.5 py-1 bg-gray-50 text-[9.5px] font-bold text-gray-600 hover:bg-gray-100 hover:border-gray-300 transition"
-                  >
-                    {aff.name}
-                  </a>
-                ))
-              ) : (
-                <>
-                  <span className="border border-gray-200 rounded px-2.5 py-1 bg-gray-50 text-[9.5px] font-bold text-gray-600">TAAN</span>
-                  <span className="border border-gray-200 rounded px-2.5 py-1 bg-gray-50 text-[9.5px] font-bold text-gray-600">NMA</span>
-                  <span className="border border-gray-200 rounded px-2.5 py-1 bg-gray-50 text-[9.5px] font-bold text-gray-600">NTB</span>
-                  <span className="border border-gray-200 rounded px-2.5 py-1 bg-gray-50 text-[9.5px] font-bold text-gray-600">KEEP</span>
-                  <span className="border border-gray-200 rounded px-2.5 py-1 bg-gray-50 text-[9.5px] font-bold text-gray-600">IPPG</span>
-                </>
-              )}
+            <div 
+              className="flex flex-nowrap items-center gap-3 justify-center md:justify-center overflow-x-auto md:overflow-x-visible w-full max-w-full pb-1 md:pb-0 scrollbar-none"
+              style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+            >
+              {footerAssociations.map((aff, idx) => (
+                <a
+                  key={idx}
+                  href={aff.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative h-6 w-11 hover:scale-105 active:scale-95 transition-transform duration-300 flex items-center justify-center shrink-0"
+                >
+                  <Image
+                    src={aff.logo}
+                    alt={`${aff.name} Logo`}
+                    fill
+                    className="object-contain"
+                    unoptimized
+                  />
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Connect with us Column */}
-          <div className="flex flex-col gap-2.5 items-center md:items-end">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">
+          <div className="flex flex-col gap-2 items-center md:items-end">
+            <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
               Connect with us
             </span>
             <div className="flex gap-2">
@@ -643,7 +614,7 @@ export default function Footer() {
                 href={socialLinks?.youtube || "https://youtube.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-8 w-8 rounded-full bg-[#FF0000] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition"
+                className="h-8 w-8 rounded-full bg-[#FF0000] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
                 aria-label="YouTube"
               >
                 <FaYoutube className="h-4 w-4" />
@@ -652,7 +623,7 @@ export default function Footer() {
                 href={socialLinks?.instagram || "https://instagram.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition"
+                className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
                 aria-label="Instagram"
               >
                 <FaInstagram className="h-4 w-4" />
@@ -661,7 +632,7 @@ export default function Footer() {
                 href={socialLinks?.facebook || "https://facebook.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-8 w-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition"
+                className="h-8 w-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
                 aria-label="Facebook"
               >
                 <FaFacebook className="h-4 w-4" />
@@ -670,7 +641,7 @@ export default function Footer() {
                 href={socialLinks?.tiktok || "https://tiktok.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-8 w-8 rounded-full bg-[#000000] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition"
+                className="h-8 w-8 rounded-full bg-[#000000] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
                 aria-label="TikTok"
               >
                 <FaTiktok className="h-4 w-4" />
@@ -681,13 +652,14 @@ export default function Footer() {
         </div>
       </section>
 
+
       {/* 3. Deep Teal Copyright Bottom Bar */}
       <footer className="bg-[#10251c] py-5 text-[11px] text-white/50 relative z-10 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div>
             <p>
               © {new Date().getFullYear()}{" "}
-              <span className="text-secondary font-medium">{siteName || "Nature Heaven Trekking & Expedition"}</span>.
+              <span className="text-secondary font-medium">{siteName || "Nature Heaven Trekking"}</span>.
               All Rights Reserved.
             </p>
             <p className="text-[10px] text-white/30 mt-1">
@@ -696,7 +668,7 @@ export default function Footer() {
           </div>
           <div className="md:max-w-md text-[10px] leading-relaxed text-white/40">
             The copyright to all content on this website, including photographs, belongs to{" "}
-            {siteName || "Nature Heaven Trekking & Expedition"} and cannot be reproduced without our permission.
+            {siteName || "Nature Heaven Trekking"} and cannot be reproduced without our permission.
           </div>
         </div>
       </footer>

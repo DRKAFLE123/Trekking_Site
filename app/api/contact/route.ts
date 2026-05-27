@@ -1,13 +1,22 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
-import { verifyRecaptcha } from "@/lib/recaptcha";
 import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, email, subject, message, recaptchaToken } = body;
+
+    // Verify reCAPTCHA
+    const isValidRecaptcha = await verifyRecaptcha(recaptchaToken);
+    if (!isValidRecaptcha) {
+      return NextResponse.json(
+        { error: "reCAPTCHA verification failed. Please try again." },
+        { status: 400 }
+      );
+    }
 
     // Validate inputs
     if (!name || !email || !subject || !message) {
@@ -17,23 +26,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify reCAPTCHA
-    const isHuman = await verifyRecaptcha(recaptchaToken);
-    if (!isHuman) {
-      return NextResponse.json(
-        { error: "reCAPTCHA verification failed. Please try again." },
-        { status: 400 }
-      );
-    }
-
     // Save to Payload Database
     const payload = await getPayload({ config });
     const inquiry = await payload.create({
       collection: "inquiries",
       data: {
+        type: "contact",
         name,
         email,
-        message: `[Subject: ${subject}]\n\n${message}`,
+        subject,
+        message,
         status: "new",
       },
     });

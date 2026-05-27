@@ -1,0 +1,8 @@
+<svg viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- SWIFT Typographic Wordmark -->
+  <text x="22" y="28" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-style="italic" font-size="24" fill="#0f2942" letter-spacing="-1">swift</text>
+  <!-- Top orange accent bar -->
+  <line x1="22" y1="5" x2="65" y2="5" stroke="#ff5f00" stroke-width="3" stroke-linecap="round"/>
+  <!-- Bottom orange accent bar -->
+  <line x1="60" y1="35" x2="102" y2="35" stroke="#ff5f00" stroke-width="3" stroke-linecap="round"/>
+</svg>

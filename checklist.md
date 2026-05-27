@@ -38,7 +38,7 @@ This document provides a comprehensive verification checklist for the **Nature H
 - [x] **Mountain Silhouette Section**:
   - [x] Subtle background image layout matching DWT mountain silhouette elements.
   - [x] Brand name "NATURE HEAVEN" and customized bio.
-  - [x] Complete Newsletter Subscription form sending data to the server, styled with subtle borders and standard reCAPTCHA terms.
+  - [x] Complete Newsletter Subscription form sending data to the server, styled with subtle borders (reCAPTCHA disabled for seamless signup per request).
   - [x] Emergency 24/7 SOS Phone support numbers and quick WhatsApp chat.
   - [x] Address listings for both **Nepal Head Office** (Pakjonal Marga - 16, Thamel, Kathmandu) and **UK Branch Office** (London, United Kingdom).
 - [x] **Footer Links Grid**:
@@ -78,3 +78,15 @@ This document provides a comprehensive verification checklist for the **Nature H
 - [x] **Custom Logo Asset**:
   - [x] The custom Nature Heaven Trek & Expedition logo provided by the user is successfully integrated at `public/logo.png`.
   - [x] Configured correctly across both the Header Navbar (scrolled/unscrolled/drawer views) and the Footer Mountain section.
+
+---
+
+## 5. Homepage Photo Gallery (Messy Grid Style)
+*Status: 100% Completed*
+
+- [x] **Messy Grid Layout**:
+  - [x] Implemented a premium messy-grid layout variant matching the user's reference image exactly (large 2/3 tall image on the left, stacked landscape images on the right, and three matching landscape images in the bottom row).
+  - [x] Set a high-quality dark forest green background (`bg-[#10251c]`) for the homepage gallery section to match the branding and user's reference.
+  - [x] Clean, borderless image layout with highly rounded corners (`rounded-[32px]`) and premium zoom transitions on card hover.
+  - [x] Responsive glassmorphic visual presentation on mobile.
+

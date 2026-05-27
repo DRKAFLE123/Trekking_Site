@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { FaCheckCircle, FaExclamationCircle, FaPaperPlane } from "react-icons/fa";
-import { Trek } from "@/types";
 import ReCAPTCHA from "react-google-recaptcha";
+import { Trek } from "@/types";
+
 
 interface CountryInquiryFormProps {
   countryName: string;
@@ -26,6 +27,7 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
   const [statusMessage, setStatusMessage] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -41,14 +43,16 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
       setStatusMessage("Please complete the reCAPTCHA validation.");
       return;
     }
-    
     setStatus("loading");
 
     try {
       const response = await fetch("/api/plan-trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, recaptchaToken }),
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken,
+        }),
       });
 
       const data = await response.json();
@@ -198,8 +202,10 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
             ></textarea>
           </div>
 
+
+
           {/* ReCAPTCHA */}
-          <div className="flex justify-center my-1">
+          <div className="flex justify-center my-2">
             <ReCAPTCHA
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
               onChange={(token) => setRecaptchaToken(token)}

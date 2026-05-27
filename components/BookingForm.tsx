@@ -44,7 +44,6 @@ export default function BookingForm({ price, discountedPrice, tripTitle }: Booki
       setStatusMessage("Please complete the reCAPTCHA validation.");
       return;
     }
-    
     setStatus("loading");
 
     try {
@@ -194,7 +193,7 @@ export default function BookingForm({ price, discountedPrice, tripTitle }: Booki
           )}
 
           {/* ReCAPTCHA */}
-          <div className="flex justify-center my-1">
+          <div className="flex justify-center my-2">
             <ReCAPTCHA
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
               onChange={(token) => setRecaptchaToken(token)}

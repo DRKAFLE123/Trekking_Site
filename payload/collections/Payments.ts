@@ -10,7 +10,7 @@ export const payments: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
-    group: 'Sales & Bookings',
+    group: 'Enquiries & Leads',
     useAsTitle: 'paymentId',
     defaultColumns: ['paymentId', 'booking', 'amount', 'method', 'status'],
   },

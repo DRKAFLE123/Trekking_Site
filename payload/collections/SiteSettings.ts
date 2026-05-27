@@ -1,13 +1,25 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor } from '../access';
+import { checkPermission } from '../access';
+
+const parseYoutubeId = (args: any) => {
+  const value = args.value;
+  if (value) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = value.match(regExp);
+    if (match && match[2].length === 11) {
+      return match[2];
+    }
+  }
+  return value;
+};
 
 export const SiteSettings: CollectionConfig = {
   slug: 'siteSettings',
   access: {
     read: () => true, // Public read needed for SSG homepage
-    create: isAdmin,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    create: checkPermission('siteSettings', 'create'),
+    update: checkPermission('siteSettings', 'update'),
+    delete: checkPermission('siteSettings', 'delete'),
   },
   admin: {
     group: 'System Admin',
@@ -26,6 +38,9 @@ export const SiteSettings: CollectionConfig = {
     {
       name: 'heroVideoUrl',
       type: 'text',
+      admin: {
+        description: 'MP4 URL or YouTube Link for the homepage background video.',
+      },
     },
     {
       name: 'heroImage',
@@ -59,6 +74,12 @@ export const SiteSettings: CollectionConfig = {
         { name: 'whatsapp', type: 'text' },
         { name: 'email', type: 'text' },
         { name: 'address', type: 'text' },
+        {
+          name: 'mapCoordinates',
+          type: 'text',
+          label: 'Map Coordinates (Lat, Lng)',
+          defaultValue: '27.71672384712074, 85.30808857301508',
+        },
       ],
     },
     {
@@ -117,16 +138,19 @@ export const SiteSettings: CollectionConfig = {
       type: 'array',
       label: 'Video Gallery (Homepage)',
       admin: {
-        description: 'YouTube video IDs shown in the Himalayan Trek Experience section. Paste just the video ID (e.g. h1F7Tj2_H0Q) from the YouTube URL.',
+        description: 'YouTube videos shown in the Himalayan Trek Experience section. Paste the 11-char ID or the full YouTube URL.',
       },
       fields: [
         {
           name: 'youtubeId',
           type: 'text',
           required: true,
-          label: 'YouTube Video ID',
+          label: 'YouTube Video ID / Link',
+          hooks: {
+            beforeValidate: [parseYoutubeId],
+          },
           admin: {
-            description: 'The part after ?v= in the YouTube URL. E.g. for youtube.com/watch?v=h1F7Tj2_H0Q, enter: h1F7Tj2_H0Q',
+            description: 'Can be the full YouTube URL or just the video ID. E.g. h1F7Tj2_H0Q',
           },
         },
         {
@@ -197,6 +221,67 @@ export const SiteSettings: CollectionConfig = {
           },
         },
       ],
+    },
+    {
+      name: 'blogsPageSettings',
+      type: 'group',
+      label: 'Blogs Page Settings',
+      fields: [
+        {
+          name: 'coverImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Blogs Hero Cover Image',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Blogs Page Title',
+          defaultValue: 'Summit Chronicles',
+        },
+        {
+          name: 'subtitle',
+          type: 'text',
+          label: 'Blogs Page Subtitle',
+          defaultValue: 'Nature Heaven Trekking & Expedition',
+        },
+      ],
+    },
+    {
+      name: 'reviewPlatforms',
+      type: 'array',
+      label: 'Review Platforms (Ratings & Stats)',
+      admin: {
+        description: 'Manage the review scores/counts displayed on the homepage.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'name', type: 'text', required: true, label: 'Platform Name (e.g. TripAdvisor)' },
+            { name: 'rating', type: 'text', required: true, label: 'Rating (e.g. 5.0)' },
+            { name: 'maxRating', type: 'text', required: true, label: 'Max Rating (e.g. 5.0 or 10)' },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'reviewsCount', type: 'text', required: true, label: 'Review Count Label (e.g. 2,234+ reviews)' },
+            { name: 'badgeText', type: 'text', label: 'Badge Text (e.g. Certificate of Excellence)' },
+            { name: 'stars', type: 'number', required: true, defaultValue: 5, label: 'Stars (1-5)' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'featuredTravelInfo',
+      type: 'relationship',
+      relationTo: 'pages',
+      hasMany: true,
+      label: 'Featured Travel Info Pages (Homepage)',
+      admin: {
+        description: 'Select travel info pages to feature in a card list on the homepage.',
+      },
     },
   ],
 };

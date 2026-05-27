@@ -1,5 +1,5 @@
 import { CollectionConfig, CollectionAfterChangeHook } from 'payload';
-import { isAdmin, isAdminOrEditor } from '../access';
+import { checkPermission } from '../access';
 import { v2 as cloudinary } from 'cloudinary';
 import path from 'path';
 import fs from 'fs';
@@ -104,10 +104,10 @@ export const media: CollectionConfig = {
     mimeTypes: ['image/*', 'application/pdf'],
   },
   access: {
-    read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    read: () => true, // Media must be publicly accessible
+    create: checkPermission('media', 'create'),
+    update: checkPermission('media', 'update'),
+    delete: checkPermission('media', 'delete'),
   },
   hooks: {
     afterChange: [uploadToCloudinary],
@@ -117,6 +117,41 @@ export const media: CollectionConfig = {
       name: 'alt',
       type: 'text',
       required: true,
+      admin: {
+        description: 'Descriptive text for accessibility/SEO.',
+      },
+    },
+    {
+      name: 'category',
+      type: 'select',
+      options: [
+        { label: 'Uncategorized', value: 'uncategorized' },
+        { label: 'Trek Covers', value: 'trek_covers' },
+        { label: 'Blog Covers', value: 'blog_covers' },
+        { label: 'Gallery Photos', value: 'gallery_photos' },
+        { label: 'Team Photos', value: 'team_photos' },
+      ],
+      defaultValue: 'uncategorized',
+      required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Categorize files to easily filter them in the media library.',
+      },
+    },
+    {
+      name: 'tags',
+      type: 'array',
+      admin: {
+        position: 'sidebar',
+        description: 'Keywords/tags for quick search.',
+      },
+      fields: [
+        {
+          name: 'tag',
+          type: 'text',
+          required: true,
+        },
+      ],
     },
   ],
 };

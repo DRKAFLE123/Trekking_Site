@@ -2,29 +2,22 @@
 
 import React, { useState } from "react";
 import { FaPaperPlane, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
-import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    if (!recaptchaToken) {
-      setStatus("error");
-      setMessage("Please complete the reCAPTCHA validation.");
-      return;
-    }
 
     setStatus("loading");
     try {
       const response = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, recaptchaToken }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
@@ -72,21 +65,13 @@ export default function Newsletter() {
           />
           <button
             type="submit"
-            disabled={status === "loading" || !recaptchaToken}
+            disabled={status === "loading"}
             className="bg-secondary text-primary font-bold px-6 py-3.5 rounded-xl hover:bg-secondary-light transition-all duration-300 flex items-center justify-center gap-2 text-sm disabled:opacity-50 active:scale-95 shrink-0"
           >
             <span>{status === "loading" ? "Subscribing..." : "Subscribe Now"}</span>
             <FaPaperPlane className="h-3 w-3" />
           </button>
         </form>
-
-        <div className="flex justify-center mt-4">
-          <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
-            onChange={(token) => setRecaptchaToken(token)}
-            theme="dark"
-          />
-        </div>
 
         {/* Message Status */}
         {status === "success" && (

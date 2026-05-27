@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTimes, FaCheckCircle, FaExclamationCircle, FaLock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -10,9 +10,11 @@ interface EnquiryModalProps {
   onClose: () => void;
   tripTitle: string;
   defaultPrice: number;
+  defaultStartDate?: string;
+  defaultTrekSlug?: string;
 }
 
-export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice }: EnquiryModalProps) {
+export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice, defaultStartDate, defaultTrekSlug }: EnquiryModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -22,6 +24,13 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [statusMsg, setStatusMsg] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
+  // Sync start date from parent when modal opens
+  useEffect(() => {
+    if (isOpen && defaultStartDate) {
+      setStartDate(defaultStartDate);
+    }
+  }, [isOpen, defaultStartDate]);
 
   const calculateCost = () => {
     let unitPrice = defaultPrice;
@@ -38,7 +47,6 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
       setStatusMsg("Please complete the reCAPTCHA validation.");
       return;
     }
-    
     setStatus("loading");
     setStatusMsg("");
 
@@ -226,7 +234,7 @@ export default function EnquiryModal({ isOpen, onClose, tripTitle, defaultPrice 
                 </div>
 
                 {/* ReCAPTCHA */}
-                <div className="flex justify-center my-1">
+                <div className="flex justify-center my-2">
                   <ReCAPTCHA
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
                     onChange={(token) => setRecaptchaToken(token)}

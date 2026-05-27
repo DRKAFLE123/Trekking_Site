@@ -1,28 +1,33 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
-import { verifyRecaptcha } from "@/lib/recaptcha";
 import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const payload = await getPayload({ config });
+
     const { name, email, phone, country, startDate, travelers, trek, message, recaptchaToken } = body;
+
+    // Verify reCAPTCHA
+    const isValidRecaptcha = await verifyRecaptcha(recaptchaToken);
+    if (!isValidRecaptcha) {
+      return NextResponse.json(
+        { error: "reCAPTCHA verification failed. Please try again." },
+        { status: 400 }
+      );
+    }
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Verify reCAPTCHA
-    const isHuman = await verifyRecaptcha(recaptchaToken);
-    if (!isHuman) {
-      return NextResponse.json({ error: "reCAPTCHA verification failed. Please try again." }, { status: 400 });
-    }
-
-    const payload = await getPayload({ config });
     const inquiry = await payload.create({
       collection: "inquiries",
       data: {
+        type: "plan_trip",
         name,
         email,
         phone: phone || "",

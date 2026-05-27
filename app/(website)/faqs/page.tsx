@@ -65,9 +65,20 @@ const DEFAULT_FAQS = [
 function extractLexicalText(body: any): string {
   if (!body) return "";
   if (typeof body === 'string') return body;
+  
   if (body.root && body.root.children) {
     return extractNodesText(body.root.children);
   }
+  
+  if (Array.isArray(body)) {
+    return body.map((block: any) => {
+      if (block.children) {
+        return extractNodesText(block.children);
+      }
+      return "";
+    }).filter(Boolean).join(" ");
+  }
+  
   return "";
 }
 
@@ -88,37 +99,152 @@ export default async function FAQsPage() {
 
   try {
     const payload = await getPayload({ config });
-    const res = await payload.find({
+    
+    // 1. Fetch standalone FAQs
+    const faqsRes = await payload.find({
       collection: "faqs",
-      limit: 100,
+      limit: 150,
+      depth: 1,
+      sort: "order",
+    });
+
+    // 2. Fetch all treks to get trek-nested FAQs
+    const treksRes = await payload.find({
+      collection: "treks",
+      limit: 150,
       depth: 1,
     });
 
-    const docs = res.docs;
-    if (docs && docs.length > 0) {
-      // Group FAQs by category name
-      const groups: Record<string, any[]> = {};
-      docs.forEach((doc: any) => {
-        const cat = doc.category || "General";
-        if (!groups[cat]) {
-          groups[cat] = [];
+    const groups: Record<string, any[]> = {};
+
+    // 3. Process standalone FAQs
+    const FAQ_CATEGORY_LABELS: Record<string, string> = {
+      general: 'General Information',
+      prep_fitness: 'Preparation & Fitness',
+      permits: 'Permits',
+      insurance_visa: 'Insurance and Visa',
+      guides_staff: 'Guides & Support Staff',
+      accommodation_facilities: 'Accommodation and Facilities',
+      food_drinks: 'Food and Drinks',
+      weather_seasons: 'Weather & Seasons',
+      health_safety: 'Health & Safety',
+      packing_gear: 'Packing & Gear',
+      booking_payments: 'Booking & Payments',
+      transportation_flights: 'Transportation & Flights',
+      'everest': 'Everest Region',
+      'annapurna': 'Annapurna Region',
+      'manaslu': 'Manaslu Region',
+      'langtang': 'Langtang Region',
+      'ganesh-himal': 'Ganesh Himal Region',
+      'mustang': 'Mustang Region',
+      'kanchenjunga': 'Kanchenjunga Region',
+      'makalu': 'Makalu Region',
+      'dolpa': 'Dolpa Region',
+      'tour-in-nepal': 'Tour in Nepal',
+      'expedition-in-nepal': 'Expedition in Nepal',
+      'peak-climbing-in-nepal': 'Peak Climbing in Nepal',
+      'jungle-safari-in-nepal': 'Jungle Safari in Nepal',
+      'river-rafting-in-nepal': 'River Rafting in Nepal',
+      'bungee-jumping-in-nepal': 'Bungee Jumping in Nepal',
+      'paragliding-in-nepal': 'Paragliding in Nepal',
+    };
+
+    if (faqsRes.docs && faqsRes.docs.length > 0) {
+      faqsRes.docs.forEach((doc: any) => {
+        const catKey = doc.category || "general";
+        const catLabel = FAQ_CATEGORY_LABELS[catKey] || catKey;
+        if (!groups[catLabel]) {
+          groups[catLabel] = [];
         }
-        groups[cat].push({
+        groups[catLabel].push({
           q: doc.question,
           a: extractLexicalText(doc.answer),
         });
       });
-
-      mappedFAQs = Object.keys(groups).map(category => ({
-        category,
-        faqs: groups[category],
-      }));
     }
+
+    // 4. Process Trek-nested FAQs
+    if (treksRes.docs && treksRes.docs.length > 0) {
+      treksRes.docs.forEach((trek: any) => {
+        if (trek.faqs && trek.faqs.length > 0) {
+          // Get the region name as the category label
+          let regLabel = "General Trek Info";
+          if (trek.region) {
+            if (typeof trek.region === 'object') {
+              regLabel = trek.region.name || "General Trek Info";
+            } else {
+              regLabel = String(trek.region);
+            }
+          }
+
+          // Format category label
+          if (FAQ_CATEGORY_LABELS[regLabel.toLowerCase()]) {
+            regLabel = FAQ_CATEGORY_LABELS[regLabel.toLowerCase()];
+          }
+
+          if (!groups[regLabel]) {
+            groups[regLabel] = [];
+          }
+
+          trek.faqs.forEach((faq: any) => {
+            // Avoid adding identical question/answer duplicates
+            const exists = groups[regLabel].some(
+              (item) => item.q.trim().toLowerCase() === faq.question.trim().toLowerCase()
+            );
+            if (!exists) {
+              groups[regLabel].push({
+                q: faq.question,
+                a: extractLexicalText(faq.answer),
+              });
+            }
+          });
+        }
+      });
+    }
+
+    // Remove empty groups
+    Object.keys(groups).forEach((key) => {
+      if (groups[key].length === 0) {
+        delete groups[key];
+      }
+    });
+
+    // 5. Sort categories: general categories first, then alphabetically for regions
+    const CATEGORY_WEIGHTS: Record<string, number> = {
+      'General Information': 1,
+      'Preparation & Fitness': 2,
+      'Permits': 3,
+      'Insurance and Visa': 4,
+      'Guides & Support Staff': 5,
+      'Accommodation and Facilities': 6,
+      'Food and Drinks': 7,
+      'Weather & Seasons': 8,
+      'Health & Safety': 9,
+      'Packing & Gear': 10,
+      'Booking & Payments': 11,
+      'Transportation & Flights': 12,
+    };
+
+    const sortedCategories = Object.keys(groups).sort((catA, catB) => {
+      const weightA = CATEGORY_WEIGHTS[catA] || 100;
+      const weightB = CATEGORY_WEIGHTS[catB] || 100;
+      
+      if (weightA !== weightB) {
+        return weightA - weightB;
+      }
+      return catA.localeCompare(catB);
+    });
+
+    mappedFAQs = sortedCategories.map(category => ({
+      category,
+      faqs: groups[category],
+    }));
+
   } catch (err: any) {
     console.warn("[FAQs Page] Failed to query faqs from CMS:", err.message);
   }
 
-  // Fallback to default faqs if database has no FAQs
+  // Fallback to default faqs if database has no FAQs at all
   const displayFAQs = mappedFAQs.length > 0 ? mappedFAQs : DEFAULT_FAQS;
 
   return <FAQsPageClient initialFAQs={displayFAQs} />;

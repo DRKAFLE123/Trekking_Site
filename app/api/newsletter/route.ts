@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { verifyRecaptcha } from "@/lib/recaptcha";
+import { getPayload } from "payload";
+import config from "@/payload/payload.config";
 import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, recaptchaToken } = body;
+    const { email } = body;
 
     // Basic email validation
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -15,14 +16,18 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify reCAPTCHA
-    const isHuman = await verifyRecaptcha(recaptchaToken);
-    if (!isHuman) {
-      return NextResponse.json(
-        { error: "reCAPTCHA verification failed. Please try again." },
-        { status: 400 }
-      );
-    }
+    // Save newsletter subscriber to inquiries collection
+    const payload = await getPayload({ config });
+    await payload.create({
+      collection: "inquiries",
+      data: {
+        type: "newsletter",
+        name: "Newsletter Subscriber",
+        email,
+        message: "Subscribed via website newsletter form.",
+        status: "new",
+      },
+    });
 
     console.log(`[NEWSLETTER SUBSCRIBE] Email: ${email}`);
 

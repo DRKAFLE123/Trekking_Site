@@ -21,6 +21,7 @@ import { payments } from './collections/Payments';
 import { users } from './collections/Users';
 import { media } from './collections/Media';
 import { Pages } from './collections/Pages';
+import { roles } from './collections/Roles';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -50,6 +51,7 @@ export default buildConfig({
   },
   collections: [
     users,
+    roles,
     SiteSettings,
     regions,
     treks,
@@ -70,7 +72,7 @@ export default buildConfig({
         pool: {
           connectionString: dbUrl,
         },
-        push: true,
+        push: false,
       })
     : sqliteAdapter({
         client: {

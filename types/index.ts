@@ -12,6 +12,7 @@ export interface ContactInfo {
   whatsapp: string;
   email: string;
   address: string;
+  mapCoordinates?: string;
 }
 
 // Site settings social links type
@@ -42,6 +43,11 @@ export interface SiteSettings {
   emergencyNumbers?: string[];
   socialLinks?: SocialLinks;
   affiliations?: Affiliation[];
+  blogsPageSettings?: {
+    coverImage?: any;
+    title?: string;
+    subtitle?: string;
+  };
 }
 
 // Region Document
@@ -108,6 +114,11 @@ export interface Trek {
   metaTitle?: string;
   metaDescription?: string;
   groupDiscounts?: GroupDiscount[];
+  faqs?: Array<{
+    id?: string;
+    question: string;
+    answer: any;
+  }>;
 }
 
 // Team Member Document
@@ -149,6 +160,7 @@ export interface Faq {
   question: string;
   answer: any[]; // Portable text blocks
   category?: string;
+  treks?: any[]; // Array of Trek objects or IDs
   order?: number;
 }
 
@@ -159,6 +171,7 @@ export interface BlogPost {
   title: string;
   slug: string;
   category: string;
+  isFeatured?: boolean;
   author: {
     name: string;
     photo?: string; // Cloudinary public ID or URL

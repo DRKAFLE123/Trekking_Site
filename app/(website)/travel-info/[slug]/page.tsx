@@ -122,45 +122,48 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
           </div>
 
           {/* Sidebar */}
-          <aside className="w-full lg:w-[350px] shrink-0 space-y-8">
-            {/* Quick Links */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-              <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
-                <FaMapMarkerAlt className="text-[#c8922a]" /> More Topics
-              </h3>
-              <ul className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
-                {allPages.map((p: any) => (
-                  <li key={p.slug}>
-                    <Link 
-                      href={`/travel-info/${p.slug}`}
-                      className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
-                        p.slug === page.slug 
-                          ? 'bg-[#1a2e1f] text-white' 
-                          : 'text-[#4A4A4A] hover:bg-gray-50 hover:text-[#c8922a]'
-                      }`}
-                    >
-                      {p.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Need Help CTA */}
-            <div className="bg-gradient-to-br from-[#1a2e1f] to-[#2E7D32] rounded-2xl p-6 text-white text-center shadow-lg">
-              <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                <FaHeadset className="text-3xl text-[#c8922a]" />
+          <aside className="w-full lg:w-[350px] shrink-0">
+            {/* Sticky wrapper — keeps both cards together while scrolling */}
+            <div className="sticky top-24 flex flex-col gap-6">
+              {/* Quick Links */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
+                  <FaMapMarkerAlt className="text-[#c8922a]" /> More Topics
+                </h3>
+                <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
+                  {allPages.map((p: any) => (
+                    <li key={p.slug}>
+                      <Link 
+                        href={`/travel-info/${p.slug}`}
+                        className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
+                          p.slug === page.slug 
+                            ? 'bg-[#1a2e1f] text-white' 
+                            : 'text-[#4A4A4A] hover:bg-gray-50 hover:text-[#c8922a]'
+                        }`}
+                      >
+                        {p.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="font-serif text-xl font-bold mb-2">Need Expert Advice?</h3>
-              <p className="text-sm text-white/80 mb-6 font-sans">
-                Our travel experts are here to help you plan your perfect Himalayan adventure.
-              </p>
-              <Link 
-                href="/contact-us"
-                className="inline-flex items-center justify-center gap-2 bg-[#c8922a] hover:bg-[#b07820] text-white w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition shadow-md hover:shadow-lg"
-              >
-                <FaEnvelope /> Contact Us
-              </Link>
+
+              {/* Need Help CTA */}
+              <div className="bg-gradient-to-br from-[#1a2e1f] to-[#2E7D32] rounded-2xl p-6 text-white text-center shadow-lg">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                  <FaHeadset className="text-3xl text-[#c8922a]" />
+                </div>
+                <h3 className="font-serif text-xl font-bold mb-2">Need Expert Advice?</h3>
+                <p className="text-sm text-white/80 mb-6 font-sans">
+                  Our travel experts are here to help you plan your perfect Himalayan adventure.
+                </p>
+                <Link 
+                  href="/contact-us"
+                  className="inline-flex items-center justify-center gap-2 bg-[#c8922a] hover:bg-[#b07820] text-white w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition shadow-md hover:shadow-lg"
+                >
+                  <FaEnvelope /> Contact Us
+                </Link>
+              </div>
             </div>
           </aside>
         </div>

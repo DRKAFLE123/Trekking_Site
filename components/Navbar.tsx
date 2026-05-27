@@ -12,51 +12,206 @@ const TRIP_DATA: Record<string, { title: string; slug: string }[]> = {
   "All Trips": [],
   "Everest Treks": [
     { title: "Everest Base Camp Trek - 14 Days", slug: "everest-base-camp-trek-14" },
-    { title: "Everest Base Camp Trek - 12 Days", slug: "everest-base-camp-trek-12" },
-    { title: "Everest Base Camp Trek via Gokyo Lakes - 15 Days", slug: "everest-base-camp-gokyo-lakes-15" },
-    { title: "Everest Base Camp Chola Pass Gokyo Trek - 15 Days", slug: "everest-chola-pass-gokyo-15" },
-    { title: "Everest Base Camp Short Trek - 10 Days", slug: "everest-base-camp-short-10" },
-    { title: "Gokyo Ri Trek - 11 Days", slug: "gokyo-ri-11" },
-    { title: "Everest Three Passes Trek - 17 Days", slug: "everest-three-passes-17" },
-    { title: "Everest High Pass Trek - 15 Days", slug: "everest-high-pass-15" },
-    { title: "Everest View Trek - 7 Days", slug: "everest-view-7" },
-    { title: "Luxury Everest Base Camp Trek - 14 Days", slug: "luxury-everest-base-camp-14" },
-    { title: "Ama Dablam Base Camp - 13 Days", slug: "ama-dablam-base-camp-13" },
-    { title: "Everest Base Camp Hike - 17 Days", slug: "everest-base-camp-hike-17" },
+    { title: "Everest Base Camp Trek – 12 Days", slug: "everest-base-camp-trek-12" },
+    { title: "Everest Base Camp Trek with Chola Pass Gokyo Trek - 19 Days", slug: "everest-base-camp-chola-gokyo-19" },
     { title: "Everest Base Camp Helicopter - 10 Days", slug: "everest-helicopter-10" },
-    { title: "Everest Base Camp Helicopter - 5 Days", slug: "everest-helicopter-5" },
-    { title: "Island Peak Climbing with EBC - 16 Days", slug: "island-peak-climbing-16" },
-    { title: "Everest Base Camp Trek - 15 Days", slug: "everest-base-camp-15" },
-    { title: "Everest Base Camp Helicopter Tour - 1 Day", slug: "everest-helicopter-tour-1" },
-    { title: "Everest Helicopter Tour - 10 Days", slug: "everest-helicopter-tour-10" },
-    { title: "Everest Base Camp trek with Gokyo Ri (avoiding Chola Pass) - 15 Days", slug: "everest-gokyo-ri-avoiding-chola-15" }
+    { title: "Everest Base Camp Helicopter - 1 Day", slug: "everest-helicopter-1" },
+    { title: "Everest Base Camp Hike - 17 Days", slug: "everest-hike-17" },
+    { title: "Everest Three Passes Trek - 21 Days", slug: "everest-three-passes-21" },
+    { title: "Everest View Trek - 7 Days", slug: "everest-view-7" },
+    { title: "Everest High Passes Trek - 19 Days", slug: "everest-high-passes-19" },
+    { title: "Gokyo Ri Trek - 14 Days", slug: "gokyo-ri-14" },
+    { title: "Ama Dablam Base Camp - 15 Days", slug: "ama-dablam-base-camp-15" },
+    { title: "Island Peak Climbing With EBC - 19 Days", slug: "island-peak-climbing-ebc-19" },
+    { title: "Lobuche peak Climbing with EBC - 19 Days", slug: "lobuche-peak-climbing-ebc-19" }
   ],
   "Annapurna Treks": [
-    { title: "Annapurna Circuit Trek - 14 Days", slug: "annapurna-circuit-14" },
-    { title: "Annapurna Base Camp Trek - 10 Days", slug: "annapurna-base-camp-10" }
+    { title: "Annapurna Sunrise Trek – 5 Days", slug: "annapurna-sunrise-5" },
+    { title: "Annapurna Base Camp Short Trek - 7 Days", slug: "annapurna-base-camp-short-7" },
+    { title: "Annapurna Base Camp - 13 Days", slug: "annapurna-base-camp-13" },
+    { title: "Annapurna Circuit Treks - 14 Days", slug: "annapurna-circuit-14" },
+    { title: "Annapurna Circuit Trek with Tilicho Lake – 16 Days", slug: "annapurna-circuit-tilicho-16" },
+    { title: "Mardi Himal with Annapurna Base Camp Trek - 15 Days", slug: "mardi-himal-abc-15" },
+    { title: "Mardi Himal Trek - 7 Days", slug: "mardi-himal-7" },
+    { title: "Khopra Danda and Annapurna Base Camp Trek - 15 Days", slug: "khopra-danda-abc-15" },
+    { title: "Khopra Danda Trek - 7 Days", slug: "khopra-danda-7" },
+    { title: "Poon Hill Trek - 5 Days", slug: "poon-hill-5" },
+    { title: "Narphu Valley Trek - 15 Days", slug: "narphu-valley-15" },
+    { title: "Khopra Danda With Mardi Himal Trek - 14 Days", slug: "khopra-mardi-himal-14" }
   ],
   "Manaslu Treks": [
-    { title: "Manaslu Circuit Trek - 16 Days", slug: "manaslu-circuit-16" },
-    { title: "Manaslu Circuit Trek - 12 Days", slug: "manaslu-circuit-12" }
+    { title: "Manaslu Circuit Trek - 12 Days", slug: "manaslu-circuit-12" },
+    { title: "Manaslu Circuit Trek - 15 Days", slug: "manaslu-circuit-15" },
+    { title: "Manaslu Tsum Valley Trek - 19 Days", slug: "manaslu-tsum-valley-19" },
+    { title: "Tsum Valley Trek - 14 Days", slug: "tsum-valley-14" }
   ],
   "Langtang Treks": [
-    { title: "Langtang Valley Trek - 8 Days", slug: "langtang-valley-8" }
+    { title: "Langtang Valley Trek - 7 Days", slug: "langtang-valley-7" },
+    { title: "Gosainkunda Trek - 7 Days", slug: "gosainkunda-7" },
+    { title: "Langtang Valley with Gosainkunda Trek – 11 Days", slug: "langtang-gosainkunda-11" },
+    { title: "Langtang Valley Full Trek - 13 Days", slug: "langtang-valley-full-13" }
   ],
   "Ganesh Himal Treks": [
-    { title: "Ganesh Himal Trek - 10 Days", slug: "ganesh-himal-10" }
+    { title: "Ganesh Himal Base Camp Trek- 14 Days", slug: "ganesh-himal-bc-14" },
+    { title: "Ganesh Himal Trek- 15 Days", slug: "ganesh-himal-15" }
   ],
   "Mustang Treks": [
-    { title: "Upper Mustang Trek - 12 Days", slug: "upper-mustang-12" },
-    { title: "Muktinath Trek - 7 Days", slug: "muktinath-7" }
+    { title: "Upper Mustang Trek - 7 Days", slug: "upper-mustang-7" },
+    { title: "Upper Mustang Tiji Festival Trek - 13 Days", slug: "upper-mustang-tiji-13" },
+    { title: "Upper Mustang Trek - 11 Days", slug: "upper-mustang-11" }
   ],
-  "Peak Climbing In Nepal": [
-    { title: "Island Peak Climbing - 16 Days", slug: "island-peak-16" },
-    { title: "Ama Dablam Base Camp - 13 Days", slug: "ama-dablam-base-camp-13" }
+  "Kanchenjunga Treks": [
+    { title: "Kanchenjunga Base Camp Trek- 25 Days", slug: "kanchenjunga-base-camp-25" }
   ],
-  "Jungle Safari In Nepal": [
-    { title: "Jungle Safari Trek - 12 Days", slug: "jungle-safari-12" }
+  "Makalu Treks": [
+    { title: "Makalu Base Camp Trek- 21 Days", slug: "makalu-base-camp-21" }
+  ],
+  "Dolpa Treks": [
+    { title: "Lower Dolpa Trek – 15 Days", slug: "lower-dolpa-15" },
+    { title: "Upper Dolpa Trek- 25 Days", slug: "upper-dolpa-25" },
+    { title: "Dolpa Trek - 17 Days", slug: "dolpa-trek-17" }
+  ],
+  "Tour in Nepal": [
+    { title: "Kathmandu Valley Tour – 1 Day", slug: "kathmandu-valley-tour-1" },
+    { title: "Gokyo Valley Tour - 2 Days", slug: "gokyo-valley-tour-2" },
+    { title: "Everest Base Camp with Heli Tour - 1 Day", slug: "ebc-heli-tour-1" },
+    { title: "Namche Bazzar Valley tour - 1 Day", slug: "namche-bazaar-tour-1" },
+    { title: "Manang Valley Tour – 2 Days", slug: "manang-valley-tour-2" },
+    { title: "Kathmandu Valley World Heritage Sites Tour- 3 Days", slug: "kathmandu-heritage-3" },
+    { title: "Pokhara Valley with Sunrise tour - 3 Days", slug: "pokhara-sunrise-3" },
+    { title: "Kathmandu Nagarkot with Sunrise Tour – 3 Days", slug: "kathmandu-nagarkot-sunrise-3" },
+    { title: "Lumbini Tour- 2 Days", slug: "lumbini-tour-2" }
+  ],
+  "Expedition in Nepal": [
+    { title: "Everest Expedition - 60 Days", slug: "everest-expedition-60" },
+    { title: "Annapurna Expedition - 40 Days", slug: "annapurna-expedition-40" },
+    { title: "Manaslu Expedition - 40 Days", slug: "manaslu-expedition-40" },
+    { title: "Ama Dablam Expedition - 30 Days", slug: "ama-dablam-expedition-30" }
+  ],
+  "Peak Climbing in Nepal": [
+    { title: "Island Peak Climbing - 16 Days", slug: "island-peak-climbing-16" },
+    { title: "Lobuche East peak climbing - 16 Days", slug: "lobuche-east-climbing-16" },
+    { title: "Mera Peak Climbing - 16 Days", slug: "mera-peak-climbing-16" }
+  ],
+  "Jungle Safari in Nepal": [
+    { title: "Bardia National Park - 3 Days", slug: "bardia-national-park-3" },
+    { title: "Chitwan National Park - 3 Days", slug: "chitwan-national-park-3" }
+  ],
+  "River Rafting in Nepal": [
+    { title: "Trishuli River Rafting - 1 Day", slug: "trishuli-river-rafting-1" },
+    { title: "Bhotekosi River Rafting - 1 Day", slug: "bhotekosi-river-rafting-1" }
+  ],
+  "Bungee Jumping in Nepal": [
+    { title: "Pokhara Bungee Jumping", slug: "pokhara-bungee-jumping" },
+    { title: "Kusma Bungee Jumping", slug: "kusma-bungee-jumping" }
+  ],
+  "Paragliding in Nepal": [
+    { title: "Pokhara Paragliding", slug: "pokhara-paragliding" },
+    { title: "Kathmandu Paragliding", slug: "kathmandu-paragliding" }
   ]
 };
+
+// Category to Region mapping for URL construction
+const categoryToRegion: Record<string, { name: string; slug: string }> = {
+  "Everest Treks": { name: "Everest Region", slug: "everest" },
+  "Annapurna Treks": { name: "Annapurna Region", slug: "annapurna" },
+  "Manaslu Treks": { name: "Manaslu Region", slug: "manaslu" },
+  "Langtang Treks": { name: "Langtang Region", slug: "langtang" },
+  "Ganesh Himal Treks": { name: "Ganesh Himal Region", slug: "ganesh-himal" },
+  "Mustang Treks": { name: "Mustang Region", slug: "mustang" },
+  "Kanchenjunga Treks": { name: "Kanchenjunga Region", slug: "kanchenjunga" },
+  "Makalu Treks": { name: "Makalu Region", slug: "makalu" },
+  "Dolpa Treks": { name: "Dolpa Region", slug: "dolpa" },
+  "Tour in Nepal": { name: "Tour in Nepal", slug: "tour-in-nepal" },
+  "Expedition in Nepal": { name: "Expedition in Nepal", slug: "expedition-in-nepal" },
+  "Peak Climbing in Nepal": { name: "Peak Climbing in Nepal", slug: "peak-climbing-in-nepal" },
+  "Jungle Safari in Nepal": { name: "Jungle Safari in Nepal", slug: "jungle-safari-in-nepal" },
+  "River Rafting in Nepal": { name: "River Rafting in Nepal", slug: "river-rafting-in-nepal" },
+  "Bungee Jumping in Nepal": { name: "Bungee Jumping in Nepal", slug: "bungee-jumping-in-nepal" },
+  "Paragliding in Nepal": { name: "Paragliding in Nepal", slug: "paragliding-in-nepal" }
+};
+
+// Travel Info page list mapping
+const travelInfoPages = [
+  { slug: "travel-guide-for-nepal", title: "Ultimate Travel Guide to Nepal" },
+  { slug: "private-treks-in-nepal", title: "Tailor-Made Private Treks in Nepal" },
+  { slug: "why-travel-to-nepal", title: "What Makes Nepal Special?" },
+  { slug: "regions-in-nepal", title: "Trekking Region in Nepal" },
+  { slug: "attractions-in-nepal", title: "Famous Destinations in Nepal" },
+  { slug: "guides-mandatory-for-trekkers", title: "Why Guides are Mandatory for Trekkers?" },
+  { slug: "accommodation-in-nepal", title: "Accommodation Facilities" },
+  { slug: "altitude-acclimatization", title: "Altitude Acclimatization: 8 Essential Golden Rules" },
+  { slug: "getting-to-nepal-and-visas", title: "Nepal Arrival and Immigration Guide" },
+  { slug: "currency-and-payments", title: "Global Currency and Digital Payment Solutions" },
+  { slug: "facts-about-mt-everest", title: "Lesser-Known Facts of Mount Everest" },
+  { slug: "fact-about-lord-buddha", title: "Fact About Lord Buddha" },
+  { slug: "food-and-beverages", title: "Beverages and Food" },
+  { slug: "safety-while-travelling", title: "Guidelines for Safe and Secure Travel in Nepal" },
+  { slug: "transportation-in-nepal", title: "How Transportation Works in Nepal" },
+  { slug: "trekking-permits-and-fees", title: "Permit Rules and Fees for Trekking in Nepal" },
+  { slug: "weather-and-climate", title: "Weather and Climate Variations Across Nepal" },
+  { slug: "what-to-do-before-coming", title: "Travel Preparation Guide for Nepal Visitors" },
+  { slug: "health-safety-risk-prevention", title: "Health, Safety, and Risk Prevention" },
+  { slug: "know-festival-in-nepal", title: "Know Festival in Nepal" }
+];
+
+// Categorized travel info mapping for premium multi-column dropdown
+const TRAVEL_INFO_CATEGORIES = [
+  {
+    title: "Essential Planning",
+    items: [
+      { slug: "travel-guide-for-nepal", title: "Ultimate Travel Guide to Nepal" },
+      { slug: "getting-to-nepal-and-visas", title: "Nepal Arrival & Visas" },
+      { slug: "trekking-permits-and-fees", title: "Permit Rules & Fees" },
+      { slug: "currency-and-payments", title: "Currency & Payments" },
+      { slug: "weather-and-climate", title: "Weather & Climate" },
+      { slug: "what-to-do-before-coming", title: "Travel Preparation Guide" },
+      { slug: "transportation-in-nepal", title: "How Transportation Works" }
+    ]
+  },
+  {
+    title: "Safety & Accommodation",
+    items: [
+      { slug: "altitude-acclimatization", title: "Altitude Acclimatization Rules" },
+      { slug: "safety-while-travelling", title: "Guidelines for Safe Travel" },
+      { slug: "health-safety-risk-prevention", title: "Health & Risk Prevention" },
+      { slug: "accommodation-in-nepal", title: "Accommodation Facilities" },
+      { slug: "food-and-beverages", title: "Beverages and Food" },
+      { slug: "guides-mandatory-for-trekkers", title: "Why Guides are Mandatory?" }
+    ]
+  },
+  {
+    title: "Destinations & Culture",
+    items: [
+      { slug: "regions-in-nepal", title: "Trekking Region in Nepal" },
+      { slug: "attractions-in-nepal", title: "Famous Destinations" },
+      { slug: "private-treks-in-nepal", title: "Tailor-Made Private Treks" },
+      { slug: "why-travel-to-nepal", title: "What Makes Nepal Special?" },
+      { slug: "facts-about-mt-everest", title: "Lesser-Known Facts of Everest" },
+      { slug: "fact-about-lord-buddha", title: "Fact About Lord Buddha" },
+      { slug: "know-festival-in-nepal", title: "Know Festival in Nepal" }
+    ]
+  }
+];
+
+// Curated Top 15 bestseller list
+const TOP_BESTSELLERS = [
+  { title: "Everest Base Camp Trek - 14 Days", slug: "everest-base-camp-trek-14", duration: 14, difficulty: "hard", price: 1399 },
+  { title: "Annapurna Base Camp Trek - 13 Days", slug: "annapurna-base-camp-13", duration: 13, difficulty: "moderate", price: 999 },
+  { title: "Manaslu Circuit Trek - 16 Days", slug: "manaslu-circuit-trek-16", duration: 16, difficulty: "hard", price: 1299 },
+  { title: "Everest Three Passes Trek - 21 Days", slug: "everest-three-passes-21", duration: 21, difficulty: "extreme", price: 2199 },
+  { title: "Island Peak Climbing With EBC - 19 Days", slug: "island-peak-climbing-ebc-19", duration: 19, difficulty: "extreme", price: 2299 },
+  { title: "Langtang Valley Trek - 7 Days", slug: "langtang-valley-7", duration: 7, difficulty: "moderate", price: 599 },
+  { title: "Dolpa Trek - 25 Days", slug: "upper-dolpa-25", duration: 25, difficulty: "extreme", price: 2799 },
+  { title: "Kanchenjunga Base Camp Trek - 25 Days", slug: "kanchenjunga-base-camp-25", duration: 25, difficulty: "extreme", price: 2499 },
+  { title: "Makalu Base Camp Trek - 21 Days", slug: "makalu-base-camp-21", duration: 21, difficulty: "extreme", price: 2199 },
+  { title: "Tsum Valley Trek - 14 Days", slug: "tsum-valley-14", duration: 14, difficulty: "hard", price: 1299 },
+  { title: "Mardi Himal Trek - 7 Days", slug: "mardi-himal-7", duration: 7, difficulty: "moderate", price: 599 },
+  { title: "Gokyo Ri Trek - 14 Days", slug: "gokyo-ri-14", duration: 14, difficulty: "hard", price: 1399 },
+  { title: "Annapurna Circuit Treks - 14 Days", slug: "annapurna-circuit-14", duration: 14, difficulty: "hard", price: 1099 },
+  { title: "Narphu Valley Trek - 15 Days", slug: "narphu-valley-15", duration: 15, difficulty: "hard", price: 1599 },
+  { title: "Poon Hill Trek - 5 Days", slug: "poon-hill-5", duration: 5, difficulty: "easy", price: 449 }
+];
 
 // Populate All Trips dynamically
 const allTripsMap = new Map<string, { title: string; slug: string }>();
@@ -76,6 +231,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All Trips");
+  const [showAllTopTreks, setShowAllTopTreks] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navbarRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -83,10 +239,29 @@ export default function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const lastScrollYRef = useRef(0);
 
+  // Reset showAllTopTreks when dropdown closes
+  useEffect(() => {
+    if (activeDropdown !== "top10") {
+      setShowAllTopTreks(false);
+    }
+  }, [activeDropdown]);
+
+  // Hide floating pill nav on conversion/form pages
+  const hideFloatingNav = ["/contact-us", "/plan-a-trip"].some(p => pathname.startsWith(p))
+    || pathname.startsWith("/booking");
+
   // Regions data (unchanged)
   const [regions, setRegions] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [treksCount, setTreksCount] = useState<number>(7);
+  const [dbTreks, setDbTreks] = useState<any[]>([]);
+
+  const getDropdownTreks = () => {
+    if (dbTreks && dbTreks.length > 0) {
+      return dbTreks.slice(0, showAllTopTreks ? 15 : 10);
+    }
+    return TOP_BESTSELLERS.slice(0, showAllTopTreks ? 15 : 10);
+  };
 
   const getTop5Treks = () => {
     if (siteSettings?.top5Treks && Array.isArray(siteSettings.top5Treks) && siteSettings.top5Treks.length > 0) {
@@ -138,6 +313,7 @@ export default function Navbar() {
         const data = await res.json();
         if (Array.isArray(data)) {
           setTreksCount(data.length);
+          setDbTreks(data);
         }
       } catch (err) {
         console.error("Failed to fetch trips count in Navbar:", err);
@@ -211,7 +387,7 @@ export default function Navbar() {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
     }
-    closeTimeoutRef.current = setTimeout(() => setActiveDropdown(null), 150);
+    closeTimeoutRef.current = setTimeout(() => setActiveDropdown(null), 350);
   };
   const closeDropdown = () => {
     if (closeTimeoutRef.current) {
@@ -226,54 +402,22 @@ export default function Navbar() {
     if (link.key === "trips") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
     if (link.key === "info") return pathname.startsWith("/travel-info") || pathname.startsWith("/faqs");
     if (link.key === "company") return ["/about-us", "/our-team", "/gallery", "/video-gallery", "/csr"].includes(pathname);
+    if (link.key === "top10") return pathname === "/bestsellers";
     return false;
   };
 
   const navLinks = [
     {
-      title: "Nepal Trips",
+      title: "Nepal Trip",
       dropdown: true,
       key: "trips",
-      items: regions.map((r: any) => ({ label: `${r.name} Region`, href: `/regions/${r.slug}` })),
+      items: Object.keys(TRIP_DATA).filter(k => k !== "All Trips").map(k => ({ label: k, href: `/regions/${categoryToRegion[k]?.slug || 'everest'}` })),
     },
     {
       title: "Travel Info",
       dropdown: true,
       key: "info",
-      items: [
-        { label: "Travel Guide for Nepal", href: "/travel-info/travel-guide-for-nepal" },
-        { label: "Why Travel to Nepal?", href: "/travel-info/why-travel-to-nepal" },
-        { label: "Regions in Nepal", href: "/travel-info/regions-in-nepal" },
-        { label: "Travel Insurance", href: "/travel-info/travel-insurance" },
-        { label: "FAQs", href: "/faqs" },
-      ],
-      megaItems: [
-        // Column 1
-        [
-          { label: "Travel Guide for Nepal", href: "/travel-info/travel-guide-for-nepal", icon: "🗺️" },
-          { label: "Why Travel to Nepal?", href: "/travel-info/why-travel-to-nepal", icon: "🏔️" },
-          { label: "Regions in Nepal", href: "/travel-info/regions-in-nepal", icon: "📍" },
-          { label: "Attractions in Nepal", href: "/travel-info/attractions-in-nepal", icon: "✨" },
-          { label: "Guides Mandatory for Trekkers", href: "/travel-info/guides-mandatory-for-trekkers", icon: "👨‍🦯" },
-          { label: "Accommodation in Nepal", href: "/travel-info/accommodation-in-nepal", icon: "🏨" },
-          { label: "Altitude Acclimatization", href: "/travel-info/altitude-acclimatization", icon: "⛰️" },
-          { label: "Getting to Nepal & Visas", href: "/travel-info/getting-to-nepal-and-visas", icon: "✈️" },
-          { label: "Private Treks in Nepal", href: "/travel-info/private-treks-in-nepal", icon: "🎿" },
-        ],
-        // Column 2
-        [
-          { label: "Currency & Payments", href: "/travel-info/currency-and-payments", icon: "💳" },
-          { label: "Facts About Mt. Everest", href: "/travel-info/facts-about-mt-everest", icon: "🏔️" },
-          { label: "Food and Beverages", href: "/travel-info/food-and-beverages", icon: "🍛" },
-          { label: "Safety While Travelling", href: "/travel-info/safety-while-travelling", icon: "🛡️" },
-          { label: "Transportation in Nepal", href: "/travel-info/transportation-in-nepal", icon: "🚌" },
-          { label: "Travel Insurance", href: "/travel-info/travel-insurance", icon: "🔒" },
-          { label: "Trekking Permits & Fees", href: "/travel-info/trekking-permits-and-fees", icon: "📋" },
-          { label: "Weather & Climate", href: "/travel-info/weather-and-climate", icon: "🌤️" },
-          { label: "What to Do Before Coming", href: "/travel-info/what-to-do-before-coming", icon: "📦" },
-          { label: "When to Come to Nepal?", href: "/travel-info/when-to-come-to-nepal", icon: "📅" },
-        ],
-      ],
+      items: travelInfoPages.map(p => ({ label: p.title, href: `/travel-info/${p.slug}` })),
     },
     {
       title: "Company",
@@ -281,14 +425,20 @@ export default function Navbar() {
       key: "company",
       items: [
         { label: "About Us", href: "/about-us" },
-        { label: "Our Sherpa Team", href: "/our-team" },
-        { label: "Photo Gallery", href: "/gallery" },
-        { label: "Video Gallery", href: "/video-gallery" },
-        { label: "CSR & Sustainability", href: "/csr" },
+        { label: "Our Team", href: "/our-team" },
+        { label: "Responsible Tourism", href: "/csr" },
+        { label: "Terms & Conditions", href: "/terms-and-conditions" },
+        { label: "Legal Documents", href: "/about-us#licensing" },
+        { label: "Privacy Policy", href: "/privacy-policy" }
       ],
     },
     { title: "Blog", href: "/blogs", dropdown: false },
     { title: "Contact Us", href: "/contact-us", dropdown: false },
+    {
+      title: "Top 10 Treks",
+      dropdown: true,
+      key: "top10",
+    }
   ];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -319,12 +469,14 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           {/* Left Logo */}
           <Link href="/" className="group flex items-center gap-2.5 shrink-0">
-            <div className="relative w-9 h-9 overflow-hidden bg-gray-50 rounded-lg p-0.5 border border-gray-200 shadow-inner transition group-hover:scale-105 shrink-0">
+            <div className="relative w-12 h-12 overflow-hidden bg-gray-50 rounded-lg p-0.5 border border-gray-200 shadow-inner transition group-hover:scale-105 shrink-0">
               <Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-sans text-[13px] font-extrabold text-[#1a2e1f] leading-none uppercase tracking-wide">Nature Heaven</span>
-              <span className="text-[9px] tracking-[0.05em] text-[#6b7280] uppercase font-semibold mt-0.5 leading-none">Trek & Expedition</span>
+              <span className="font-sans text-[13px] font-extrabold text-[#1a2e1f] leading-none uppercase tracking-wide">
+                {(siteSettings?.siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "Nature Heaven"}
+              </span>
+              <span className="text-[9px] tracking-[0.05em] text-[#6b7280] uppercase font-semibold mt-0.5 leading-none">Trekking &amp; Expedition</span>
             </div>
           </Link>
 
@@ -425,34 +577,42 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Sticky Nav */}
+      {/* Sticky Nav — hidden on booking/contact/plan-a-trip */}
       <nav className={`transition-all duration-300 z-50 ${
-        isScrolled 
-          ? `fixed left-0 right-0 mx-auto w-[92%] max-w-5xl rounded-full bg-[#1a2e1f]/90 backdrop-blur-md shadow-2xl border border-white/10 py-1.5 px-3 transform transition-all duration-300 ${showNavbar ? "top-4 opacity-100 translate-y-0" : "-top-24 opacity-0 -translate-y-4 pointer-events-none"}`
+        isScrolled && !hideFloatingNav
+          ? `fixed left-0 right-0 mx-auto w-[90%] max-w-5xl rounded-full bg-[#1a2e1f]/95 backdrop-blur-md shadow-xl border border-white/10 py-1 px-2 transform transition-all duration-300 ${showNavbar ? "top-3 opacity-100 translate-y-0" : "-top-24 opacity-0 -translate-y-4 pointer-events-none"}`
+          : isScrolled && hideFloatingNav
+          ? "hidden"
           : "w-full bg-[#1a2e1f] py-3"
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center relative">
-          {/* Logo - Always visible on mobile, visible on desktop only when scrolled */}
+          {/* Logo — compact in floating mode: just logo + "Nature Heaven" */}
           <div className={`transition-all duration-300 ${isScrolled ? "opacity-100 block" : "opacity-100 block lg:opacity-0 lg:hidden"}`}>
-            <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-8 h-8 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0">
+            <Link href="/" className="flex items-center gap-1.5">
+              <div className="relative w-6 h-6 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0">
                 <Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
               </div>
-              <span className="font-sans text-[12px] font-extrabold text-white uppercase tracking-wide">Nature Heaven</span>
+              <span className="font-sans text-[10px] font-extrabold text-white uppercase tracking-wide leading-none">
+                Nature Heaven
+              </span>
             </Link>
           </div>
 
-          {/* Desktop Links */}
-          <div className="hidden lg:flex items-center gap-7">
+          {/* Desktop Nav Links — tighter spacing in floating mode */}
+          <div className={`hidden lg:flex items-center ${isScrolled ? "gap-4" : "gap-7"}`}>
             {navLinks.map((link) => (
-              <div key={link.title} className={link.key === "trips" ? "" : "relative"} onMouseEnter={() => link.dropdown && link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave}>
+              <div key={link.title} className={(link.key === "trips" || link.key === "info") ? "" : "relative"} onMouseEnter={() => link.dropdown && link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave}>
                 {link.dropdown ? (
                   <button onClick={() => {
                     if (closeTimeoutRef.current) { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }
                     setActiveDropdown(activeDropdown === link.key ? null : (link.key || null));
-                  }} className={`flex items-center gap-1 font-sans font-semibold text-white/95 hover:text-[#c8922a] py-3.5 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${isActive(link) || activeDropdown === link.key ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}> {link.title}<FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
+                  }} className={`flex items-center gap-1 font-sans font-medium text-white/90 hover:text-[#c8922a] py-3 border-b-2 focus:outline-none transition duration-300 ${isScrolled ? "text-[11px]" : "text-[13px] font-semibold"} ${isActive(link) || activeDropdown === link.key ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}>
+                    {link.key === "top10" && <FaStar className="h-2.5 w-2.5 text-[#c8922a] animate-pulse" />}
+                    <span>{link.title}</span>
+                    <FaChevronDown className={`h-2.5 w-2.5 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} />
+                  </button>
                 ) : (
-                  <Link href={link.href || "/"} className={`font-sans font-semibold text-white/95 hover:text-[#c8922a] py-3.5 border-b-[3px] transition duration-300 text-[13px] ${isActive(link) ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}>{link.title}</Link>
+                  <Link href={link.href || "/"} className={`font-sans font-medium text-white/90 hover:text-[#c8922a] py-3 border-b-2 transition duration-300 ${isScrolled ? "text-[11px]" : "text-[13px] font-semibold"} ${isActive(link) ? "border-[#c8922a] text-[#c8922a]" : "border-transparent"}`}>{link.title}</Link>
                 )}
                 {/* Dropdown */}
                 {link.dropdown && (
@@ -460,84 +620,116 @@ export default function Navbar() {
                     {activeDropdown === link.key && (
                       link.key === "trips" ? (
                         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 15 }} transition={{ duration: 0.2 }} onMouseEnter={() => link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave} className="absolute left-0 right-0 top-full mt-1 w-full bg-white border border-gray-200 shadow-2xl rounded-2xl p-6 z-50 flex gap-6 text-charcoal before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent animate-in fade-in slide-in-from-top-3 duration-250">
-                          {/* Left categories */}
-                          <div className="w-60 flex flex-col gap-1 border-r border-[#e5e5e5] pr-6 shrink-0">
+                          {/* Left Categories */}
+                          <div className="w-56 flex flex-col gap-0.5 border-r border-gray-100 pr-5 shrink-0 max-h-[400px] overflow-y-auto scrollbar-thin">
+                            <span className="text-[10px] tracking-[0.2em] font-extrabold uppercase text-gray-400 mb-3 block border-b border-gray-100 pb-2 font-sans">
+                              Regions &amp; Categories
+                            </span>
                             {categories.map((cat) => (
-                              <button key={cat} onClick={() => setActiveCategory(cat)} onMouseEnter={() => setActiveCategory(cat)} className={`w-full text-left px-4 py-2 rounded transition duration-200 text-[12.5px] font-sans font-semibold border-l-[3px] ${activeCategory === cat ? "bg-secondary/10 border-secondary text-secondary-dark" : "border-transparent text-charcoal/80 hover:bg-secondary/5 hover:text-secondary-dark"}`}>{cat}</button>
+                              <button 
+                                key={cat} 
+                                onClick={() => setActiveCategory(cat)} 
+                                onMouseEnter={() => setActiveCategory(cat)} 
+                                className={`w-full text-left px-3 py-2 rounded-xl transition duration-200 text-[13px] font-sans font-bold border-l-[3px] ${activeCategory === cat ? "bg-secondary/10 border-secondary text-secondary-dark" : "border-transparent text-gray-900 hover:bg-secondary/5 hover:text-secondary-dark"}`}
+                              >
+                                {cat}
+                              </button>
                             ))}
                           </div>
-                          {/* Right content */}
-                          <div className="flex-1 pl-4">
-                            <div className="text-xs uppercase font-bold text-muted tracking-wider mb-4 border-b border-[#e5e5e5] pb-2 font-sans">{activeCategory} ({TRIP_DATA[activeCategory].length} Options)</div>
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3 font-sans">
+                          
+                          {/* Center Content: full trek names, no truncation */}
+                          <div className="flex-1 pl-2 min-w-0">
+                            <div className="flex items-center mb-3 pb-2 border-b border-gray-100">
+                              <span className="text-[10px] tracking-[0.2em] font-extrabold uppercase text-gray-400 font-sans">
+                                Popular Trips under {activeCategory} ({TRIP_DATA[activeCategory].length} Options)
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 font-sans max-h-[360px] overflow-y-auto scrollbar-thin pr-1">
                               {TRIP_DATA[activeCategory].map((trip) => (
-                                <Link key={trip.slug} href={`/trips/${trip.slug}`} onClick={closeDropdown} className="text-[12.5px] font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark px-3 py-2 rounded transition duration-200 block truncate">{trip.title}</Link>
+                                <Link 
+                                  key={trip.slug} 
+                                  href={`/trips/${trip.slug}`} 
+                                  onClick={closeDropdown} 
+                                  className="text-[12px] font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark px-3 py-2 rounded-lg transition duration-200 block leading-snug"
+                                >
+                                  {trip.title}
+                                </Link>
                               ))}
                             </div>
                           </div>
                         </motion.div>
-                      ) : link.key === "info" && (link as any).megaItems ? (
-                        // ===== TRAVEL INFO MEGA DROPDOWN =====
+                      ) : link.key === "info" ? (
+                        // ===== PREMIUM CATEGORIZED TRAVEL INFO DROPDOWN =====
                         <motion.div
                           initial={{ opacity: 0, y: 15 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 15 }}
                           transition={{ duration: 0.2 }}
-                          onMouseEnter={() => link.key && handleMouseEnter(link.key)}
+                          onMouseEnter={() => link.key && handleMouseEnter("info")}
                           onMouseLeave={handleMouseLeave}
-                          className="absolute left-1/2 -translate-x-1/2 mt-1 w-[600px] bg-white border border-gray-200 shadow-2xl rounded-2xl z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent"
+                          className="absolute left-0 right-0 mx-auto mt-1 w-full max-w-5xl bg-white border border-gray-200 shadow-2xl rounded-2xl p-6 grid grid-cols-3 gap-6 text-charcoal z-50 before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent animate-in fade-in slide-in-from-top-3 duration-250"
                         >
-                          {/* Header */}
-                          <div className="bg-[#1a2e1f] px-5 py-3 flex items-center justify-between">
-                            <span className="text-xs font-bold text-[#c8922a] uppercase tracking-[0.15em]">Nepal Travel Information</span>
-                            <Link href="/why-us" onClick={closeDropdown} className="text-[10px] text-white/60 hover:text-[#c8922a] font-semibold transition">
-                              View All →
-                            </Link>
-                          </div>
-                          {/* 2-column grid */}
-                          <div className="grid grid-cols-2 divide-x divide-gray-100">
-                            {((link as any).megaItems as { label: string; href: string; icon: string }[][]).map((col, ci) => (
-                              <div key={ci} className="flex flex-col py-2">
-                                {col.map((item) => (
+                          {TRAVEL_INFO_CATEGORIES.map((category) => (
+                            <div key={category.title} className="flex flex-col">
+                              <span className="text-[10px] tracking-[0.2em] font-extrabold uppercase text-[#c8922a] mb-3.5 block border-b border-gray-100 pb-2 font-sans">
+                                {category.title}
+                              </span>
+                              <div className="flex flex-col gap-1 max-h-[320px] overflow-y-auto scrollbar-none pr-1">
+                                {category.items.map((item) => (
                                   <Link
-                                    key={item.label}
-                                    href={item.href}
+                                    key={item.slug}
+                                    href={`/travel-info/${item.slug}`}
                                     onClick={closeDropdown}
-                                    className="flex items-center gap-2.5 px-4 py-2.5 font-sans text-[12.5px] font-semibold text-[#3D3D3D] hover:bg-[#c8922a]/15 hover:text-[#1a2e1f] hover:translate-x-1 transition-all duration-200 group"
+                                    className="block px-3 py-2 rounded-lg font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-200"
                                   >
-                                    <span className="text-sm w-5 text-center shrink-0 group-hover:scale-125 transition-transform duration-200">{item.icon}</span>
-                                    <span className="leading-tight">{item.label}</span>
+                                    {item.title}
                                   </Link>
                                 ))}
                               </div>
+                            </div>
+                          ))}
+                        </motion.div>
+                      ) : link.key === "top10" ? (
+                        // ===== TOP 10 TREKS DROPDOWN =====
+                        <motion.div
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 15 }}
+                          transition={{ duration: 0.2 }}
+                          onMouseEnter={() => handleMouseEnter("top10")}
+                          onMouseLeave={handleMouseLeave}
+                          className="absolute left-0 mt-1 min-w-[300px] max-w-[340px] bg-white border border-gray-150 shadow-2xl rounded-xl py-3 z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent"
+                        >
+                          <div className="px-5 py-1.5 border-b border-gray-100 mb-2">
+                            <span className="text-[10px] uppercase font-bold text-muted tracking-wider block font-sans">
+                              Bestseller Himalayan Treks
+                            </span>
+                          </div>
+                          <div className="max-h-[380px] overflow-y-auto scrollbar-none flex flex-col">
+                            {getDropdownTreks().map((item: any) => (
+                              <Link
+                                key={item.slug}
+                                href={`/trips/${item.slug}`}
+                                onClick={closeDropdown}
+                                className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-300 border-l-[3px] border-transparent hover:border-secondary"
+                              >
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-primary transition duration-200">{item.title}</span>
+                                  <span className="text-[10px] text-charcoal/50 mt-0.5 font-normal">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.price} USD</span>
+                                </div>
+                              </Link>
                             ))}
                           </div>
-                          {/* Footer CTA strip */}
-                          <div className="border-t border-gray-100 px-5 py-3 bg-gray-50/80 flex items-center justify-between gap-3">
-                            <div className="flex gap-2 flex-wrap">
-                              {[
-                                { label: "Visa Info", href: "/travel-info/getting-to-nepal-and-visas" },
-                                { label: "Insurance", href: "/travel-info/travel-insurance" },
-                                { label: "Packing List", href: "/travel-info/what-to-do-before-coming" },
-                                { label: "FAQs", href: "/faqs" },
-                              ].map((q) => (
-                                <Link
-                                  key={q.label}
-                                  href={q.href}
-                                  onClick={closeDropdown}
-                                  className="text-[10px] font-bold text-[#1a2e1f] bg-white border border-gray-200 hover:border-[#c8922a] hover:text-[#c8922a] px-2.5 py-1 rounded-full transition duration-200"
-                                >
-                                  {q.label}
-                                </Link>
-                              ))}
-                            </div>
-                            <Link
-                              href="/contact-us"
-                              onClick={closeDropdown}
-                              className="text-[10px] font-bold bg-[#c8922a] hover:bg-[#b07820] text-white px-3 py-1.5 rounded-full transition duration-200 shrink-0"
+                          <div className="px-5 pt-2 mt-1 border-t border-gray-150 flex items-center justify-center">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowAllTopTreks(!showAllTopTreks);
+                              }}
+                              className="text-xs font-bold text-secondary-dark hover:text-secondary transition-colors duration-200 focus:outline-none flex items-center gap-1"
                             >
-                              Ask an Expert
-                            </Link>
+                              {showAllTopTreks ? "Collapse List" : "+ Show 5 More Bestsellers"}
+                            </button>
                           </div>
                         </motion.div>
                       ) : (
@@ -552,73 +744,21 @@ export default function Navbar() {
                 )}
               </div>
             ))}
-            {/* Top 5 Treks */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleMouseEnter("top5")}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button
-                onClick={() => {
-                  if (closeTimeoutRef.current) {
-                    clearTimeout(closeTimeoutRef.current);
-                    closeTimeoutRef.current = null;
-                  }
-                  setActiveDropdown(activeDropdown === "top5" ? null : "top5");
-                }}
-                className={`flex items-center gap-1.5 font-sans font-bold text-[#c8922a] hover:text-[#c8922a]/80 py-3 border-b-[3px] focus:outline-none transition duration-300 text-[13px] ${
-                  activeDropdown === "top5" ? "border-[#c8922a]" : "border-transparent"
-                }`}
-              >
-                <FaStar className="h-3.5 w-3.5 text-[#c8922a] animate-pulse" />
-                <span>Top 5 Treks</span>
-                <FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
-              </button>
-
-              <AnimatePresence>
-                {activeDropdown === "top5" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 15 }}
-                    transition={{ duration: 0.2 }}
-                    onMouseEnter={() => handleMouseEnter("top5")}
-                    onMouseLeave={handleMouseLeave}
-                    className="absolute left-0 mt-1 min-w-[280px] bg-white border border-gray-150 shadow-2xl rounded-xl py-3 z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent"
-                  >
-                    <div className="px-5 py-1.5 border-b border-gray-100 mb-2">
-                      <span className="text-[10px] uppercase font-bold text-muted tracking-wider block font-sans">
-                        Recommended Treks
-                      </span>
-                    </div>
-                    {getTop5Treks().map((item: any) => (
-                      <Link
-                        key={item.slug}
-                        href={`/trips/${item.slug}`}
-                        onClick={closeDropdown}
-                        className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-300 border-l-[3px] border-transparent hover:border-secondary"
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-bold text-primary transition duration-200">{item.title}</span>
-                          <span className="text-[10px] text-charcoal/50 mt-0.5 font-normal">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.discountedPrice || item.price} USD</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </div>
 
           {/* Right CTA & Mobile Quick Actions */}
-          <div className="flex items-center gap-2 sm:gap-4 ml-auto lg:ml-0">
-            {/* Desktop Search Button */}
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto lg:ml-0">
+            {/* Desktop Search Button — compact icon+text in floating, full button in top bar */}
             <button 
               onClick={() => setSearchOpen(true)} 
-              className="group border-2 border-[#c8922a] hover:bg-[#c8922a] text-white hover:text-[#1a2e1f] font-sans font-bold px-4 py-2 rounded-[6px] text-[12px] uppercase tracking-wider transition-all duration-300 hidden lg:flex items-center gap-2 shadow-sm"
+              className={`group border border-[#c8922a] hover:bg-[#c8922a] text-white hover:text-white font-sans transition-all duration-300 hidden lg:flex items-center gap-1.5 ${
+                isScrolled
+                  ? "px-2.5 py-1.5 rounded-full text-[10px] font-semibold tracking-wide"
+                  : "px-4 py-2 rounded-[6px] text-[12px] font-bold border-2 tracking-wider shadow-sm"
+              }`}
             >
-              <FaSearch className="h-3.5 w-3.5 text-[#c8922a] group-hover:text-[#1a2e1f] transition-colors duration-300" />
-              <span>Search Your Trip</span>
+              <FaSearch className={`text-[#c8922a] group-hover:text-white transition-colors duration-300 ${isScrolled ? "h-2.5 w-2.5" : "h-3.5 w-3.5"}`} />
+              <span>{isScrolled ? "Search" : "Search Your Trip"}</span>
             </button>
 
             {/* Mobile/Tablet WhatsApp CTA */}
@@ -677,7 +817,12 @@ export default function Navbar() {
               <div className="flex justify-between items-center pb-4 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <div className="relative w-7 h-7 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0"><Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized /></div>
-                  <span className="font-sans text-xs font-bold text-white uppercase tracking-wider">Nature Heaven</span>
+                  <div className="flex flex-col">
+                    <span className="font-sans text-xs font-bold text-white uppercase tracking-wider leading-none">
+                      {((siteSettings?.siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "Nature Heaven")}
+                    </span>
+                    <span className="text-[8px] text-white/50 uppercase tracking-widest font-semibold mt-0.5 leading-none">Trekking &amp; Expedition</span>
+                  </div>
                 </div>
                 <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-bgOffWhite hover:text-[#c8922a] focus:outline-none" aria-label="Close Mobile Menu"><FaTimes className="h-6 w-6" /></button>
               </div>
@@ -687,7 +832,13 @@ export default function Navbar() {
                   <div key={link.title} className="flex flex-col gap-2">
                     {link.dropdown ? (
                       <>
-                        <button onClick={() => setActiveDropdown(activeDropdown === link.key ? null : (link.key || null))} className="flex items-center justify-between font-sans font-bold text-bgOffWhite text-left py-1.5 hover:text-[#c8922a] focus:outline-none transition text-sm"><span>{link.title}</span><FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} /></button>
+                        <button onClick={() => setActiveDropdown(activeDropdown === link.key ? null : (link.key || null))} className="flex items-center justify-between font-sans font-bold text-bgOffWhite text-left py-1.5 hover:text-[#c8922a] focus:outline-none transition text-sm">
+                          <span className="flex items-center gap-1.5">
+                            {link.key === "top10" && <FaStar className="h-3.5 w-3.5 text-[#c8922a] animate-pulse mr-1" />}
+                            {link.title}
+                          </span>
+                          <FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} />
+                        </button>
                         <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === link.key ? "max-h-none opacity-100 py-1" : "max-h-0 opacity-0"}`}>
                           {link.key === "trips" ? (
                             <div className="flex flex-col gap-3 py-1 pl-1">
@@ -702,19 +853,35 @@ export default function Navbar() {
                                 ))}
                               </div>
                             </div>
-                          ) : link.key === "info" && (link as any).megaItems ? (
-                            <div className="flex flex-col gap-0.5 pl-2">
-                              {((link as any).megaItems as { label: string; href: string; icon: string }[][]).flat().map((item) => (
+                          ) : link.key === "top10" ? (
+                            <div className="flex flex-col gap-1.5 pl-4 font-sans">
+                              {getDropdownTreks().map((item: any) => (
                                 <Link
-                                  key={item.label}
-                                  href={item.href}
-                                  onClick={() => { setMobileMenuOpen(false); closeDropdown(); }}
-                                  className="flex items-center gap-2.5 text-xs font-semibold text-white/75 hover:text-[#c8922a] transition py-1.5 px-2 rounded-lg hover:bg-white/5"
+                                  key={item.slug}
+                                  href={`/trips/${item.slug}`}
+                                  onClick={() => {
+                                    setMobileMenuOpen(false);
+                                    closeDropdown();
+                                  }}
+                                  className="text-xs font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2.5 rounded-lg transition"
                                 >
-                                  <span className="text-sm w-4 text-center shrink-0">{item.icon}</span>
-                                  <span>{item.label}</span>
+                                  <div className="flex flex-col">
+                                    <span className="font-bold text-white">{item.title}</span>
+                                    <span className="text-[9px] text-white/50 mt-0.5">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.price} USD</span>
+                                  </div>
                                 </Link>
                               ))}
+                              <div className="pt-2 flex items-center justify-center">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowAllTopTreks(!showAllTopTreks);
+                                  }}
+                                  className="text-xs font-bold text-[#c8922a] hover:text-[#c8922a]/80 transition duration-200 focus:outline-none"
+                                >
+                                  {showAllTopTreks ? "Collapse List" : "+ Show 5 More Bestsellers"}
+                                </button>
+                              </div>
                             </div>
                           ) : (
                             <div className="flex flex-col gap-2 pl-4">
@@ -730,39 +897,6 @@ export default function Navbar() {
                     )}
                   </div>
                 ))}
-                {/* Top 5 Treks */}
-                <div className="flex flex-col gap-2">
-                  <button
-                    onClick={() => setActiveDropdown(activeDropdown === "top5" ? null : "top5")}
-                    className="flex items-center justify-between font-sans font-bold text-[#c8922a] text-left py-1.5 hover:text-[#c8922a]/80 focus:outline-none transition text-sm"
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <FaStar className="h-3.5 w-3.5 text-[#c8922a] animate-pulse" />
-                      <span>Top 5 Treks</span>
-                    </div>
-                    <FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === "top5" ? "rotate-180" : ""}`} />
-                  </button>
-                  <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === "top5" ? "max-h-none opacity-100 py-1" : "max-h-0 opacity-0"}`}>
-                    <div className="flex flex-col gap-1.5 pl-4 font-sans">
-                      {getTop5Treks().map((item: any) => (
-                        <Link
-                          key={item.slug}
-                          href={`/trips/${item.slug}`}
-                          onClick={() => {
-                            setMobileMenuOpen(false);
-                            closeDropdown();
-                          }}
-                          className="text-xs font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2.5 rounded-lg transition"
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-bold text-white">{item.title}</span>
-                            <span className="text-[9px] text-white/50 mt-0.5">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.discountedPrice || item.price} USD</span>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
             {/* Footer Contact */}

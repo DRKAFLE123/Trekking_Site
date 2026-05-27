@@ -1,13 +1,14 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
+import { checkPermission } from '../access';
 
 export const faqs: CollectionConfig = {
   slug: 'faqs',
+  defaultSort: 'order',
   access: {
-    read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    read: checkPermission('faqs', 'read'),
+    create: checkPermission('faqs', 'create'),
+    update: checkPermission('faqs', 'update'),
+    delete: checkPermission('faqs', 'delete'),
   },
   admin: {
     group: 'Website Content',
@@ -15,23 +16,86 @@ export const faqs: CollectionConfig = {
   },
   fields: [
     {
-      name: 'question',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'answer',
-      type: 'richText',
-      required: true,
-    },
-    {
-      name: 'category',
-      type: 'text',
-    },
-    {
-      name: 'order',
-      type: 'number',
-      defaultValue: 0,
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'FAQ Details',
+          fields: [
+            {
+              name: 'question',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'answer',
+              type: 'richText',
+              required: true,
+            },
+            {
+              name: 'order',
+              type: 'number',
+              defaultValue: 0,
+              admin: {
+                description: 'Used for sorting FAQs on pages. Smaller numbers appear first.',
+              },
+            },
+          ],
+        },
+        {
+          label: 'Targeting / Scope',
+          fields: [
+            {
+              name: 'category',
+              type: 'select',
+              options: [
+                { label: 'General Information', value: 'general' },
+                { label: 'Preparation & Fitness', value: 'prep_fitness' },
+                { label: 'Permits', value: 'permits' },
+                { label: 'Insurance and Visa', value: 'insurance_visa' },
+                { label: 'Guides & Support Staff', value: 'guides_staff' },
+                { label: 'Accommodation and Facilities', value: 'accommodation_facilities' },
+                { label: 'Food and Drinks', value: 'food_drinks' },
+                { label: 'Weather & Seasons', value: 'weather_seasons' },
+                { label: 'Health & Safety', value: 'health_safety' },
+                { label: 'Packing & Gear', value: 'packing_gear' },
+                { label: 'Booking & Payments', value: 'booking_payments' },
+                { label: 'Transportation & Flights', value: 'transportation_flights' },
+                { label: 'Everest Region', value: 'everest' },
+                { label: 'Annapurna Region', value: 'annapurna' },
+                { label: 'Manaslu Region', value: 'manaslu' },
+                { label: 'Langtang Region', value: 'langtang' },
+                { label: 'Ganesh Himal Region', value: 'ganesh-himal' },
+                { label: 'Mustang Region', value: 'mustang' },
+                { label: 'Kanchenjunga Region', value: 'kanchenjunga' },
+                { label: 'Makalu Region', value: 'makalu' },
+                { label: 'Dolpa Region', value: 'dolpa' },
+                { label: 'Tour in Nepal', value: 'tour-in-nepal' },
+                { label: 'Expedition in Nepal', value: 'expedition-in-nepal' },
+                { label: 'Peak Climbing in Nepal', value: 'peak-climbing-in-nepal' },
+                { label: 'Jungle Safari in Nepal', value: 'jungle-safari-in-nepal' },
+                { label: 'River Rafting in Nepal', value: 'river-rafting-in-nepal' },
+                { label: 'Bungee Jumping in Nepal', value: 'bungee-jumping-in-nepal' },
+                { label: 'Paragliding in Nepal', value: 'paragliding-in-nepal' },
+              ],
+              required: true,
+              defaultValue: 'general',
+              admin: {
+                description: 'Categorize this FAQ to help organize lists.',
+              },
+            },
+            {
+              name: 'treks',
+              type: 'relationship',
+              relationTo: 'treks',
+              hasMany: true,
+              required: false,
+              admin: {
+                description: 'Optional: Select specific treks where this FAQ will appear. If empty, this FAQ is global.',
+              },
+            },
+          ],
+        },
+      ],
     },
   ],
 };

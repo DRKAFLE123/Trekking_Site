@@ -37,7 +37,7 @@ import {
   FaQuestionCircle,
   FaPlay
 } from "react-icons/fa";
-import { Trek, Testimonial } from "@/types";
+import { Trek, Testimonial, Faq } from "@/types";
 import { renderLexical } from "@/lib/lexical-renderer";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
 import EnquiryModal from "./EnquiryModal";
@@ -56,6 +56,7 @@ interface TrekDetailClientProps {
   trek: Trek;
   similarTreks: Trek[];
   testimonials: Testimonial[];
+  faqs?: Faq[];
 }
 
 // ----------------------------------------------------
@@ -357,7 +358,49 @@ const EBC_FALLBACK = {
   ]
 };
 
-export default function TrekDetailClient({ trek, similarTreks, testimonials }: TrekDetailClientProps) {
+const FAQ_CATEGORIES = {
+  general: { label: "General Info", icon: "ℹ️" },
+  prep_fitness: { label: "Prep & Fitness", icon: "💪" },
+  permits: { label: "Permits", icon: "🎫" },
+  insurance_visa: { label: "Insurance & Visa", icon: "📋" },
+  guides_staff: { label: "Guides & Staff", icon: "👥" },
+  accommodation_facilities: { label: "Lodging & Facilities", icon: "🏨" },
+  food_drinks: { label: "Food & Drinks", icon: "🍽️" },
+  weather_seasons: { label: "Weather & Seasons", icon: "☀️" },
+  health_safety: { label: "Health & Safety", icon: "🏥" },
+  packing_gear: { label: "Packing & Gear", icon: "🎒" },
+  booking_payments: { label: "Booking & Payments", icon: "💳" },
+  transportation_flights: { label: "Transport & Flights", icon: "✈️" }
+};
+
+const DEFAULT_FAQS = [
+  {
+    id: "df1",
+    question: "What is the best time of year to trek to Everest Base Camp?",
+    answer: "The absolute best seasons are Spring (March to May) and Autumn (September to November). During these months, skies are typically clear, providing magnificent mountain vistas, and weather on the trail is relatively stable.",
+    category: "weather_seasons"
+  },
+  {
+    id: "df2",
+    question: "How difficult is the Everest Base Camp Trek?",
+    answer: "It is rated as hard/moderate. While it requires no technical climbing skills, you will walk 5 to 7 hours daily on rugged uphill and downhill trails. Physical conditioning, regular cardio exercises, and stair climbing preparations are highly recommended.",
+    category: "prep_fitness"
+  },
+  {
+    id: "df3",
+    question: "Is altitude sickness common, and how do you manage it?",
+    answer: "Altitude sickness (AMS) is a potential risk above 3,000 meters. Our 14-day itinerary includes two dedicated acclimatization rest days to help your body adapt. Guides monitor blood oxygen levels daily and carry emergency medication.",
+    category: "health_safety"
+  },
+  {
+    id: "df4",
+    question: "What training or physical fitness do I need?",
+    answer: "You need a good level of cardiovascular fitness. Try doing regular aerobic workouts like hiking, running, swimming, or cycling 3-4 times a week starting at least two months before your departure date.",
+    category: "prep_fitness"
+  }
+];
+
+export default function TrekDetailClient({ trek, similarTreks, testimonials, faqs = [] }: TrekDetailClientProps) {
   const router = useRouter();
   const isEBC = trek.slug === "everest-base-camp-trek" || trek.slug === "everest-base-camp-trek-14" || trek.slug === "everest-base-camp-trek-12" || trek.slug?.startsWith("everest-base-camp-");
 
@@ -486,6 +529,11 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
   const [activeReviewTab, setActiveReviewTab] = useState<"tripadvisor" | "google" | "facebook">("tripadvisor");
   const [expandedReviews, setExpandedReviews] = useState<Record<number, boolean>>({});
   const [showShare, setShowShare] = useState(false);
+
+  // FAQ Console State
+  const [faqSearchQuery, setFaqSearchQuery] = useState("");
+  const [activeFaqCategory, setActiveFaqCategory] = useState<string>("all");
+  const [expandedFaqs, setExpandedFaqs] = useState<Record<string, boolean>>({});
 
   // Live Departures Database State
   const [departures, setDepartures] = useState<any[]>([]);
@@ -1705,38 +1753,201 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials }: T
                   </div>
                 </div>
 
-            {/* FAQs Section */}
-            <div id="faqs" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">
-                    Frequently Asked Questions
-                  </h2>
+            {/* FAQs Section — Interactive Console */}
+            {(() => {
+              // Build the FAQ dataset from CMS or fallback
+              const faqData = (faqs && faqs.length > 0)
+                ? faqs.map((f: any) => ({
+                    id: f.id || f._id || `faq-${Math.random()}`,
+                    question: f.question,
+                    answer: typeof f.answer === 'string'
+                      ? f.answer
+                      : (f.answer && f.answer.root && f.answer.root.children
+                          ? (() => {
+                              const extract = (nodes: any[]): string =>
+                                nodes.map(n => n.type === 'text' ? (n.text || '') : (n.children ? extract(n.children) : '')).join(' ');
+                              return extract(f.answer.root.children);
+                            })()
+                          : (Array.isArray(f.answer)
+                              ? f.answer.map((b: any) => b?.children?.map((c: any) => c?.text).join('') || '').join(' ')
+                              : '')),
+                    category: f.category || 'general',
+                  }))
+                : DEFAULT_FAQS;
 
-                  <div className="flex flex-col gap-4">
-                    {[
-                      {
-                        q: "What is the best time of year to trek to Everest Base Camp?",
-                        a: "The absolute best seasons are Spring (March to May) and Autumn (September to November). During these months, skies are typically clear, providing magnificent mountain vistas, and weather on the trail is relatively stable."
-                      },
-                      {
-                        q: "How difficult is the Everest Base Camp Trek?",
-                        a: "It is rated as hard/moderate. While it requires no technical climbing skills, you will walk 5 to 7 hours daily on rugged uphill and downhill trails. Physical conditioning, regular cardio exercises, and stair climbing preparations are highly recommended."
-                      },
-                      {
-                        q: "Is altitude sickness common, and how do you manage it?",
-                        a: "Altitude sickness (AMS) is a potential risk above 3,000 meters. Our 14-day itinerary includes two dedicated acclimatization rest days to help your body adapt. Guides monitor blood oxygen levels daily and carry emergency medication."
-                      },
-                      {
-                        q: "What training or physical fitness do I need?",
-                        a: "You need a good level of cardiovascular fitness. Try doing regular aerobic workouts like hiking, running, swimming, or cycling 3-4 times a week starting at least two months before your departure date."
-                      }
-                    ].map((faq, idx) => (
-                      <div key={idx} className="flex flex-col gap-2 p-4 bg-[#F8F7F4] border border-[#E5E5E5] rounded-xl">
-                        <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{faq.q}</h4>
-                        <p className="text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/60 pt-2 mt-1">{faq.a}</p>
+              // Count per category
+              const categoryCounts: Record<string, number> = {};
+              faqData.forEach((f: any) => {
+                categoryCounts[f.category] = (categoryCounts[f.category] || 0) + 1;
+              });
+
+              // Filter by active category & search
+              const filtered = faqData.filter((f: any) => {
+                const matchesCat = activeFaqCategory === 'all' || f.category === activeFaqCategory;
+                const matchesSearch = !faqSearchQuery || f.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) || f.answer.toLowerCase().includes(faqSearchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+              });
+
+              const toggleFaq = (id: string) => {
+                setExpandedFaqs((prev) => ({ ...prev, [id]: !prev[id] }));
+              };
+
+              const expandAll = () => {
+                const expanded: Record<string, boolean> = {};
+                filtered.forEach((f: any) => { expanded[f.id] = true; });
+                setExpandedFaqs((prev) => ({ ...prev, ...expanded }));
+              };
+
+              const collapseAll = () => {
+                const collapsed: Record<string, boolean> = {};
+                filtered.forEach((f: any) => { collapsed[f.id] = false; });
+                setExpandedFaqs((prev) => ({ ...prev, ...collapsed }));
+              };
+
+              // Only show category tabs that have FAQs
+              const activeCats = Object.keys(FAQ_CATEGORIES).filter((cat) => categoryCounts[cat] && categoryCounts[cat] > 0);
+
+              return (
+                <div id="faqs" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                  <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#E5E5E5] pb-4">
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">
+                      FAQs For {trek.title}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <button onClick={expandAll} className="text-[10px] font-bold text-[#2E7D32] hover:underline">
+                        Expand All
+                      </button>
+                      <span className="text-[#E5E5E5]">|</span>
+                      <button onClick={collapseAll} className="text-[10px] font-bold text-[#6B6B6B] hover:underline">
+                        Collapse All
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col lg:flex-row gap-6">
+                    {/* LEFT PANEL: Search + Category Tabs */}
+                    <div className="lg:w-[260px] shrink-0 flex flex-col gap-4">
+                      {/* Search */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Search questions..."
+                          value={faqSearchQuery}
+                          onChange={(e) => setFaqSearchQuery(e.target.value)}
+                          className="w-full bg-[#F8F7F4] border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] transition pr-9 placeholder:text-[#999]"
+                        />
+                        <FaQuestionCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] text-xs" />
                       </div>
-                    ))}
+
+                      {/* Category tabs (vertical) */}
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={() => setActiveFaqCategory('all')}
+                          className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
+                            activeFaqCategory === 'all'
+                              ? 'bg-[#2E7D32] text-white shadow-md'
+                              : 'bg-[#F8F7F4] text-[#3D3D3D] hover:bg-[#2E7D32]/10'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span>📋</span>
+                            <span>All Questions</span>
+                          </span>
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
+                            activeFaqCategory === 'all' ? 'bg-white/20 text-white' : 'bg-[#2E7D32]/10 text-[#2E7D32]'
+                          }`}>
+                            {faqData.length}
+                          </span>
+                        </button>
+                        {activeCats.map((catKey) => {
+                          const cat = FAQ_CATEGORIES[catKey as keyof typeof FAQ_CATEGORIES];
+                          if (!cat) return null;
+                          return (
+                            <button
+                              key={catKey}
+                              onClick={() => setActiveFaqCategory(catKey)}
+                              className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
+                                activeFaqCategory === catKey
+                                  ? 'bg-[#2E7D32] text-white shadow-md'
+                                  : 'bg-[#F8F7F4] text-[#3D3D3D] hover:bg-[#2E7D32]/10'
+                              }`}
+                            >
+                              <span className="flex items-center gap-2">
+                                <span>{cat.icon}</span>
+                                <span>{cat.label}</span>
+                              </span>
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
+                                activeFaqCategory === catKey ? 'bg-white/20 text-white' : 'bg-[#2E7D32]/10 text-[#2E7D32]'
+                              }`}>
+                                {categoryCounts[catKey]}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* RIGHT PANEL: Accordions */}
+                    <div className="flex-1 flex flex-col gap-3">
+                      {filtered.length === 0 ? (
+                        <div className="text-center py-12 text-[#999] text-sm">
+                          <FaQuestionCircle className="mx-auto mb-3 text-3xl text-[#E5E5E5]" />
+                          <p className="font-bold">No matching questions found.</p>
+                          <p className="text-xs mt-1">Try a different search term or category.</p>
+                        </div>
+                      ) : (
+                        filtered.map((faq: any) => {
+                          const isOpen = !!expandedFaqs[faq.id];
+                          const catMeta = FAQ_CATEGORIES[faq.category as keyof typeof FAQ_CATEGORIES];
+                          return (
+                            <div
+                              key={faq.id}
+                              className={`border rounded-xl overflow-hidden transition-all duration-300 ${
+                                isOpen ? 'border-[#2E7D32]/30 bg-[#2E7D32]/[0.02] shadow-sm' : 'border-[#E5E5E5] bg-[#F8F7F4]'
+                              }`}
+                            >
+                              <button
+                                onClick={() => toggleFaq(faq.id)}
+                                className="w-full flex items-center gap-3 p-4 text-left group"
+                              >
+                                <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                                  isOpen ? 'bg-[#2E7D32] text-white rotate-180' : 'bg-[#E5E5E5] text-[#6B6B6B] group-hover:bg-[#2E7D32]/20 group-hover:text-[#2E7D32]'
+                                }`}>
+                                  <FaChevronDown className="text-[10px]" />
+                                </span>
+                                <div className="flex-1">
+                                  <h4 className={`font-serif font-black text-sm transition-colors ${
+                                    isOpen ? 'text-[#2E7D32]' : 'text-[#1A1A2E] group-hover:text-[#2E7D32]'
+                                  }`}>
+                                    {faq.question}
+                                  </h4>
+                                  {catMeta && (
+                                    <span className="text-[9px] text-[#999] font-bold uppercase tracking-wider mt-0.5 block">
+                                      {catMeta.icon} {catMeta.label}
+                                    </span>
+                                  )}
+                                </div>
+                              </button>
+                              <div
+                                className={`overflow-hidden transition-all duration-300 ${
+                                  isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                                }`}
+                              >
+                                <div className="px-4 pb-4 pl-14">
+                                  <p className="text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/40 pt-3">
+                                    {faq.answer}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              );
+            })()}
             </div>
 
             {/* RIGHT COLUMN (Sticky Booking & Advisor Widgets) */}

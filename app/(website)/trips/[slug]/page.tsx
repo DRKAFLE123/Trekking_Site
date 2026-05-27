@@ -1,7 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Trek, Testimonial } from "@/types";
+import { Trek, Testimonial, Faq } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import TrekDetailClient from "@/components/TrekDetailClient";
@@ -62,6 +62,7 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
   let trek: Trek | null = null;
   let similarTreks: Trek[] = [];
   let displayTestimonials: Testimonial[] = [];
+  let faqs: Faq[] = [];
 
   try {
     const payload = await getPayload({ config });
@@ -73,8 +74,8 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
     trek = (res.docs[0] || null) as unknown as Trek | null;
 
     if (trek) {
-      // Fetch similar treks (same region, exclude current trek) in parallel with testimonials
-      const [allTreksRes, testimonialsRes] = await Promise.all([
+      // Fetch similar treks (same region, exclude current trek) in parallel with testimonials and FAQs
+      const [allTreksRes, testimonialsRes, faqsRes] = await Promise.all([
         payload.find({
           collection: "treks",
           depth: 1,
@@ -82,6 +83,11 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         payload.find({
           collection: "testimonials",
           depth: 1,
+        }),
+        payload.find({
+          collection: "faqs",
+          depth: 0,
+          limit: 500, // Fetch all to filter in JS safely
         })
       ]);
 
@@ -95,6 +101,23 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         .filter((t) => t.trek?.slug === trek!.slug)
         .slice(0, 3);
       displayTestimonials = relatedTestimonials.length > 0 ? relatedTestimonials : testimonials.slice(0, 3);
+
+      // Filter FAQs: matches if treks array contains this trek ID OR treks array is empty/undefined (global)
+      const globalAndCategoryFaqs = faqsRes.docs.filter((faq: any) => {
+        if (!faq.treks || faq.treks.length === 0) return true; // global
+        const trekIds = faq.treks.map((t: any) => typeof t === 'object' ? t.id : t);
+        return trekIds.includes(trek!.id);
+      }) as unknown as Faq[];
+
+      // Map trek-specific nested FAQs into the Faq interface format
+      const trekSpecificFaqs = (trek.faqs || []).map((faq: any, idx: number) => ({
+        id: `trek-faq-${idx}`,
+        question: faq.question,
+        answer: faq.answer,
+      })) as unknown as Faq[];
+
+      // Merge trek-specific FAQs first, then global/category FAQs
+      faqs = [...trekSpecificFaqs, ...globalAndCategoryFaqs];
     }
   } catch (err: any) {
     console.warn("[Trip Detail Page] Failed to query trip details:", err.message);
@@ -162,6 +185,7 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         trek={trek}
         similarTreks={similarTreks}
         testimonials={displayTestimonials}
+        faqs={faqs}
       />
     </>
   );

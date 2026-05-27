@@ -32,8 +32,10 @@ export default async function HomePage() {
 
   try {
     const payload = await getPayload({ config });
-    const [bestSellersRes, regionsRes, blogsRes, faqsRes, galleryRes, siteSettingsRes] = await Promise.all([
-      payload.find({
+
+    // 1. Fetch Best Sellers
+    try {
+      const bestSellersRes = await payload.find({
         collection: 'treks',
         where: {
           isBestSeller: {
@@ -42,41 +44,79 @@ export default async function HomePage() {
         },
         depth: 1,
         limit: 6, // Limit best sellers to exactly 6 as requested
-      }),
-      payload.find({
+      });
+      bestSellers = bestSellersRes.docs as unknown as Trek[];
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query treks/bestSellers collection:", e.message);
+    }
+
+    // 2. Fetch Regions
+    try {
+      const regionsRes = await payload.find({
         collection: 'regions',
         depth: 1,
         limit: 8,
-      }),
-      payload.find({
+      });
+      regions = regionsRes.docs as unknown as Region[];
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query regions collection:", e.message);
+    }
+
+    // 3. Fetch Blogs
+    try {
+      const blogsRes = await payload.find({
         collection: 'blogPosts',
         depth: 1,
-      }),
-      payload.find({
+      });
+      blogs = blogsRes.docs as unknown as BlogPost[];
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query blogPosts collection:", e.message);
+    }
+
+    // 4. Fetch FAQs
+    try {
+      const faqsRes = await payload.find({
         collection: 'faqs',
+        where: {
+          category: {
+            equals: 'general',
+          },
+        },
+        sort: 'order',
         depth: 1,
-      }),
-      payload.find({
+      });
+      faqs = faqsRes.docs as unknown as Faq[];
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query faqs collection:", e.message);
+    }
+
+    // 5. Fetch Gallery
+    try {
+      const galleryRes = await payload.find({
         collection: 'gallery',
         depth: 2,
         limit: 30,
-      }),
-      payload.find({
+      });
+      galleryItems = galleryRes.docs as any[];
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query gallery collection:", e.message);
+    }
+
+    // 6. Fetch Site Settings
+    try {
+      const siteSettingsRes = await payload.find({
         collection: 'siteSettings',
         depth: 2,
         limit: 1,
         overrideAccess: true, // Needed for SSG prerender (no authenticated user context)
-      })
-    ]);
+      });
+      siteSettings = siteSettingsRes.docs[0] as any;
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query siteSettings collection:", e.message);
+    }
 
-    bestSellers = bestSellersRes.docs as unknown as Trek[];
-    regions = regionsRes.docs as unknown as Region[];
-    blogs = blogsRes.docs as unknown as BlogPost[];
-    faqs = faqsRes.docs as unknown as Faq[];
-    galleryItems = galleryRes.docs as any[];
-    siteSettings = siteSettingsRes.docs[0] as any;
   } catch (err: any) {
-    console.warn("[Home Page] Failed to query database collections (relation may not exist yet during build):", err.message);
+    console.warn("[Home Page] Failed to initialize Payload CMS:", err.message);
   }
 
   // Configure hero fields dynamically from CMS with absolute default fallbacks
@@ -136,6 +176,24 @@ export default async function HomePage() {
       publishedAt: "2026-05-02T00:00:00.000Z",
       readTime: "8 min read",
       slug: "everest-vs-annapurna-circuit"
+    },
+    {
+      title: "Nepal Trekking Packing List: Essential Gear Guide",
+      category: "Trekking Guides",
+      coverImage: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800",
+      excerpt: "What should you pack for a high-altitude Himalayan trek? Here is our comprehensive gear checklist, covering clothing layers, boots, sleeping bags, and medicine.",
+      publishedAt: "2026-04-20T00:00:00.000Z",
+      readTime: "7 min read",
+      slug: "nepal-trekking-packing-list-guide"
+    },
+    {
+      title: "Manaslu Circuit Trek: Complete Preparation & Permit Guide",
+      category: "Trekking Guides",
+      coverImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800",
+      excerpt: "All you need to know about the special restricted area permit for the Manaslu region, and physical training recommendations for Larke La Pass.",
+      publishedAt: "2026-04-10T00:00:00.000Z",
+      readTime: "6 min read",
+      slug: "manaslu-circuit-trek-preparation"
     }
   ];
 
@@ -145,8 +203,20 @@ export default async function HomePage() {
     ...defaultBlogs.filter(d => !dbSlugs.has((d.slug || "").toLowerCase()))
   ];
 
-  // Slice first 3 blogs for homepage preview
-  const featuredBlogs = mergedBlogs.slice(0, 3) as unknown as BlogPost[];
+  // Sort: featured blogs first, then by publishedAt descending
+  const sortedBlogs = [...mergedBlogs].sort((a: any, b: any) => {
+    const aFeat = a.isFeatured ? 1 : 0;
+    const bFeat = b.isFeatured ? 1 : 0;
+    if (aFeat !== bFeat) {
+      return bFeat - aFeat;
+    }
+    const aTime = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+    const bTime = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+    return bTime - aTime;
+  });
+
+  // Slice first 5 blogs for homepage preview
+  const featuredBlogs = sortedBlogs.slice(0, 5) as unknown as BlogPost[];
 
 
   return (
@@ -391,7 +461,7 @@ export default async function HomePage() {
       </section>
 
       {/* 6. Review Platforms */}
-      <ReviewPlatforms />
+      <ReviewPlatforms platforms={siteSettings?.reviewPlatforms} />
 
       {/* 7. Exclusive Private Treks */}
       <ExclusivePrivateTreks />
@@ -408,86 +478,204 @@ export default async function HomePage() {
       {/* 11. Blog Preview Grid */}
       <section className="py-16 md:py-24 px-4 md:px-6 bg-white border-t border-b border-secondary/10">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
-              Himalayan Chronicles
-            </span>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4 text-primary">
-              Latest Travel Guides & News
-            </h2>
-            <div className="h-0.5 w-16 bg-secondary mx-auto mb-6"></div>
-            <p className="text-sm md:text-base text-charcoal/80">
-              Read pro trekking advice, gear checklists, difficulty guides, and weather reports written directly by our mountain leaders.
-            </p>
-          </div>
-
-          {/* Grid (Slider on mobile, grid on desktop) */}
-          <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
-            {featuredBlogs.map((blog: BlogPost, idx: number) => (
-              <div
-                key={blog._id || idx}
-                className="group flex flex-col bg-bgOffWhite rounded-xl overflow-hidden border border-secondary/10 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 w-[290px] sm:w-auto shrink-0 snap-align-start"
-              >
-                {/* Cover image */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-primary/10">
-                  {blog.coverImage && (
-                    <Image
-                      src={blog.coverImage}
-                      alt={blog.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition duration-500"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                  )}
-                  {/* Category Badge */}
-                  <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full">
-                    {blog.category}
-                  </span>
-                </div>
-
-                {/* Body details */}
-                <div className="p-5 flex flex-col justify-between grow">
-                  <div className="flex flex-col gap-2.5">
-                    {/* Meta */}
-                    <div className="flex items-center gap-2 text-[10px] text-muted tracking-wider uppercase font-semibold">
-                      <span>{new Date(blog.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                      <span>•</span>
-                      <span>{blog.readTime}</span>
-                    </div>
-
-                    <h3 className="font-serif font-bold text-primary group-hover:text-secondary transition text-base md:text-lg leading-snug line-clamp-2">
-                      <Link href={`/blogs/${blog.slug}`}>{blog.title}</Link>
-                    </h3>
-
-                    <p className="text-xs md:text-sm text-charcoal/70 leading-relaxed line-clamp-3">
-                      {blog.excerpt}
-                    </p>
-                  </div>
-
-                  <Link
-                    href={`/blogs/${blog.slug}`}
-                    className="inline-flex items-center gap-1.5 text-xs text-primary font-bold mt-4 hover:text-secondary group/link transition"
-                  >
-                    <span>Read More</span>
-                    <span className="group-hover/link:translate-x-1 transition duration-300">→</span>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
+          
+          {/* Split Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="max-w-2xl">
+              <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-2 block">
+                Himalayan Chronicles
+              </span>
+              <h2 className="font-serif text-3xl md:text-5xl font-black text-primary leading-tight">
+                Explore our Travel Blog
+              </h2>
+              <p className="text-sm md:text-base text-charcoal/70 leading-relaxed mt-2">
+                Explore our blog for trusted trekking insights across Nepal: from beginner-friendly tips and route breakdowns to expert guidance for seasoned high-altitude adventurers.
+              </p>
+            </div>
             <Link
               href="/blogs"
-              className="inline-flex items-center gap-2 text-primary font-bold border-b-2 border-secondary hover:text-secondary transition duration-300 pb-1"
+              className="inline-flex items-center gap-2 border border-secondary text-primary hover:text-white font-bold px-6 py-3 rounded-xl hover:bg-secondary hover:scale-105 active:scale-95 transition-all duration-300 shrink-0 self-start md:self-end"
             >
-              <span>View All Blog Articles</span>
-              <span>→</span>
+              <span>Explore more blogs</span>
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+              </svg>
             </Link>
           </div>
+
+          {/* Desktop Split Layout */}
+          {featuredBlogs.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+              
+              {/* Left Column: Big Featured Card */}
+              <div className="lg:col-span-7 flex animate-fadeIn">
+                {(() => {
+                  const mainBlog = featuredBlogs[0];
+                  const mainBlogUrl = `/blogs/${mainBlog.slug}`;
+                  return (
+                    <Link
+                      href={mainBlogUrl}
+                      className="group relative w-full rounded-2xl overflow-hidden shadow-lg border border-secondary/10 flex flex-col justify-end p-6 sm:p-8 min-h-[350px] lg:min-h-[450px]"
+                    >
+                      {/* Dark Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent z-10 transition duration-300 group-hover:from-black/95" />
+                      
+                      {/* Cover Image */}
+                      {mainBlog.coverImage && (
+                        <Image
+                          src={mainBlog.coverImage}
+                          alt={mainBlog.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition duration-500 z-0"
+                          sizes="(max-width: 1024px) 100vw, 60vw"
+                        />
+                      )}
+
+                      {/* Content Overlay */}
+                      <div className="relative z-20 flex flex-col gap-2">
+                        <span className="text-secondary font-bold text-[10px] tracking-widest uppercase flex items-center gap-2">
+                          <span>{mainBlog.category}</span>
+                          <span>|</span>
+                          <span>
+                            {new Date(mainBlog.publishedAt).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </span>
+                        
+                        <h3 className="font-serif text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug group-hover:text-secondary transition duration-300">
+                          {mainBlog.title}
+                        </h3>
+                        
+                        <p className="text-xs text-bgOffWhite/80 line-clamp-2 mt-1 font-light leading-relaxed">
+                          {mainBlog.excerpt}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })()}
+              </div>
+
+              {/* Right Column: Four Stacked Smaller Horizontal Cards (Compact Layout) */}
+              <div className="lg:col-span-5 flex flex-col gap-3.5 justify-start">
+                {featuredBlogs.slice(1, 5).map((blog: BlogPost, idx: number) => {
+                  const blogUrl = `/blogs/${blog.slug}`;
+                  return (
+                    <Link
+                      key={blog._id || idx}
+                      href={blogUrl}
+                      className="group flex gap-3.5 items-center bg-bgOffWhite/10 hover:bg-bgOffWhite/45 border border-secondary/5 hover:border-secondary/15 p-2.5 rounded-xl transition duration-300"
+                    >
+                      {/* Small Thumbnail */}
+                      <div className="relative w-24 sm:w-28 aspect-[16/10] rounded-lg overflow-hidden shrink-0 bg-primary/10">
+                        {blog.coverImage && (
+                          <Image
+                            src={blog.coverImage}
+                            alt={blog.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition duration-300"
+                            sizes="(max-width: 640px) 100px, 120px"
+                          />
+                        )}
+                      </div>
+
+                      {/* Info on Right */}
+                      <div className="flex flex-col gap-1.5 overflow-hidden">
+                        <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] text-charcoal/50 font-bold uppercase tracking-wider">
+                          <span>📍</span>
+                          <span>{blog.category}</span>
+                          <span>•</span>
+                          <span>
+                            {new Date(blog.publishedAt).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                        
+                        <h4 className="font-serif font-black text-primary group-hover:text-secondary transition text-sm sm:text-base leading-snug line-clamp-2">
+                          {blog.title}
+                        </h4>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+            </div>
+          )}
+
         </div>
       </section>
+
+      {/* 11.5 Featured Travel Info Pages */}
+      {siteSettings?.featuredTravelInfo && siteSettings.featuredTravelInfo.length > 0 && (
+        <section className="py-16 md:py-24 px-4 md:px-6 bg-[#f8f5f0] border-b border-secondary/10">
+          <div className="max-w-7xl mx-auto">
+            {/* Section Header */}
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
+                Essential Trip Guides
+              </span>
+              <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4 text-primary">
+                Himalayan Travel Preparation
+              </h2>
+              <div className="h-0.5 w-16 bg-secondary mx-auto mb-6"></div>
+              <p className="text-sm md:text-base text-charcoal/80">
+                Read local guidelines, visa policies, packing tips, and acclimatization strategies prepared by our native Sherpa team.
+              </p>
+            </div>
+
+            {/* Travel Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {siteSettings.featuredTravelInfo.map((page: any, idx: number) => {
+                const coverImage = page.heroImage?.url || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800";
+                return (
+                  <Link
+                    key={page.id || idx}
+                    href={`/travel-info/${page.slug}`}
+                    className="group bg-white rounded-2xl overflow-hidden border border-secondary/10 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full animate-fadeIn"
+                  >
+                    {/* Cover Image */}
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-primary/10">
+                      <Image
+                        src={coverImage}
+                        alt={page.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 flex flex-col justify-between grow gap-4">
+                      <div className="flex flex-col gap-2">
+                        <h3 className="font-serif font-black text-primary text-lg sm:text-xl group-hover:text-secondary transition duration-300 leading-snug">
+                          {page.title}
+                        </h3>
+                        {page.excerpt && (
+                          <p className="text-xs sm:text-sm text-charcoal/70 line-clamp-3 leading-relaxed font-light font-sans">
+                            {page.excerpt}
+                          </p>
+                        )}
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 text-xs text-secondary font-bold uppercase tracking-wider group-hover:gap-2.5 transition-all duration-300 pt-2 border-t border-gray-50 self-start">
+                        <span>Read full guide</span>
+                        <span>→</span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 12. FAQ Accordion */}
       <section className="py-16 md:py-24 px-4 md:px-6 bg-[#fcfbfa]">

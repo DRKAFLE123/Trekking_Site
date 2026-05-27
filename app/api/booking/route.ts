@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
-import { verifyRecaptcha } from "@/lib/recaptcha";
 import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 // Helper to generate a random uppercase alphanumeric string
 function generateBookingId(trekSlug: string): string {
@@ -17,10 +17,12 @@ export async function POST(request: Request) {
     const payload = await getPayload({ config });
 
     // Verify reCAPTCHA
-    const { recaptchaToken } = body;
-    const isHuman = await verifyRecaptcha(recaptchaToken);
-    if (!isHuman) {
-      return NextResponse.json({ error: "reCAPTCHA verification failed. Please try again." }, { status: 400 });
+    const isValidRecaptcha = await verifyRecaptcha(body.recaptchaToken);
+    if (!isValidRecaptcha) {
+      return NextResponse.json(
+        { error: "reCAPTCHA verification failed. Please try again." },
+        { status: 400 }
+      );
     }
 
     // ----------------------------------------------------
@@ -68,6 +70,7 @@ export async function POST(request: Request) {
       const inquiry = await payload.create({
         collection: "inquiries",
         data: {
+          type: "booking_enquiry",
           name,
           email,
           phone: body.phone || "",

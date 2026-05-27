@@ -1,5 +1,54 @@
 import React from 'react';
 
+export interface HeadingItem {
+  id: string;
+  text: string;
+}
+
+export const slugify = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
+
+export function extractHeadings(body: any): HeadingItem[] {
+  if (!body || typeof body === 'string') return [];
+  const headings: HeadingItem[] = [];
+
+  const traverse = (node: any) => {
+    if (node.type === 'heading' && node.tag === 'h2' && node.children) {
+      const text = node.children
+        .filter((c: any) => c.type === 'text')
+        .map((c: any) => c.text)
+        .join('');
+      if (text) {
+        headings.push({ id: slugify(text), text });
+      }
+    }
+    // PortableText fallback style
+    if (node._type === 'block' && node.style === 'h2' && node.children) {
+      const text = node.children.map((c: any) => c.text).join('');
+      if (text) {
+        headings.push({ id: slugify(text), text });
+      }
+    }
+
+    if (node.children && Array.isArray(node.children)) {
+      node.children.forEach(traverse);
+    }
+    if (node.root && node.root.children) {
+      node.root.children.forEach(traverse);
+    }
+  };
+
+  if (Array.isArray(body)) {
+    body.forEach(traverse);
+  } else {
+    traverse(body);
+  }
+  return headings;
+}
+
 export function renderLexical(body: any): React.ReactNode {
   if (!body) return null;
   if (typeof body === 'string') {
@@ -18,7 +67,7 @@ export function renderLexical(body: any): React.ReactNode {
         const text = block.children.map((c: any) => c.text).join('');
         if (block.style === 'h2') {
           return (
-            <h2 key={idx} className="font-serif text-2xl font-bold text-primary mt-8 mb-4 border-b border-secondary/10 pb-2">
+            <h2 id={slugify(text)} key={idx} className="font-serif text-2xl font-bold text-primary mt-8 mb-4 border-b border-secondary/10 pb-2 scroll-mt-28">
               {text}
             </h2>
           );
@@ -55,8 +104,12 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
     if (node.type === 'heading' && node.children) {
       const text = renderLexicalChildren(node.children);
       if (node.tag === 'h2') {
+        const textStr = node.children
+          .filter((c: any) => c.type === 'text')
+          .map((c: any) => c.text)
+          .join('');
         return (
-          <h2 key={idx} className="font-serif text-2xl font-bold text-primary mt-8 mb-4 border-b border-secondary/10 pb-2">
+          <h2 id={slugify(textStr)} key={idx} className="font-serif text-2xl font-bold text-primary mt-8 mb-4 border-b border-secondary/10 pb-2 scroll-mt-28">
             {text}
           </h2>
         );
@@ -80,6 +133,48 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
         return <ol key={idx} className="list-decimal list-inside my-4 flex flex-col gap-1">{listItems}</ol>;
       }
       return <ul key={idx} className="list-disc list-inside my-4 flex flex-col gap-1">{listItems}</ul>;
+    }
+    if (node.type === 'quote' && node.children) {
+      return (
+        <blockquote key={idx} className="border-l-4 border-secondary bg-primary/5 pl-4 py-2.5 my-4 italic text-charcoal/80 rounded-r-lg">
+          {renderLexicalNodes(node.children)}
+        </blockquote>
+      );
+    }
+    if (node.type === 'table' && node.children) {
+      return (
+        <div key={idx} className="overflow-x-auto w-full my-6 rounded-xl border border-secondary/15 shadow-sm">
+          <table className="min-w-full divide-y divide-secondary/15 text-sm">
+            <tbody className="divide-y divide-secondary/10 bg-white">
+              {renderLexicalNodes(node.children)}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+    if (node.type === 'tablerow' && node.children) {
+      return (
+        <tr key={idx} className="hover:bg-primary/[0.02] transition">
+          {renderLexicalNodes(node.children)}
+        </tr>
+      );
+    }
+    if (node.type === 'tablecell' && node.children) {
+      const isHeader = node.headerState && node.headerState > 0;
+      const CellTag = isHeader ? 'th' : 'td';
+      return (
+        <CellTag
+          key={idx}
+          className={`px-4 py-3 text-left ${
+            isHeader
+              ? 'bg-primary/5 font-bold text-primary border-b border-secondary/20'
+              : 'text-charcoal/80'
+          }`}
+          style={node.width ? { width: `${node.width}px` } : undefined}
+        >
+          {renderLexicalNodes(node.children)}
+        </CellTag>
+      );
     }
     return null;
   });

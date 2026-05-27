@@ -1,13 +1,13 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
+import { checkPermission } from '../access';
 
 export const blogPosts: CollectionConfig = {
   slug: 'blogPosts',
   access: {
-    read: isAuthenticated,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    read: checkPermission('blogPosts', 'read'),
+    create: checkPermission('blogPosts', 'create'),
+    update: checkPermission('blogPosts', 'update'),
+    delete: checkPermission('blogPosts', 'delete'),
   },
   admin: {
     group: 'Website Content',
@@ -31,110 +31,154 @@ export const blogPosts: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
-    },
-    {
-      name: 'status',
-      type: 'select',
-      options: [
-        { label: 'Draft', value: 'draft' },
-        { label: 'Published', value: 'published' },
-      ],
-      required: false,
-      defaultValue: 'draft',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'tags',
-      type: 'array',
-      admin: {
-        position: 'sidebar',
-      },
-      fields: [
+      type: 'tabs',
+      tabs: [
         {
-          name: 'tag',
-          type: 'text',
-        },
-      ],
-    },
-    {
-      name: 'category',
-      type: 'text',
-      required: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'author',
-      type: 'relationship',
-      relationTo: 'teamMembers',
-      required: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'publishedAt',
-      type: 'date',
-      required: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'readTime',
-      type: 'text',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'coverImage',
-      type: 'upload',
-      relationTo: 'media',
-    },
-    {
-      name: 'excerpt',
-      type: 'textarea',
-      required: true,
-    },
-    {
-      name: 'body',
-      type: 'richText',
-    },
-    {
-      name: 'relatedTreks',
-      type: 'relationship',
-      relationTo: 'treks',
-      hasMany: true,
-    },
-    {
-      name: 'seo',
-      type: 'group',
-      fields: [
-        {
-          name: 'metaTitle',
-          type: 'text',
+          label: 'Blog Content',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'slug',
+                  type: 'text',
+                  required: true,
+                  unique: true,
+                },
+              ],
+            },
+            {
+              name: 'coverImage',
+              type: 'upload',
+              relationTo: 'media',
+              required: true,
+            },
+            {
+              name: 'excerpt',
+              type: 'textarea',
+              required: true,
+              admin: {
+                description: 'A brief summary of the blog post (shown on lists and cards).',
+              },
+            },
+            {
+              name: 'body',
+              type: 'richText',
+              required: true,
+            },
+          ],
         },
         {
-          name: 'metaDescription',
-          type: 'textarea',
+          label: 'Publishing Info',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'status',
+                  type: 'select',
+                  options: [
+                    { label: 'Draft', value: 'draft' },
+                    { label: 'Published', value: 'published' },
+                  ],
+                  required: true,
+                  defaultValue: 'draft',
+                },
+                {
+                  name: 'publishedAt',
+                  type: 'date',
+                  required: true,
+                  defaultValue: () => new Date().toISOString(),
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'author',
+                  type: 'relationship',
+                  relationTo: 'teamMembers',
+                  required: true,
+                },
+                {
+                  name: 'category',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'E.g. Trekking Guides, Travel Info, Packing Tips',
+                  },
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'readTime',
+                  type: 'text',
+                  admin: {
+                    placeholder: 'E.g. 5 min read',
+                  },
+                },
+                {
+                  name: 'isFeatured',
+                  type: 'checkbox',
+                  label: 'Feature on Homepage',
+                  defaultValue: false,
+                },
+              ],
+            },
+            {
+              name: 'tags',
+              type: 'array',
+              fields: [
+                {
+                  name: 'tag',
+                  type: 'text',
+                  required: true,
+                },
+              ],
+            },
+            {
+              name: 'relatedTreks',
+              type: 'relationship',
+              relationTo: 'treks',
+              hasMany: true,
+            },
+          ],
         },
         {
-          name: 'metaImage',
-          type: 'upload',
-          relationTo: 'media',
+          label: 'SEO',
+          fields: [
+            {
+              name: 'seo',
+              type: 'group',
+              fields: [
+                {
+                  name: 'metaTitle',
+                  type: 'text',
+                  label: 'Meta Title',
+                },
+                {
+                  name: 'metaDescription',
+                  type: 'textarea',
+                  label: 'Meta Description',
+                },
+                {
+                  name: 'metaImage',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Social Share Image',
+                },
+              ],
+            },
+          ],
         },
       ],
     },

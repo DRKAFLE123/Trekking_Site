@@ -51,9 +51,20 @@ export const users: CollectionConfig = {
         { label: 'Administrator', value: 'admin' },
         { label: 'Editor', value: 'editor' },
         { label: 'Viewer', value: 'viewer' },
+        { label: 'Custom Role', value: 'custom' },
       ],
       required: true,
       defaultValue: 'admin',
+    },
+    {
+      name: 'customRole',
+      type: 'relationship',
+      relationTo: 'roles',
+      required: false,
+      admin: {
+        condition: (data) => data?.role === 'custom',
+        description: 'Select a custom role managed in the Roles collection.',
+      },
     },
   ],
 };
