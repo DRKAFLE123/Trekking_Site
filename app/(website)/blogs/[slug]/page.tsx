@@ -226,7 +226,7 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
       where: { slug: { equals: slug } },
       depth: 1,
     });
-    let blog = (res.docs[0] || null) as unknown as BlogPost | null;
+    const blog = (res.docs[0] || null) as unknown as BlogPost | null;
 
     if (!blog) {
       const matchedDefault = defaultBlogs.find(b => b.slug === slug);
