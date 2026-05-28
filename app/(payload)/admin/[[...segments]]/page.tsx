@@ -8,5 +8,7 @@ interface Props {
 }
 
 export default async function Page({ params, searchParams }: Props) {
-  return <RootPage params={params as any} searchParams={searchParams as any} config={config} importMap={importMap} />;
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  return <RootPage params={resolvedParams as any} searchParams={resolvedSearchParams as any} config={config} importMap={importMap} />;
 }

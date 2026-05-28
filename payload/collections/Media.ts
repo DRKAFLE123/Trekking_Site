@@ -49,6 +49,7 @@ const uploadToCloudinary: CollectionAfterChangeHook = async ({
       folder: 'summit-trail-trekking',
       use_filename: true,
       unique_filename: true,
+      resource_type: 'auto',
     });
 
     console.log(`[Media Cloudinary Upload] Successful! URL: ${uploadResult.secure_url}`);
@@ -101,7 +102,7 @@ export const media: CollectionConfig = {
       },
     ],
     adminThumbnail: 'thumbnail',
-    mimeTypes: ['image/*', 'application/pdf'],
+    mimeTypes: ['image/*', 'application/pdf', 'video/*'],
   },
   access: {
     read: () => true, // Media must be publicly accessible

@@ -19,8 +19,13 @@ export const blogPosts: CollectionConfig = {
       return '';
     },
     livePreview: {
-      url: ({ data }) => data?.slug ? `/blogs/preview/${data.slug}` : '',
+      url: ({ data }) => `/blogs/preview/${data?.slug || data?.id || 'new-post'}`,
     },
+    components: {
+      edit: {
+        PreviewButton: '@components/payload/CustomPreviewToggle#CustomPreviewToggle',
+      }
+    }
   },
   versions: {
     drafts: {
@@ -31,154 +36,143 @@ export const blogPosts: CollectionConfig = {
   },
   fields: [
     {
-      type: 'tabs',
-      tabs: [
+      name: 'coverImage',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+      label: 'Hero Cover Image',
+    },
+    {
+      name: 'title',
+      type: 'text',
+      required: true,
+      label: 'Post Title',
+    },
+    {
+      name: 'body',
+      type: 'richText',
+      required: true,
+    },
+    {
+      name: 'excerpt',
+      type: 'textarea',
+      required: true,
+      admin: {
+        description: 'A brief summary of the blog post shown on lists and category cards.',
+      },
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Draft', value: 'draft' },
+        { label: 'Published', value: 'published' },
+      ],
+      required: true,
+      defaultValue: 'draft',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'publishedAt',
+      type: 'date',
+      required: true,
+      defaultValue: () => new Date().toISOString(),
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'slug',
+      type: 'text',
+      required: true,
+      unique: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'author',
+      type: 'relationship',
+      relationTo: 'teamMembers',
+      required: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'category',
+      type: 'text',
+      required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'E.g. Trekking Guides, Travel Info, Packing Tips',
+      },
+    },
+    {
+      name: 'tags',
+      type: 'array',
+      admin: {
+        position: 'sidebar',
+        description: 'Keywords/tags for quick search.',
+      },
+      fields: [
         {
-          label: 'Blog Content',
-          fields: [
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'title',
-                  type: 'text',
-                  required: true,
-                },
-                {
-                  name: 'slug',
-                  type: 'text',
-                  required: true,
-                  unique: true,
-                },
-              ],
-            },
-            {
-              name: 'coverImage',
-              type: 'upload',
-              relationTo: 'media',
-              required: true,
-            },
-            {
-              name: 'excerpt',
-              type: 'textarea',
-              required: true,
-              admin: {
-                description: 'A brief summary of the blog post (shown on lists and cards).',
-              },
-            },
-            {
-              name: 'body',
-              type: 'richText',
-              required: true,
-            },
-          ],
+          name: 'tag',
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'readTime',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        placeholder: 'E.g. 5 min read',
+      },
+    },
+    {
+      name: 'isFeatured',
+      type: 'checkbox',
+      label: 'Feature on Homepage',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'relatedTreks',
+      type: 'relationship',
+      relationTo: 'treks',
+      hasMany: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'seo',
+      type: 'group',
+      admin: {
+        position: 'sidebar',
+      },
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          label: 'Meta Title',
         },
         {
-          label: 'Publishing Info',
-          fields: [
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'status',
-                  type: 'select',
-                  options: [
-                    { label: 'Draft', value: 'draft' },
-                    { label: 'Published', value: 'published' },
-                  ],
-                  required: true,
-                  defaultValue: 'draft',
-                },
-                {
-                  name: 'publishedAt',
-                  type: 'date',
-                  required: true,
-                  defaultValue: () => new Date().toISOString(),
-                },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'author',
-                  type: 'relationship',
-                  relationTo: 'teamMembers',
-                  required: true,
-                },
-                {
-                  name: 'category',
-                  type: 'text',
-                  required: true,
-                  admin: {
-                    description: 'E.g. Trekking Guides, Travel Info, Packing Tips',
-                  },
-                },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'readTime',
-                  type: 'text',
-                  admin: {
-                    placeholder: 'E.g. 5 min read',
-                  },
-                },
-                {
-                  name: 'isFeatured',
-                  type: 'checkbox',
-                  label: 'Feature on Homepage',
-                  defaultValue: false,
-                },
-              ],
-            },
-            {
-              name: 'tags',
-              type: 'array',
-              fields: [
-                {
-                  name: 'tag',
-                  type: 'text',
-                  required: true,
-                },
-              ],
-            },
-            {
-              name: 'relatedTreks',
-              type: 'relationship',
-              relationTo: 'treks',
-              hasMany: true,
-            },
-          ],
+          name: 'metaDescription',
+          type: 'textarea',
+          label: 'Meta Description',
         },
         {
-          label: 'SEO',
-          fields: [
-            {
-              name: 'seo',
-              type: 'group',
-              fields: [
-                {
-                  name: 'metaTitle',
-                  type: 'text',
-                  label: 'Meta Title',
-                },
-                {
-                  name: 'metaDescription',
-                  type: 'textarea',
-                  label: 'Meta Description',
-                },
-                {
-                  name: 'metaImage',
-                  type: 'upload',
-                  relationTo: 'media',
-                  label: 'Social Share Image',
-                },
-              ],
-            },
-          ],
+          name: 'metaImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Social Share Image',
         },
       ],
     },

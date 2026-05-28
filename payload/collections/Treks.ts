@@ -27,311 +27,334 @@ export const treks: CollectionConfig = {
   },
   fields: [
     {
-      type: 'tabs',
-      tabs: [
+      type: 'collapsible',
+      label: 'Basic Info',
+      admin: {
+        initCollapsed: false,
+      },
+      fields: [
         {
-          label: 'Basic Info',
+          type: 'row',
           fields: [
             {
-              type: 'row',
-              fields: [
-                {
-                  name: 'title',
-                  type: 'text',
-                  required: true,
-                },
-                {
-                  name: 'slug',
-                  type: 'text',
-                  required: true,
-                  unique: true,
-                },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'region',
-                  type: 'relationship',
-                  relationTo: 'regions',
-                  required: true,
-                },
-                {
-                  name: 'difficulty',
-                  type: 'select',
-                  options: [
-                    { label: 'Easy', value: 'easy' },
-                    { label: 'Moderate', value: 'moderate' },
-                    { label: 'Hard', value: 'hard' },
-                    { label: 'Extreme', value: 'extreme' },
-                  ],
-                  required: true,
-                },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'price',
-                  type: 'number',
-                  required: true,
-                },
-                {
-                  name: 'discountedPrice',
-                  type: 'number',
-                },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'duration',
-                  type: 'number',
-                  required: true,
-                  admin: {
-                    description: 'Duration in days (e.g. 14)',
-                  },
-                },
-                {
-                  name: 'maxAltitude',
-                  type: 'number',
-                  required: true,
-                  admin: {
-                    description: 'Max altitude in meters (e.g. 5364)',
-                  },
-                },
-                {
-                  name: 'groupSize',
-                  type: 'number',
-                },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'startPoint',
-                  type: 'text',
-                },
-                {
-                  name: 'endPoint',
-                  type: 'text',
-                },
-              ],
-            },
-            {
-              name: 'isBestSeller',
-              type: 'checkbox',
-              defaultValue: false,
-              label: 'Feature as Best Seller',
-            },
-          ],
-        },
-        {
-          label: 'Content & Itinerary',
-          fields: [
-            {
-              name: 'overview',
-              type: 'richText',
+              name: 'title',
+              type: 'text',
               required: true,
             },
             {
-              name: 'highlights',
-              type: 'array',
-              labels: {
-                singular: 'Highlight',
-                plural: 'Highlights',
-              },
-              fields: [
-                {
-                  name: 'highlight',
-                  type: 'text',
-                  required: true,
-                },
-              ],
-            },
-            {
-              name: 'dayByDayItinerary',
-              type: 'array',
-              labels: {
-                singular: 'Day',
-                plural: 'Days Itinerary',
-              },
-              fields: [
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'day', type: 'number', required: true },
-                    { name: 'title', type: 'text', required: true },
-                  ],
-                },
-                {
-                  name: 'description',
-                  type: 'textarea',
-                  required: true,
-                },
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'accommodation', type: 'text' },
-                    { name: 'meals', type: 'text' },
-                  ],
-                },
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'distance', type: 'text' },
-                    { name: 'altitude', type: 'number', label: 'Altitude (meters)' },
-                  ],
-                },
-              ],
+              name: 'slug',
+              type: 'text',
+              required: true,
+              unique: true,
             },
           ],
         },
         {
-          label: 'Inclusions / Exclusions',
+          type: 'row',
           fields: [
             {
-              name: 'inclusions',
-              type: 'array',
-              fields: [
-                {
-                  name: 'inclusion',
-                  type: 'text',
-                  required: true,
-                },
-              ],
+              name: 'region',
+              type: 'relationship',
+              relationTo: 'regions',
+              required: true,
             },
             {
-              name: 'exclusions',
-              type: 'array',
-              fields: [
-                {
-                  name: 'exclusion',
-                  type: 'text',
-                  required: true,
-                },
+              name: 'difficulty',
+              type: 'select',
+              options: [
+                { label: 'Easy', value: 'easy' },
+                { label: 'Moderate', value: 'moderate' },
+                { label: 'Hard', value: 'hard' },
+                { label: 'Extreme', value: 'extreme' },
               ],
+              required: true,
             },
           ],
         },
         {
-          label: 'Media & Videos',
+          type: 'row',
           fields: [
             {
-              name: 'heroImage',
+              name: 'price',
+              type: 'number',
+              required: true,
+            },
+            {
+              name: 'discountedPrice',
+              type: 'number',
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'duration',
+              type: 'number',
+              required: true,
+              admin: {
+                description: 'Duration in days (e.g. 14)',
+              },
+            },
+            {
+              name: 'maxAltitude',
+              type: 'number',
+              required: true,
+              admin: {
+                description: 'Max altitude in meters (e.g. 5364)',
+              },
+            },
+            {
+              name: 'groupSize',
+              type: 'number',
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'startPoint',
+              type: 'text',
+            },
+            {
+              name: 'endPoint',
+              type: 'text',
+            },
+          ],
+        },
+        {
+          name: 'isBestSeller',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Feature as Best Seller',
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'Content & Itinerary',
+      admin: {
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'overview',
+          type: 'richText',
+          required: true,
+        },
+        {
+          name: 'highlights',
+          type: 'array',
+          labels: {
+            singular: 'Highlight',
+            plural: 'Highlights',
+          },
+          fields: [
+            {
+              name: 'highlight',
+              type: 'text',
+              required: true,
+            },
+          ],
+        },
+        {
+          name: 'dayByDayItinerary',
+          type: 'array',
+          labels: {
+            singular: 'Day',
+            plural: 'Days Itinerary',
+          },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'day', type: 'number', required: true },
+                { name: 'title', type: 'text', required: true },
+              ],
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              required: true,
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'accommodation', type: 'text' },
+                { name: 'meals', type: 'text' },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'distance', type: 'text' },
+                { name: 'altitude', type: 'number', label: 'Altitude (meters)' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'Inclusions / Exclusions',
+      admin: {
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'inclusions',
+          type: 'array',
+          fields: [
+            {
+              name: 'inclusion',
+              type: 'text',
+              required: true,
+            },
+          ],
+        },
+        {
+          name: 'exclusions',
+          type: 'array',
+          fields: [
+            {
+              name: 'exclusion',
+              type: 'text',
+              required: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'Media & Videos',
+      admin: {
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'heroImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Hero Cover Image',
+        },
+        {
+          name: 'gallery',
+          type: 'array',
+          label: 'Photo Gallery',
+          fields: [
+            {
+              name: 'image',
               type: 'upload',
               relationTo: 'media',
-              label: 'Hero Cover Image',
+              required: true,
             },
+          ],
+        },
+        {
+          name: 'youtubeVideoId',
+          type: 'text',
+          label: 'YouTube Video ID / URL',
+          hooks: {
+            beforeValidate: [parseYoutubeId],
+          },
+          admin: {
+            description: 'Enter the YouTube Video ID (e.g. fAsw_vB3JpI) or paste the full YouTube watch URL.',
+          },
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'Logistics & Map',
+      admin: {
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'groupDiscounts',
+          type: 'array',
+          fields: [
             {
-              name: 'gallery',
-              type: 'array',
-              label: 'Photo Gallery',
+              type: 'row',
               fields: [
-                {
-                  name: 'image',
-                  type: 'upload',
-                  relationTo: 'media',
-                  required: true,
-                },
+                { name: 'minPersons', type: 'number', required: true },
+                { name: 'maxPersons', type: 'number', required: true },
+                { name: 'pricePerPerson', type: 'number', required: true },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'gpsCoordinates',
+          type: 'array',
+          label: 'GPS Map Coordinates / Route Points',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'lat', type: 'number', required: true, label: 'Latitude' },
+                { name: 'lng', type: 'number', required: true, label: 'Longitude' },
               ],
             },
             {
-              name: 'youtubeVideoId',
+              type: 'row',
+              fields: [
+                { name: 'label', type: 'text', required: true, label: 'Point Label (e.g. Lukla)' },
+                { name: 'altitude', type: 'number', label: 'Altitude (meters)' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'FAQs',
+      admin: {
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'faqs',
+          type: 'array',
+          labels: {
+            singular: 'FAQ',
+            plural: 'FAQs',
+          },
+          fields: [
+            {
+              name: 'question',
               type: 'text',
-              label: 'YouTube Video ID / URL',
-              hooks: {
-                beforeValidate: [parseYoutubeId],
-              },
-              admin: {
-                description: 'Enter the YouTube Video ID (e.g. fAsw_vB3JpI) or paste the full YouTube watch URL.',
-              },
+              required: true,
+            },
+            {
+              name: 'answer',
+              type: 'richText',
+              required: true,
             },
           ],
         },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'SEO',
+      admin: {
+        initCollapsed: true,
+      },
+      fields: [
         {
-          label: 'Logistics & Map',
-          fields: [
-            {
-              name: 'groupDiscounts',
-              type: 'array',
-              fields: [
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'minPersons', type: 'number', required: true },
-                    { name: 'maxPersons', type: 'number', required: true },
-                    { name: 'pricePerPerson', type: 'number', required: true },
-                  ],
-                },
-              ],
-            },
-            {
-              name: 'gpsCoordinates',
-              type: 'array',
-              label: 'GPS Map Coordinates / Route Points',
-              fields: [
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'lat', type: 'number', required: true, label: 'Latitude' },
-                    { name: 'lng', type: 'number', required: true, label: 'Longitude' },
-                  ],
-                },
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'label', type: 'text', required: true, label: 'Point Label (e.g. Lukla)' },
-                    { name: 'altitude', type: 'number', label: 'Altitude (meters)' },
-                  ],
-                },
-              ],
-            },
-          ],
+          name: 'metaTitle',
+          type: 'text',
+          label: 'Meta Title',
         },
         {
-          label: 'FAQs',
-          fields: [
-            {
-              name: 'faqs',
-              type: 'array',
-              labels: {
-                singular: 'FAQ',
-                plural: 'FAQs',
-              },
-              fields: [
-                {
-                  name: 'question',
-                  type: 'text',
-                  required: true,
-                },
-                {
-                  name: 'answer',
-                  type: 'richText',
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: 'SEO',
-          fields: [
-            {
-              name: 'metaTitle',
-              type: 'text',
-              label: 'Meta Title',
-            },
-            {
-              name: 'metaDescription',
-              type: 'textarea',
-              label: 'Meta Description',
-            },
-          ],
+          name: 'metaDescription',
+          type: 'textarea',
+          label: 'Meta Description',
         },
       ],
     },

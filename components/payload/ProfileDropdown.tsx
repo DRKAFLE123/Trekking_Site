@@ -36,6 +36,7 @@ export const ProfileDropdown: React.FC = () => {
   // Modals state
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   
   // Password change state
   const [newPassword, setNewPassword] = useState('');
@@ -341,7 +342,10 @@ export const ProfileDropdown: React.FC = () => {
             <button 
               type="button" 
               className="profile-dropdown-menu__item sign-out"
-              onClick={handleLogout}
+              onClick={() => {
+                setIsOpen(false);
+                setIsLogoutModalOpen(true);
+              }}
             >
               <FaSignOutAlt className="profile-dropdown-menu__item-icon" />
               <span>Sign Out</span>
@@ -530,6 +534,48 @@ export const ProfileDropdown: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {isLogoutModalOpen && (
+        <div className="profile-modal-overlay">
+          <div className="profile-modal">
+            <div className="profile-modal__header">
+              <h3>Confirm Sign Out</h3>
+              <button 
+                type="button" 
+                className="profile-modal__close-btn"
+                onClick={() => setIsLogoutModalOpen(false)}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            
+            <div className="profile-modal__form">
+              <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '24px', fontSize: '14px', lineHeight: '1.5' }}>
+                Are you sure you want to sign out? Active unsaved drafts will not be preserved.
+              </p>
+              
+              <div className="profile-modal__actions">
+                <button 
+                  type="button" 
+                  className="profile-modal__btn cancel"
+                  onClick={() => setIsLogoutModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="profile-modal__btn submit"
+                  onClick={handleLogout}
+                  style={{ background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', boxShadow: '0 8px 20px rgba(239, 68, 68, 0.2)' }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

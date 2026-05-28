@@ -302,7 +302,7 @@ body.login button[type="submit"]:hover {
 .collection-edit {
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 30px !important;
+  padding: 24px 24px 24px 32px !important; /* Elegant spacious padding, maximizes editor width! */
 }
 
 /* Align document header with actions */
@@ -315,8 +315,8 @@ body.login button[type="submit"]:hover {
 /* Create the Strapi-style 2-column layout */
 .collection-edit__main-layout {
   display: grid !important;
-  grid-template-cols: 1fr 340px !important;
-  gap: 32px !important;
+  grid-template-cols: 1fr 280px !important; /* Narrower right sidebar to give the main editor column maximum breathing room */
+  gap: 24px !important;
   align-items: start !important;
 }
 
@@ -414,14 +414,16 @@ body.login button[type="submit"]:hover {
 .nav {
   background-color: #1a2e1f !important;
   border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+  z-index: 999 !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03) !important;
 }
 
 .nav__link {
   color: rgba(255, 255, 255, 0.7) !important;
   font-weight: 600 !important;
-  padding: 10px 16px !important;
-  border-radius: 8px !important;
-  margin: 4px 8px !important;
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
+  margin: 2px 6px !important;
   transition: all 0.2s ease !important;
 }
 
@@ -432,13 +434,20 @@ body.login button[type="submit"]:hover {
   border-left: 3px solid #c8922a !important;
 }
 
-.nav__group-title {
+.nav__group-title,
+.nav-group__toggle,
+.nav-group__header,
+[class*="nav-group__toggle"],
+[class*="nav-group__header"],
+button[class*="nav-group"] {
   color: rgba(255, 255, 255, 0.4) !important;
-  font-size: 11px !important;
+  font-size: 10px !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.1em !important;
-  padding: 16px 24px 8px !important;
+  padding: 8px 12px 2px !important;
+  margin-top: 6px !important;
+  margin-bottom: 2px !important;
   transition: color 0.2s ease, background-color 0.2s ease !important;
 }
 
@@ -452,6 +461,59 @@ button[class*="nav-group"]:hover {
   color: #c8922a !important; /* Golden highlights for readability on dark background */
   cursor: pointer !important;
 }
+
+/* ============================================================
+   NAV HAMBURGER TOGGLE — OPEN / CLOSE ICON CONDITIONS
+   ============================================================ */
+
+/* On DESKTOP: the nav sidebar is always visible, so hide the mobile nav toggler */
+@media (min-width: 769px) {
+  .app-header__mobile-nav-toggler {
+    display: none !important;
+  }
+}
+
+/* On MOBILE: show the toggler; style it to match the theme */
+@media (max-width: 768px) {
+  .app-header__mobile-nav-toggler {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .app-header__mobile-nav-toggler:hover {
+    background: rgba(200, 146, 42, 0.15) !important;
+    border-color: #c8922a !important;
+  }
+
+  /* When nav is OPEN — the toggler shows the hamburger (≡) lines icon
+     with a subtle golden tint so the user knows they can close it */
+  .app-header__mobile-nav-toggler .hamburger__open-icon {
+    display: flex !important;
+    color: #c8922a !important;
+  }
+
+  /* When nav is CLOSED — the close icon shows (× or back arrow) */
+  .app-header__mobile-nav-toggler .hamburger__close-icon {
+    display: flex !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* When toggler has the "is-open" class (nav open state) — dim slightly */
+  .app-header__mobile-nav-toggler.nav-toggler--is-open {
+    opacity: 0.75 !important;
+    background: rgba(200, 146, 42, 0.1) !important;
+  }
+}
+
+
 
 /* ============================================================
    NATURE HEAVEN CUSTOM HIGHLIGHTS & AVATAR READABILITY
@@ -510,17 +572,17 @@ button[class*="nav-group"]:hover {
   background: rgba(200, 146, 42, 0.12) !important;
   border-left: 3px solid #c8922a !important;
   font-weight: 800 !important;
-  padding-left: 18px !important;
+  padding-left: 14px !important;
 }
 
-/* /* Non-Floating Bulk Action Styles (Top-Right List Toolbar) */
-div.select-all,
-div[class*="select-all"],
+/* Non-Floating Bulk Action Styles (Top-Right List Toolbar) */
+.select-all,
+[class*="select-all"],
 .collection-list__select-all,
-div[class*="select-all__wrap"],
-div[class*="select-actions"],
+[class*="select-all__wrap"],
+[class*="select-actions"],
 .select-actions,
-div[class*="bulk-actions"],
+[class*="bulk-actions"],
 .bulk-actions {
   position: static !important;
   transform: none !important;
@@ -538,13 +600,14 @@ div[class*="bulk-actions"],
 }
 
 /* Style selected items count text inside the toolbar */
-div[class*="select-all"] span,
-div.select-all span,
+[class*="select-all"] span,
+.select-all span,
 .collection-list__select-all span,
 .select-actions [class*="label"],
 .select-actions span,
 [class*="select-actions"] span,
-.bulk-actions span {
+.bulk-actions span,
+[class*="select-all__selected"] {
   color: #626c64 !important;
   font-weight: 700 !important;
   font-size: 11px !important;
@@ -554,29 +617,28 @@ div.select-all span,
   letter-spacing: normal !important;
 }
 
-/* Style Edit & Delete buttons and select links to make them small, clean, adjusted pills */
-div[class*="select-all"] button,
-div.select-all button,
+/* Style ALL buttons and links in the selection toolbar (such as Edit, Select all) as clean, small pills */
+[class*="select-all"] button,
+.select-all button,
 .collection-list__select-all button,
-div[class*="select-all"] .btn,
-div.select-all .btn,
-.collection-list__select-all .btn,
-div[class*="select-all"] a,
-div.select-all a,
+[class*="select-all"] a,
+.select-all a,
 .collection-list__select-all a,
-div[class*="select-actions"] button,
-div[class*="select-actions"] a,
+[class*="select-actions"] button,
+[class*="select-actions"] a,
 .select-actions button,
 .select-actions a,
-div[class*="bulk-actions"] button,
-div[class*="bulk-actions"] a,
+[class*="bulk-actions"] button,
+[class*="bulk-actions"] a,
 .bulk-actions button,
-.bulk-actions a {
+.bulk-actions a,
+[class*="select-all__edit"],
+.select-all__edit {
   background: #ffffff !important;
   color: #1a2e1f !important;
   border: 1px solid #cbd5e1 !important;
-  border-radius: 4px !important;
-  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  padding: 3px 10px !important;
   font-size: 10px !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
@@ -587,62 +649,69 @@ div[class*="bulk-actions"] a,
   align-items: center !important;
   justify-content: center !important;
   text-decoration: none !important;
-  margin: 0 2px !important;
+  margin: 0 4px !important;
   height: 24px !important;
   line-height: 24px !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
   vertical-align: middle !important;
   box-sizing: border-box !important;
 }
 
-div[class*="select-all"] button:hover,
-div.select-all button:hover,
-.collection-list__select-all button:hover,
-div[class*="select-all"] a:hover,
-div.select-all a:hover,
-.collection-list__select-all a:hover,
-div[class*="select-actions"] button:hover,
-div[class*="select-actions"] a:hover,
-.select-actions button:hover,
-.select-actions a:hover,
-div[class*="bulk-actions"] button:hover,
-div[class*="bulk-actions"] a:hover,
-.bulk-actions button:hover,
-.bulk-actions a:hover {
+/* Hover effect for all non-danger buttons (Edit, Select all, etc.) */
+[class*="select-all"] button:not([class*="delete"]):not([class*="delete-many"]):hover,
+.select-all button:not([class*="delete"]):not([class*="delete-many"]):hover,
+.collection-list__select-all button:not([class*="delete"]):not([class*="delete-many"]):hover,
+[class*="select-all"] a:not([class*="delete"]):not([class*="delete-many"]):hover,
+.select-all a:not([class*="delete"]):not([class*="delete-many"]):hover,
+.collection-list__select-all a:not([class*="delete"]):not([class*="delete-many"]):hover,
+[class*="select-actions"] button:not([class*="delete"]):hover,
+[class*="select-actions"] a:not([class*="delete"]):hover,
+.select-actions button:not([class*="delete"]):hover,
+.select-actions a:not([class*="delete"]):hover,
+[class*="bulk-actions"] button:not([class*="delete"]):hover,
+[class*="bulk-actions"] a:not([class*="delete"]):hover,
+.bulk-actions button:not([class*="delete"]):hover,
+.bulk-actions a:not([class*="delete"]):hover {
   background: #f8fafc !important;
   border-color: #c8922a !important;
   color: #c8922a !important;
+  box-shadow: 0 2px 4px rgba(200, 146, 42, 0.1) !important;
   transform: translateY(-0.5px) !important;
 }
 
-/* Specific Delete Button - Red Danger Pill */
-div[class*="select-all"] button[class*="delete"],
-div.select-all button[class*="delete"],
+/* Specific Delete Button - Compact Red Danger Pill matching the Edit button */
+[class*="select-all"] button[class*="delete"],
+.select-all button[class*="delete"],
 .collection-list__select-all button[class*="delete"],
-div[class*="select-all"] [class*="delete-many"],
-div.select-all [class*="delete-many"],
+[class*="select-all"] [class*="delete-many"],
+.select-all [class*="delete-many"],
 .collection-list__select-all [class*="delete-many"],
-div[class*="select-actions"] button[class*="delete"],
+[class*="select-actions"] button[class*="delete"],
 .select-actions button[class*="delete"],
-div[class*="bulk-actions"] button[class*="delete"],
+[class*="bulk-actions"] button[class*="delete"],
 .bulk-actions button[class*="delete"] {
   background: #ef4444 !important;
   color: #ffffff !important;
   border: 1px solid #ef4444 !important;
+  box-shadow: 0 1px 2px rgba(239, 68, 68, 0.15) !important;
 }
 
-div[class*="select-all"] [class*="delete-many"]:hover,
+[class*="select-all"] [class*="delete-many"]:hover,
 .collection-list__select-all [class*="delete-many"]:hover,
-div[class*="select-actions"] button[class*="delete"]:hover,
-div[class*="select-actions"] a[class*="delete"]:hover,
+[class*="select-actions"] button[class*="delete"]:hover,
+[class*="select-actions"] a[class*="delete"]:hover,
 .select-actions button[class*="delete"]:hover,
-.select-actions a[class*="delete"]:hover {
+.select-actions a[class*="delete"]:hover,
+[class*="bulk-actions"] button[class*="delete"]:hover,
+.bulk-actions button[class*="delete"]:hover {
   background: #dc2626 !important;
   border-color: #dc2626 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2) !important;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.25) !important;
   transform: translateY(-0.5px) !important;
 }
+
+
 
 @keyframes action-bar-slide-up {
   from {
@@ -1097,57 +1166,620 @@ button[class*="delete"]:hover {
 }
 
 /* ============================================================
-   LEXICAL RICH TEXT EDITOR SLASH COMMAND MENU LEGIBILITY FIX
+   LEXICAL RICH TEXT EDITOR — INSERT BLOCK DROPDOWN MENU FIX
    ============================================================ */
-.slash-menu,
-.popover,
-[class*="slash-menu"],
-[class*="floating-menu"],
-div[class*="popup"]:not(.modal):not([class*="modal"]) {
+
+/* The popup container that appears when clicking the "+" button */
+.slash-menu-popup,
+[class*="slash-menu-popup"] {
   background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 10px !important;
-  box-shadow: 0 10px 25px rgba(26, 46, 31, 0.15) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(26, 46, 31, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
   padding: 8px !important;
-  color: #1b2f21 !important;
+  z-index: 10000 !important;
+  /* Ensure the popup is wide enough to show full labels */
+  min-width: 220px !important;
+  width: 220px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  max-height: 380px !important;
 }
 
-.slash-menu button,
-[class*="slash-menu"] button {
-  background: #ffffff !important;
-  color: #1b2f21 !important;
-  border: none !important;
-  border-radius: 6px !important;
-  padding: 8px 12px !important;
-  text-align: left !important;
-  font-family: 'Inter', sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
-  transition: all 0.2s ease !important;
-  width: 100% !important;
+/* Group sections (Lists, Basic, etc.) */
+.slash-menu-popup__group,
+[class*="slash-menu-popup__group"] {
+  padding-bottom: 6px !important;
+  margin-bottom: 4px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.slash-menu-popup__group:last-child,
+[class*="slash-menu-popup__group"]:last-child {
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+}
+
+/* Group title (Lists, Basic, etc.) */
+.slash-menu-popup__group-title,
+[class*="slash-menu-popup__group-title"] {
+  padding: 6px 12px 4px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: #c8922a !important;
+}
+
+/* Each item row */
+.slash-menu-popup__item,
+[class*="slash-menu-popup__item"] {
+  all: unset !important;
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
-  box-shadow: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 7px 12px !important;
+  border-radius: 7px !important;
+  cursor: pointer !important;
+  color: #1a2e1f !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+  height: auto !important;
+  min-height: 34px !important;
+}
+
+.slash-menu-popup__item:hover,
+[class*="slash-menu-popup__item"]:hover,
+.slash-menu-popup__item--selected,
+[class*="slash-menu-popup__item--selected"] {
+  background: rgba(200, 146, 42, 0.08) !important;
+  color: #c8922a !important;
+}
+
+/* The icon inside each item */
+.slash-menu-popup__item .icon,
+[class*="slash-menu-popup__item"] .icon {
+  color: #c8922a !important;
+  flex-shrink: 0 !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* The label text — STOP truncating! */
+.slash-menu-popup__item-text,
+[class*="slash-menu-popup__item-text"] {
+  overflow: visible !important;
+  white-space: normal !important;
+  text-overflow: unset !important;
+  flex: 1 !important;
+  line-height: 1.3 !important;
+}
+
+/* The floating inline toolbar (bold/italic/link on text selection) */
+[class*="floating-toolbar"],
+[class*="inline-toolbar"],
+.rich-text-floating-toolbar {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(26, 46, 31, 0.12) !important;
+  padding: 4px 6px !important;
+  z-index: 10000 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+
+
+/* ============================================================
+   5. PREMIUM BLOG WRITER / EDIT LAYOUT OVERRIDES (MOCKUP-INSPIRED)
+   ============================================================ */
+
+/* Large Title Input styling */
+input[name="title"],
+input[id*="field-title"],
+[class*="field-type-text"][class*="title"] input {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  color: #1a2e1f !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  background-color: #faf9f6 !important;
+  transition: all 0.2s ease !important;
+}
+
+input[name="title"]:focus,
+input[id*="field-title"]:focus {
+  border-color: #c8922a !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(200, 146, 42, 0.15) !important;
+}
+
+/* Cover Image / Hero Image upload dotted box styling */
+.file-field__upload,
+[class*="file-field__upload"],
+.upload__dropzone,
+[class*="upload__dropzone"],
+.file-field__wrap,
+[class*="file-field__wrap"] {
+  border: 2px dashed #cbd5e1 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  background-color: #faf9f6 !important;
+  text-align: center !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.file-field__upload:hover,
+[class*="file-field__upload"]:hover,
+.upload__dropzone:hover,
+[class*="upload__dropzone"]:hover,
+.file-field__wrap:hover,
+[class*="file-field__wrap"]:hover {
+  border-color: #c8922a !important;
+  background-color: #ffffff !important;
+}
+
+/* Custom "Click to upload hero image" text instructions overlay if uploader is empty */
+.field-type.upload [class*="upload__button"],
+.field-type.upload button,
+[class*="file-field"] button {
+  background: #ffffff !important;
+  color: #1a2e1f !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  padding: 8px 16px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+  transition: all 0.2s ease !important;
+}
+
+.field-type.upload [class*="upload__button"]:hover,
+.field-type.upload button:hover {
+  border-color: #c8922a !important;
+  color: #c8922a !important;
+}
+
+/* Compact Sidebar Layout cards & dropdowns */
+.collection-edit__sidebar-card,
+[class*="collection-edit__sidebar"] [class*="card"] {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 16px !important;
+}
+
+.collection-edit__sidebar-card-title,
+[class*="collection-edit__sidebar"] [class*="title"] {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: #c8922a !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+/* Style all selects, tags, list checkboxes inside the sidebar beautifully */
+[class*="collection-edit__sidebar"] .field-type {
+  margin-bottom: 16px !important;
+}
+
+[class*="collection-edit__sidebar"] label {
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  color: #626c64 !important;
+}
+
+/* Category Checkbox blocks / tags list */
+.tag-capsule,
+[class*="tag-capsule"],
+.array-field__row,
+[class*="array-field__row"] {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #1a2e1f !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.tag-capsule button,
+[class*="tag-capsule"] button {
+  color: #ef4444 !important;
+  cursor: pointer !important;
+}
+
+/* Add custom down arrow scroll indicator to the center bottom */
+.admin-scroll-down-indicator {
+  position: absolute !important;
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #1a2e1f !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-scroll-down-indicator:hover {
+  border-color: #c8922a !important;
+  color: #c8922a !important;
+  box-shadow: 0 4px 12px rgba(200, 146, 42, 0.15) !important;
+}
+
+
+/* ============================================================
+   11. FORCE FULL-WIDTH LAYOUT & HIDE THREE-DOTS MENU
+   ============================================================ */
+
+/* Force all Payload CMS layout wrappers to stretch to 100% of the screen width */
+.template-default,
+.template-default__wrap,
+[class*="template-default"],
+.collection-edit,
+[class*="collection-edit"],
+main,
+.doc-wrap,
+[class*="doc-wrap"],
+.document-fields,
+[class*="document-fields"],
+form.form {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* ============================================================
+   12. WIDER WRITING / EDITOR COLUMN — NARROW SIDEBAR
+   ============================================================ */
+/*
+  Payload CMS default layout uses:
+    - Main editor: 66.66% (via --main-width)
+    - Sidebar:     33.33% (via --sidebar-wrap-width)
+  We override these to 78% / 22% so the writing area is
+  much wider and the sidebar stays compact.
+*/
+.document-fields--has-sidebar {
+  --main-width: 78% !important;
+}
+
+.document-fields--has-sidebar .document-fields__main {
+  width: 78% !important;
+  flex-grow: 1 !important;
+}
+
+.document-fields__sidebar-wrap {
+  --sidebar-wrap-width: 22% !important;
+  width: 22% !important;
+  min-width: 260px !important;
+}
+
+/* On narrower screens, collapse back to stacked layout */
+@media (max-width: 1024px) {
+  .document-fields--has-sidebar .document-fields__main {
+    width: 100% !important;
+  }
+  .document-fields__sidebar-wrap {
+    width: 100% !important;
+    min-width: unset !important;
+    position: static !important;
+    height: auto !important;
+  }
+}
+
+/* Also ensure the rich-text editor area inside the main column
+   fills all available horizontal space without any artificial max-width cap */
+.document-fields__edit .rich-text,
+.document-fields__edit [class*="rich-text"],
+.document-fields__edit .field-type.rich-text,
+[class*="document-fields__edit"] .field-type.rich-text {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Hide the confusing three-dots floating options menu in the document header actions */
+button[class*="more-actions"],
+[class*="more-actions-toggle"],
+[class*="more-actions__toggle"],
+[class*="document-controls"] button[class*="toggle"],
+.document-actions__more,
+[class*="document-actions__more"],
+[class*="more-actions"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  padding: 0 !important;
   margin: 0 !important;
 }
 
-.slash-menu button:hover,
-[class*="slash-menu"] button:hover,
-.slash-menu button[class*="active"],
-[class*="slash-menu"] button[class*="active"] {
-  background: rgba(200, 146, 42, 0.1) !important;
-  color: #c8922a !important;
-  transform: none !important;
+/* Clean, standard action buttons side-by-side in header controls */
+.form-submit,
+[class*="form-submit"],
+.document-controls,
+[class*="document-controls"],
+.document-actions,
+[class*="document-actions"] {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+/* ============================================================
+   13. THREE-COLUMN LIVE PREVIEW & TOOLBAR BEAUTIFICATION
+   ============================================================ */
+
+/* 1. Main Live Preview Wrapper Layout: Allow editor, sidebar, and preview window to stand side-by-side */
+[class*="-edit--is-live-previewing"] .collection-edit__main-wrapper,
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"] {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  background-color: #f7f6f2 !important;
+  gap: 0 !important;
+}
+
+/* 2. Bypass intermediate container wrappers so their children align inside the main-wrapper flexbox */
+[class*="-edit--is-live-previewing"] .collection-edit__main,
+[class*="-edit--is-live-previewing"] [class*="__main"],
+[class*="-edit--is-live-previewing"] form,
+[class*="-edit--is-live-previewing"] .document-fields,
+[class*="-edit--is-live-previewing"] [class*="document-fields"] {
+  display: contents !important;
+}
+
+/* 3. Column 1: Writing / Editor Column (Left) - DEFAULT when previewing but closed/edit mode: 78% width */
+[class*="-edit--is-live-previewing"] .document-fields__main {
+  order: 1 !important;
+  width: 78% !important;
+  flex: 0 0 78% !important;
+  box-sizing: border-box !important;
+  padding: 20px !important;
+  background-color: #ffffff !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* 4. Column 2: Live Preview Website Render (Middle) - DEFAULT when previewing but closed/edit mode: Hidden */
+[class*="-edit--is-live-previewing"] .live-preview-window {
+  display: none !important;
+  order: 2 !important;
+  width: 0 !important;
+  flex: 0 0 0 !important;
+  box-sizing: border-box !important;
+  border-left: none !important;
+  border-right: none !important;
+  background-color: #f1f5f9 !important;
+  height: 0 !important;
+}
+
+/* 5. Column 3: Sidebar Settings (Right) - DEFAULT when previewing but closed/edit mode: 22% width */
+[class*="-edit--is-live-previewing"] .document-fields__sidebar-wrap {
+  order: 3 !important;
+  width: 22% !important;
+  min-width: 240px !important;
+  flex: 0 0 22% !important;
+  box-sizing: border-box !important;
+  padding: 20px !important;
+  background-color: #ffffff !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* 6. Live Preview Window internal wrappers and iframe styling */
+.live-preview-window__main {
+  flex-grow: 1 !important;
+  height: 100% !important;
+}
+
+.live-preview-window__wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.live-preview-iframe {
+  width: 100% !important;
+  height: 100% !important;
   border: none !important;
 }
 
-.slash-menu button svg,
-[class*="slash-menu"] button svg {
-  color: #c8922a !important;
-  font-size: 14px !important;
+.live-preview-window__toolbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e6e4de !important;
+  padding: 8px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  height: 48px !important;
 }
 
+/* Transform default buttons into Edit / Split / Preview button group */
+.live-preview-window__toolbar button,
+.live-preview-window__toolbar a {
+  background: #ffffff !important;
+  color: #1a2e1f !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 4px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
 
+.live-preview-window__toolbar button:hover,
+.live-preview-window__toolbar a:hover {
+  background: #fafafa !important;
+  border-color: #c8922a !important;
+  color: #c8922a !important;
+}
+
+/* ============================================================
+   14. CUSTOM LIVE PREVIEW INTERACTIVE MODE TOGGLES
+   ============================================================ */
+
+/* Mode: Edit (Show only editor, hide preview window) */
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-edit) .live-preview-window {
+  display: none !important;
+  width: 0 !important;
+  flex: 0 0 0 !important;
+}
+
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-edit) .document-fields__main {
+  width: 78% !important;
+  flex: 0 0 78% !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-edit) .document-fields__sidebar-wrap {
+  width: 22% !important;
+  flex: 0 0 22% !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Mode: Split (3-Column Layout: 39% / 39% / 22%) */
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-split) .document-fields__main {
+  width: 39% !important;
+  flex: 0 0 39% !important;
+  height: calc(100vh - 80px) !important;
+  overflow-y: auto !important;
+}
+
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-split) .live-preview-window {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 39% !important;
+  flex: 0 0 39% !important;
+  height: calc(100vh - 80px) !important;
+  border-left: 1px solid #e6e4de !important;
+  border-right: 1px solid #e6e4de !important;
+}
+
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-split) .document-fields__sidebar-wrap {
+  width: 22% !important;
+  flex: 0 0 22% !important;
+  height: calc(100vh - 80px) !important;
+  overflow-y: auto !important;
+}
+
+/* Mode: Preview (Show only website preview) */
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-preview) .document-fields__main,
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-preview) .document-fields__sidebar-wrap,
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-preview) .document-controls {
+  display: none !important;
+}
+
+[class*="-edit--is-live-previewing"] [class*="__main-wrapper"]:has(.live-preview-window--mode-preview) .live-preview-window {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  flex: 0 0 100% !important;
+  border-left: none !important;
+  border-right: none !important;
+  height: 100vh !important;
+}
+
+/* Custom button hover visual aesthetics inside custom-preview-btn-group */
+.custom-preview-btn-group button:hover {
+  background: #cbd5e1 !important;
+  color: #1a2e1f !important;
+}
+
+/* Hide native Live Preview toggler to avoid duplicate button showing slashed eye icon */
+.live-preview-toggler,
+#live-preview-toggler,
+[class*="live-preview-toggler"],
+button[class*="live-preview-toggler"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* PREVENT OVERFLOW AND HIDE LAYOUT ELEMENTS IN FULL-PAGE PREVIEW MODE */
+body:has(.live-preview-window--mode-preview) .nav,
+body:has(.live-preview-window--mode-preview) [class*="nav"],
+body:has(.live-preview-window--mode-preview) .app-header,
+body:has(.live-preview-window--mode-preview) [class*="app-header"],
+body:has(.live-preview-window--mode-preview) .hamburger,
+body:has(.live-preview-window--mode-preview) [class*="hamburger"],
+body:has(.live-preview-window--mode-preview) .app-header__mobile-nav-toggler {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body:has(.live-preview-window--mode-preview) .template-default,
+body:has(.live-preview-window--mode-preview) [class*="template-default"],
+body:has(.live-preview-window--mode-preview) .template-default__wrap,
+body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}

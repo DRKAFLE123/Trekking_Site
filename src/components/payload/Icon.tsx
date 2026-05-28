@@ -11,7 +11,7 @@ export const Icon: React.FC = () => {
       boxSizing: 'border-box'
     }}>
       <img
-        src="/logo.jpeg"
+        src="/finalofficiallogo.jpeg"
         alt="Nature Heaven"
         style={{ 
           maxWidth: '100%', 

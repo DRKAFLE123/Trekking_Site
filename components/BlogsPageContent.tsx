@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { FaSearch, FaClock, FaUser, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { BlogPost } from "@/types";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
@@ -19,6 +20,10 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const gridSectionRef = useRef<HTMLDivElement>(null);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const authorQuery = searchParams.get("author");
 
   // Normalize and clean up published blogs
   const publishedBlogs = useMemo(() => {
@@ -40,7 +45,7 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
     return Object.keys(categoriesWithCounts);
   }, [categoriesWithCounts]);
 
-  // Filtered blogs based on search and category
+  // Filtered blogs based on search, category, and author
   const filteredBlogs = useMemo(() => {
     return publishedBlogs.filter((blog) => {
       const titleLower = (blog.title || "").toLowerCase();
@@ -51,9 +56,15 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
         excerptLower.includes(searchLower);
       const matchesCategory =
         selectedCategory === "All" || blog.category === selectedCategory;
-      return matchesSearch && matchesCategory;
+      
+      const authorName = blog.author?.name || "Summit Guide";
+      const matchesAuthor = 
+        !authorQuery || 
+        authorName.toLowerCase() === authorQuery.toLowerCase();
+
+      return matchesSearch && matchesCategory && matchesAuthor;
     });
-  }, [publishedBlogs, searchQuery, selectedCategory]);
+  }, [publishedBlogs, searchQuery, selectedCategory, authorQuery]);
 
   // Reset page when search or category changes
   const handleCategoryChange = (cat: string) => {
@@ -67,9 +78,13 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
   };
 
   // Determine if we should show the Spotlight Featured post
-  // Only show when page is 1, category is 'All', and there is no search query
+  // Only show when page is 1, category is 'All', no search query, and no author filter active
   const showFeaturedSpotlight =
-    currentPage === 1 && selectedCategory === "All" && searchQuery === "" && filteredBlogs.length > 0;
+    currentPage === 1 && 
+    selectedCategory === "All" && 
+    searchQuery === "" && 
+    !authorQuery && 
+    filteredBlogs.length > 0;
 
   // The featured post is the most recent (first item)
   const featuredPost = showFeaturedSpotlight ? filteredBlogs[0] : null;
@@ -137,6 +152,26 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12">
+
+        {/* Dynamic Author Filtering Header */}
+        {authorQuery && (
+          <div className="mb-8 bg-secondary/10 border border-secondary/20 rounded-2xl p-4.5 flex items-center justify-between animate-fadeIn max-w-7xl mx-auto shadow-sm">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">✍️</span>
+              <span className="text-xs sm:text-sm font-semibold text-primary">
+                Showing articles written by <strong className="text-secondary font-bold">{authorQuery}</strong>
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                router.push("/blogs");
+              }}
+              className="text-xs font-bold text-[#c8922a] hover:underline cursor-pointer border border-[#c8922a]/30 hover:border-[#c8922a] px-3.5 py-1.5 rounded-xl bg-white hover:bg-secondary/5 transition duration-300"
+            >
+              Show All Authors
+            </button>
+          </div>
+        )}
         
         {/* 2. Featured Spotlight Post */}
         {featuredPost && (
@@ -195,7 +230,10 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
                 {/* Author Info & Button */}
                 <div className="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-primary/5">
                   <div className="flex items-center gap-3">
-                    <div className="relative h-10 w-10 rounded-full overflow-hidden border border-secondary/20 bg-primary/5 flex items-center justify-center shrink-0">
+                    <Link 
+                      href={`/blogs?author=${encodeURIComponent(featuredPost.author?.name || "Summit Guide")}`}
+                      className="relative h-10 w-10 rounded-full overflow-hidden border border-secondary/20 bg-primary/5 flex items-center justify-center shrink-0 hover:scale-105 transition"
+                    >
                       {featuredPost.author?.photo ? (
                         <Image
                           src={getMediaUrl(featuredPost.author.photo)}
@@ -206,9 +244,14 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
                       ) : (
                         <FaUser className="text-primary/30 h-4 w-4" />
                       )}
-                    </div>
+                    </Link>
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-primary">{featuredPost.author?.name || "Summit Guide"}</span>
+                      <Link 
+                        href={`/blogs?author=${encodeURIComponent(featuredPost.author?.name || "Summit Guide")}`}
+                        className="text-xs font-bold text-primary hover:text-secondary transition"
+                      >
+                        {featuredPost.author?.name || "Summit Guide"}
+                      </Link>
                       <span className="text-[10px] text-muted font-semibold uppercase tracking-wider">Author</span>
                     </div>
                   </div>
@@ -360,7 +403,10 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
                   {/* Card Footer: Author + Read Link */}
                   <div className="px-4.5 pb-4.5 pt-3 border-t border-primary/5 flex items-center justify-between gap-2 mt-auto">
                     <div className="flex items-center gap-2">
-                      <div className="relative h-7 w-7 rounded-full overflow-hidden border border-secondary/20 bg-primary/5 flex items-center justify-center shrink-0">
+                      <Link 
+                        href={`/blogs?author=${encodeURIComponent(blog.author?.name || "Summit Guide")}`}
+                        className="relative h-7 w-7 rounded-full overflow-hidden border border-secondary/20 bg-primary/5 flex items-center justify-center shrink-0 hover:scale-105 transition"
+                      >
                         {blog.author?.photo ? (
                           <Image
                             src={getMediaUrl(blog.author.photo)}
@@ -371,10 +417,13 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
                         ) : (
                           <FaUser className="text-primary/30 h-3 w-3" />
                         )}
-                      </div>
-                      <span className="text-[11px] font-bold text-primary truncate max-w-[90px] sm:max-w-[120px]">
+                      </Link>
+                      <Link 
+                        href={`/blogs?author=${encodeURIComponent(blog.author?.name || "Summit Guide")}`}
+                        className="text-[11px] font-bold text-primary hover:text-secondary transition truncate max-w-[90px] sm:max-w-[120px]"
+                      >
                         {blog.author?.name || "Summit Guide"}
-                      </span>
+                      </Link>
                     </div>
 
                     <Link
@@ -441,6 +490,7 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
                 setSearchQuery("");
                 setSelectedCategory("All");
                 setCurrentPage(1);
+                router.push("/blogs");
               }}
               className="mt-3 px-5 py-2 bg-primary hover:bg-primary-light text-white font-bold text-xs rounded-xl shadow transition"
             >

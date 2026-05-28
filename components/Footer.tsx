@@ -143,7 +143,7 @@ export default function Footer() {
               <Link href="/" className="group flex items-center gap-2.5">
                 <div className="relative w-12 h-12 overflow-hidden bg-white/10 rounded-xl p-1 border border-white/20 shadow-inner transition group-hover:scale-105 shrink-0">
                   <Image
-                    src="/officiallogo.jpeg"
+                    src="/finalofficiallogo.jpeg"
                     alt="Nature Heaven Logo"
                     fill
                     className="object-contain"
@@ -349,7 +349,7 @@ export default function Footer() {
                         </Link>
                       </li>
                       <li>
-                        <Link href="/trips/manaslu-circuit-16" className="hover:text-secondary transition duration-300">
+                        <Link href="/trips/manaslu-circuit-trek-16" className="hover:text-secondary transition duration-300">
                           Manaslu Circuit Trek
                         </Link>
                       </li>

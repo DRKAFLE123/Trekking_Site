@@ -9,9 +9,9 @@ export const BeforeNav = () => {
 
   return (
     <div style={{
-      padding: '0 16px',
-      marginBottom: '12px',
-      marginTop: '16px'
+      padding: '0 12px',
+      marginBottom: '4px',
+      marginTop: '8px'
     }}>
       <Link
         href="/admin"
@@ -19,14 +19,14 @@ export const BeforeNav = () => {
           display: 'flex',
           alignItems: 'center',
           gap: '12px',
-          padding: '12px 16px',
-          borderRadius: '10px',
+          padding: '6px 12px',
+          borderRadius: '6px',
           textDecoration: 'none',
           color: isActive ? '#c8922a' : '#e2f4e8',
           background: isActive ? 'rgba(200, 146, 42, 0.15)' : 'transparent',
           border: isActive ? '1.5px solid rgba(200, 146, 42, 0.3)' : '1px solid transparent',
           fontWeight: isActive ? '800' : '600',
-          fontSize: '13px',
+          fontSize: '12px',
           transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
           boxSizing: 'border-box'
         }}
@@ -43,7 +43,7 @@ export const BeforeNav = () => {
           }
         }}
       >
-        <span style={{ fontSize: '16px' }}>📊</span>
+        <span style={{ fontSize: '14px' }}>📊</span>
         <span style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.02em' }}>Dashboard</span>
       </Link>
       
@@ -51,8 +51,8 @@ export const BeforeNav = () => {
       <div style={{
         height: '1px',
         background: 'rgba(255, 255, 255, 0.08)',
-        marginTop: '16px',
-        marginBottom: '8px'
+        marginTop: '8px',
+        marginBottom: '4px'
       }} />
     </div>
   );

@@ -28,7 +28,7 @@ export const AdminHeaderLogo = () => {
       }}>
         {/* Using <img> instead of next/image to avoid loader issues in admin */}
         <img
-          src="/logo.jpeg"
+          src="/finalofficiallogo.jpeg"
           alt="Nature Heaven Trek"
           style={{
             width: '40px',

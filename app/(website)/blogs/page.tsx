@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Metadata } from "next";
 import BlogsPageContent from "@/components/BlogsPageContent";
 import { BlogPost } from "@/types";
@@ -91,7 +91,13 @@ export default async function BlogsPage() {
 
   return (
     <div className="pt-24 md:pt-32 bg-[#fcfbfa] min-h-screen">
-      <BlogsPageContent blogs={displayBlogs} siteSettings={siteSettings} />
+      <Suspense fallback={
+        <div className="flex items-center justify-center py-32 text-charcoal/50 text-xs font-semibold uppercase tracking-wider">
+          Loading Himalayan Chronicles...
+        </div>
+      }>
+        <BlogsPageContent blogs={displayBlogs} siteSettings={siteSettings} />
+      </Suspense>
     </div>
   );
 }

@@ -92,13 +92,95 @@ export function renderLexical(body: any): React.ReactNode {
   return null;
 }
 
+function getYouTubeId(url: string): string | null {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
+}
+
+function getVimeoId(url: string): string | null {
+  const regExp = /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/posts\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+}
+
 function renderLexicalNodes(nodes: any[]): React.ReactNode {
   return nodes.map((node, idx) => {
     if (node.type === 'paragraph' && node.children) {
+      if (node.children.length === 1 && node.children[0].type === 'link' && node.children[0].fields?.url) {
+        const linkUrl = node.children[0].fields.url;
+        const ytId = getYouTubeId(linkUrl);
+        if (ytId) {
+          return (
+            <div key={idx} className="my-6 rounded-xl overflow-hidden shadow-md aspect-video w-full bg-black">
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${ytId}`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            </div>
+          );
+        }
+        const vimeoId = getVimeoId(linkUrl);
+        if (vimeoId) {
+          return (
+            <div key={idx} className="my-6 rounded-xl overflow-hidden shadow-md aspect-video w-full bg-black">
+              <iframe
+                src={`https://player.vimeo.com/video/${vimeoId}`}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            </div>
+          );
+        }
+      }
+
       return (
         <p key={idx} className="my-3 leading-relaxed text-charcoal/85 text-sm md:text-base">
           {renderLexicalChildren(node.children)}
         </p>
+      );
+    }
+    if (node.type === 'upload' && node.value) {
+      const media = node.value;
+      const url = media.url || '';
+      const alt = media.alt || '';
+      const mimeType = media.mimeType || '';
+
+      if (mimeType.startsWith('video/')) {
+        return (
+          <div key={idx} className="my-6 rounded-xl overflow-hidden border border-secondary/10 shadow-md bg-black max-w-full">
+            <video
+              src={url}
+              controls
+              className="w-full h-auto aspect-video object-contain"
+              preload="metadata"
+            >
+              Your browser does not support the video tag.
+            </video>
+            {alt && <div className="p-3 text-xs text-charcoal/60 bg-white italic border-t border-secondary/5 text-center">{alt}</div>}
+          </div>
+        );
+      }
+
+      return (
+        <div key={idx} className="my-6 flex flex-col items-center gap-2">
+          <img
+            src={url}
+            alt={alt}
+            className="rounded-xl object-cover shadow-md w-full max-h-[500px]"
+          />
+          {alt && <span className="text-xs text-charcoal/60 italic text-center">{alt}</span>}
+        </div>
       );
     }
     if (node.type === 'heading' && node.children) {

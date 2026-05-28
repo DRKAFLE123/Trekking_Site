@@ -42,6 +42,7 @@ const TRIP_DATA: Record<string, { title: string; slug: string }[]> = {
   "Manaslu Treks": [
     { title: "Manaslu Circuit Trek - 12 Days", slug: "manaslu-circuit-12" },
     { title: "Manaslu Circuit Trek - 15 Days", slug: "manaslu-circuit-15" },
+    { title: "Manaslu Circuit Trek - 16 Days", slug: "manaslu-circuit-trek-16" },
     { title: "Manaslu Tsum Valley Trek - 19 Days", slug: "manaslu-tsum-valley-19" },
     { title: "Tsum Valley Trek - 14 Days", slug: "tsum-valley-14" }
   ],
@@ -470,7 +471,7 @@ export default function Navbar() {
           {/* Left Logo */}
           <Link href="/" className="group flex items-center gap-2.5 shrink-0">
             <div className="relative w-12 h-12 overflow-hidden bg-gray-50 rounded-lg p-0.5 border border-gray-200 shadow-inner transition group-hover:scale-105 shrink-0">
-              <Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
+              <Image src="/finalofficiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
             </div>
             <div className="flex flex-col text-left">
               <span className="font-sans text-[13px] font-extrabold text-[#1a2e1f] leading-none uppercase tracking-wide">
@@ -590,7 +591,7 @@ export default function Navbar() {
           <div className={`transition-all duration-300 ${isScrolled ? "opacity-100 block" : "opacity-100 block lg:opacity-0 lg:hidden"}`}>
             <Link href="/" className="flex items-center gap-1.5">
               <div className="relative w-6 h-6 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0">
-                <Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
+                <Image src="/finalofficiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
               </div>
               <span className="font-sans text-[10px] font-extrabold text-white uppercase tracking-wide leading-none">
                 Nature Heaven
@@ -816,7 +817,7 @@ export default function Navbar() {
               {/* Header */}
               <div className="flex justify-between items-center pb-4 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                  <div className="relative w-7 h-7 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0"><Image src="/officiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized /></div>
+                  <div className="relative w-7 h-7 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0"><Image src="/finalofficiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized /></div>
                   <div className="flex flex-col">
                     <span className="font-sans text-xs font-bold text-white uppercase tracking-wider leading-none">
                       {((siteSettings?.siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "Nature Heaven")}

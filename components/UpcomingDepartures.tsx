@@ -147,7 +147,7 @@ export default function UpcomingDepartures() {
       trek: {
         id: "fallback-trek-3",
         title: "Manaslu Circuit Trek",
-        slug: "manaslu-circuit-16",
+        slug: "manaslu-circuit-trek-16",
         duration: 16,
         price: 1699,
         discountedPrice: 1359,

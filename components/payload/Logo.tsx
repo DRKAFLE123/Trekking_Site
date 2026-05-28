@@ -19,7 +19,7 @@ export const Logo: React.FC = () => {
         transition: 'transform 0.3s ease'
       }}>
         <img
-          src="/officiallogo.jpeg"
+          src="/finalofficiallogo.jpeg"
           alt="Nature Heaven Logo"
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
         />
