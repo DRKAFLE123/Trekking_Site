@@ -33,7 +33,6 @@ const isPostgres = dbUrl.toLowerCase().startsWith('postgres://') || dbUrl.toLowe
 export default buildConfig({
   admin: {
     user: users.slug,
-    css: path.resolve(dirname, 'custom-admin.css'),
     importMap: {
       baseDir: path.resolve(dirname, '..'),
     },
