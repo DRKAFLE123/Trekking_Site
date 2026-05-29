@@ -62,8 +62,10 @@ const MONTHS = [
 const formatDateFriendly = (dateStr: string) => {
   if (!dateStr) return "";
   try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric" });
+    const datePart = dateStr.split("T")[0];
+    const [y, m, d] = datePart.split("-").map(Number);
+    const dateObj = (y && m && d) ? new Date(y, m - 1, d) : new Date(dateStr);
+    return dateObj.toLocaleDateString("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric" });
   } catch (e) {
     return dateStr;
   }
@@ -98,6 +100,9 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     if (initialStartDate) return new Date(initialStartDate);
     return new Date();
   });
+
+  // Hover preview for the fixed-duration schedule calendar
+  const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
   // Contact Details (Step 2 - Lead Traveler)
   const [contactInfo, setContactInfo] = useState({
@@ -266,13 +271,14 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     });
   }, [contactInfo.fullName, contactInfo.country]);
 
-  // Calculate return date dynamically if custom date is entered and no departure is selected
+  // Calculate trip end date from the fixed trek duration (inclusive of the start day)
   useEffect(() => {
     if (!selectedDeparture && startDate) {
-      const dep = new Date(startDate);
-      const ret = new Date(dep);
-      ret.setDate(dep.getDate() + trek.duration);
-      setEndDate(ret.toISOString().split("T")[0]);
+      const [y, m, d] = startDate.split("T")[0].split("-").map(Number);
+      if (!y || !m || !d) return;
+      const end = new Date(y, m - 1, d);
+      end.setDate(end.getDate() + (trek.duration - 1));
+      setEndDate(`${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, "0")}-${String(end.getDate()).padStart(2, "0")}`);
     }
   }, [startDate, selectedDeparture, trek.duration]);
 
@@ -305,6 +311,83 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   const selectCustomDate = (dateStr: string) => {
     setSelectedDeparture(null);
     setStartDate(dateStr);
+  };
+
+  // ----------------------------------------------------
+  // FIXED-DURATION SCHEDULE CALENDAR (matches trek detail planner)
+  // ----------------------------------------------------
+  const tripDays = trek.duration || 1;
+  const startOfToday = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; })();
+  const addDays = (date: Date, n: number) => { const d = new Date(date); d.setDate(d.getDate() + n); d.setHours(0, 0, 0, 0); return d; };
+  const isSameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  const parseISODate = (s: string): Date | null => {
+    if (!s) return null;
+    const [y, m, d] = s.split("T")[0].split("-").map(Number);
+    if (!y || !m || !d) return null;
+    const dt = new Date(y, m - 1, d); dt.setHours(0, 0, 0, 0); return dt;
+  };
+  const fmtISODate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const selectScheduleDate = (date: Date) => {
+    setSelectedDeparture(null);
+    setStartDate(fmtISODate(date));
+  };
+
+  const renderScheduleMonth = (mDate: Date) => {
+    const year = mDate.getFullYear();
+    const month = mDate.getMonth();
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const blanks = Array(firstDayIndex).fill(null);
+    const days = Array.from({ length: totalDays }, (_, i) => i + 1);
+
+    const selStart = parseISODate(startDate);
+    const rangeStart = selStart || hoverDate;
+    const rangeEnd = rangeStart ? addDays(rangeStart, tripDays - 1) : null;
+
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="text-center font-serif font-black text-xs text-[#1A1A2E] py-2 bg-slate-50 border border-slate-200/60 rounded-xl uppercase tracking-wider">
+          {MONTHS[month]} {year}
+        </div>
+        <div className="grid grid-cols-7 gap-1 text-center font-extrabold text-[9px] uppercase text-[#6B6B6B] border-b border-[#E5E5E5] pb-1.5 mt-1">
+          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        </div>
+        <div className="grid grid-cols-7 gap-1.5 mt-1.5">
+          {blanks.map((_, idx) => (<div key={`blank-${idx}`} className="aspect-square"></div>))}
+          {days.map((day) => {
+            const date = new Date(year, month, day); date.setHours(0, 0, 0, 0);
+            const past = date < startOfToday;
+            const isRangeStart = rangeStart && isSameDay(date, rangeStart);
+            const isRangeEnd = rangeEnd && isSameDay(date, rangeEnd);
+            const inRange = rangeStart && rangeEnd && date > rangeStart && date < rangeEnd;
+
+            let cellStyle = "bg-white text-[#1A1A2E] border border-slate-200 hover:border-[#2E7D32] hover:bg-emerald-50 cursor-pointer";
+            if (past) {
+              cellStyle = "text-slate-300 line-through cursor-not-allowed";
+            } else if (isRangeStart || isRangeEnd) {
+              cellStyle = "bg-[#2E7D32] text-white font-black border border-[#2E7D32] shadow-sm cursor-pointer";
+            } else if (inRange) {
+              cellStyle = "bg-emerald-100 text-emerald-900 font-bold cursor-pointer";
+            }
+
+            return (
+              <button
+                key={`day-${day}`}
+                type="button"
+                disabled={past}
+                onClick={() => { if (!past) selectScheduleDate(date); }}
+                onMouseEnter={() => { if (!past) setHoverDate(date); }}
+                onMouseLeave={() => setHoverDate(null)}
+                className={`aspect-square w-full rounded-xl flex items-center justify-center select-none transition text-[11px] ${cellStyle}`}
+              >
+                {day}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
   };
 
   // ----------------------------------------------------
@@ -342,7 +425,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     if (shouldSetError) setStepError(null);
     if (currentStep === 1) {
       if (!startDate || !endDate) {
-        if (shouldSetError) setStepError("Please select a departure date from the live calendar or pick a custom private date.");
+        if (shouldSetError) setStepError("Please select your trip start date from the calendar below.");
         return false;
       }
       if (guestsCount < 1) {
@@ -864,8 +947,34 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
           {currentStep === 1 && (
             <div className="flex flex-col gap-6 animate-fade-in">
               <div>
-                <h3 className="font-serif text-2xl font-black text-[#1a2e1f]">1. Choose Date & Group Size</h3>
-                <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">Select an available group departure date on our live calendar, or configure a private custom start date.</p>
+                <h3 className="font-serif text-2xl font-black text-[#1a2e1f]">Your Booking Details</h3>
+                <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">Confirm your trip and pick a start date below. The end date is calculated automatically from the fixed trip duration.</p>
+              </div>
+
+              {/* Selected Trip + Dates Summary */}
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-extrabold uppercase text-[#6B6B6B] tracking-wide">Select Your Trip</label>
+                  <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3 text-sm font-bold text-[#1a2e1f]">
+                    {trek.title} &ndash; {trek.duration} Days
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-extrabold uppercase text-[#6B6B6B] tracking-wide">Trip Start Date</label>
+                    <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3 text-sm font-bold text-[#1a2e1f] flex items-center justify-between gap-2">
+                      <span className={startDate ? "" : "text-slate-400 font-semibold"}>{startDate ? formatDateFriendly(startDate) : "Select a date below"}</span>
+                      <FaCalendarAlt className="text-[#2E7D32] shrink-0" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-extrabold uppercase text-[#6B6B6B] tracking-wide">Trip End Date</label>
+                    <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3 text-sm font-bold text-[#1a2e1f] flex items-center justify-between gap-2">
+                      <span className={endDate ? "" : "text-slate-400 font-semibold"}>{endDate ? formatDateFriendly(endDate) : "Auto-calculated"}</span>
+                      <FaCalendarAlt className="text-[#2E7D32] shrink-0" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Group Size Stepper */}
@@ -894,162 +1003,57 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                 </div>
               </div>
 
-              {/* Calendar Grid Container */}
+              {/* Fixed-Duration Schedule Calendar */}
               <div className="border-t border-[#E5E5E5] pt-5">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                  <span className="font-serif text-sm font-black text-[#1a2e1f] uppercase tracking-wide">Live Departures Calendar</span>
-                  
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentMonthDate(prev => {
-                        const next = new Date(prev);
-                        next.setMonth(prev.getMonth() - 1);
-                        return next;
-                      })}
-                      className="w-7 h-7 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 flex items-center justify-center font-bold text-slate-700 transition"
-                    >
-                      &lt;
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentMonthDate(prev => {
-                        const next = new Date(prev);
-                        next.setMonth(prev.getMonth() + 1);
-                        return next;
-                      })}
-                      className="w-7 h-7 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 flex items-center justify-center font-bold text-slate-700 transition"
-                    >
-                      &gt;
-                    </button>
-
-                    <select
-                      value={currentMonthDate.getMonth()}
-                      onChange={(e) => {
-                        const m = parseInt(e.target.value);
-                        setCurrentMonthDate(prev => {
-                          const next = new Date(prev);
-                          next.setMonth(m);
-                          return next;
-                        });
-                      }}
-                      className="bg-white border border-[#E5E5E5] rounded-lg px-2.5 py-1 text-xs font-bold text-[#1A1A2E] cursor-pointer"
-                    >
-                      {MONTHS.map((name, i) => (
-                        <option key={i} value={i}>{name}</option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={currentMonthDate.getFullYear()}
-                      onChange={(e) => {
-                        const y = parseInt(e.target.value);
-                        setCurrentMonthDate(prev => {
-                          const next = new Date(prev);
-                          next.setFullYear(y);
-                          return next;
-                        });
-                      }}
-                      className="bg-white border border-[#E5E5E5] rounded-lg px-2.5 py-1 text-xs font-bold text-[#1A1A2E] cursor-pointer"
-                    >
-                      {[new Date().getFullYear(), new Date().getFullYear() + 1].map(y => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
-                    </select>
-                  </div>
+                <div className="flex flex-wrap items-center justify-end gap-2 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentMonthDate(prev => { const next = new Date(prev); next.setMonth(prev.getMonth() - 1); return next; })}
+                    className="w-7 h-7 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 flex items-center justify-center font-bold text-slate-700 transition"
+                  >
+                    &lt;
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentMonthDate(prev => { const next = new Date(prev); next.setMonth(prev.getMonth() + 1); return next; })}
+                    className="w-7 h-7 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 flex items-center justify-center font-bold text-slate-700 transition"
+                  >
+                    &gt;
+                  </button>
+                  <select
+                    value={currentMonthDate.getMonth()}
+                    onChange={(e) => { const m = parseInt(e.target.value); setCurrentMonthDate(prev => { const next = new Date(prev); next.setMonth(m); return next; }); }}
+                    className="bg-white border border-[#E5E5E5] rounded-lg px-2.5 py-1 text-xs font-bold text-[#1A1A2E] cursor-pointer"
+                  >
+                    {MONTHS.map((name, i) => (
+                      <option key={i} value={i}>{name}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={currentMonthDate.getFullYear()}
+                    onChange={(e) => { const y = parseInt(e.target.value); setCurrentMonthDate(prev => { const next = new Date(prev); next.setFullYear(y); return next; }); }}
+                    className="bg-white border border-[#E5E5E5] rounded-lg px-2.5 py-1 text-xs font-bold text-[#1A1A2E] cursor-pointer"
+                  >
+                    {[new Date().getFullYear(), new Date().getFullYear() + 1].map(y => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
                 </div>
 
-                {loadingDepartures ? (
-                  <div className="flex flex-col items-center justify-center py-16 gap-3">
-                    <div className="w-8 h-8 border-4 border-[#2E7D32] border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-xs text-[#6B6B6B] font-semibold">Synchronizing Live Availability Registry...</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {renderCalendarGrid(currentMonthDate)}
-                      {(() => {
-                        const nextMonth = new Date(currentMonthDate);
-                        nextMonth.setMonth(currentMonthDate.getMonth() + 1);
-                        return renderCalendarGrid(nextMonth);
-                      })()}
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {renderScheduleMonth(currentMonthDate)}
+                  {(() => {
+                    const nextMonth = new Date(currentMonthDate);
+                    nextMonth.setMonth(currentMonthDate.getMonth() + 1);
+                    return renderScheduleMonth(nextMonth);
+                  })()}
+                </div>
 
-                    <div className="border-t border-slate-100 pt-4 flex flex-wrap justify-between items-center gap-4 text-[10px]">
-                      <div className="flex flex-wrap gap-4 font-semibold text-[#6B6B6B]">
-                        <div className="flex items-center gap-1">
-                          <span className="w-3 h-3 rounded-md bg-[#emerald-50] border border-emerald-200 bg-emerald-50/80 flex items-center justify-center text-[6px] text-emerald-700 font-extrabold">GO</span>
-                          <span>Available Start Date</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="w-3 h-3 rounded-md bg-amber-50 border border-amber-200 flex items-center justify-center text-[6px] text-amber-700 font-extrabold">LFT</span>
-                          <span>Limited Seats Left</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="w-3 h-3 rounded-md bg-red-50 border border-red-100 flex items-center justify-center text-[6px] text-red-400 font-extrabold line-through">FULL</span>
-                          <span>Sold Out / Full</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Fallback Custom Date Selector */}
-              <div className="bg-[#F8F7F4] border border-[#E5E5E5] p-5 rounded-2xl flex flex-col gap-4 mt-2">
-                <span className="text-xs font-black text-[#1a2e1f] uppercase tracking-wide">Or Pick Custom Private Date</span>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Start Date *</label>
-                    <input
-                      type="date"
-                      required
-                      min={new Date().toISOString().split("T")[0]}
-                      value={startDate}
-                      onChange={(e) => selectCustomDate(e.target.value)}
-                      className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-bold text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32]"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Calculated Return Date</label>
-                    <div className="bg-white border border-[#E5E5E5] px-4 py-3 rounded-xl text-xs font-bold text-[#1A1A2E] flex items-center">
-                      {endDate ? `${endDate} (${trek.duration} Days)` : "Select a start date first"}
-                    </div>
-                  </div>
+                <div className="border-t border-slate-100 pt-4 mt-4 flex items-center gap-2 text-[11px] font-semibold text-[#6B6B6B]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                  <span>Past dates are unavailable</span>
                 </div>
               </div>
-
-              {/* Dynamic Active Reservation Date Range Banner */}
-              {startDate && endDate && (
-                <div className="bg-gradient-to-r from-[#1a2e1f] to-[#25422c] border border-[#2E7D32]/30 rounded-2xl p-5 text-white shadow-lg animate-fade-in flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl shadow-inner shrink-0 border border-white/5">
-                      🏔️
-                    </div>
-                    <div className="flex flex-col text-left">
-                      <span className="text-[9px] uppercase tracking-[0.15em] text-green-400 font-extrabold">Active Package Reservation</span>
-                      <h4 className="font-serif font-black text-sm text-white mt-0.5 leading-tight">
-                        {trek.title}
-                      </h4>
-                      <p className="text-[10px] text-white/70 font-semibold mt-1 flex items-center gap-1.5">
-                        <span>⏱️ {trek.duration} Days Package</span>
-                        <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                        <span className="text-[#FF9800] font-bold">Standard Guided Itinerary</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 flex flex-col items-center sm:items-end gap-0.5 shrink-0 min-w-[200px] text-center sm:text-right">
-                    <span className="text-[8px] uppercase tracking-wider text-white/50 font-bold">Calculated Date Range</span>
-                    <span className="text-xs font-black text-[#FF9800] font-sans">
-                      {formatDateFriendly(startDate)}
-                    </span>
-                    <span className="text-[9px] text-white/40 font-bold uppercase py-0.5">through</span>
-                    <span className="text-xs font-black text-green-400 font-sans">
-                      {formatDateFriendly(endDate)}
-                    </span>
-                  </div>
-                </div>
-              )}
 
               {/* Premium Addons List */}
               <div className="flex flex-col gap-4 border-t border-[#E5E5E5] pt-5">
