@@ -35,8 +35,20 @@ import {
   FaRegImage,
   FaRegComments,
   FaQuestionCircle,
-  FaPlay
+  FaPlay,
+  FaGlobeAsia,
+  FaSignal,
+  FaMapMarkerAlt,
+  FaBed,
+  FaUtensils,
+  FaWalking,
+  FaMountain,
+  FaPaperPlane,
+  FaRegClock,
+  FaArrowRight,
+  FaTimesCircle
 } from "react-icons/fa";
+import { FiPlusCircle, FiXCircle } from "react-icons/fi";
 import { Trek, Testimonial, Faq } from "@/types";
 import { renderLexical } from "@/lib/lexical-renderer";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
@@ -400,9 +412,71 @@ const DEFAULT_FAQS = [
   }
 ];
 
+// Keyword-based grouping of free-text inclusion/exclusion items into categories.
+// (The treks collection stores these as a flat list, so categories are inferred here.)
+const PACKAGE_CATEGORIES = [
+  { key: "transport", label: "Transportation", Icon: FaPaperPlane, keywords: ["flight", "airfare", "airport", "transfer", "transport", "vehicle", "bus", "drive", "domestic", "lukla", "pick-up", "pickup", "drop-off", "drop off"] },
+  { key: "accommodation", label: "Accommodations", Icon: FaBed, keywords: ["accommodation", "hotel", "teahouse", "tea house", "lodge", "nights", "night ", "twin-sharing", "twin sharing", "rooms"] },
+  { key: "food", label: "Food & Drinks", Icon: FaUtensils, keywords: ["meal", "breakfast", "lunch", "dinner", "b, l, d", "fresh fruit", "drinking water", "water purification", "dal bhat"] },
+  { key: "guide", label: "Guide & Porter", Icon: FaUsers, keywords: ["guide", "porter", "sherpa", "trek leader", "crew", "wages"] },
+  { key: "permits", label: "Permits & Fees", Icon: FaListUl, keywords: ["permit", "entry fee", "national park", "municipality", "tims", "vat", "government tax"] },
+  { key: "insurance", label: "Travel Insurance", Icon: FaShieldAlt, keywords: ["insurance"] },
+  { key: "visa", label: "Visa", Icon: FaInfoCircle, keywords: ["visa"] },
+  { key: "equipment", label: "Equipment & Gear", Icon: FaMedkit, keywords: ["sleeping bag", "down jacket", "duffel", "duffle", "equipment", "first aid", "first-aid", "oximeter", "certificate", "hiking poles", "boots", "daypack"] },
+  { key: "personal", label: "Personal Expenses", Icon: FaCreditCard, keywords: ["personal", "tip", "tipping", "wifi", "wi-fi", "laundry", "hot shower", "battery", "charging", "snack", "alcohol", "phone", "shopping", "bottled", "beverage"] },
+];
+
+function categorizePackageItems(items: string[], fallbackLabel: string) {
+  const map = new Map<string, string[]>();
+  const other: string[] = [];
+  for (const item of items) {
+    const lower = (item || "").toLowerCase();
+    const cat = PACKAGE_CATEGORIES.find((c) => c.keywords.some((k) => lower.includes(k)));
+    if (cat) {
+      if (!map.has(cat.key)) map.set(cat.key, []);
+      map.get(cat.key)!.push(item);
+    } else {
+      other.push(item);
+    }
+  }
+  const groups = PACKAGE_CATEGORIES.filter((c) => map.has(c.key)).map((c) => ({
+    label: c.label,
+    Icon: c.Icon,
+    items: map.get(c.key)!,
+  }));
+  if (other.length) groups.push({ label: fallbackLabel, Icon: FaInfoCircle, items: other });
+  return groups;
+}
+
 export default function TrekDetailClient({ trek, similarTreks, testimonials, faqs = [] }: TrekDetailClientProps) {
   const router = useRouter();
   const isEBC = trek.slug === "everest-base-camp-trek" || trek.slug === "everest-base-camp-trek-14" || trek.slug === "everest-base-camp-trek-12" || trek.slug?.startsWith("everest-base-camp-");
+
+  // Route map image: CMS upload (backend) > local slug fallback (EBC / Manaslu). Empty => use interactive map.
+  const mapImageUrl = getMediaUrl(trek.mapImage)
+    || (isEBC
+      ? "/Map%20Image/ebc-map.webp"
+      : (trek.slug?.includes("manaslu") ? "/Map%20Image/manslu%20trek.webp" : ""));
+
+  // Download the route map image to the user's device (works for local + remote/CMS images).
+  const handleDownloadMap = async () => {
+    if (!mapImageUrl) return;
+    try {
+      const res = await fetch(mapImageUrl);
+      const blob = await res.blob();
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objUrl;
+      const ext = mapImageUrl.split("?")[0].match(/\.(\w+)$/)?.[1] || "jpg";
+      a.download = `${trek.slug || "trek"}-route-map.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objUrl);
+    } catch {
+      window.open(mapImageUrl, "_blank");
+    }
+  };
 
   const [siteSettings, setSiteSettings] = useState<any>(null);
 
@@ -436,7 +510,9 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
     ? EBC_FALLBACK.exclusions
     : (trek.exclusions?.map((e: any) => typeof e === "string" ? e : e?.exclusion).filter(Boolean) || []);
 
-  const tripInfoList = EBC_FALLBACK.tripInfo;
+  const inclusionGroups = categorizePackageItems(inclusionsList, "Other Inclusions");
+  const exclusionGroups = categorizePackageItems(exclusionsList, "Other Exclusions");
+
   const packingChecklist = EBC_FALLBACK.packingChecklist;
 
   const computedGallery = (trek.gallery?.map((g: any) => {
@@ -465,6 +541,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
   // INTERACTIVE STATES
   // ----------------------------------------------------
   const [activeSection, setActiveSection] = useState("overview");
+  const [hideSubNav, setHideSubNav] = useState(false);
 
   // Hero photo gallery lightbox
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -507,6 +584,13 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             }
           }
         }
+
+        // Hide the sticky sub-nav once the (full-width) FAQ section is reached
+        const faqEl = document.getElementById("faqs");
+        if (faqEl) {
+          setHideSubNav(faqEl.getBoundingClientRect().top <= 80);
+        }
+
         isScrolling = false;
       });
     };
@@ -514,6 +598,24 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Scrollspy for the FAQ category navigation
+  useEffect(() => {
+    const handleFaqScroll = () => {
+      const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-faq-cat]"));
+      if (sections.length === 0) return;
+      const scrollPos = window.scrollY + 160;
+      let current = sections[0].dataset.faqCat || "";
+      for (const sec of sections) {
+        if (scrollPos >= sec.offsetTop) current = sec.dataset.faqCat || current;
+      }
+      setActiveFaqCat(current);
+    };
+    window.addEventListener("scroll", handleFaqScroll, { passive: true });
+    handleFaqScroll();
+    return () => window.removeEventListener("scroll", handleFaqScroll);
+  }, [faqs]);
+
   const [startDate, setStartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [dateStatus, setDateStatus] = useState<"none" | "guaranteed" | "limited" | "soldout">("none");
@@ -523,16 +625,14 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
   // Itinerary & Info accordions
   const [openDays, setOpenDays] = useState<Record<number, boolean>>({ 1: true });
   const [packedItems, setPackedItems] = useState<Record<string, boolean>>({});
-  const [openInfo, setOpenInfo] = useState<Record<string, boolean>>({ Accommodations: true });
   
   // Reviews Tab
   const [activeReviewTab, setActiveReviewTab] = useState<"tripadvisor" | "google" | "facebook">("tripadvisor");
   const [expandedReviews, setExpandedReviews] = useState<Record<number, boolean>>({});
   const [showShare, setShowShare] = useState(false);
 
-  // FAQ Console State
-  const [faqSearchQuery, setFaqSearchQuery] = useState("");
-  const [activeFaqCategory, setActiveFaqCategory] = useState<string>("all");
+  // FAQ State (scrollspy category nav)
+  const [activeFaqCat, setActiveFaqCat] = useState<string>("");
   const [expandedFaqs, setExpandedFaqs] = useState<Record<string, boolean>>({});
 
   // Live Departures Database State
@@ -542,6 +642,10 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
 
   // Calendar month state
   const [currentMonthDate, setCurrentMonthDate] = useState<Date>(() => new Date());
+
+  // Trek Schedule Planner state (self-service date picker based on fixed trip duration)
+  const [scheduleStart, setScheduleStart] = useState<Date | null>(null);
+  const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
   const findDepartureForDate = (date: Date) => {
     if (!departures || departures.length === 0) return null;
@@ -698,10 +802,6 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
     setOpenDays({});
   };
 
-  const toggleInfo = (title: string) => {
-    setOpenInfo((prev) => ({ ...prev, [title]: !prev[title] }));
-  };
-
   // Reviews
   const reviewCards = {
     tripadvisor: [
@@ -845,6 +945,135 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               >
                 {displayElement}
               </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // ----------------------------------------------------
+  // TREK SCHEDULE PLANNER (fixed-duration self-service calendar)
+  // ----------------------------------------------------
+  const tripDays = trek.duration || 1;
+  const startOfToday = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; })();
+
+  const addDays = (date: Date, n: number) => {
+    const d = new Date(date);
+    d.setDate(d.getDate() + n);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  };
+  const isSameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+  const scheduleEnd = scheduleStart ? addDays(scheduleStart, tripDays - 1) : null;
+  const fmtLong = (d: Date) => d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const fmtISO = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const handleScheduleBooking = () => {
+    if (!scheduleStart) return;
+    const end = addDays(scheduleStart, tripDays - 1);
+    router.push(`/booking/${trek.slug}?guests=${guests}&startDate=${fmtISO(scheduleStart)}&endDate=${fmtISO(end)}`);
+  };
+
+  const renderScheduleMonth = (mDate: Date) => {
+    const year = mDate.getFullYear();
+    const month = mDate.getMonth();
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const blanks = Array(firstDayIndex).fill(null);
+    const days = Array.from({ length: totalDays }, (_, i) => i + 1);
+
+    // Range to highlight: the committed selection, or a hover preview before selecting.
+    const rangeStart = scheduleStart || hoverDate;
+    const rangeEnd = rangeStart ? addDays(rangeStart, tripDays - 1) : null;
+
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="text-center font-serif font-black text-xs text-[#1A1A2E] py-2 bg-slate-50 border border-slate-200/60 rounded-xl uppercase tracking-wider">
+          {months[month]} {year}
+        </div>
+        <div className="grid grid-cols-7 gap-1 text-center font-extrabold text-[9px] uppercase text-[#6B6B6B] border-b border-[#E5E5E5] pb-1.5 mt-1">
+          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        </div>
+        <div className="grid grid-cols-7 gap-1.5 mt-1.5">
+          {blanks.map((_, idx) => (
+            <div key={`blank-${idx}`} className="aspect-square"></div>
+          ))}
+          {days.map((day) => {
+            const date = new Date(year, month, day);
+            date.setHours(0, 0, 0, 0);
+            const past = date < startOfToday;
+
+            const isRangeStart = rangeStart && isSameDay(date, rangeStart);
+            const isRangeEnd = rangeEnd && isSameDay(date, rangeEnd);
+            const inRange = rangeStart && rangeEnd && date > rangeStart && date < rangeEnd;
+
+            let cellStyle = "bg-white text-[#1A1A2E] border border-slate-200 hover:border-[#2E7D32] hover:bg-emerald-50 cursor-pointer";
+            if (past) {
+              cellStyle = "text-slate-300 cursor-not-allowed";
+            } else if (isRangeStart || isRangeEnd) {
+              cellStyle = "bg-[#2E7D32] text-white font-black border border-[#2E7D32] shadow-sm cursor-pointer";
+            } else if (inRange) {
+              cellStyle = "bg-emerald-100 text-emerald-900 font-bold cursor-pointer";
+            }
+
+            return (
+              <button
+                key={`day-${day}`}
+                type="button"
+                disabled={past}
+                onClick={() => { if (!past) setScheduleStart(date); }}
+                onMouseEnter={() => { if (!past) setHoverDate(date); }}
+                onMouseLeave={() => setHoverDate(null)}
+                className={`aspect-square w-full rounded-xl flex items-center justify-center select-none transition text-[11px] ${cellStyle}`}
+              >
+                {day}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // Categorized Inclusions / Exclusions card (single box, grouped by category)
+  const renderPackageCard = (
+    title: string,
+    groups: { label: string; Icon: any; items: string[] }[],
+    included: boolean
+  ) => {
+    const HeaderIcon = included ? FaCheckCircle : FaTimesCircle;
+    const BulletIcon = included ? FiPlusCircle : FiXCircle;
+    const accent = included ? "text-[#2E7D32]" : "text-[#D32F2F]";
+    const headerBg = included ? "bg-emerald-50 border-emerald-100" : "bg-red-50 border-red-100";
+    return (
+      <div className="bg-white rounded-2xl border border-[#E5E5E5] shadow-sm overflow-hidden scroll-mt-24">
+        <div className={`flex items-center gap-3 px-6 md:px-8 py-5 border-b ${headerBg}`}>
+          <span className={`w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm ${accent}`}>
+            <HeaderIcon className="text-lg" />
+          </span>
+          <h2 className="font-serif text-xl md:text-2xl font-black text-[#1A1A2E]">{title}</h2>
+        </div>
+        <div className="p-5 md:p-8 flex flex-col gap-4">
+          {groups.map((group, gi) => {
+            const CatIcon = group.Icon;
+            return (
+              <div key={gi} className="border border-[#E5E5E5] rounded-xl overflow-hidden">
+                <div className="flex items-center gap-2.5 px-4 py-3 bg-[#F8F7F4] border-b border-[#E5E5E5]">
+                  <CatIcon className={`text-sm ${accent}`} />
+                  <h3 className="font-bold text-sm text-[#1A1A2E]">{group.label}</h3>
+                </div>
+                <ul className="flex flex-col divide-y divide-dashed divide-[#E5E5E5] px-4">
+                  {group.items.map((item, ii) => (
+                    <li key={ii} className="flex items-start gap-3 py-3 text-xs md:text-sm text-[#3D3D3D]">
+                      <BulletIcon className={`${accent} text-base mt-0.5 shrink-0`} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             );
           })}
         </div>
@@ -1098,7 +1327,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
       {/* ----------------------------------------------------
           3. STICKY QUICK NAVIGATION BAR
           ---------------------------------------------------- */}
-      <nav className="sticky top-0 bg-[#F1F3F5] border-b border-slate-200 shadow-md z-40 overflow-x-auto scrollbar-none font-sans font-bold text-xs transition-all duration-300">
+      <nav className={`sticky top-0 bg-[#F1F3F5] border-b border-slate-200 shadow-md z-40 overflow-x-auto scrollbar-none font-sans font-bold text-xs transition-all duration-300 ${hideSubNav ? "-translate-y-full opacity-0 pointer-events-none" : ""}`}>
         <div className="max-w-[1240px] mx-auto flex items-center justify-start h-12">
           {[
             { id: "overview", label: "Overview", icon: <FaRegEye className="text-sm shrink-0" /> },
@@ -1129,40 +1358,43 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
       </nav>
 
       {/* ----------------------------------------------------
-          4. KEY SPECIFICATIONS BAR
-          ---------------------------------------------------- */}
-      <section className="bg-white border-b border-[#E5E5E5] py-6 shadow-inner relative z-10">
-        <div className="max-w-[1240px] mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6 text-center">
-            {[
-              { label: "Destination", value: "Nepal (Everest)", icon: "📍" },
-              { label: "Difficulty Grade", value: trek.difficulty.toUpperCase(), icon: "🏔️" },
-              { label: "Start / End", value: `${trek.startPoint || "Lukla"} / ${trek.endPoint || "Lukla"}`, icon: "🥾" },
-              { label: "Max Altitude", value: `${trek.maxAltitude}m / ${Math.round(trek.maxAltitude * 3.28084)}ft`, icon: "📈" },
-              { label: "Best Season", value: "Spring / Autumn", icon: "🌤️" },
-              { label: "Accommodations", value: "Teahouses / Hotels", icon: "🏨" },
-              { label: "Meals", value: "Breakfast, Lunch, Dinner", icon: "🍛" },
-              { label: "Activity", value: "High Altitude Trekking", icon: "🚶" }
-            ].map((spec, idx) => (
-              <div key={idx} className="flex flex-col items-center justify-center p-2 border-r border-[#E5E5E5] last:border-0 last:pr-0">
-                <span className="text-xl mb-1">{spec.icon}</span>
-                <span className="text-[9px] uppercase tracking-wider text-[#6B6B6B] font-bold">{spec.label}</span>
-                <span className="text-xs font-black text-[#1A1A2E] mt-0.5">{spec.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
           5. MAIN TWO-COLUMN CONTENT GRID
           ---------------------------------------------------- */}
       <section id="main-content-grid" className="max-w-[1240px] mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10 items-start">
-          
+
           {/* LEFT COLUMN */}
           <div className="flex flex-col gap-8 min-w-0">
-            
+
+            {/* Key Specifications Card */}
+            <div className="bg-white rounded-3xl border border-[#ECECEC] shadow-sm p-6 md:p-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-6">
+                {[
+                  { label: "Destination", value: "Nepal (Everest)", Icon: FaGlobeAsia, iconBg: "bg-blue-500" },
+                  { label: "Difficulty Grade", value: trek.difficulty.toUpperCase(), Icon: FaSignal, iconBg: "bg-red-500" },
+                  { label: "Start / End Point", value: `${trek.startPoint || "Lukla"} / ${trek.endPoint || "Lukla"}`, Icon: FaMapMarkerAlt, iconBg: "bg-teal-600" },
+                  { label: "Accommodation", value: "Teahouses / Hotels", Icon: FaBed, iconBg: "bg-purple-500" },
+                  { label: "Best Season", value: "Spring / Autumn", Icon: FaCalendarAlt, iconBg: "bg-amber-500" },
+                  { label: "Meals Included", value: "Breakfast, Lunch, Dinner", Icon: FaUtensils, iconBg: "bg-orange-500" },
+                  { label: "Activity", value: "High Altitude Trekking", Icon: FaWalking, iconBg: "bg-indigo-500" },
+                  { label: "Max Altitude", value: `${trek.maxAltitude}m / ${Math.round(trek.maxAltitude * 3.28084)}ft`, Icon: FaMountain, iconBg: "bg-teal-600" }
+                ].map((spec, idx) => {
+                  const Icon = spec.Icon;
+                  return (
+                    <div key={idx} className="flex items-center gap-4">
+                      <span className={`shrink-0 w-12 h-12 rounded-full ${spec.iconBg} text-white flex items-center justify-center shadow-sm`}>
+                        <Icon className="text-lg" />
+                      </span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[11px] uppercase tracking-wider text-[#8A8A8A] font-bold">{spec.label}</span>
+                        <span className="text-sm font-black text-[#1A1A2E] mt-0.5 leading-snug">{spec.value}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Section 1: Overview */}
             <div id="overview" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
                   <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
@@ -1178,22 +1410,65 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                     )}
                   </div>
 
-                  {/* Highlights */}
-                  {highlightsList.length > 0 && (
-                    <div className="bg-[#F8F7F4] border border-[#E5E5E5] rounded-2xl p-6 md:p-8 mt-4">
-                      <h3 className="font-serif text-lg md:text-xl font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
-                        🏆 Trek Highlights
-                      </h3>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                        {highlightsList.map((h, idx) => (
-                          <li key={idx} className="flex items-start gap-2.5 text-xs md:text-sm font-semibold text-[#3D3D3D]">
-                            <span className="text-[#2E7D32] text-sm shrink-0">✓</span>
-                            <span>{h}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                </div>
+
+                {/* Section: Trek Highlights (independent block) */}
+                {highlightsList.length > 0 && (
+                  <div id="highlights" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm scroll-mt-24">
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
+                      <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-[#F5A623] flex items-center justify-center shrink-0 shadow-sm">
+                        <FaStar className="text-lg" />
+                      </span>
+                      Trek Highlights
+                    </h2>
+                    <ul className="flex flex-col divide-y divide-[#F0F0F0]">
+                      {highlightsList.map((h, idx) => (
+                        <li key={idx} className="flex items-start gap-3 text-sm md:text-base font-medium text-[#3D3D3D] py-3 first:pt-0 last:pb-0">
+                          <FaRegCheckCircle className="text-[#2E7D32] text-base mt-0.5 shrink-0" />
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Section: Lukla Flight Information (independent block) */}
+                <div id="flight-info" className="bg-[#eef5fb] rounded-2xl border border-[#dce8f3] p-6 md:p-10 shadow-sm scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <FaPaperPlane className="text-base" />
+                    </span>
+                    Lukla Flight Information
+                  </h2>
+                  <div className="flex flex-col gap-4 text-sm md:text-base text-[#3D3D3D] leading-relaxed">
+                    <p>
+                      During <strong className="font-bold text-[#1A1A2E]">peak trekking seasons</strong> (March–May and October–November), Lukla flights operate from <strong className="font-bold text-[#1A1A2E]">Manthali (Ramechhap)</strong> instead of Kathmandu due to <strong className="font-bold text-[#1A1A2E]">air traffic congestion</strong>. On these days, you will leave Kathmandu around 12:30 a.m. for a <strong className="font-bold text-[#1A1A2E]">5–6 hour drive to Manthali</strong> to catch your early morning flight.
+                    </p>
+                    <p>
+                      During <strong className="font-bold text-[#1A1A2E]">off-peak months</strong>, flights usually depart directly from Kathmandu.
+                    </p>
+                    <p>
+                      Flight delays and cancellations are common due to changing mountain weather, so we strongly recommend adding <strong className="font-bold text-[#1A1A2E]">at least two buffer days</strong> after your trek. These buffer days help prevent delays or disruptions to your <strong className="font-bold text-[#1A1A2E]">international travel plans</strong>.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Section: Online Trip Briefing (independent block) */}
+                <div id="trip-briefing" className="bg-[#fdf7ec] rounded-2xl border border-[#f1e6cf] p-6 md:p-10 shadow-sm scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <FaRegCalendarCheck className="text-base" />
+                    </span>
+                    Online Trip Briefing
+                  </h2>
+                  <div className="flex flex-col gap-4 text-sm md:text-base text-[#3D3D3D] leading-relaxed">
+                    <p>
+                      After confirming your <strong className="font-bold text-[#1A1A2E]">10% booking deposit</strong> and receiving your documents, we quickly schedule an <strong className="font-bold text-[#1A1A2E]">online briefing on WhatsApp</strong>. During the call, we will walk you through the itinerary, gear checklist, weather conditions, and exactly what to expect on the trail.
+                    </p>
+                    <p>
+                      As we answer your queries, we will guide you on physical and mental preparation for the trek. Our goal is to clear <strong className="font-bold text-[#1A1A2E]">all your doubts</strong> and help you feel <strong className="font-bold text-[#1A1A2E]">confident, ready, and excited</strong> for the trek.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Section 8: Photo Gallery (integrated at the bottom of Overview tab) */}
@@ -1219,207 +1494,129 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
 
             {/* Section 2: Trip Dates (Departure Calendar System) */}
             <div id="dates" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-                  <div className="border-b border-[#E5E5E5] pb-4">
-                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-2">
-                      🏔️ Upcoming fixed departures
-                    </h2>
-                    <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">
-                      Join a small guaranteed group (average 8–10 people) and share the adventure. Pricing includes premium guides.
+                  {/* Header */}
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-3 border-b border-[#E5E5E5] pb-4">
+                    <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <FaRegCalendarCheck className="text-base" />
+                    </span>
+                    Planning Your Trek Schedule
+                  </h2>
+
+                  {/* Intro info box */}
+                  <div className="bg-[#eef5fb] border border-[#dce8f3] rounded-2xl p-5">
+                    <h3 className="font-bold text-sm md:text-base text-[#1A1A2E] flex items-center gap-2 mb-1">
+                      <FaRegCalendarCheck className="text-[#2E7D32]" /> Select Departure Date
+                    </h3>
+                    <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">
+                      Plan your trek by selecting the exact start and end dates from the calendar below. Ensure your arrival and departure dates align with your itinerary and schedule.
                     </p>
                   </div>
 
-                  {loadingDepartures ? (
-                    <div className="flex flex-col items-center justify-center py-10 gap-3">
-                      <div className="w-10 h-10 border-4 border-t-[#2E7D32] border-[#E5E5E5] rounded-full animate-spin"></div>
-                      <span className="text-xs text-[#6B6B6B] font-bold">Scanning departures registry...</span>
+                  {/* Trip duration + start / end point (from trek details) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-slate-200/60 border border-slate-200/60 rounded-2xl overflow-hidden">
+                    <div className="bg-slate-50 p-5 flex items-center gap-3">
+                      <FaRegClock className="text-[#2E7D32] text-lg shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-bold">Trip Duration</span>
+                        <span className="text-sm font-black text-[#1A1A2E]">{trek.duration} Days</span>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="flex flex-col gap-6">
-                      {/* Calendar Navigation Controls */}
-                      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 border border-slate-200/60 p-4 rounded-2xl">
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCurrentMonthDate(prev => {
-                                const next = new Date(prev);
-                                next.setMonth(prev.getMonth() - 1);
-                                return next;
-                              });
-                            }}
-                            className="w-8 h-8 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 hover:border-[#2E7D32] flex items-center justify-center font-bold text-slate-700 transition shadow-sm cursor-pointer select-none"
-                          >
-                            &lt;
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCurrentMonthDate(prev => {
-                                const next = new Date(prev);
-                                next.setMonth(prev.getMonth() + 1);
-                                return next;
-                              });
-                            }}
-                            className="w-8 h-8 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 hover:border-[#2E7D32] flex items-center justify-center font-bold text-slate-700 transition shadow-sm cursor-pointer select-none"
-                          >
-                            &gt;
-                          </button>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          {/* Month dropdown */}
-                          <select
-                            value={currentMonthDate.getMonth()}
-                            onChange={(e) => {
-                              const m = parseInt(e.target.value);
-                              setCurrentMonthDate(prev => {
-                                const next = new Date(prev);
-                                next.setMonth(m);
-                                return next;
-                              });
-                            }}
-                            className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-1.5 text-xs font-bold text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] cursor-pointer"
-                          >
-                            {months.map((name, i) => (
-                              <option key={i} value={i}>{name}</option>
-                            ))}
-                          </select>
-
-                          {/* Year dropdown */}
-                          <select
-                            value={currentMonthDate.getFullYear()}
-                            onChange={(e) => {
-                              const y = parseInt(e.target.value);
-                              setCurrentMonthDate(prev => {
-                                const next = new Date(prev);
-                                next.setFullYear(y);
-                                return next;
-                              });
-                            }}
-                            className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-1.5 text-xs font-bold text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] cursor-pointer"
-                          >
-                            {years.map(y => (
-                              <option key={y} value={y}>{y}</option>
-                            ))}
-                          </select>
-                        </div>
+                    <div className="bg-slate-50 p-5 flex items-center gap-3">
+                      <FaMapMarkerAlt className="text-[#2E7D32] text-lg shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-bold">Trip Start and End Point</span>
+                        <span className="text-sm font-black text-[#1A1A2E]">{trek.startPoint || "Lukla"} / {trek.endPoint || "Lukla"}</span>
                       </div>
+                    </div>
+                  </div>
 
-                      {/* Side-by-Side Month Grids */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Calendar Month 1 */}
-                        {renderCalendarGrid(currentMonthDate)}
+                  {/* Calendar Navigation Controls */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 border border-slate-200/60 p-4 rounded-2xl">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentMonthDate(prev => { const next = new Date(prev); next.setMonth(prev.getMonth() - 1); return next; })}
+                        className="w-8 h-8 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 hover:border-[#2E7D32] flex items-center justify-center font-bold text-slate-700 transition shadow-sm cursor-pointer select-none"
+                      >
+                        &lt;
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentMonthDate(prev => { const next = new Date(prev); next.setMonth(prev.getMonth() + 1); return next; })}
+                        className="w-8 h-8 rounded-lg bg-white border border-[#E5E5E5] hover:bg-slate-50 hover:border-[#2E7D32] flex items-center justify-center font-bold text-slate-700 transition shadow-sm cursor-pointer select-none"
+                      >
+                        &gt;
+                      </button>
+                    </div>
 
-                        {/* Calendar Month 2 */}
-                        {(() => {
-                          const nextM = new Date(currentMonthDate);
-                          nextM.setMonth(currentMonthDate.getMonth() + 1);
-                          return renderCalendarGrid(nextM);
-                        })()}
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <select
+                        value={currentMonthDate.getMonth()}
+                        onChange={(e) => { const m = parseInt(e.target.value); setCurrentMonthDate(prev => { const next = new Date(prev); next.setMonth(m); return next; }); }}
+                        className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-1.5 text-xs font-bold text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] cursor-pointer"
+                      >
+                        {months.map((name, i) => (
+                          <option key={i} value={i}>{name}</option>
+                        ))}
+                      </select>
+                      <select
+                        value={currentMonthDate.getFullYear()}
+                        onChange={(e) => { const y = parseInt(e.target.value); setCurrentMonthDate(prev => { const next = new Date(prev); next.setFullYear(y); return next; }); }}
+                        className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-1.5 text-xs font-bold text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] cursor-pointer"
+                      >
+                        {years.map(y => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
 
-                      {/* Legends & Helpers */}
-                      <div className="border-t border-[#E5E5E5] pt-4 flex flex-wrap justify-between items-center gap-4 text-[11px]">
-                        <div className="flex flex-wrap gap-4 font-semibold text-[#6B6B6B]">
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[7px] text-emerald-700 font-extrabold font-sans">GO</span>
-                            <span>Available Departure</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-3.5 h-3.5 rounded-md bg-amber-50 border border-amber-200 flex items-center justify-center text-[7px] text-amber-700 font-extrabold font-sans">LFT</span>
-                            <span>Limited Seats</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-3.5 h-3.5 rounded-md bg-red-50 border border-red-100 flex items-center justify-center text-[7px] text-red-400 font-extrabold font-sans line-through">FULL</span>
-                            <span>Sold Out</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-3.5 h-3.5 rounded-md bg-white border border-slate-100 flex items-center justify-center text-[8px] text-slate-300 font-black">22</span>
-                            <span>No Departures</span>
-                          </div>
-                        </div>
+                  {/* Side-by-Side Month Grids (fixed-duration selection) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {renderScheduleMonth(currentMonthDate)}
+                    {(() => {
+                      const nextM = new Date(currentMonthDate);
+                      nextM.setMonth(currentMonthDate.getMonth() + 1);
+                      return renderScheduleMonth(nextM);
+                    })()}
+                  </div>
 
-                        <button
-                          type="button"
-                          onClick={() => setIsEnquiryModalOpen(true)}
-                          className="text-[#008CCF] hover:underline font-bold flex items-center gap-1 cursor-pointer"
-                        >
-                          🗺️ Looking for custom private dates? Request Private Trek
-                        </button>
-                      </div>
-
-                      {/* Selected Booking Checkout Box */}
-                      <div className="mt-4 border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-sm transition-all duration-300 bg-[#F8F7F4]">
-                        {selectedDeparture ? (
-                          <div className="p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in">
-                            <div className="flex flex-col gap-1.5">
-                              <span className="bg-emerald-600 text-white font-bold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded self-start">
-                                Selected Departure Slot
-                              </span>
-                              <h4 className="font-serif font-black text-base text-[#1A1A2E] leading-tight">
-                                {new Date(startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} &mdash; {new Date(returnDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                              </h4>
-                              <div className="flex flex-wrap items-center gap-3 text-xs text-[#6B6B6B] font-semibold mt-1">
-                                <span className="flex items-center gap-1 text-[#2E7D32]">
-                                  ✓ Guaranteed departure
-                                </span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]"></span>
-                                <span>⏱️ {trek.duration} Days</span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]"></span>
-                                <span className="text-[#1a3c2e] font-black">${selectedDeparture.priceOverride || paxPrice} USD / PP</span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-4 shrink-0 flex-wrap sm:flex-nowrap">
-                              {/* Guests stepper inside dates section */}
-                              <div className="flex flex-col gap-1 bg-white border border-[#E5E5E5] rounded-xl px-3 py-1.5 shadow-sm">
-                                <span className="text-[8px] uppercase tracking-wider text-[#6B6B6B] font-black">Number of Guests</span>
-                                <div className="flex items-center gap-2 h-7 w-[100px]">
-                                  <button
-                                    type="button"
-                                    onClick={() => setGuests(Math.max(1, guests - 1))}
-                                    className="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded border border-slate-200 flex items-center justify-center font-bold text-xs cursor-pointer select-none"
-                                  >
-                                    -
-                                  </button>
-                                  <span className="grow text-center text-xs font-black text-[#1A1A2E]">{guests}</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => setGuests(Math.min(30, guests + 1))}
-                                    className="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded border border-slate-200 flex items-center justify-center font-bold text-xs cursor-pointer select-none"
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="flex flex-col gap-1">
-                                <button
-                                  onClick={handleProceedToBooking}
-                                  className="bg-[#008CCF] hover:bg-[#0070A6] text-white font-black text-xs uppercase px-6 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-1.5 tracking-wider cursor-pointer select-none"
-                                >
-                                  Continue Booking <span className="text-base font-sans font-light leading-none">&rarr;</span>
-                                </button>
-                                <span className="text-[8.5px] text-[#6B6B6B] text-center font-medium">Advance deposit only ${Math.round(totalCost * 0.1)}</span>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="p-6 text-center flex flex-col items-center justify-center gap-3">
-                            <span className="text-2xl">📅</span>
-                            <div className="flex flex-col gap-1 max-w-[400px]">
-                              <h4 className="font-serif font-black text-sm text-[#1A1A2E]">
-                                Please Select Your Departure Date
-                              </h4>
-                              <p className="text-xs text-[#6B6B6B] leading-normal font-semibold">
-                                Browse the calendars above and click on any green or amber colored departure slot to view trip summary and proceed with your booking.
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                  {/* Selected Trip Summary */}
+                  {scheduleStart && scheduleEnd && (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+                      <span className="bg-[#2E7D32] text-white font-bold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded">Your Trip</span>
+                      <span className="font-serif font-black text-base text-[#1A1A2E]">
+                        {fmtLong(scheduleStart)} &rarr; {fmtLong(scheduleEnd)}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-xs text-[#6B6B6B] font-semibold">
+                        <FaRegClock className="text-[#2E7D32]" /> {trek.duration} Days
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => { setScheduleStart(null); setHoverDate(null); }}
+                        className="text-[11px] text-[#6B6B6B] hover:text-red-500 font-bold underline ml-auto cursor-pointer select-none"
+                      >
+                        Clear
+                      </button>
                     </div>
                   )}
+
+                  {/* Footer: legend + continue */}
+                  <div className="border-t border-[#E5E5E5] pt-5 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 text-[11px] font-semibold text-[#6B6B6B]">
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                      <span>Past dates are unavailable</span>
+                    </div>
+                    <span className="text-xs italic text-[#6B6B6B]">Group-Size Discounts will be applied in the next step.</span>
+                    <button
+                      type="button"
+                      onClick={handleScheduleBooking}
+                      disabled={!scheduleStart}
+                      className={`font-black text-xs uppercase px-6 py-3.5 rounded-xl tracking-wider transition-all duration-300 flex items-center gap-2 select-none ${scheduleStart ? "bg-[#008CCF] hover:bg-[#0070A6] text-white shadow-md hover:shadow-lg cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}`}
+                    >
+                      Continue Booking <FaArrowRight className="text-sm" />
+                    </button>
+                  </div>
                 </div>
 
             {/* Experience Video Section */}
@@ -1536,63 +1733,41 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                   </div>
                 </div>
 
-            {/* Section 4: Inclusions & Exclusions */}
-            <div id="includes" className="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-24">
-                  <div className="bg-white rounded-2xl border border-green-200 p-6 md:p-8 flex flex-col gap-4 shadow-sm">
-                    <h3 className="font-serif text-xl font-bold text-green-900 border-b border-green-100 pb-3 flex items-center gap-2">
-                      <span className="p-1 rounded-full bg-green-100 text-green-600"><FaCheck className="h-3 w-3" /></span>
-                      <span>Included in Cost</span>
-                    </h3>
-                    <ul className="flex flex-col gap-3">
-                      {inclusionsList.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-[#3D3D3D]">
-                          <span className="text-green-600 font-bold shrink-0 mt-0.5">✓</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="bg-white rounded-2xl border border-red-200 p-6 md:p-8 flex flex-col gap-4 shadow-sm">
-                    <h3 className="font-serif text-xl font-bold text-red-900 border-b border-red-100 pb-3 flex items-center gap-2">
-                      <span className="p-1 rounded-full bg-red-100 text-red-500"><FaTimes className="h-3 w-3" /></span>
-                      <span>Excluded from Cost</span>
-                    </h3>
-                    <ul className="flex flex-col gap-3">
-                      {exclusionsList.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-[#3D3D3D]">
-                          <span className="text-red-500 font-bold shrink-0 mt-0.5">✗</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+            {/* Section 4: Inclusions & Exclusions (single box, categorized) */}
+            <div id="includes" className="flex flex-col gap-6 scroll-mt-24">
+              {renderPackageCard("What is Included in This Package", inclusionGroups, true)}
+              {renderPackageCard("What is Excluded from This Package", exclusionGroups, false)}
+            </div>
 
             {/* Section 5: Route Map */}
             <div id="map" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-2">
-                    Trek Route Map
-                  </h2>
-                  {isEBC ? (
-                    <div className="relative w-full aspect-[3/4] sm:aspect-square md:aspect-[4/3] rounded-xl overflow-hidden border border-[#E5E5E5]">
-                      <Image
-                        src="https://cms.discoveryworldtrekking.com/media/8120/everest-base-camp-trek-map.webp"
-                        alt="Everest Base Camp Trek Route Map"
-                        fill
-                        className="object-contain bg-slate-50"
-                        unoptimized
-                      />
-                    </div>
+                  <div className="flex items-center justify-between gap-4 border-b border-[#E5E5E5] pb-4 flex-wrap">
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-2">
+                      Trek Route Map
+                    </h2>
+                    {mapImageUrl && (
+                      <button
+                        type="button"
+                        onClick={handleDownloadMap}
+                        className="inline-flex items-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 shrink-0"
+                      >
+                        <FaDownload /> Download Map
+                      </button>
+                    )}
+                  </div>
+
+                  {mapImageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={mapImageUrl}
+                      alt={`${trek.title} Route Map`}
+                      className="w-full h-auto rounded-xl border border-[#E5E5E5] bg-slate-50"
+                    />
+                  ) : trek.gpsCoordinates && trek.gpsCoordinates.length > 0 ? (
+                    <TrekMap waypoints={trek.gpsCoordinates} center={trek.region?.mapCenter} />
                   ) : (
-                    <div className="w-full">
-                      {trek.gpsCoordinates && trek.gpsCoordinates.length > 0 ? (
-                        <TrekMap waypoints={trek.gpsCoordinates} center={trek.region?.mapCenter} />
-                      ) : (
-                        <div className="h-[300px] bg-slate-100 rounded-xl flex items-center justify-center text-slate-500">
-                          No coordinates route mapped.
-                        </div>
-                      )}
+                    <div className="h-[300px] bg-slate-100 rounded-xl flex items-center justify-center text-slate-500">
+                      No route map available.
                     </div>
                   )}
                 </div>
@@ -1647,38 +1822,24 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                   </div>
                 </div>
 
-            {/* Section 7: Important Trip Info */}
+            {/* Section 7: Important Trip Info (blog-style rich content) */}
             <div id="info" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">
-                    Important Trip Information
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <FaInfoCircle className="text-base" />
+                    </span>
+                    {trek.title} Package Information
                   </h2>
 
-                  <div className="flex flex-col gap-3">
-                    {tripInfoList.map((info, idx) => {
-                      const isOpen = !!openInfo[info.title];
-                      return (
-                        <div
-                          key={idx}
-                          className="border border-[#E5E5E5] rounded-xl overflow-hidden transition-all shadow-sm bg-white"
-                        >
-                          <button
-                            onClick={() => toggleInfo(info.title)}
-                            className="w-full px-5 py-3.5 bg-slate-50 hover:bg-[#F8F7F4] flex items-center justify-between text-left focus:outline-none transition font-sans font-bold text-xs md:text-sm text-[#1A1A2E]"
-                          >
-                            <span>{idx + 1}. {info.title}</span>
-                            <span className={`text-[#2E7D32] transition-transform ${isOpen ? "rotate-180" : ""}`}>
-                              <FaChevronDown />
-                            </span>
-                          </button>
-                          {isOpen && (
-                            <div className="px-5 py-4 bg-white border-t border-[#E5E5E5] text-xs md:text-sm text-[#3D3D3D] leading-relaxed animate-fade-in">
-                              {info.content}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                  {trek.tripInfoContent ? (
+                    <div className="prose max-w-none prose-headings:font-serif prose-headings:text-[#1A1A2E] text-sm md:text-base leading-relaxed text-[#3D3D3D]">
+                      {renderLexical(trek.tripInfoContent)}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#6B6B6B] italic">
+                      Detailed trip information for this trek will be published soon.
+                    </p>
+                  )}
                 </div>
 
             {/* Section 9: Reviews */}
@@ -1753,201 +1914,6 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                   </div>
                 </div>
 
-            {/* FAQs Section — Interactive Console */}
-            {(() => {
-              // Build the FAQ dataset from CMS or fallback
-              const faqData = (faqs && faqs.length > 0)
-                ? faqs.map((f: any) => ({
-                    id: f.id || f._id || `faq-${Math.random()}`,
-                    question: f.question,
-                    answer: typeof f.answer === 'string'
-                      ? f.answer
-                      : (f.answer && f.answer.root && f.answer.root.children
-                          ? (() => {
-                              const extract = (nodes: any[]): string =>
-                                nodes.map(n => n.type === 'text' ? (n.text || '') : (n.children ? extract(n.children) : '')).join(' ');
-                              return extract(f.answer.root.children);
-                            })()
-                          : (Array.isArray(f.answer)
-                              ? f.answer.map((b: any) => b?.children?.map((c: any) => c?.text).join('') || '').join(' ')
-                              : '')),
-                    category: f.category || 'general',
-                  }))
-                : DEFAULT_FAQS;
-
-              // Count per category
-              const categoryCounts: Record<string, number> = {};
-              faqData.forEach((f: any) => {
-                categoryCounts[f.category] = (categoryCounts[f.category] || 0) + 1;
-              });
-
-              // Filter by active category & search
-              const filtered = faqData.filter((f: any) => {
-                const matchesCat = activeFaqCategory === 'all' || f.category === activeFaqCategory;
-                const matchesSearch = !faqSearchQuery || f.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) || f.answer.toLowerCase().includes(faqSearchQuery.toLowerCase());
-                return matchesCat && matchesSearch;
-              });
-
-              const toggleFaq = (id: string) => {
-                setExpandedFaqs((prev) => ({ ...prev, [id]: !prev[id] }));
-              };
-
-              const expandAll = () => {
-                const expanded: Record<string, boolean> = {};
-                filtered.forEach((f: any) => { expanded[f.id] = true; });
-                setExpandedFaqs((prev) => ({ ...prev, ...expanded }));
-              };
-
-              const collapseAll = () => {
-                const collapsed: Record<string, boolean> = {};
-                filtered.forEach((f: any) => { collapsed[f.id] = false; });
-                setExpandedFaqs((prev) => ({ ...prev, ...collapsed }));
-              };
-
-              // Only show category tabs that have FAQs
-              const activeCats = Object.keys(FAQ_CATEGORIES).filter((cat) => categoryCounts[cat] && categoryCounts[cat] > 0);
-
-              return (
-                <div id="faqs" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-                  <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#E5E5E5] pb-4">
-                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">
-                      FAQs For {trek.title}
-                    </h2>
-                    <div className="flex items-center gap-2">
-                      <button onClick={expandAll} className="text-[10px] font-bold text-[#2E7D32] hover:underline">
-                        Expand All
-                      </button>
-                      <span className="text-[#E5E5E5]">|</span>
-                      <button onClick={collapseAll} className="text-[10px] font-bold text-[#6B6B6B] hover:underline">
-                        Collapse All
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col lg:flex-row gap-6">
-                    {/* LEFT PANEL: Search + Category Tabs */}
-                    <div className="lg:w-[260px] shrink-0 flex flex-col gap-4">
-                      {/* Search */}
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Search questions..."
-                          value={faqSearchQuery}
-                          onChange={(e) => setFaqSearchQuery(e.target.value)}
-                          className="w-full bg-[#F8F7F4] border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] transition pr-9 placeholder:text-[#999]"
-                        />
-                        <FaQuestionCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] text-xs" />
-                      </div>
-
-                      {/* Category tabs (vertical) */}
-                      <div className="flex flex-col gap-1">
-                        <button
-                          onClick={() => setActiveFaqCategory('all')}
-                          className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
-                            activeFaqCategory === 'all'
-                              ? 'bg-[#2E7D32] text-white shadow-md'
-                              : 'bg-[#F8F7F4] text-[#3D3D3D] hover:bg-[#2E7D32]/10'
-                          }`}
-                        >
-                          <span className="flex items-center gap-2">
-                            <span>📋</span>
-                            <span>All Questions</span>
-                          </span>
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
-                            activeFaqCategory === 'all' ? 'bg-white/20 text-white' : 'bg-[#2E7D32]/10 text-[#2E7D32]'
-                          }`}>
-                            {faqData.length}
-                          </span>
-                        </button>
-                        {activeCats.map((catKey) => {
-                          const cat = FAQ_CATEGORIES[catKey as keyof typeof FAQ_CATEGORIES];
-                          if (!cat) return null;
-                          return (
-                            <button
-                              key={catKey}
-                              onClick={() => setActiveFaqCategory(catKey)}
-                              className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
-                                activeFaqCategory === catKey
-                                  ? 'bg-[#2E7D32] text-white shadow-md'
-                                  : 'bg-[#F8F7F4] text-[#3D3D3D] hover:bg-[#2E7D32]/10'
-                              }`}
-                            >
-                              <span className="flex items-center gap-2">
-                                <span>{cat.icon}</span>
-                                <span>{cat.label}</span>
-                              </span>
-                              <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
-                                activeFaqCategory === catKey ? 'bg-white/20 text-white' : 'bg-[#2E7D32]/10 text-[#2E7D32]'
-                              }`}>
-                                {categoryCounts[catKey]}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* RIGHT PANEL: Accordions */}
-                    <div className="flex-1 flex flex-col gap-3">
-                      {filtered.length === 0 ? (
-                        <div className="text-center py-12 text-[#999] text-sm">
-                          <FaQuestionCircle className="mx-auto mb-3 text-3xl text-[#E5E5E5]" />
-                          <p className="font-bold">No matching questions found.</p>
-                          <p className="text-xs mt-1">Try a different search term or category.</p>
-                        </div>
-                      ) : (
-                        filtered.map((faq: any) => {
-                          const isOpen = !!expandedFaqs[faq.id];
-                          const catMeta = FAQ_CATEGORIES[faq.category as keyof typeof FAQ_CATEGORIES];
-                          return (
-                            <div
-                              key={faq.id}
-                              className={`border rounded-xl overflow-hidden transition-all duration-300 ${
-                                isOpen ? 'border-[#2E7D32]/30 bg-[#2E7D32]/[0.02] shadow-sm' : 'border-[#E5E5E5] bg-[#F8F7F4]'
-                              }`}
-                            >
-                              <button
-                                onClick={() => toggleFaq(faq.id)}
-                                className="w-full flex items-center gap-3 p-4 text-left group"
-                              >
-                                <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                                  isOpen ? 'bg-[#2E7D32] text-white rotate-180' : 'bg-[#E5E5E5] text-[#6B6B6B] group-hover:bg-[#2E7D32]/20 group-hover:text-[#2E7D32]'
-                                }`}>
-                                  <FaChevronDown className="text-[10px]" />
-                                </span>
-                                <div className="flex-1">
-                                  <h4 className={`font-serif font-black text-sm transition-colors ${
-                                    isOpen ? 'text-[#2E7D32]' : 'text-[#1A1A2E] group-hover:text-[#2E7D32]'
-                                  }`}>
-                                    {faq.question}
-                                  </h4>
-                                  {catMeta && (
-                                    <span className="text-[9px] text-[#999] font-bold uppercase tracking-wider mt-0.5 block">
-                                      {catMeta.icon} {catMeta.label}
-                                    </span>
-                                  )}
-                                </div>
-                              </button>
-                              <div
-                                className={`overflow-hidden transition-all duration-300 ${
-                                  isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-                                }`}
-                              >
-                                <div className="px-4 pb-4 pl-14">
-                                  <p className="text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/40 pt-3">
-                                    {faq.answer}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
             </div>
 
             {/* RIGHT COLUMN (Sticky Booking & Advisor Widgets) */}
@@ -2143,6 +2109,154 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
           </div>
 
         </div>
+      </section>
+
+      {/* ----------------------------------------------------
+          FAQs — full-width section (below the grid, so the sticky
+          pricing column releases at the Reviews section)
+          ---------------------------------------------------- */}
+      <section id="faqs" className="max-w-[1240px] mx-auto px-6 pb-16 scroll-mt-24">
+            {(() => {
+              // Build FAQ dataset from CMS or fallback, then group by category
+              const faqData = (faqs && faqs.length > 0)
+                ? faqs.map((f: any) => ({
+                    id: f.id || f._id || `faq-${Math.random()}`,
+                    question: f.question,
+                    answer: typeof f.answer === 'string'
+                      ? f.answer
+                      : (f.answer && f.answer.root && f.answer.root.children
+                          ? (() => {
+                              const extract = (nodes: any[]): string =>
+                                nodes.map(n => n.type === 'text' ? (n.text || '') : (n.children ? extract(n.children) : '')).join(' ');
+                              return extract(f.answer.root.children);
+                            })()
+                          : (Array.isArray(f.answer)
+                              ? f.answer.map((b: any) => b?.children?.map((c: any) => c?.text).join('') || '').join(' ')
+                              : '')),
+                    category: f.category || 'general',
+                  }))
+                : DEFAULT_FAQS;
+
+              const grouped: Record<string, any[]> = {};
+              faqData.forEach((f: any) => {
+                if (!grouped[f.category]) grouped[f.category] = [];
+                grouped[f.category].push(f);
+              });
+              const activeCats = Object.keys(FAQ_CATEGORIES).filter((cat) => grouped[cat] && grouped[cat].length > 0);
+
+              const toggleFaq = (id: string) => setExpandedFaqs((prev) => ({ ...prev, [id]: !prev[id] }));
+              const expandCat = (catKey: string) => {
+                const e: Record<string, boolean> = {};
+                (grouped[catKey] || []).forEach((f: any) => { e[f.id] = true; });
+                setExpandedFaqs((prev) => ({ ...prev, ...e }));
+              };
+              const scrollToCat = (catKey: string) => {
+                const el = document.getElementById(`faq-cat-${catKey}`);
+                if (el) {
+                  const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                  window.scrollTo({ top: y, behavior: "smooth" });
+                }
+              };
+
+              return (
+                <>
+                  <h2 className="font-serif text-3xl md:text-4xl font-black text-[#1a2e1f] mb-8">
+                    FAQs For {trek.title}
+                  </h2>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 items-start">
+                    {/* Sticky category navigation (scrollspy) */}
+                    <nav className="hidden lg:block lg:sticky lg:top-[80px] self-start">
+                      <div className="flex flex-col gap-1 bg-white border border-[#E5E5E5] rounded-2xl p-2 shadow-sm">
+                        {activeCats.map((catKey) => {
+                          const cat = FAQ_CATEGORIES[catKey as keyof typeof FAQ_CATEGORIES];
+                          if (!cat) return null;
+                          const active = activeFaqCat === catKey;
+                          return (
+                            <button
+                              key={catKey}
+                              onClick={() => scrollToCat(catKey)}
+                              className={`flex items-center gap-2.5 w-full px-3.5 py-2.5 rounded-xl text-sm font-bold text-left transition-all duration-200 ${
+                                active
+                                  ? "bg-[#1a3c2e] text-white shadow-md"
+                                  : "text-[#3D3D3D] hover:bg-[#2E7D32]/10"
+                              }`}
+                            >
+                              <span className="text-base shrink-0">{cat.icon}</span>
+                              <span>{cat.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </nav>
+
+                    {/* Stacked category sections */}
+                    <div className="flex flex-col gap-10">
+                      {activeCats.map((catKey) => {
+                        const cat = FAQ_CATEGORIES[catKey as keyof typeof FAQ_CATEGORIES];
+                        if (!cat) return null;
+                        return (
+                          <div
+                            key={catKey}
+                            id={`faq-cat-${catKey}`}
+                            data-faq-cat={catKey}
+                            className="scroll-mt-28 flex flex-col gap-4"
+                          >
+                            <div className="flex items-center justify-between gap-3 border-b border-[#E5E5E5] pb-3">
+                              <h3 className="font-serif text-xl md:text-2xl font-black text-[#1a3c2e] flex items-center gap-2.5">
+                                <span className="text-lg">{cat.icon}</span>
+                                {cat.label}
+                              </h3>
+                              <button
+                                onClick={() => expandCat(catKey)}
+                                className="text-xs font-bold text-[#c8922a] hover:underline shrink-0"
+                              >
+                                Expand All
+                              </button>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                              {grouped[catKey].map((faq: any) => {
+                                const isOpen = !!expandedFaqs[faq.id];
+                                return (
+                                  <div
+                                    key={faq.id}
+                                    className={`border rounded-xl overflow-hidden transition-all duration-300 ${
+                                      isOpen ? "border-[#2E7D32]/30 bg-[#2E7D32]/[0.02] shadow-sm" : "border-[#E5E5E5] bg-white"
+                                    }`}
+                                  >
+                                    <button
+                                      onClick={() => toggleFaq(faq.id)}
+                                      className="w-full flex items-center justify-between gap-3 p-4 text-left group"
+                                    >
+                                      <h4 className={`font-serif font-black text-sm md:text-base transition-colors ${
+                                        isOpen ? "text-[#2E7D32]" : "text-[#1A1A2E] group-hover:text-[#2E7D32]"
+                                      }`}>
+                                        {faq.question}
+                                      </h4>
+                                      <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                        isOpen ? "bg-[#2E7D32] text-white rotate-180" : "bg-[#E5E5E5] text-[#6B6B6B] group-hover:bg-[#2E7D32]/20 group-hover:text-[#2E7D32]"
+                                      }`}>
+                                        <FaChevronDown className="text-[10px]" />
+                                      </span>
+                                    </button>
+                                    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
+                                      <p className="px-4 pb-4 text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/40 pt-3">
+                                        {faq.answer}
+                                      </p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
       </section>
 
       {/* ----------------------------------------------------

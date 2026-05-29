@@ -107,6 +107,8 @@ export interface Trek {
   inclusions?: string[];
   exclusions?: string[];
   heroImage?: string; // Cloudinary public ID or URL
+  mapImage?: any; // Payload media relationship (route map image)
+  tripInfoContent?: any; // Lexical rich text (blog-style Trip Info)
   youtubeVideoId?: string;
   gallery?: string[]; // Cloudinary public IDs or URLs
   gpsCoordinates?: GPSWaypoint[];

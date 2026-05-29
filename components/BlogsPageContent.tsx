@@ -151,11 +151,11 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
       </div>
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 pt-12 pb-24">
 
         {/* Dynamic Author Filtering Header */}
         {authorQuery && (
-          <div className="mb-8 bg-secondary/10 border border-secondary/20 rounded-2xl p-4.5 flex items-center justify-between animate-fadeIn max-w-7xl mx-auto shadow-sm">
+          <div className="mb-8 bg-secondary/10 border border-secondary/20 rounded-2xl p-5 flex items-center justify-between animate-fadeIn max-w-7xl mx-auto shadow-sm">
             <div className="flex items-center gap-3">
               <span className="text-xl">✍️</span>
               <span className="text-xs sm:text-sm font-semibold text-primary">
@@ -377,7 +377,7 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
                     </div>
 
                     {/* Card Body */}
-                    <div className="p-4.5 flex flex-col gap-2.5">
+                    <div className="p-5 flex flex-col gap-2.5">
                       {/* Meta */}
                       <div className="flex items-center gap-2 text-[10px] text-muted font-bold tracking-wider uppercase">
                         <span>
@@ -401,7 +401,7 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
                   </div>
 
                   {/* Card Footer: Author + Read Link */}
-                  <div className="px-4.5 pb-4.5 pt-3 border-t border-primary/5 flex items-center justify-between gap-2 mt-auto">
+                  <div className="px-5 pb-5 pt-3 border-t border-primary/5 flex items-center justify-between gap-2 mt-auto">
                     <div className="flex items-center gap-2">
                       <Link 
                         href={`/blogs?author=${encodeURIComponent(blog.author?.name || "Summit Guide")}`}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, DM_Sans } from "next/font/google";
 import "../globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -13,9 +13,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-dmsans",
   display: "swap",
 });
 
@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} scroll-smooth`}
+      className={`${inter.variable} ${dmSans.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <body className="font-sans bg-bgOffWhite text-charcoal min-h-screen flex flex-col" suppressHydrationWarning>

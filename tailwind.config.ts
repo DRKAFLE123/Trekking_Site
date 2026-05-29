@@ -23,7 +23,8 @@ const config: Config = {
         muted: "#6b7280", // grey
       },
       fontFamily: {
-        serif: ["var(--font-playfair)", "serif"],
+        // Titles/headings use DM Sans (the `serif` key is kept so existing `font-serif` usages stay valid).
+        serif: ["var(--font-dmsans)", "sans-serif"],
         sans: ["var(--font-inter)", "sans-serif"],
       },
       borderRadius: {

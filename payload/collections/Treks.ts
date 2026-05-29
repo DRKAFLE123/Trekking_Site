@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload';
+import { lexicalEditor, EXPERIMENTAL_TableFeature } from '@payloadcms/richtext-lexical';
 import { checkPermission } from '../access';
 
 const parseYoutubeId = (args: any) => {
@@ -241,6 +242,15 @@ export const treks: CollectionConfig = {
           label: 'Hero Cover Image',
         },
         {
+          name: 'mapImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Route Map Image',
+          admin: {
+            description: 'Static route-map image. Falls back to the interactive map if empty.',
+          },
+        },
+        {
           name: 'gallery',
           type: 'array',
           label: 'Photo Gallery',
@@ -336,6 +346,26 @@ export const treks: CollectionConfig = {
               required: true,
             },
           ],
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'Trip Info (Blog Content)',
+      admin: {
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'tripInfoContent',
+          type: 'richText',
+          label: 'Trip Info (Blog Content)',
+          editor: lexicalEditor({
+            features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()],
+          }),
+          admin: {
+            description: 'Freeform blog-style content: headings, paragraphs, lists, and tables.',
+          },
         },
       ],
     },
