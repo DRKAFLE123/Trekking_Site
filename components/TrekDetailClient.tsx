@@ -734,31 +734,43 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               </div>
             </div>
 
-            {/* ── FLIGHT INFO (CMS richText) ────────────────────────────── */}
-            {trek.flightInfo && (
-              <div id="flight-info" className="bg-[#eef5fb] rounded-2xl border border-[#dce8f3] p-6 md:p-10 shadow-sm scroll-mt-24">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaPaperPlane className="text-base" /></span>
-                  {trek.flightInfoTitle || 'Lukla Flight Information'}
-                </h2>
-                <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
-                  {renderLexical(trek.flightInfo)}
-                </div>
+            {/* ── FLIGHT INFO (always shown; CMS richText overrides defaults) ─ */}
+            <div id="flight-info" className="bg-[#eef5fb] rounded-2xl border border-[#dce8f3] p-6 md:p-10 shadow-sm scroll-mt-24">
+              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
+                <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaPaperPlane className="text-base" /></span>
+                {trek.flightInfoTitle || 'Flight Information'}
+              </h2>
+              <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
+                {trek.flightInfo ? (
+                  renderLexical(trek.flightInfo)
+                ) : (
+                  <p>
+                    Detailed flight and transport information for this trek will be shared with you upon booking.
+                    Please contact our team for the latest schedule, seasonal considerations, and recommended buffer days
+                    for your international itinerary.
+                  </p>
+                )}
               </div>
-            )}
+            </div>
 
-            {/* ── TRIP BRIEFING (CMS richText) ─────────────────────────── */}
-            {trek.briefingInfo && (
-              <div id="trip-briefing" className="bg-[#fdf7ec] rounded-2xl border border-[#f1e6cf] p-6 md:p-10 shadow-sm scroll-mt-24">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaRegCalendarCheck className="text-base" /></span>
-                  Online Trip Briefing
-                </h2>
-                <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
-                  {renderLexical(trek.briefingInfo)}
-                </div>
+            {/* ── TRIP BRIEFING (always shown; CMS richText overrides defaults) ─ */}
+            <div id="trip-briefing" className="bg-[#fdf7ec] rounded-2xl border border-[#f1e6cf] p-6 md:p-10 shadow-sm scroll-mt-24">
+              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
+                <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaRegCalendarCheck className="text-base" /></span>
+                {trek.briefingInfoTitle || 'Online Trip Briefing'}
+              </h2>
+              <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
+                {trek.briefingInfo ? (
+                  renderLexical(trek.briefingInfo)
+                ) : (
+                  <p>
+                    Once your booking is confirmed, we&apos;ll schedule a free online briefing on WhatsApp or Zoom.
+                    Your trek leader will walk you through the itinerary, gear checklist, weather expectations,
+                    and answer your questions so you feel fully prepared and confident before the trek begins.
+                  </p>
+                )}
               </div>
-            )}
+            </div>
 
             {/* ── PHOTO GALLERY ─────────────────────────────────────────── */}
             <div id="gallery" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">

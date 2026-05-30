@@ -1,8 +1,71 @@
-import { CollectionConfig, CollectionAfterChangeHook } from 'payload';
+import { CollectionConfig, CollectionAfterChangeHook, CollectionAfterReadHook } from 'payload';
 import { checkPermission } from '../access';
 import { v2 as cloudinary } from 'cloudinary';
 import path from 'path';
 import fs from 'fs';
+
+/**
+ * Payload v3 regenerates the `url` field on every read from staticDir + filename,
+ * silently undoing the URL that was actually stored in the DB. For media that
+ * was uploaded via the Cloudinary hook, that means the Cloudinary URL is lost.
+ * For media that was seeded with a local path (e.g. "/gallery/foo.png"), that
+ * path is also lost — and the Payload-default `/api/media/file/<filename>` 404s
+ * because the file isn't in `public/uploads`.
+ *
+ * This afterRead hook fixes BOTH cases by reading the stored value directly
+ * from the DB and restoring it onto `doc.url`. It does NOT invent URLs:
+ *  - If the DB has a Cloudinary URL  → use it (transforms applied to sizes).
+ *  - If the DB has a local path      → use it as-is.
+ *  - If the DB has no URL            → leave Payload's default alone.
+ */
+const overrideUrlWithStoredValue: CollectionAfterReadHook = async ({ doc, req }) => {
+  if (!doc?.id) return doc;
+
+  let storedUrl: string | null = null;
+  try {
+    // Raw SQL via the Drizzle proxy on the postgres adapter — single column,
+    // single row, fast.
+    const drizzle: any = (req?.payload?.db as any)?.drizzle;
+    if (drizzle?.execute) {
+      const r = await drizzle.execute(`SELECT url FROM media WHERE id = ${Number(doc.id)} LIMIT 1`);
+      storedUrl = (r?.rows?.[0]?.url as string) || null;
+    }
+  } catch {
+    // If anything goes wrong, just keep Payload's default URL.
+    return doc;
+  }
+
+  if (!storedUrl || typeof storedUrl !== 'string') return doc;
+
+  // Don't echo Payload's own auto-generated path back into doc.url — that path
+  // is exactly the thing we're trying to override.
+  if (storedUrl.startsWith('/api/media/file/')) return doc;
+
+  doc.url = storedUrl;
+
+  // If the stored URL is a Cloudinary URL, also derive the image-size URLs via
+  // on-the-fly Cloudinary transforms so admin thumbnails / relationship
+  // previews / blog covers all get a proper image at the right size.
+  if (storedUrl.includes('res.cloudinary.com/') && storedUrl.includes('/upload/')) {
+    const sizeWidths: Record<string, string> = {
+      thumbnail: 'w_400,h_300,c_fill',
+      card: 'w_768,h_512,c_fill',
+      tablet: 'w_1024,c_limit',
+    };
+    if (doc.sizes && typeof doc.sizes === 'object') {
+      for (const sizeName of Object.keys(doc.sizes)) {
+        const transform = sizeWidths[sizeName] || 'w_800,c_limit';
+        doc.sizes[sizeName] = doc.sizes[sizeName] || {};
+        doc.sizes[sizeName].url = storedUrl.replace(
+          '/upload/',
+          `/upload/${transform},q_auto,f_auto/`
+        );
+      }
+    }
+  }
+
+  return doc;
+};
 
 // Configure Cloudinary using environment variables
 cloudinary.config({
@@ -79,6 +142,8 @@ export const media: CollectionConfig = {
   slug: 'media',
   admin: {
     group: 'System Admin',
+    useAsTitle: 'filename',
+    defaultColumns: ['filename', 'alt', 'category', 'tags'],
   },
   upload: {
     staticDir: 'public/uploads',
@@ -101,7 +166,22 @@ export const media: CollectionConfig = {
         position: 'centre',
       },
     ],
-    adminThumbnail: 'thumbnail',
+    // Always return a working thumbnail URL for the admin media list,
+    // including Cloudinary-hosted assets (the previous `'thumbnail'` size
+    // string broke for those because the local resized file no longer
+    // existed after the Cloudinary upload hook ran — Payload then fell
+    // back to a generic file icon).
+    adminThumbnail: ({ doc }: { doc: any }) => {
+      const url: string | undefined =
+        doc?.url || doc?.sizes?.thumbnail?.url || doc?.thumbnailURL;
+      if (!url || typeof url !== 'string') return null;
+      // Cloudinary supports on-the-fly resizing — request a small, square
+      // crop so the list thumbnail loads fast.
+      if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
+        return url.replace('/upload/', '/upload/w_120,h_120,c_fill,q_auto,f_auto/');
+      }
+      return url;
+    },
     mimeTypes: ['image/*', 'application/pdf', 'video/*'],
   },
   access: {
@@ -112,6 +192,7 @@ export const media: CollectionConfig = {
   },
   hooks: {
     afterChange: [uploadToCloudinary],
+    afterRead: [overrideUrlWithStoredValue],
   },
   fields: [
     {

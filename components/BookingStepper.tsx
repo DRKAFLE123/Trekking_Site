@@ -205,7 +205,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     async function fetchDepartures() {
       try {
         setLoadingDepartures(true);
-        const res = await fetch(`/api/departures?slug=${trek.slug}`);
+        const res = await fetch(`/api/public/departures?slug=${trek.slug}`);
         if (res.ok) {
           const data = await res.json();
           const list = data.departures || [];

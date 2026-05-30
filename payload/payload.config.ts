@@ -2,7 +2,6 @@
 import { buildConfig } from 'payload';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { sqliteAdapter } from '@payloadcms/db-sqlite';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 
@@ -28,7 +27,15 @@ const dirname = path.dirname(filename);
 
 const rawDbUrl = process.env.DATABASE_URL || process.env.DATABASE_URI || '';
 const dbUrl = rawDbUrl.trim().replace(/^["']|["']$/g, '');
-const isPostgres = dbUrl.toLowerCase().startsWith('postgres://') || dbUrl.toLowerCase().startsWith('postgresql://');
+
+// This project uses a single Supabase Postgres database for both dev and prod.
+// SQLite is no longer supported — `DATABASE_URI` must be a Postgres URL.
+if (!dbUrl.toLowerCase().startsWith('postgres://') && !dbUrl.toLowerCase().startsWith('postgresql://')) {
+  throw new Error(
+    'DATABASE_URI must be a Postgres connection string (postgres:// or postgresql://). ' +
+    'See .env.example and Supabase → Project Settings → Database → Connection pooling.'
+  );
+}
 
 export default buildConfig({
   admin: {
@@ -67,19 +74,15 @@ export default buildConfig({
     media,
     Pages
   ],
-  db: isPostgres
-    ? postgresAdapter({
-        pool: {
-          connectionString: dbUrl,
-        },
-        push: true,
-      })
-    : sqliteAdapter({
-        client: {
-          url: dbUrl || 'file:./payload.db',
-        },
-        push: true,
-      }),
+  db: postgresAdapter({
+    pool: {
+      connectionString: dbUrl,
+    },
+    // Disable Drizzle dev-push so it doesn't prompt the dev server on schema
+    // diffs (those prompts hang the server because it has no TTY). Schema
+    // changes go through migrations in src/migrations/.
+    push: false,
+  }),
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'change_this_secret_1234567890',
   typescript: {

@@ -335,7 +335,7 @@ export default function Navbar() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("/api/regions");
+        const res = await fetch("/api/public/regions");
         const data = await res.json();
         setRegions(data);
       } catch (err) {
@@ -365,7 +365,7 @@ export default function Navbar() {
     }
     async function fetchPages() {
       try {
-        const res = await fetch("/api/pages?limit=100");
+        const res = await fetch("/api/public/pages?limit=100");
         const data = await res.json();
         if (Array.isArray(data)) {
           setDbPages(data);

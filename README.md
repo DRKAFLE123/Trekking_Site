@@ -1,5 +1,17 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Database
+
+This project uses a **single Supabase Postgres database for both development and production**. SQLite is no longer supported. Schema changes go through migrations in `src/migrations/` (the Drizzle dev-push prompt is disabled).
+
+The `DATABASE_URI` in `.env` must be a Postgres connection string. For faster local development from Asia/Nepal, prefer Supabase's **connection pooler URL** (port `6543`) over the direct IPv6 host — find it in Supabase → *Project Settings → Database → Connection pooling*. Example:
+
+```
+DATABASE_URI="postgresql://postgres.<project>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres"
+```
+
+To add/modify a Payload collection field, edit the collection then create a migration with `npx payload migrate:create <name>` and run `npx payload migrate`. (Use Node 20 or 22 LTS — the Payload CLI has known issues with Node 24's strict ESM resolver.)
+
 ## Getting Started
 
 First, run the development server:

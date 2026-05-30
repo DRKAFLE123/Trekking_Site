@@ -45,6 +45,12 @@ next-env.d.ts
 # scratch scripts
 /scratch
 
+# Local SQLite databases are no longer supported. We use Supabase Postgres
+# for both dev and prod. Any *.db files here would be leftover local data.
+*.db
+*.db.local-backup
+*.db-journal
+
 # deployments and zips
 *.zip
 /deploy.zip

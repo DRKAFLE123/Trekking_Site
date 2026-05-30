@@ -1308,9 +1308,17 @@ div[class*="select-actions"] a[class*="delete"]:hover,
    PREMIUM MODALS & BUTTON DECORATIONS (GOLD & FOREST GREEN)
    ============================================================ */
 
-/* Center and align custom confirmation modals perfectly */
+/* Center and align custom confirmation modals perfectly.
+   IMPORTANT: this selector must NOT match buttons, close icons,
+   headers, actions or other random elements that merely contain
+   the substring "modal" in their class name (e.g. `.close-modal-button`,
+   `.list-drawer__header-close` siblings, etc.). Those would otherwise
+   become invisible full-viewport overlays that block clicks on the
+   actual drawer content — which was the "transparent black overlay"
+   blocking image selection. We therefore restrict the rule to DIV
+   modal containers only, and exclude common UI parts. */
 .modal,
-[class*="modal"]:not([class*="modal__content"]):not([class*="confirm-modal"]):not([class*="confirm-modal__content"]) {
+div[class*="modal"]:not([class*="modal__content"]):not([class*="confirm-modal"]):not([class*="confirm-modal__content"]):not([class*="close"]):not([class*="header"]):not([class*="actions"]):not([class*="toggler"]):not([class*="button"]) {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;

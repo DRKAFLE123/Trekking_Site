@@ -1,6 +1,6 @@
 import { CollectionConfig, Block } from 'payload';
 import { checkPermission } from '../access';
-import { lexicalEditor, BlocksFeature } from '@payloadcms/richtext-lexical';
+import { lexicalEditor, BlocksFeature, EXPERIMENTAL_TableFeature } from '@payloadcms/richtext-lexical';
 
 const TrekCardBlock: Block = {
   slug: 'trekCardBlock',
@@ -111,6 +111,7 @@ export const blogPosts: CollectionConfig = {
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
+          EXPERIMENTAL_TableFeature(),
           BlocksFeature({
             blocks: [TrekCardBlock, CtaBlock],
           }),

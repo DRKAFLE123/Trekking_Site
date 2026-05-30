@@ -55,7 +55,7 @@ export default function UpcomingDepartures() {
     async function getDepartures() {
       try {
         setLoading(true);
-        const res = await fetch("/api/departures");
+        const res = await fetch("/api/public/departures");
         if (res.ok) {
           const data = await res.json();
           if (data && Array.isArray(data.departures)) {

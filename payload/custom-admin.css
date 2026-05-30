@@ -1860,3 +1860,440 @@ body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
   resize: vertical !important;
 }
 
+/* ============================================================
+   15. BLOG ADMIN — BUG FIXES + WORDPRESS-STYLE POLISH
+   ============================================================
+   Goal: make the blog edit/create experience feel like the
+   WordPress dashboard (clean, predictable, content-first) while
+   keeping every existing feature (Lexical blocks, live preview,
+   draft autosave, custom preview toggle, media picker, sidebar
+   fields, SEO group, etc.).
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   15.1  DRAWER / MODAL — fix transparent overlay blocking
+         image selection from media picker.
+
+   The earlier "WordPress-like upload box" rules cast a wide net
+   with broad [class*="file-field__upload"] selectors and many
+   !important declarations. Inside the media-picker DRAWER,
+   those rules leaked and shoved the drawer's interactive
+   content behind the backdrop (looking like an unclickable
+   "transparent black overlay"). We do two things:
+     (a) Force the drawer panel to sit ABOVE its own backdrop,
+         with restored pointer events.
+     (b) Neutralize the leaked upload styling INSIDE any drawer.
+   ------------------------------------------------------------ */
+
+/* Drawer/modal container, content panel and backdrop stacking. */
+.payload__modal-container,
+[class*="payload__modal"] {
+  z-index: 100000 !important;
+  pointer-events: auto !important;
+}
+
+.payload__modal-container > *,
+[class*="payload__modal"] > * {
+  pointer-events: auto !important;
+}
+
+[class*="drawer__content"],
+[class*="modal-container__content"],
+.list-drawer,
+.list-drawer__content,
+.upload-edit,
+.doc-drawer,
+.doc-drawer__content {
+  position: relative !important;
+  z-index: 100001 !important;
+  background: #ffffff !important;
+  pointer-events: auto !important;
+}
+
+/* Backdrop must sit BELOW the drawer panel and still close
+   the drawer on click (Payload's default behavior). */
+[class*="drawer__overlay"],
+[class*="modal-container__bg"],
+.list-drawer__overlay,
+.doc-drawer__overlay {
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+}
+
+/* Disable the broad WordPress-upload-box styling INSIDE drawers
+   so it doesn't fight with the drawer's own layout. */
+[class*="drawer"] [class*="file-field__upload"],
+[class*="drawer"] [class*="upload__dropzone"],
+.list-drawer [class*="file-field__upload"],
+.list-drawer [class*="upload__dropzone"],
+.doc-drawer [class*="file-field__upload"],
+.doc-drawer [class*="upload__dropzone"] {
+  background: #ffffff !important;
+  border: 1px dashed #c3c4c7 !important;
+  padding: 24px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 4px !important;
+}
+
+/* Re-enable hover affordance inside drawer upload zones. */
+[class*="drawer"] [class*="file-field__upload"]:hover,
+.list-drawer [class*="file-field__upload"]:hover {
+  border-color: #1a3c2e !important;
+  background: #f6faf7 !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.2  STICKY DOC-EDIT ACTION BAR — fix Split/Preview/Save
+         buttons becoming unreachable when scrolled.
+
+   The CustomPreviewToggle "Split" / eye buttons live in the
+   doc-edit top header. The earlier live-preview block applied
+   transforms that broke the natural sticky behavior. We pin
+   the action bar to the top of the viewport in ALL preview
+   modes so it never scrolls out of reach.
+   ------------------------------------------------------------ */
+
+.collection-edit__publish,
+.collection-edit__controls,
+[class*="collection-edit"] [class*="__controls"],
+[class*="edit-view"] [class*="__controls"],
+.doc-controls,
+.doc-controls__wrapper,
+.doc-header,
+.edit-view-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e4e7 !important;
+}
+
+/* Even when live-preview rebuilds the layout via :has(), keep
+   the action bar sticky and visible. */
+body:has(.live-preview-window--mode-edit) .collection-edit__publish,
+body:has(.live-preview-window--mode-split) .collection-edit__publish,
+body:has(.live-preview-window--mode-preview) .collection-edit__publish,
+body:has(.live-preview-window--mode-edit) .doc-controls,
+body:has(.live-preview-window--mode-split) .doc-controls {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+  transform: none !important;
+}
+
+/* The CustomPreviewToggle button group must remain interactive. */
+.custom-preview-btn-group,
+.custom-preview-btn-group button {
+  pointer-events: auto !important;
+  z-index: 51 !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.3  WORDPRESS-STYLE TOP ACTION BAR — clean white bar with
+         a prominent primary "Publish" button and a subtle
+         secondary "Save Draft", as in WordPress' editor.
+   ------------------------------------------------------------ */
+
+.collection-edit__publish {
+  padding: 10px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Primary action: Publish / Save (brand green like our site CTA). */
+.collection-edit__publish button[id*="action-save"]:not([id*="draft"]),
+.collection-edit__publish button[type="submit"]:not([class*="draft"]),
+[class*="publish-button"]:not([class*="draft"]) {
+  background: #1a3c2e !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  border-radius: 6px !important;
+  border: 1px solid #1a3c2e !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, transform 0.05s ease !important;
+}
+
+.collection-edit__publish button[id*="action-save"]:not([id*="draft"]):hover,
+.collection-edit__publish button[type="submit"]:not([class*="draft"]):hover,
+[class*="publish-button"]:not([class*="draft"]):hover {
+  background: #2E7D32 !important;
+  border-color: #2E7D32 !important;
+}
+
+/* Secondary action: Save Draft / Cancel (subtle outline). */
+.collection-edit__publish button[id*="save-draft"],
+.collection-edit__publish [class*="save-draft"],
+.collection-edit__publish [class*="draft"] button {
+  background: #ffffff !important;
+  color: #1a3c2e !important;
+  border: 1px solid #c3c4c7 !important;
+  font-weight: 600 !important;
+  padding: 7px 14px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+}
+
+.collection-edit__publish button[id*="save-draft"]:hover,
+.collection-edit__publish [class*="save-draft"]:hover {
+  background: #f6f7f7 !important;
+  border-color: #1a3c2e !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.4  WORDPRESS-STYLE RIGHT SIDEBAR — meta panels styled as
+         clean white cards (like WP's Publish/Status/Categories
+         panels). Already sticky from section 3; we polish look.
+   ------------------------------------------------------------ */
+
+.collection-edit__sidebar [class*="field-type"]:not([class*="row"]) {
+  background: #ffffff !important;
+  border: 1px solid #e2e4e7 !important;
+  border-radius: 6px !important;
+  padding: 14px 16px !important;
+  margin-bottom: 10px !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02) !important;
+}
+
+.collection-edit__sidebar [class*="field-type"] label,
+.collection-edit__sidebar [class*="field-label"] {
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: #50575e !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+}
+
+.collection-edit__sidebar [class*="field-type"] input[type="text"],
+.collection-edit__sidebar [class*="field-type"] textarea,
+.collection-edit__sidebar [class*="field-type"] select,
+.collection-edit__sidebar [class*="rs__control"] {
+  border: 1px solid #c3c4c7 !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  padding: 6px 8px !important;
+  background: #ffffff !important;
+}
+
+.collection-edit__sidebar [class*="field-type"] input[type="text"]:focus,
+.collection-edit__sidebar [class*="field-type"] textarea:focus {
+  border-color: #1a3c2e !important;
+  outline: 2px solid rgba(26, 60, 46, 0.15) !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.5  WORDPRESS-STYLE MEDIA LIBRARY GRID — when the media
+         picker drawer opens, present existing images as a
+         clean responsive thumbnail grid with hover feedback.
+   ------------------------------------------------------------ */
+
+.list-drawer [class*="thumbnail-grid"],
+.list-drawer [class*="card-list"],
+.list-drawer [class*="cards"] {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+  gap: 14px !important;
+  padding: 18px !important;
+  background: #f6f7f7 !important;
+}
+
+.list-drawer [class*="card"]:not([class*="header"]):not([class*="action"]) {
+  border: 1px solid #e2e4e7 !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease !important;
+}
+
+.list-drawer [class*="card"]:not([class*="header"]):not([class*="action"]):hover {
+  border-color: #1a3c2e !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.6  TITLE INPUT — large prominent "Add title"-style input,
+         matching WordPress' editor focus on the title.
+   ------------------------------------------------------------ */
+
+.collection-edit__main input[name="title"],
+.collection-edit__main [id*="field-title"] input[type="text"] {
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  padding: 14px 16px !important;
+  border: 1px solid transparent !important;
+  background: #ffffff !important;
+  color: #1a1a2e !important;
+  border-radius: 6px !important;
+  transition: border-color 0.15s ease !important;
+}
+
+.collection-edit__main input[name="title"]:focus,
+.collection-edit__main [id*="field-title"] input[type="text"]:focus {
+  border-color: #1a3c2e !important;
+  outline: none !important;
+}
+
+.collection-edit__main input[name="title"]::placeholder,
+.collection-edit__main [id*="field-title"] input[type="text"]::placeholder {
+  color: #8c8f94 !important;
+  font-weight: 400 !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.7  NAV-TOGGLER STRIP — let clicks pass through to the
+         sticky action bar (Publish / Split / Preview) below.
+
+   Payload's template layout renders a full-width strip at the
+   top of every admin page containing only the hamburger toggle
+   button. The strip spans the entire viewport width, so it
+   sits ON TOP of the doc-edit action bar (Publish, Save Draft,
+   the CustomPreviewToggle eye + Split buttons), and intercepts
+   every click on the right-hand side of the screen.
+
+   Fix: disable pointer events on the strip and its wrapper, but
+   re-enable them on the actual hamburger button so it stays
+   functional. This makes the rest of the strip "transparent"
+   to clicks so the buttons underneath work.
+   ------------------------------------------------------------ */
+
+.template-default__nav-toggler-wrapper,
+.template-default__nav-toggler-container,
+#nav-toggler {
+  pointer-events: none !important;
+  z-index: 40 !important; /* below the action bar's z-index (50) as a second line of defense */
+}
+
+/* Restore interactivity on the actual hamburger button inside the strip */
+.template-default__nav-toggler-wrapper button,
+.template-default__nav-toggler-container button,
+#nav-toggler button,
+.template-default__nav-toggler-container .hamburger,
+.template-default__nav-toggler-container [class*="hamburger"],
+.template-default__nav-toggler-container .app-header__mobile-nav-toggler {
+  pointer-events: auto !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.9  MEDIA LIST — show a real image preview in the first
+         column instead of the tiny generic file icon, so
+         editors can tell which image is which at a glance.
+   ------------------------------------------------------------ */
+
+/* Enlarge the thumbnail cell + make the image fill it nicely.
+   Targets both Payload v3's `.thumbnail` cell and the list table's
+   first column on the media collection list page. */
+[id="collection-list-media"] .thumbnail,
+[id="collection-list-media"] [class*="thumbnail"]:not([class*="header"]),
+.list-drawer [class*="cell-thumbnail"],
+[class*="cell-thumbnail"] {
+  width: 72px !important;
+  height: 56px !important;
+  min-width: 72px !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  background: #f6f7f7 !important;
+  border: 1px solid #e2e4e7 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+[id="collection-list-media"] .thumbnail img,
+[id="collection-list-media"] [class*="thumbnail"] img,
+.list-drawer [class*="cell-thumbnail"] img,
+[class*="cell-thumbnail"] img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Hide Payload's generic "no thumbnail" file glyph in the media list —
+   our custom adminThumbnail function now always returns a real URL, so
+   if you ever see this glyph it means the upload itself is missing. */
+[id="collection-list-media"] [class*="thumbnail--no-image"],
+[id="collection-list-media"] [class*="generic-file-icon"] {
+  background: #f6f7f7 !important;
+}
+
+/* Give the row a bit more vertical breathing room so the larger
+   thumbnails don't feel cramped. */
+[id="collection-list-media"] tbody tr td,
+[id="collection-list-media"] tbody tr th {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  vertical-align: middle !important;
+}
+
+
+/* ------------------------------------------------------------
+   15.8  CUSTOM LEFT-NAV COLLAPSE TOGGLE — fixed top-left button
+         that lets the user hide / show the left sidebar at will
+         (state persisted via localStorage so it survives reloads).
+   ------------------------------------------------------------ */
+
+.nature-nav-collapse-toggle {
+  position: fixed !important;
+  top: 12px !important;
+  left: 12px !important;
+  z-index: 100 !important; /* above the sidebar and action bar */
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(26, 60, 46, 0.95) !important;
+  border: 1px solid rgba(200, 146, 42, 0.45) !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22) !important;
+  transition: background 0.15s ease, transform 0.05s ease, border-color 0.15s ease !important;
+}
+
+.nature-nav-collapse-toggle:hover {
+  background: #1a3c2e !important;
+  border-color: #c8922a !important;
+}
+
+.nature-nav-collapse-toggle:active {
+  transform: scale(0.95) !important;
+}
+
+/* NOTE: the broad `body.nav-collapsed` and `[data-nav-collapsed]` CSS
+   that used to live here was over-greedy — its `[class*="template-default__nav"]`
+   selector and the `grid-template-columns: 0 1fr; display: block` override
+   on `.template-default` ended up hitting the main content too, causing a
+   white page on hard refresh when the previously-saved collapse state was
+   re-applied at mount.
+
+   The collapse is now driven entirely by JS in BeforeNav.tsx, which clicks
+   Payload's own built-in nav toggle button — Payload then handles the
+   layout correctly via its own `template-default--nav-open` modifier. */
+
+/* When collapsed, nudge the toggle button a bit further from the edge
+   for an obvious affordance to "open" the nav again. */
+body.nav-collapsed .nature-nav-collapse-toggle {
+  background: #c8922a !important;
+  border-color: #c8922a !important;
+  color: #1a2e1f !important;
+}
+

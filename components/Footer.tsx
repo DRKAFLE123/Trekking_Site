@@ -47,7 +47,7 @@ export default function Footer() {
     }
     async function fetchRegions() {
       try {
-        const res = await fetch("/api/regions");
+        const res = await fetch("/api/public/regions");
         const data = await res.json();
         if (Array.isArray(data)) {
           setRegions(data);

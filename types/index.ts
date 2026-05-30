@@ -146,6 +146,7 @@ export interface Trek {
   // Flight & briefing info (CMS plain text)
   flightInfoTitle?: string;
   flightInfo?: any;
+  briefingInfoTitle?: string;
   briefingInfo?: any;
 
   // Trip Info sections (named topic cards)
