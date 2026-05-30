@@ -2,10 +2,18 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FaChevronRight, FaInfoCircle, FaMapMarkerAlt, FaHeadset, FaEnvelope } from "react-icons/fa";
+import { FaChevronRight, FaInfoCircle, FaMapMarkerAlt, FaHeadset, FaEnvelope, FaStar } from "react-icons/fa";
 import { renderLexical } from "@/lib/lexical-renderer";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import ScrollSpyTOC from "@/components/ScrollSpyTOC";
+
+function extractYoutubeId(url: string) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : url;
+}
 
 async function getPageData(slug: string) {
   try {
@@ -104,7 +112,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col gap-8">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10">
               <article className="prose prose-lg max-w-none 
                 prose-headings:font-serif prose-headings:text-[#1a2e1f] 
@@ -119,12 +127,131 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
                 {renderLexical(page.content)}
               </article>
             </div>
+
+            {/* Downloadable Documents / PDFs Section */}
+            {page.documents && page.documents.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-6 flex items-center gap-2">
+                  <FaInfoCircle className="text-[#c8922a]" /> Downloadable Resources &amp; PDFs
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {page.documents.map((doc: any) => (
+                    <a 
+                      key={doc.id} 
+                      href={doc.url} 
+                      download 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="group flex items-center justify-between p-4 bg-[#fbfbfc] border border-gray-100 rounded-xl hover:border-[#c8922a] hover:bg-[#f0f6fa] hover:shadow-sm transition duration-300"
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-100 transition">
+                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="min-w-0 flex flex-col">
+                          <span className="font-sans text-sm font-bold text-[#1a2e1f] truncate group-hover:text-[#c8922a] transition">{doc.filename}</span>
+                          <span className="text-[11px] text-gray-400 font-sans mt-0.5 capitalize">{doc.mimeType?.split('/')[1] || 'PDF Document'}</span>
+                        </div>
+                      </div>
+                      <div className="text-gray-400 group-hover:text-[#c8922a] shrink-0 transition pl-4">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* YouTube Helper Videos Section */}
+            {page.videos && page.videos.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-6 flex items-center gap-2">
+                  <svg className="w-6 h-6 text-[#c8922a]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                  </svg>
+                  Helper Video Guides &amp; Overviews
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {page.videos.map((vid: any, idx: number) => {
+                    const videoId = extractYoutubeId(vid.youtubeUrl);
+                    if (!videoId) return null;
+                    return (
+                      <div key={idx} className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col h-full hover:shadow-md transition">
+                        <div className="relative aspect-video w-full bg-black">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            title={vid.title}
+                            className="absolute inset-0 w-full h-full border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        </div>
+                        <div className="p-4 flex-1 bg-gray-50/50 border-t border-gray-100 flex items-center">
+                          <span className="font-sans text-sm font-bold text-[#1a2e1f] leading-snug">{vid.title}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Recommended Treks / Trips Section */}
+            {page.relatedTreks && page.relatedTreks.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-6 flex items-center gap-2">
+                  <FaStar className="text-[#c8922a]" /> Recommended Trips &amp; Itineraries
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {page.relatedTreks.map((trek: any) => (
+                    <div key={trek.slug} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col h-full">
+                      {/* Trek Image */}
+                      <div className="relative h-48 w-full bg-[#1a2e1f]">
+                        {trek.coverImage?.url ? (
+                          <Image src={trek.coverImage.url} alt={trek.coverImage.alt || trek.title} fill className="object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-white/40"><FaMapMarkerAlt className="text-4xl" /></div>
+                        )}
+                        <div className="absolute top-4 right-4 bg-[#c8922a] text-white px-2.5 py-1 rounded-lg text-xs font-bold font-sans uppercase tracking-wider">
+                          {trek.difficulty || 'Moderate'}
+                        </div>
+                      </div>
+                      {/* Trek Content */}
+                      <div className="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h4 className="font-serif text-lg font-bold text-[#1a2e1f] mb-2 hover:text-[#c8922a] transition duration-200">
+                            <Link href={`/trips/${trek.slug}`}>{trek.title}</Link>
+                          </h4>
+                          <p className="text-xs text-gray-500 font-sans mb-4">{trek.duration || 14} Days duration</p>
+                        </div>
+                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">From</span>
+                            <span className="text-lg font-extrabold text-[#2E7D32] font-sans">${trek.price || 1200} <span className="text-xs text-gray-400 font-normal">USD</span></span>
+                          </div>
+                          <Link href={`/trips/${trek.slug}`} className="bg-[#1a2e1f] hover:bg-[#c8922a] text-white font-sans font-bold text-xs px-4 py-2.5 rounded-lg transition duration-200 uppercase tracking-wider">
+                            View Details
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
           <aside className="w-full lg:w-[350px] shrink-0">
             {/* Sticky wrapper — keeps both cards together while scrolling */}
             <div className="sticky top-24 flex flex-col gap-6">
+              {/* ScrollSpy Table of Contents */}
+              <ScrollSpyTOC />
+
               {/* Quick Links */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">

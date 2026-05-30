@@ -107,6 +107,97 @@ export const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          label: 'Navbar Navigation',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'showInNavbar',
+                  type: 'checkbox',
+                  label: 'Show in Travel Info Dropdown?',
+                  defaultValue: true,
+                },
+                {
+                  name: 'navbarCategory',
+                  type: 'select',
+                  label: 'Navbar Column Category',
+                  defaultValue: 'essential',
+                  options: [
+                    { label: 'Essential Planning', value: 'essential' },
+                    { label: 'Safety & Accommodation', value: 'safety' },
+                    { label: 'Destinations & Culture', value: 'destinations' },
+                  ],
+                  admin: {
+                    condition: (data: any) => data?.showInNavbar,
+                  },
+                },
+                {
+                  name: 'navbarOrder',
+                  type: 'number',
+                  label: 'Dropdown Order Position',
+                  defaultValue: 10,
+                  admin: {
+                    condition: (data: any) => data?.showInNavbar,
+                    description: 'Lower numbers appear first in the column.',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Related Resources',
+          fields: [
+            {
+              name: 'relatedTreks',
+              type: 'relationship',
+              relationTo: 'treks',
+              hasMany: true,
+              label: 'Recommended / Related Treks',
+              admin: {
+                description: 'Select related trekking itineraries to display as promotional cards on this page.',
+              },
+            },
+            {
+              name: 'documents',
+              type: 'relationship',
+              relationTo: 'media',
+              hasMany: true,
+              label: 'Downloadable Documents / PDFs',
+              admin: {
+                description: 'Link PDFs, visa guidelines, or maps for travelers to download.',
+              },
+            },
+            {
+              name: 'videos',
+              type: 'array',
+              label: 'Helper YouTube Videos',
+              labels: {
+                singular: 'Video',
+                plural: 'Videos',
+              },
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  label: 'Video Title',
+                  required: true,
+                },
+                {
+                  name: 'youtubeUrl',
+                  type: 'text',
+                  label: 'YouTube Video URL or ID',
+                  required: true,
+                  admin: {
+                    description: 'Paste watch URL or 11-char ID.',
+                  },
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],

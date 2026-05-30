@@ -256,6 +256,49 @@ export default function Navbar() {
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [treksCount, setTreksCount] = useState<number>(7);
   const [dbTreks, setDbTreks] = useState<any[]>([]);
+  const [dbPages, setDbPages] = useState<any[]>([]);
+
+  // Dynamically compute categorized travel info pages
+  const getCategorizedTravelInfo = () => {
+    if (dbPages && dbPages.length > 0) {
+      // Filter pages to show in navbar (defaulting to true if undefined)
+      const visiblePages = dbPages.filter((p: any) => p.showInNavbar !== false);
+
+      const essential = visiblePages
+        .filter((p: any) => p.navbarCategory === "essential" || !p.navbarCategory)
+        .sort((a: any, b: any) => (a.navbarOrder ?? 10) - (b.navbarOrder ?? 10))
+        .map((p: any) => ({ slug: p.slug, title: p.title }));
+
+      const safety = visiblePages
+        .filter((p: any) => p.navbarCategory === "safety")
+        .sort((a: any, b: any) => (a.navbarOrder ?? 10) - (b.navbarOrder ?? 10))
+        .map((p: any) => ({ slug: p.slug, title: p.title }));
+
+      const destinations = visiblePages
+        .filter((p: any) => p.navbarCategory === "destinations")
+        .sort((a: any, b: any) => (a.navbarOrder ?? 10) - (b.navbarOrder ?? 10))
+        .map((p: any) => ({ slug: p.slug, title: p.title }));
+
+      return [
+        { title: "Essential Planning", items: essential },
+        { title: "Safety & Accommodation", items: safety },
+        { title: "Destinations & Culture", items: destinations }
+      ];
+    }
+    return TRAVEL_INFO_CATEGORIES; // Fallback
+  };
+
+  // Get simple flat list for mobile link items
+  const getTravelInfoFlatList = () => {
+    const categorized = getCategorizedTravelInfo();
+    const flatList: { label: string; href: string }[] = [];
+    categorized.forEach(cat => {
+      cat.items.forEach(item => {
+        flatList.push({ label: item.title, href: `/travel-info/${item.slug}` });
+      });
+    });
+    return flatList;
+  };
 
   const getDropdownTreks = () => {
     if (dbTreks && dbTreks.length > 0) {
@@ -320,9 +363,21 @@ export default function Navbar() {
         console.error("Failed to fetch trips count in Navbar:", err);
       }
     }
+    async function fetchPages() {
+      try {
+        const res = await fetch("/api/pages?limit=100");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setDbPages(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch pages in Navbar:", err);
+      }
+    }
     fetchData();
     fetchSettings();
     fetchTrips();
+    fetchPages();
   }, []);
 
   // Scroll effect with direction tracking
@@ -418,7 +473,7 @@ export default function Navbar() {
       title: "Travel Info",
       dropdown: true,
       key: "info",
-      items: travelInfoPages.map(p => ({ label: p.title, href: `/travel-info/${p.slug}` })),
+      items: getTravelInfoFlatList(),
     },
     {
       title: "Company",
@@ -670,7 +725,7 @@ export default function Navbar() {
                           onMouseLeave={handleMouseLeave}
                           className="absolute left-0 right-0 mx-auto mt-1 w-full max-w-5xl bg-white border border-gray-200 shadow-2xl rounded-2xl p-6 grid grid-cols-3 gap-6 text-charcoal z-50 before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent animate-in fade-in slide-in-from-top-3 duration-250"
                         >
-                          {TRAVEL_INFO_CATEGORIES.map((category) => (
+                          {getCategorizedTravelInfo().map((category) => (
                             <div key={category.title} className="flex flex-col">
                               <span className="text-[10px] tracking-[0.2em] font-extrabold uppercase text-[#c8922a] mb-3.5 block border-b border-gray-100 pb-2 font-sans">
                                 {category.title}
