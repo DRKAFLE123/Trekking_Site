@@ -1,5 +1,61 @@
-import { CollectionConfig } from 'payload';
+import { CollectionConfig, Block } from 'payload';
 import { checkPermission } from '../access';
+import { lexicalEditor, BlocksFeature } from '@payloadcms/richtext-lexical';
+
+const TrekCardBlock: Block = {
+  slug: 'trekCardBlock',
+  labels: {
+    singular: 'Trek Card',
+    plural: 'Trek Cards',
+  },
+  fields: [
+    {
+      name: 'trek',
+      type: 'relationship',
+      relationTo: 'treks',
+      required: true,
+      admin: {
+        description: 'Select the trek package to display inside the blog.',
+      },
+    },
+    {
+      name: 'customOneLiner',
+      type: 'text',
+      label: 'Custom One Liner',
+      admin: {
+        description: 'Optional override for the short description under the title.',
+      },
+    },
+  ],
+};
+
+const CtaBlock: Block = {
+  slug: 'ctaBlock',
+  labels: {
+    singular: 'CTA Holiday Banner',
+    plural: 'CTA Holiday Banners',
+  },
+  fields: [
+    {
+      name: 'headline',
+      type: 'text',
+      defaultValue: 'Want to Plan Your Holiday in Nepal?',
+      required: true,
+    },
+    {
+      name: 'buttonText',
+      type: 'text',
+      defaultValue: 'Make Inquiry Now',
+      required: true,
+    },
+    {
+      name: 'whatsappNumber',
+      type: 'text',
+      defaultValue: '+977-9823636377',
+      required: true,
+    },
+  ],
+};
 
 export const blogPosts: CollectionConfig = {
   slug: 'blogPosts',
@@ -52,6 +108,14 @@ export const blogPosts: CollectionConfig = {
       name: 'body',
       type: 'richText',
       required: true,
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          BlocksFeature({
+            blocks: [TrekCardBlock, CtaBlock],
+          }),
+        ],
+      }),
     },
     {
       name: 'excerpt',
@@ -114,7 +178,6 @@ export const blogPosts: CollectionConfig = {
       name: 'tags',
       type: 'array',
       admin: {
-        position: 'sidebar',
         description: 'Keywords/tags for quick search.',
       },
       fields: [
@@ -154,8 +217,9 @@ export const blogPosts: CollectionConfig = {
     {
       name: 'seo',
       type: 'group',
+      label: 'SEO Settings',
       admin: {
-        position: 'sidebar',
+        description: 'Search engine and social sharing settings for this post.',
       },
       fields: [
         {

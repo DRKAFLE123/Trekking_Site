@@ -1,4 +1,5 @@
 import React from 'react';
+import { getMediaUrl } from './cloudinary-loader';
 
 export interface HeadingItem {
   id: string;
@@ -223,6 +224,13 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
         </blockquote>
       );
     }
+    if (node.type === 'code' && node.children) {
+      return (
+        <pre key={idx} className="bg-slate-100 border border-slate-200/60 rounded-xl p-4 my-4 overflow-x-auto text-xs md:text-sm font-mono text-slate-800 leading-normal">
+          <code>{renderLexicalChildren(node.children)}</code>
+        </pre>
+      );
+    }
     if (node.type === 'table' && node.children) {
       return (
         <div key={idx} className="overflow-x-auto w-full my-6 rounded-xl border border-secondary/15 shadow-sm">
@@ -258,25 +266,178 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
         </CellTag>
       );
     }
+    if (node.type === 'block' && node.fields) {
+      const blockType = node.fields.blockType;
+      
+      if (blockType === 'trekCardBlock') {
+        const trek = node.fields.trek;
+        if (trek) {
+          const trekTitle = trek.title || 'Trek Details';
+          const duration = trek.duration ? `${trek.duration} Days` : '';
+          const difficulty = trek.difficulty
+            ? trek.difficulty.charAt(0).toUpperCase() + trek.difficulty.slice(1)
+            : '';
+          const price = trek.discountedPrice || trek.price || 0;
+          const oneLiner = node.fields.customOneLiner || trek.metaDescription || '';
+          const imageSrc =
+            getMediaUrl(trek.heroImage) ||
+            'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=400';
+
+          return (
+            <a
+              key={idx}
+              href={`/trips/${trek.slug}`}
+              className="trek-card-link"
+              style={{
+                display: 'flex',
+                alignItems: 'stretch',
+                margin: '20px 0',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                border: '1px solid #334155',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+                backgroundColor: '#1E2D3D',
+                textDecoration: 'none',
+                transition: 'box-shadow 0.25s, transform 0.25s',
+              }}
+            >
+              {/* Left: compact photo */}
+              <div style={{ width: '120px', minWidth: '120px', overflow: 'hidden', flexShrink: 0, backgroundColor: '#0f1f2e' }}>
+                <img
+                  src={imageSrc}
+                  alt={trekTitle}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', minHeight: '90px', display: 'block' }}
+                />
+              </div>
+
+              {/* Middle: info */}
+              <div style={{ flex: 1, padding: '10px 14px', minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '4px' }}>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#ffffff', lineHeight: '1.3', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {trekTitle}
+                </h3>
+                {oneLiner && (
+                  <p style={{ margin: 0, fontSize: '11px', color: '#94a3b8', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {oneLiner}
+                  </p>
+                )}
+                {(duration || difficulty) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '6px' }}>
+                    {duration && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, color: '#94a3b8' }}>
+                        🗓 {duration}
+                      </span>
+                    )}
+                    {difficulty && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, color: '#94a3b8' }}>
+                        📈 {difficulty}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Right: price badge */}
+              <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, padding: '0 14px' }}>
+                <span style={{ backgroundColor: '#E67E22', color: '#ffffff', fontSize: '13px', fontWeight: 700, padding: '8px 14px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+                  US$ {price}
+                </span>
+              </div>
+            </a>
+          );
+        }
+      }
+
+      if (blockType === 'ctaBlock') {
+        const { headline, buttonText, whatsappNumber } = node.fields;
+        return (
+          <div
+            key={idx}
+            style={{
+              margin: '24px 0',
+              padding: '28px 24px',
+              backgroundColor: '#D9EAF5',
+              borderRadius: '12px',
+              border: '1px solid #B8D4E8',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              gap: '12px',
+            }}
+          >
+            <p style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#1A3F5E', lineHeight: '1.4' }}>
+              {headline}
+            </p>
+            <a
+              href="/plan-a-trip"
+              className="blog-cta-btn"
+              style={{
+                display: 'inline-block',
+                backgroundColor: '#1B7047',
+                color: '#ffffff',
+                fontSize: '14px',
+                fontWeight: 700,
+                padding: '10px 28px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+                transition: 'background-color 0.2s',
+              }}
+            >
+              {buttonText}
+            </a>
+            {whatsappNumber && (
+              <a
+                href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ fontSize: '13px', fontWeight: 600, color: '#1B5FA8', textDecoration: 'none' }}
+              >
+                Or Call on Whatsapp {whatsappNumber}
+              </a>
+            )}
+          </div>
+        );
+      }
+    }
     return null;
   });
+}
+
+function formatText(text: string, format: number, key: any) {
+  let element: React.ReactNode = <span>{text}</span>;
+  if (format & 1) { // Bold
+    element = <strong>{element}</strong>;
+  }
+  if (format & 2) { // Italic
+    element = <em>{element}</em>;
+  }
+  if (format & 4) { // Strikethrough
+    element = <del>{element}</del>;
+  }
+  if (format & 8) { // Underline
+    element = <u>{element}</u>;
+  }
+  if (format & 16) { // Code
+    element = <code className="bg-slate-100 px-1 py-0.5 rounded text-emerald-800 font-mono text-xs md:text-sm">{element}</code>;
+  }
+  if (format & 32) { // Subscript
+    element = <sub>{element}</sub>;
+  }
+  if (format & 64) { // Superscript
+    element = <sup>{element}</sup>;
+  }
+  return <React.Fragment key={key}>{element}</React.Fragment>;
 }
 
 function renderLexicalChildren(children: any[]): React.ReactNode {
   return children.map((child, idx) => {
     if (child.type === 'text') {
-      const text = child.text;
-      if (child.format & 1) { // Bold
-        return <strong key={idx}>{text}</strong>;
-      }
-      if (child.format & 2) { // Italic
-        return <em key={idx}>{text}</em>;
-      }
-      return <span key={idx}>{text}</span>;
+      return formatText(child.text, child.format || 0, idx);
     }
     if (child.type === 'link' && child.children) {
       return (
-        <a key={idx} href={child.fields?.url || '#'} className="text-secondary hover:underline" target="_blank" rel="noopener noreferrer">
+        <a key={idx} href={child.fields?.url || '#'} className="text-secondary hover:underline font-semibold" target="_blank" rel="noopener noreferrer">
           {renderLexicalChildren(child.children)}
         </a>
       );

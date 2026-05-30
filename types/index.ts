@@ -66,6 +66,14 @@ export interface Region {
   treks?: Trek[];
 }
 
+export interface ItineraryDayMedia {
+  id?: string;
+  type: 'image' | 'video';
+  image?: any; // Payload Media Upload reference or Cloudinary ID
+  youtubeUrl?: string; // YouTube video link or ID
+  title?: string; // Optional caption
+}
+
 // Itinerary Day inside Trek
 export interface ItineraryDay {
   day: number;
@@ -75,6 +83,27 @@ export interface ItineraryDay {
   meals?: string;
   distance?: string;
   altitude?: number;
+  // New premium fields
+  location?: string;
+  trekDuration?: string;
+  flightHours?: string;
+  media?: ItineraryDayMedia[];
+}
+
+// Trip Info Section (named topic card)
+export interface TripInfoSection {
+  id?: string;
+  title: string;
+  icon?: string;
+  content: any; // Lexical rich text
+  image?: any;  // Optional upload image / chart
+}
+
+// Packing List Category
+export interface PackingCategory {
+  id?: string;
+  category: string;
+  items: Array<{ id?: string; item: string }>;
 }
 
 // GPS Waypoint inside Trek
@@ -93,6 +122,7 @@ export interface Trek {
   slug: string;
   region: Region;
 
+  // Basic specs
   duration: number;
   price: number;
   discountedPrice?: number;
@@ -101,26 +131,52 @@ export interface Trek {
   groupSize?: number;
   startPoint?: string;
   endPoint?: string;
-  highlights?: string[];
-  overview?: any[]; // Portable text blocks
-  dayByDayItinerary?: ItineraryDay[];
-  inclusions?: string[];
-  exclusions?: string[];
-  heroImage?: string; // Cloudinary public ID or URL
-  mapImage?: any; // Payload media relationship (route map image)
-  tripInfoContent?: any; // Lexical rich text (blog-style Trip Info)
-  youtubeVideoId?: string;
-  gallery?: string[]; // Cloudinary public IDs or URLs
-  gpsCoordinates?: GPSWaypoint[];
+  bestSeason?: string;
+  accommodationType?: string;
+  mealsIncluded?: string;
   isBestSeller?: boolean;
-  metaTitle?: string;
-  metaDescription?: string;
+
+  // Content
+  overview?: any; // Lexical rich text
+  highlights?: Array<{ id?: string; highlight: string } | string>;
+  dayByDayItinerary?: ItineraryDay[];
+  inclusions?: Array<{ id?: string; inclusion: string } | string>;
+  exclusions?: Array<{ id?: string; exclusion: string } | string>;
+
+  // Flight & briefing info (CMS plain text)
+  flightInfoTitle?: string;
+  flightInfo?: any;
+  briefingInfo?: any;
+
+  // Trip Info sections (named topic cards)
+  tripInfoSections?: TripInfoSection[];
+
+  // Packing list (per-trek)
+  packingList?: PackingCategory[];
+
+  // Media
+  heroImage?: any; // Payload media or Cloudinary
+  mapImage?: any; // Payload media relationship
+  youtubeVideoId?: string;
+  gallery?: Array<{ id?: string; image: any } | string>;
+
+  // GPS & map
+  gpsCoordinates?: GPSWaypoint[];
+
+  // Pricing
   groupDiscounts?: GroupDiscount[];
+
+  // FAQs (trek-specific)
   faqs?: Array<{
     id?: string;
     question: string;
+    category?: string;
     answer: any;
   }>;
+
+  // SEO
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 // Team Member Document

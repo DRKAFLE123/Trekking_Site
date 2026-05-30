@@ -524,7 +524,7 @@ export default async function HomePage() {
                       {mainBlog.coverImage && (
                         <Image
                           src={mainBlog.coverImage}
-                          alt={mainBlog.title}
+                          alt={mainBlog.title || 'Blog post cover image'}
                           fill
                           className="object-cover group-hover:scale-105 transition duration-500 z-0"
                           sizes="(max-width: 1024px) 100vw, 60vw"
@@ -573,7 +573,7 @@ export default async function HomePage() {
                         {blog.coverImage && (
                           <Image
                             src={blog.coverImage}
-                            alt={blog.title}
+                            alt={blog.title || 'Blog post thumbnail'}
                             fill
                             className="object-cover group-hover:scale-105 transition duration-300"
                             sizes="(max-width: 640px) 100px, 120px"

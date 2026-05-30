@@ -62,7 +62,7 @@ export const users: CollectionConfig = {
       relationTo: 'roles',
       required: false,
       admin: {
-        condition: (data) => data?.role === 'custom',
+        condition: (data: any) => data?.role === 'custom',
         description: 'Select a custom role managed in the Roles collection.',
       },
     },

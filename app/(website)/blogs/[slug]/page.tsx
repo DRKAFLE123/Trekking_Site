@@ -308,7 +308,9 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   }
 
   const headings = extractHeadings(blog.body);
-  const bodyContent = renderLexical(blog.body);
+  // Wrap in <> </> so the returned array becomes a single stable ReactNode.
+  // Passing a raw array from server → client component triggers "key" warnings.
+  const bodyContent = <>{renderLexical(blog.body)}</>;
 
   // Remodeled to display as a premium full-width grid below the article!
   const relatedTreksCard = blog.relatedTreks && blog.relatedTreks.length > 0 ? (

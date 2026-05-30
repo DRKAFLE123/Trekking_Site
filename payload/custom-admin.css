@@ -466,16 +466,20 @@ button[class*="nav-group"]:hover {
    NAV HAMBURGER TOGGLE — OPEN / CLOSE ICON CONDITIONS
    ============================================================ */
 
-/* On DESKTOP: the nav sidebar is always visible, so hide the mobile nav toggler */
+/* On DESKTOP: the nav sidebar is always visible, so hide the mobile nav toggler / hamburger completely */
 @media (min-width: 769px) {
-  .app-header__mobile-nav-toggler {
+  .app-header__mobile-nav-toggler,
+  .hamburger,
+  [class*="hamburger"] {
     display: none !important;
   }
 }
 
 /* On MOBILE: show the toggler; style it to match the theme */
 @media (max-width: 768px) {
-  .app-header__mobile-nav-toggler {
+  .app-header__mobile-nav-toggler,
+  .hamburger,
+  [class*="hamburger"] {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -486,28 +490,41 @@ button[class*="nav-group"]:hover {
     background: rgba(255, 255, 255, 0.05) !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
   }
 
-  .app-header__mobile-nav-toggler:hover {
+  .app-header__mobile-nav-toggler:hover,
+  .hamburger:hover,
+  [class*="hamburger"]:hover {
     background: rgba(200, 146, 42, 0.15) !important;
     border-color: #c8922a !important;
   }
 
   /* When nav is OPEN — the toggler shows the hamburger (≡) lines icon
      with a subtle golden tint so the user knows they can close it */
-  .app-header__mobile-nav-toggler .hamburger__open-icon {
+  .app-header__mobile-nav-toggler .hamburger__open-icon,
+  .hamburger .hamburger__open-icon,
+  [class*="hamburger"] .hamburger__open-icon,
+  [class*="hamburger"] [class*="open-icon"] {
     display: flex !important;
     color: #c8922a !important;
   }
 
   /* When nav is CLOSED — the close icon shows (× or back arrow) */
-  .app-header__mobile-nav-toggler .hamburger__close-icon {
+  .app-header__mobile-nav-toggler .hamburger__close-icon,
+  .hamburger .hamburger__close-icon,
+  [class*="hamburger"] .hamburger__close-icon,
+  [class*="hamburger"] [class*="close-icon"] {
     display: flex !important;
     color: rgba(255, 255, 255, 0.8) !important;
   }
 
   /* When toggler has the "is-open" class (nav open state) — dim slightly */
-  .app-header__mobile-nav-toggler.nav-toggler--is-open {
+  .app-header__mobile-nav-toggler.nav-toggler--is-open,
+  .hamburger.nav-toggler--is-open,
+  [class*="hamburger"].nav-toggler--is-open,
+  .hamburger.hamburger--is-open,
+  [class*="hamburger"].hamburger--is-open {
     opacity: 0.75 !important;
     background: rgba(200, 146, 42, 0.1) !important;
   }
@@ -724,191 +741,7 @@ button[class*="nav-group"]:hover {
   }
 }
 
-/* ============================================================
-   PREMIUM MODALS & BUTTON DECORATIONS (GOLD & FOREST GREEN)
-   ============================================================ */
 
-/* Center and align custom confirmation modals perfectly */
-.modal,
-[class*="modal"]:not([class*="modal__content"]):not([class*="confirm-modal"]):not([class*="confirm-modal__content"]) {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(0, 0, 0, 0.15) !important; /* Very light dimming so background page is highly visible */
-  backdrop-filter: blur(1px) !important; /* Tiny, elegant blur */
-  -webkit-backdrop-filter: blur(1px) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 999999 !important;
-}
-
-.confirm-modal,
-div[class*="confirm-modal"],
-[class*="modal__content"],
-.modal__content {
-  background: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important; /* Lighter border */
-  border-radius: 8px !important;
-  padding: 20px 24px !important; /* Compact padding */
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important; /* Clean premium shadow */
-  color: #1a2e1f !important;
-  width: 100% !important;
-  max-width: 350px !important; /* Small alert-type width */
-  min-width: 280px !important;
-  margin: 0 auto !important;
-  transform: none !important;
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  text-align: center !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 16px !important;
-  animation: modal-slide-up 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.confirm-modal__content,
-[class*="confirm-modal__content"],
-.confirm-modal__actions,
-[class*="confirm-modal__actions"] {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-}
-
-.confirm-modal__actions,
-[class*="confirm-modal__actions"] {
-  flex-direction: row !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin-top: 4px !important;
-}
-
-/* Hide overlapping watermark background texts completely for premium clean look */
-.confirm-modal__watermark,
-[class*="confirm-modal"] [class*="watermark"],
-.modal [class*="watermark"],
-[class*="modal"] [class*="watermark"],
-[class*="confirm-modal"]::before,
-[class*="confirm-modal"]::after,
-.modal::before,
-.modal::after {
-  display: none !important;
-  content: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  width: 0 !important;
-  position: absolute !important;
-  pointer-events: none !important;
-}
-
-/* Reset all title positions inside the modal to be standard block elements */
-.modal__content h2,
-[class*="modal__content"] h2,
-.modal__content h3,
-[class*="modal__content"] h3,
-[class*="confirm-modal"] h3,
-.modal__content p,
-[class*="modal__content"] p,
-[class*="confirm-modal"] p {
-  position: relative !important;
-  transform: none !important;
-  left: auto !important;
-  top: auto !important;
-  margin: 0 !important;
-  display: block !important;
-}
-
-.modal__content h2,
-[class*="modal__content"] h2,
-.modal__content h3,
-[class*="modal__content"] h3,
-[class*="confirm-modal"] h3 {
-  font-family: 'Inter', sans-serif !important;
-  font-weight: 800 !important;
-  color: #1a2e1f !important;
-  font-size: 14px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-}
-
-.modal__content p,
-[class*="modal__content"] p,
-[class*="confirm-modal"] p {
-  color: #626c64 !important;
-  font-size: 12px !important;
-  line-height: 1.4 !important;
-  margin: 0 !important;
-}
-
-/* Confirm/Cancel Modal button styles - Small and clear */
-.modal__content button,
-[class*="modal__content"] button,
-[class*="confirm-modal"] button,
-.confirm-modal__actions button {
-  border-radius: 4px !important;
-  padding: 4px 10px !important;
-  font-weight: 700 !important;
-  font-size: 10px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  margin: 0 4px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 24px !important;
-  line-height: 24px !important;
-  box-shadow: none !important;
-}
-
-.modal__content button[class*="cancel"],
-[class*="modal__content"] button[class*="cancel"],
-.confirm-modal__actions button[class*="cancel"] {
-  background: #f1f5f9 !important;
-  color: #64748b !important;
-  border: 1px solid #cbd5e1 !important;
-}
-
-.modal__content button[class*="cancel"]:hover,
-[class*="modal__content"] button[class*="cancel"]:hover,
-.confirm-modal__actions button[class*="cancel"]:hover {
-  background: #e2e8f0 !important;
-  color: #334155 !important;
-}
-
-.modal__content button[class*="confirm"],
-.modal__content button[class*="delete"],
-[class*="modal__content"] button[class*="confirm"],
-[class*="modal__content"] button[class*="delete"],
-[class*="confirm-modal"] button[class*="confirm"],
-.confirm-modal__actions button[class*="confirm"] {
-  background: #ef4444 !important;
-  color: #ffffff !important;
-  border: 1px solid #ef4444 !important;
-}
-
-.modal__content button[class*="confirm"]:hover,
-.modal__content button[class*="delete"]:hover,
-[class*="modal__content"] button[class*="confirm"]:hover,
-[class*="modal__content"] button[class*="delete"]:hover,
-.confirm-modal__actions button[class*="confirm"]:hover {
-  background: #dc2626 !important;
-  border-color: #dc2626 !important;
-  transform: translateY(-0.5px) !important;
-}
 
 /* Ensure absolute vertical alignment on all elements in all select/bulk toolbars */
 .select-actions,
@@ -1305,59 +1138,198 @@ input[id*="field-title"]:focus {
   box-shadow: 0 0 0 3px rgba(200, 146, 42, 0.15) !important;
 }
 
-/* Cover Image / Hero Image upload dotted box styling */
-.file-field__upload,
-[class*="file-field__upload"],
-.upload__dropzone,
-[class*="upload__dropzone"],
-.file-field__wrap,
-[class*="file-field__wrap"] {
-  border: 2px dashed #cbd5e1 !important;
-  border-radius: 12px !important;
-  padding: 20px !important;
-  background-color: #faf9f6 !important;
-  text-align: center !important;
-  transition: all 0.2s ease !important;
+/* WordPress-like Media Upload Box - single clean outline, no nested borders */
+.field-type.upload,
+[class*="field-type"][class*="upload"] {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+/* 1. Reset inner nested divs/wrappers inside the upload zones, explicitly excluding drawers, list tables, modals, popups, or previews */
+.file-field__upload div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]),
+[class*="file-field__upload"] div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]),
+.upload__dropzone div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]),
+[class*="upload__dropzone"] div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]) {
+  border: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 12px !important;
+  width: 100% !important;
+}
+
+/* 2. Single clean dotted WordPress outer box (applied to the upload dropzone container only to avoid breaking drawer layout) */
+.file-field__upload,
+[class*="file-field__upload"] {
+  border: 2px dashed #b5bfc9 !important; /* WordPress signature dashed border grey */
+  border-radius: 8px !important;
+  padding: 24px 16px !important; /* Tight clean WordPress padding */
+  background-color: #fbfbfc !important; /* Very light clean WordPress canvas background */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  transition: all 0.15s ease-in-out !important;
   cursor: pointer !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
 .file-field__upload:hover,
-[class*="file-field__upload"]:hover,
-.upload__dropzone:hover,
-[class*="upload__dropzone"]:hover,
-.file-field__wrap:hover,
-[class*="file-field__wrap"]:hover {
-  border-color: #c8922a !important;
-  background-color: #ffffff !important;
+[class*="file-field__upload"]:hover {
+  border-color: #2271b1 !important; /* WordPress active signature blue */
+  background-color: #f0f6fa !important; /* WordPress hover tint */
 }
 
-/* Custom "Click to upload hero image" text instructions overlay if uploader is empty */
-.field-type.upload [class*="upload__button"],
-.field-type.upload button,
-[class*="file-field"] button {
-  background: #ffffff !important;
-  color: #1a2e1f !important;
+/* Reset drag drop zones so they just act as invisible overlays inside the master box */
+[class*="upload__dropzone"],
+.upload__dropzone {
+  border: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+}
+
+/* WordPress-style buttons inside uploader - only inside dropzone/upload wrappers and NOT inside drawers */
+.upload__dropzone button:not([class*="drawer"]):not([class*="list"]):not([class*="table"]),
+[class*="upload__dropzone"] button:not([class*="drawer"]):not([class*="list"]):not([class*="table"]),
+.file-field__upload button:not([class*="drawer"]):not([class*="list"]):not([class*="table"]),
+[class*="file-field__upload"] button:not([class*="drawer"]):not([class*="list"]):not([class*="table"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 32px !important;
+  padding: 0 16px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease-in-out !important;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05) !important;
+  margin: 6px !important;
+  box-sizing: border-box !important;
   border: 1px solid #cbd5e1 !important;
-  border-radius: 6px !important;
-  font-weight: 700 !important;
-  font-size: 11px !important;
-  text-transform: uppercase !important;
-  padding: 8px 16px !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
-  transition: all 0.2s ease !important;
 }
 
-.field-type.upload [class*="upload__button"]:hover,
-.field-type.upload button:hover {
-  border-color: #c8922a !important;
-  color: #c8922a !important;
+/* Force all child elements inside dropzone buttons to inherit font-weight, size and color correctly */
+.upload__dropzone button:not([class*="drawer"]):not([class*="list"]) *,
+[class*="upload__dropzone"] button:not([class*="drawer"]):not([class*="list"]) *,
+.file-field__upload button:not([class*="drawer"]):not([class*="list"]) *,
+[class*="file-field__upload"] button:not([class*="drawer"]):not([class*="list"]) * {
+  color: inherit !important;
+  font-weight: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Primary Button (WordPress Blue, e.g. Choose from existing) */
+.upload__dropzone button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]),
+[class*="upload__dropzone"] button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]),
+.file-field__upload button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]),
+[class*="file-field__upload"] button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]) {
+  background: #2271b1 !important;
+  border: 1px solid #2271b1 !important;
+  color: #ffffff !important;
+}
+
+.upload__dropzone button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]):hover,
+[class*="upload__dropzone"] button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]):hover,
+.file-field__upload button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]):hover,
+[class*="file-field__upload"] button:not([class*="cancel"]):not([class*="delete"]):not([class*="secondary"]):not([class*="secondary-btn"]):not([class*="drawer"]):not([class*="list"]):hover {
+  background: #135e96 !important;
+  border-color: #135e96 !important;
+  color: #ffffff !important;
+}
+
+/* Secondary Button (WordPress light outline grey, e.g. Create new) */
+.upload__dropzone button[class*="secondary"]:not([class*="drawer"]),
+.upload__dropzone button[class*="create"]:not([class*="drawer"]),
+.upload__dropzone button:has([class*="create"]):not([class*="drawer"]),
+.upload__dropzone button:first-child:not([class*="drawer"]):not([class*="list"]),
+[class*="upload__dropzone"] button[class*="secondary"]:not([class*="drawer"]),
+[class*="upload__dropzone"] button[class*="create"]:not([class*="drawer"]),
+[class*="upload__dropzone"] button:has([class*="create"]):not([class*="drawer"]),
+[class*="upload__dropzone"] button:first-child:not([class*="drawer"]):not([class*="list"]),
+.file-field__upload button[class*="secondary"]:not([class*="drawer"]),
+.file-field__upload button[class*="create"]:not([class*="drawer"]),
+.file-field__upload button:has([class*="create"]):not([class*="drawer"]),
+.file-field__upload button:first-child:not([class*="drawer"]):not([class*="list"]),
+[class*="file-field__upload"] button[class*="secondary"]:not([class*="drawer"]),
+[class*="file-field__upload"] button[class*="create"]:not([class*="drawer"]),
+[class*="file-field__upload"] button:has([class*="create"]):not([class*="drawer"]),
+[class*="file-field__upload"] button:first-child:not([class*="drawer"]):not([class*="list"]) {
+  background: #f6f7f7 !important;
+  border: 1px solid #2271b1 !important;
+  color: #2271b1 !important;
+}
+
+.upload__dropzone button[class*="secondary"]:not([class*="drawer"]):hover,
+.upload__dropzone button[class*="create"]:not([class*="drawer"]):hover,
+.upload__dropzone button:has([class*="create"]):not([class*="drawer"]):hover,
+.upload__dropzone button:first-child:not([class*="drawer"]):not([class*="list"]):hover,
+[class*="upload__dropzone"] button[class*="secondary"]:not([class*="drawer"]):hover,
+[class*="upload__dropzone"] button[class*="create"]:not([class*="drawer"]):hover,
+[class*="upload__dropzone"] button:has([class*="create"]):not([class*="drawer"]):hover,
+[class*="upload__dropzone"] button:first-child:not([class*="drawer"]):not([class*="list"]):hover,
+.file-field__upload button[class*="secondary"]:not([class*="drawer"]):hover,
+.file-field__upload button[class*="create"]:not([class*="drawer"]):hover,
+.file-field__upload button:has([class*="create"]):not([class*="drawer"]):hover,
+.file-field__upload button:first-child:not([class*="drawer"]):not([class*="list"]):hover,
+[class*="file-field__upload"] button[class*="secondary"]:not([class*="drawer"]):hover,
+[class*="file-field__upload"] button[class*="create"]:not([class*="drawer"]):hover,
+[class*="file-field__upload"] button:has([class*="create"]):not([class*="drawer"]):hover,
+[class*="file-field__upload"] button:first-child:not([class*="drawer"]):not([class*="list"]):hover {
+  background: #f0f6fa !important;
+  color: #0a4b78 !important;
+  border-color: #0a4b78 !important;
+}
+
+
+/* WordPress-style Uploader instruction text */
+[class*="upload__dropzone"] span,
+[class*="upload__dropzone"] p,
+[class*="file-field__upload"] span,
+[class*="file-field__upload"] p,
+.upload__dropzone span,
+.upload__dropzone p {
+  color: #646970 !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  margin: 4px 0 !important;
+  display: block !important;
+  text-align: center !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+/* WordPress-style Uploader Preview when file is selected */
+[class*="upload__preview"],
+.upload__preview,
+[class*="file-field__preview"],
+.file-field__preview {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+  background-color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* Compact Sidebar Layout cards & dropdowns */
@@ -1449,7 +1421,7 @@ input[id*="field-title"]:focus {
    11. FORCE FULL-WIDTH LAYOUT & HIDE THREE-DOTS MENU
    ============================================================ */
 
-/* Force all Payload CMS layout wrappers to stretch to 100% of the screen width */
+/* Force all Payload CMS layout wrappers to stretch to 100% of the screen width, and prevent horizontal scroll overflow */
 .template-default,
 .template-default__wrap,
 [class*="template-default"],
@@ -1463,6 +1435,19 @@ main,
 form.form {
   max-width: 100% !important;
   width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Explicitly prevent header and page layout overflow horizontally */
+.app-header,
+[class*="app-header"],
+.app-header__wrap,
+[class*="app-header__wrap"],
+.header,
+[class*="header"] {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: clip !important;
 }
 
 /* ============================================================
@@ -1783,3 +1768,95 @@ body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
   max-height: 100vh !important;
   overflow: hidden !important;
 }
+
+
+/* ============================================================
+   13. PREMIUM PAYLOAD CMS ARRAY & HIGHLIGHTS EDITOR BEAUTIFICATION
+   ============================================================ */
+
+/* Make array rows stack vertically instead of side-by-side to give input fields maximum width */
+[class*="array-field"] [class*="draggable-row"],
+[class*="array-field"] [class*="draggable-row-wrap"],
+[class*="array-field"] .array-field__row,
+[class*="array-field"] [class*="row-wrap"] {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #f8fafc !important;
+  padding: 8px 12px !important;
+  margin-bottom: 6px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* Row Header area (drag handle, title pill, actions) */
+[class*="array-field"] [class*="draggable-row__header"],
+[class*="array-field"] [class*="row-header"],
+[class*="array-field"] [class*="header__wrap"] {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-bottom: none !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+/* Row Content area (input fields) - styled with dashed border top so it only displays when EXPANDED */
+[class*="array-field"] [class*="draggable-row__content"],
+[class*="array-field"] [class*="row-content"],
+[class*="array-field"] [class*="row-fields"],
+[class*="array-field"] [class*="row-body"],
+[class*="array-field"] [class*="row-fields__wrap"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 10px 0 2px 0 !important;
+  border-top: 1.5px dashed #cbd5e1 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Stylize the singular text inputs inside highlights array for premium look */
+[class*="array-field"] .field-type {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure the inner grid, block, or flex wrapper of the fields spans full width */
+[class*="array-field"] [class*="render-fields"],
+[class*="array-field"] [class*="row-fields"],
+[class*="array-field"] [class*="draggable-row__content"] > div,
+[class*="array-field"] [class*="row-content"] > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+/* Force textarea/inputs inside highlights cards to be full width, spacious and modern */
+[class*="array-field"] textarea,
+[class*="array-field"] input[type="text"],
+[class*="array-field"] [class*="field-type"] input,
+[class*="array-field"] [class*="field-type"] textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Give textareas inside array blocks a spacious minimum height for easy editing */
+[class*="array-field"] textarea,
+[class*="array-field"] [class*="field-type"] textarea {
+  min-height: 90px !important;
+  resize: vertical !important;
+}
+
