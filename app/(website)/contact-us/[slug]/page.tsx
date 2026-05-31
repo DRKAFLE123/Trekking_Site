@@ -19,7 +19,7 @@ async function getPageData(slug: string) {
   try {
     const payload = await getPayload({ config });
     const result = await payload.find({
-      collection: 'pages',
+      collection: 'contactPages',
       where: {
         slug: {
           equals: slug,
@@ -39,7 +39,7 @@ async function getPagesList() {
   try {
     const payload = await getPayload({ config });
     const result = await payload.find({
-      collection: 'pages',
+      collection: 'contactPages',
       limit: 20,
       depth: 0,
     });
@@ -56,12 +56,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!page) return { title: "Page Not Found | Nature Heaven Treks" };
 
   return {
-    title: page.seoTitle || `${page.title} | Travel Info | Nature Heaven Treks`,
-    description: page.seoDescription || page.excerpt || `Information about ${page.title} for traveling in Nepal.`,
+    title: page.seoTitle || `${page.title} | Contact | Nature Heaven Treks`,
+    description: page.seoDescription || page.excerpt || `Contact information and support details about ${page.title}.`,
   };
 }
 
-export default async function TravelInfoPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ContactDynamicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const page = await getPageData(slug);
   if (!page) notFound();
@@ -69,9 +69,9 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
   const allPages = await getPagesList();
 
   return (
-    <div className="bg-[#f8f5f0] min-h-screen pb-20">
+    <div className="bg-[#f8f5f0] min-h-screen pb-20 pt-24 md:pt-32">
       {/* Hero Section */}
-      <div className="relative h-[300px] md:h-[400px] w-full bg-[#1a2e1f]">
+      <div className="relative h-[300px] md:h-[350px] w-full bg-[#1a2e1f]">
         {(page.heroImage as any)?.url ? (
           <Image
             src={(page.heroImage as any).url}
@@ -87,7 +87,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs font-bold uppercase tracking-widest mb-4 border border-white/20">
             <FaInfoCircle className="text-[#c8922a]" />
-            Travel Information
+            Contact &amp; Support
           </div>
           <h1 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4 drop-shadow-lg">
             {page.title}
@@ -105,7 +105,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
         <div className="flex items-center text-sm text-[#6B6B6B] mb-8 font-sans overflow-x-auto whitespace-nowrap pb-2">
           <Link href="/" className="hover:text-[#2E7D32] transition">Home</Link>
           <FaChevronRight className="mx-2 text-xs text-gray-400" />
-          <span className="text-gray-400">Travel Info</span>
+          <Link href="/contact-us" className="hover:text-[#2E7D32] transition">Contact Us</Link>
           <FaChevronRight className="mx-2 text-xs text-gray-400" />
           <span className="font-semibold text-[#1a2e1f]">{page.title}</span>
         </div>
@@ -247,33 +247,34 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
 
           {/* Sidebar */}
           <aside className="w-full lg:w-[350px] shrink-0">
-            {/* Sticky wrapper — keeps both cards together while scrolling */}
             <div className="sticky top-24 flex flex-col gap-6">
               {/* ScrollSpy Table of Contents */}
               <ScrollSpyTOC />
 
               {/* Quick Links */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
-                  <FaMapMarkerAlt className="text-[#c8922a]" /> More Topics
-                </h3>
-                <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
-                  {allPages.map((p: any) => (
-                    <li key={p.slug}>
-                      <Link 
-                        href={`/travel-info/${p.slug}`}
-                        className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
-                          p.slug === page.slug 
-                            ? 'bg-[#1a2e1f] text-white' 
-                            : 'text-[#4A4A4A] hover:bg-gray-50 hover:text-[#c8922a]'
-                        }`}
-                      >
-                        {p.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {allPages.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-[#c8922a]" /> Related Support
+                  </h3>
+                  <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
+                    {allPages.map((p: any) => (
+                      <li key={p.slug}>
+                        <Link 
+                          href={`/contact-us/${p.slug}`}
+                          className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
+                            p.slug === page.slug 
+                              ? 'bg-[#1a2e1f] text-white' 
+                              : 'text-[#4A4A4A] hover:bg-gray-50 hover:text-[#c8922a]'
+                          }`}
+                        >
+                          {p.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Need Help CTA */}
               <div className="bg-gradient-to-br from-[#1a2e1f] to-[#2E7D32] rounded-2xl p-6 text-white text-center shadow-lg">

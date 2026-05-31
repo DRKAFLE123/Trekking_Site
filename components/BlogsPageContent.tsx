@@ -11,11 +11,12 @@ import { getMediaUrl } from "@/lib/cloudinary-loader";
 interface BlogsPageContentProps {
   blogs: BlogPost[];
   siteSettings?: any;
+  blogSettings?: any;
 }
 
 const POSTS_PER_PAGE = 6;
 
-export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageContentProps) {
+export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: BlogsPageContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -121,23 +122,27 @@ export default function BlogsPageContent({ blogs, siteSettings }: BlogsPageConte
   };
 
   // Extract cover page fields from CMS dynamically
-  const coverImageFromCMS = siteSettings?.blogsPageSettings?.coverImage
-    ? getMediaUrl(siteSettings.blogsPageSettings.coverImage)
+  const activeBlogSettings = blogSettings || siteSettings?.blogsPageSettings;
+  const coverImageFromCMS = activeBlogSettings?.coverImage
+    ? getMediaUrl(activeBlogSettings.coverImage)
     : null;
   const coverBgUrl = coverImageFromCMS || "/uploads/blog_ebc_sunrise.png";
-  const coverTitle = siteSettings?.blogsPageSettings?.title || "Summit Chronicles";
-  const coverSubtitle = siteSettings?.blogsPageSettings?.subtitle || "Nature Heaven Trekking & Expedition";
+  const coverTitle = activeBlogSettings?.title || "Summit Chronicles";
+  const coverSubtitle = activeBlogSettings?.subtitle || "Nature Heaven Trekking & Expedition";
 
   return (
     <div className="w-full -mt-24 md:-mt-32">
       {/* 1. Compact Cover Hero Section */}
-      <div className="relative bg-primary overflow-hidden py-10 md:py-14 px-6 text-center text-white border-b border-secondary/20 shadow-inner">
-        {/* Background Image Overlay */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-primary/95 via-primary-dark/95 to-black/90" />
-        <div 
-          className="absolute inset-0 z-0 opacity-20 mix-blend-overlay bg-cover bg-center transition-all duration-500"
-          style={{ backgroundImage: `url('${coverBgUrl}')` }}
-        />
+      <div 
+        className="relative overflow-hidden py-16 md:py-20 px-6 text-center text-white border-b border-secondary/20 shadow-inner bg-primary"
+        style={{
+          backgroundImage: `url('${coverBgUrl}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 40%",
+        }}
+      >
+        {/* Background Image Overlay - semi-transparent brand green overlay to keep text highly readable while showing the photo clearly */}
+        <div className="absolute inset-0 z-0 bg-[#1a2e1f]/75" />
 
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-2 mt-8 animate-fadeIn">
           <span className="text-secondary uppercase font-bold text-[10px] tracking-[0.2em] block">

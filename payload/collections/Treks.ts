@@ -50,7 +50,7 @@ const basicInfoSection = {
         {
           name: 'region',
           type: 'relationship' as const,
-          relationTo: 'regions',
+          relationTo: 'regions' as const,
           required: true,
         },
         {
@@ -257,7 +257,7 @@ const mediaSection = {
     {
       name: 'heroImage',
       type: 'upload' as const,
-      relationTo: 'media',
+      relationTo: 'media' as const,
       label: 'Hero Cover Photo',
       admin: {
         description: 'Main cover image shown at the top of the page. Use a landscape photo, minimum 1200px wide.',
@@ -266,7 +266,7 @@ const mediaSection = {
     {
       name: 'mapImage',
       type: 'upload' as const,
-      relationTo: 'media',
+      relationTo: 'media' as const,
       label: 'Route Map Image',
       admin: {
         description: 'Upload a static route map (JPG/PNG/WebP). If empty, the interactive GPS map will be used instead.',
@@ -283,7 +283,7 @@ const mediaSection = {
         {
           name: 'image',
           type: 'upload' as const,
-          relationTo: 'media',
+          relationTo: 'media' as const,
           required: true,
         },
       ],
@@ -342,27 +342,6 @@ const itinerarySection = {
           ],
         },
         {
-          name: 'description',
-          type: 'textarea' as const,
-          required: true,
-          admin: { description: 'What happens on this day. 2–4 sentences is ideal.' },
-        },
-        {
-          type: 'row' as const,
-          fields: [
-            {
-              name: 'accommodation',
-              type: 'text' as const,
-              admin: { description: 'Where you sleep, e.g. "Standard Teahouse"' },
-            },
-            {
-              name: 'meals',
-              type: 'text' as const,
-              admin: { description: 'Meals provided, e.g. "B, L, D" or "Breakfast only"' },
-            },
-          ],
-        },
-        {
           type: 'row' as const,
           fields: [
             {
@@ -396,6 +375,27 @@ const itinerarySection = {
           ],
         },
         {
+          name: 'description',
+          type: 'textarea' as const,
+          required: true,
+          admin: { description: 'What happens on this day. 2–4 sentences is ideal.' },
+        },
+        {
+          type: 'row' as const,
+          fields: [
+            {
+              name: 'accommodation',
+              type: 'text' as const,
+              admin: { description: 'Where you sleep, e.g. "Standard Teahouse"' },
+            },
+            {
+              name: 'meals',
+              type: 'text' as const,
+              admin: { description: 'Meals provided, e.g. "B, L, D" or "Breakfast only"' },
+            },
+          ],
+        },
+        {
           name: 'media',
           type: 'array' as const,
           label: 'Day Media (Images & YouTube Videos)',
@@ -420,7 +420,7 @@ const itinerarySection = {
             {
               name: 'image',
               type: 'upload' as const,
-              relationTo: 'media',
+              relationTo: 'media' as const,
               admin: {
                 condition: (data: any, siblingData: any) => siblingData?.type === 'image',
                 description: 'Select an image from library or upload one.',
@@ -453,38 +453,124 @@ const inclusionsExclusionsSection = {
   label: '✅ Inclusions & Exclusions',
   admin: {
     initCollapsed: true,
-    description: 'What is and isn\'t included in the package price. These are shown as categorized bullet lists.',
+    description: 'Define what is included and excluded in the package price. Categorize them into clean visual groups.',
   },
   fields: [
     {
       name: 'inclusions',
       type: 'array' as const,
-      label: 'What\'s Included',
-      admin: {
-        description: 'Add one item per row. The system will auto-group them by category (transport, food, guide, etc.).',
+      label: "What's Included",
+      labels: {
+        singular: 'Inclusion Category Group',
+        plural: 'Inclusion Category Groups',
       },
       fields: [
         {
-          name: 'inclusion',
+          name: 'heading',
           type: 'text' as const,
+          label: 'Category Heading (e.g. Transportation)',
           required: true,
-          admin: { description: 'e.g. "Round-trip domestic flights (Kathmandu–Lukla–Kathmandu)"' },
+          admin: { width: '100%' },
+        },
+        {
+          name: 'icon',
+          type: 'select' as const,
+          label: 'Icon Code',
+          defaultValue: 'info',
+          admin: { width: '100%' },
+          options: [
+            { label: '✈️ Transportation', value: 'transport' },
+            { label: '🏨 Accommodations', value: 'accommodation' },
+            { label: '🍽️ Food & Drinks', value: 'food' },
+            { label: '👥 Guide & Porter', value: 'guide' },
+            { label: '🎫 Permits & Fees', value: 'permits' },
+            { label: '🛡️ Travel Insurance', value: 'insurance' },
+            { label: '📋 Visa Info', value: 'visa' },
+            { label: '🎒 Equipment & Gear', value: 'equipment' },
+            { label: '💳 Personal Expenses', value: 'personal' },
+            { label: 'ℹ️ Other Info', value: 'info' },
+          ],
+        },
+        {
+          name: 'points',
+          type: 'array' as const,
+          label: 'Inclusion Points',
+          admin: { width: '100%' },
+          labels: {
+            singular: 'Inclusion Point',
+            plural: 'Inclusion Points',
+          },
+          fields: [
+            {
+              name: 'point',
+              type: 'text' as const,
+              required: true,
+              label: false as any,
+              admin: {
+                width: '100%',
+                placeholder: 'e.g. Round-trip domestic flights (Kathmandu–Lukla–Kathmandu)',
+              },
+            },
+          ],
         },
       ],
     },
     {
       name: 'exclusions',
       type: 'array' as const,
-      label: 'What\'s NOT Included',
-      admin: {
-        description: 'Add one item per row.',
+      label: "What's NOT Included",
+      labels: {
+        singular: 'Exclusion Category Group',
+        plural: 'Exclusion Category Groups',
       },
       fields: [
         {
-          name: 'exclusion',
+          name: 'heading',
           type: 'text' as const,
+          label: 'Category Heading (e.g. Personal Expenses)',
           required: true,
-          admin: { description: 'e.g. "International airfare and departure taxes"' },
+          admin: { width: '100%' },
+        },
+        {
+          name: 'icon',
+          type: 'select' as const,
+          label: 'Icon Code',
+          defaultValue: 'personal',
+          admin: { width: '100%' },
+          options: [
+            { label: '✈️ Transportation', value: 'transport' },
+            { label: '🏨 Accommodations', value: 'accommodation' },
+            { label: '🍽️ Food & Drinks', value: 'food' },
+            { label: '👥 Guide & Porter', value: 'guide' },
+            { label: '🎫 Permits & Fees', value: 'permits' },
+            { label: '🛡️ Travel Insurance', value: 'insurance' },
+            { label: '📋 Visa Info', value: 'visa' },
+            { label: '🎒 Equipment & Gear', value: 'equipment' },
+            { label: '💳 Personal Expenses', value: 'personal' },
+            { label: 'ℹ️ Other Info', value: 'info' },
+          ],
+        },
+        {
+          name: 'points',
+          type: 'array' as const,
+          label: 'Exclusion Points',
+          admin: { width: '100%' },
+          labels: {
+            singular: 'Exclusion Point',
+            plural: 'Exclusion Points',
+          },
+          fields: [
+            {
+              name: 'point',
+              type: 'text' as const,
+              required: true,
+              label: false as any,
+              admin: {
+                width: '100%',
+                placeholder: 'e.g. International airfare and departure taxes',
+              },
+            },
+          ],
         },
       ],
     },
@@ -602,7 +688,7 @@ const tripInfoSection = {
         {
           name: 'image',
           type: 'upload' as const,
-          relationTo: 'media',
+          relationTo: 'media' as const,
           label: 'Section Image / Chart',
           admin: {
             description: 'Optional image or chart to display in this section (e.g. Route Map, Altitude Chart, packing diagram).',

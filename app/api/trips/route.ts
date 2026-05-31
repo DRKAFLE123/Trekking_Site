@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const payload = await getPayload({ config });
-  const trips = await payload.find({ collection: 'treks', depth: 1 });
+  const trips = await payload.find({ collection: 'treks', depth: 1, limit: 100 });
   return new NextResponse(JSON.stringify(trips.docs), {
     status: 200,
     headers: {

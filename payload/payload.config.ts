@@ -6,6 +6,8 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 
 import { SiteSettings } from './collections/SiteSettings';
+import { NavbarSettings } from './collections/NavbarSettings';
+import { FooterSettings } from './collections/FooterSettings';
 import { regions } from './collections/Regions';
 import { treks } from './collections/Treks';
 import { blogPosts } from './collections/BlogPosts';
@@ -20,6 +22,9 @@ import { payments } from './collections/Payments';
 import { users } from './collections/Users';
 import { media } from './collections/Media';
 import { Pages } from './collections/Pages';
+import { ContactPages } from './collections/ContactPages';
+import { BlogSettings } from './collections/BlogSettings';
+import { CompanyPages } from './collections/CompanyPages';
 import { roles } from './collections/Roles';
 
 const filename = fileURLToPath(import.meta.url);
@@ -60,6 +65,8 @@ export default buildConfig({
     users,
     roles,
     SiteSettings,
+    NavbarSettings,
+    FooterSettings,
     regions,
     treks,
     blogPosts,
@@ -72,7 +79,10 @@ export default buildConfig({
     inquiries,
     payments,
     media,
-    Pages
+    Pages,
+    ContactPages,
+    BlogSettings,
+    CompanyPages
   ],
   db: postgresAdapter({
     pool: {

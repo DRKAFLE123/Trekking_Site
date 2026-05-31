@@ -247,16 +247,40 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
     typeof h === "string" ? h : h?.highlight
   ).filter(Boolean);
 
-  const inclusionsList = (trek.inclusions || []).map((i: any) =>
-    typeof i === "string" ? i : i?.inclusion
-  ).filter(Boolean);
+  // ── Inclusions / Exclusions: use structured backend groups directly ──────
+  // The CMS now stores [{heading, icon, points:[{point}]}] — map them into
+  // the same shape renderPackageCard expects.
+  const ICON_MAP: Record<string, any> = {
+    transport:     FaPaperPlane,
+    accommodation: FaBed,
+    food:          FaUtensils,
+    guide:         FaUsers,
+    permits:       FaListUl,
+    insurance:     FaShieldAlt,
+    visa:          FaInfoCircle,
+    equipment:     FaMedkit,
+    personal:      FaCreditCard,
+    info:          FaInfoCircle,
+  };
 
-  const exclusionsList = (trek.exclusions || []).map((e: any) =>
-    typeof e === "string" ? e : e?.exclusion
-  ).filter(Boolean);
+  // Convert CMS InclusionGroup[] → renderable group array
+  function cmsGroupsToRender(
+    groups: typeof trek.inclusions,
+    fallbackLabel: string,
+  ): { label: string; Icon: any; items: string[] }[] {
+    if (!groups || groups.length === 0) return [];
+    return groups
+      .map((g: any) => ({
+        label: g.heading || fallbackLabel,
+        Icon:  ICON_MAP[g.icon] || FaInfoCircle,
+        items: (g.points || []).map((p: any) => p.point || p).filter(Boolean),
+      }))
+      .filter(g => g.items.length > 0);
+  }
 
-  const inclusionGroups = categorizePackageItems(inclusionsList, "Other Inclusions");
-  const exclusionGroups = categorizePackageItems(exclusionsList, "Other Exclusions");
+  const inclusionGroups  = cmsGroupsToRender(trek.inclusions,  "Other Inclusions");
+  const exclusionGroups  = cmsGroupsToRender(trek.exclusions,  "Other Exclusions");
+
 
   // Packing list: CMS or default
   const packingChecklist: PackingCategory[] =

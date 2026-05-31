@@ -45,7 +45,7 @@ export default async function BookingPage({ params }: BookingPageProps) {
             slug: trek.slug,
             duration: trek.duration,
             price: trek.price,
-            discountedPrice: trek.discountedPrice,
+            discountedPrice: trek.discountedPrice || undefined,
             groupDiscounts
           }}
         />

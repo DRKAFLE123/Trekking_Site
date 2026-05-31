@@ -963,38 +963,25 @@ body.login::before {
   text-shadow: none !important;
 }
 
-/* 2. Strapi-style 2-Column Document Editor Layout & Sticky Sidebar */
+/* 2. Document Editor — let Payload v3 manage the main/sidebar split natively.
+   Payload v3 uses document-fields__main + document-fields__sidebar-wrap for the
+   two-column layout. We must NOT override those with our own grid or the main
+   content area shrinks to half-width on trek/blog edit pages. */
 .collection-edit__form, 
 [class*="collection-edit__form"],
 form.form {
   max-width: 100% !important;
 }
 
-@media (min-width: 1200px) {
-  /* Document view layout - force 2 columns: main editor left, sidebar right */
-  .doc-view__main,
-  [class*="doc-view__main"],
-  .collection-edit__main,
-  .doc-view__content,
-  .form-submit {
-    display: grid !important;
-    grid-template-columns: 1fr 340px !important;
-    gap: 32px !important;
-    align-items: start !important;
-  }
-  
-  /* Sidebar sticky style */
-  .doc-view__sidebar,
-  [class*="doc-view__sidebar"],
-  .collection-edit__sidebar {
-    position: sticky !important;
-    top: 90px !important;
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
-    padding: 24px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
-  }
+/* Sidebar card visual polish — applied without forcing a grid layout */
+.collection-edit__sidebar,
+.doc-view__sidebar,
+[class*="doc-view__sidebar"] {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 }
 
 /* 3. Premium Strapi-style Collection List Tables & Controls */
@@ -1317,7 +1304,6 @@ div[class*="select-actions"] a[class*="delete"]:hover,
    actual drawer content — which was the "transparent black overlay"
    blocking image selection. We therefore restrict the rule to DIV
    modal containers only, and exclude common UI parts. */
-.modal,
 div[class*="modal"]:not([class*="modal__content"]):not([class*="confirm-modal"]):not([class*="confirm-modal__content"]):not([class*="close"]):not([class*="header"]):not([class*="actions"]):not([class*="toggler"]):not([class*="button"]) {
   position: fixed !important;
   top: 0 !important;

@@ -106,6 +106,14 @@ export interface PackingCategory {
   items: Array<{ id?: string; item: string }>;
 }
 
+// Inclusion / Exclusion category group (structured CMS format)
+export interface InclusionGroup {
+  id?: string;
+  heading: string;
+  icon?: string;
+  points?: Array<{ id?: string; point: string }>;
+}
+
 // GPS Waypoint inside Trek
 export interface GPSWaypoint {
   lat: number;
@@ -140,8 +148,9 @@ export interface Trek {
   overview?: any; // Lexical rich text
   highlights?: Array<{ id?: string; highlight: string } | string>;
   dayByDayItinerary?: ItineraryDay[];
-  inclusions?: Array<{ id?: string; inclusion: string } | string>;
-  exclusions?: Array<{ id?: string; exclusion: string } | string>;
+  // Structured category groups (new CMS format): each has heading, icon, points[]
+  inclusions?: InclusionGroup[];
+  exclusions?: InclusionGroup[];
 
   // Flight & briefing info (CMS plain text)
   flightInfoTitle?: string;

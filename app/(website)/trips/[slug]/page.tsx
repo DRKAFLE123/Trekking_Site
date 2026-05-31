@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: TripDetailPageProps): Promise
     const res = await payload.find({
       collection: "treks",
       where: { slug: { equals: slug } },
-      depth: 1,
+      depth: 2,
     });
     const trek = (res.docs[0] || null) as unknown as Trek | null;
     if (!trek) {
@@ -69,7 +69,7 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
     const res = await payload.find({
       collection: "treks",
       where: { slug: { equals: slug } },
-      depth: 1,
+      depth: 2,
     });
     trek = (res.docs[0] || null) as unknown as Trek | null;
 

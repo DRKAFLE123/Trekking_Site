@@ -1,11 +1,11 @@
 import { CollectionConfig } from 'payload';
 import { checkPermission } from '../access';
 
-export const Pages: CollectionConfig = {
-  slug: 'pages',
+export const CompanyPages: CollectionConfig = {
+  slug: 'companyPages',
   labels: {
-    singular: 'Travel Info Page',
-    plural: 'Travel Info Pages',
+    singular: 'Company Page',
+    plural: 'Company Pages',
   },
   admin: {
     useAsTitle: 'title',
@@ -13,10 +13,10 @@ export const Pages: CollectionConfig = {
     group: 'Website Content',
   },
   access: {
-    read: checkPermission('pages', 'read'),
-    create: checkPermission('pages', 'create'),
-    update: checkPermission('pages', 'update'),
-    delete: checkPermission('pages', 'delete'),
+    read: () => true, // Publicly readable for dynamic frontend routing
+    create: checkPermission('companyPages', 'create'),
+    update: checkPermission('companyPages', 'update'),
+    delete: checkPermission('companyPages', 'delete'),
   },
   fields: [
     {
@@ -42,7 +42,7 @@ export const Pages: CollectionConfig = {
                   index: true,
                   label: 'URL Slug',
                   admin: {
-                    description: 'The URL path for this page (e.g. weather-and-climate). Auto-generated from title if left blank.',
+                    description: 'The URL path for this page (e.g. about-us, why-us, csr). Auto-generated from title if left blank.',
                   },
                   hooks: {
                     beforeValidate: [
@@ -108,46 +108,6 @@ export const Pages: CollectionConfig = {
               admin: {
                 description: 'Leave blank to use the excerpt.',
               },
-            },
-          ],
-        },
-        {
-          label: 'Navbar Navigation',
-          fields: [
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'showInNavbar',
-                  type: 'checkbox',
-                  label: 'Show in Travel Info Dropdown?',
-                  defaultValue: true,
-                },
-                {
-                  name: 'navbarCategory',
-                  type: 'select',
-                  label: 'Navbar Column Category',
-                  defaultValue: 'essential',
-                  options: [
-                    { label: 'Essential Planning', value: 'essential' },
-                    { label: 'Safety & Accommodation', value: 'safety' },
-                    { label: 'Destinations & Culture', value: 'destinations' },
-                  ],
-                  admin: {
-                    condition: (data: any) => data?.showInNavbar,
-                  },
-                },
-                {
-                  name: 'navbarOrder',
-                  type: 'number',
-                  label: 'Dropdown Order Position',
-                  defaultValue: 10,
-                  admin: {
-                    condition: (data: any) => data?.showInNavbar,
-                    description: 'Lower numbers appear first in the column.',
-                  },
-                },
-              ],
             },
           ],
         },

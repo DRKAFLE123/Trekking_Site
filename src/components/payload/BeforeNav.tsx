@@ -3,12 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@payloadcms/ui';
 
 export const BeforeNav = () => {
   const pathname = usePathname();
   const isActive = pathname === '/admin' || pathname === '/admin/';
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { user } = useAuth<any>();
+  const isSuperAdminOrAdmin = user?.role === 'admin';
 
   // Robustly find the actual sidebar element no matter what class
   // Payload uses for it (it differs slightly between versions). We try
@@ -189,6 +192,18 @@ export const BeforeNav = () => {
 
   return (
     <>
+      {/* Hide edit and api tabs at top right for non-admin roles */}
+      {mounted && !isSuperAdminOrAdmin && (
+        <style dangerouslySetInnerHTML={{ __html: `
+          .doc-tab,
+          .doc-tabs,
+          [class*="doc-tab"],
+          [class*="doc-header__actions"] {
+            display: none !important;
+          }
+        `}} />
+      )}
+
       {/* Portal the button to document.body so it always stays visible,
           even when Payload collapses the nav (which would otherwise hide
           all descendants of the nav, including children of this component). */}

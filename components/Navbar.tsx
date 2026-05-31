@@ -235,17 +235,35 @@ export default function Navbar() {
   const [showAllTopTreks, setShowAllTopTreks] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navbarRef = useRef<HTMLDivElement>(null);
+  const navStripRef = useRef<HTMLElement>(null);
+  const [navBottom, setNavBottom] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
   const [showNavbar, setShowNavbar] = useState(true);
   const lastScrollYRef = useRef(0);
 
+  const topTreksScrollRef = useRef<HTMLDivElement>(null);
+
   // Reset showAllTopTreks when dropdown closes
   useEffect(() => {
-    if (activeDropdown !== "top10") {
+    if (activeDropdown !== "top10" && activeDropdown !== "treks-list") {
       setShowAllTopTreks(false);
     }
   }, [activeDropdown]);
+
+  // Auto-scroll when Show More Bestsellers is clicked
+  useEffect(() => {
+    if (showAllTopTreks && topTreksScrollRef.current) {
+      setTimeout(() => {
+        if (topTreksScrollRef.current) {
+          topTreksScrollRef.current.scrollTo({
+            top: topTreksScrollRef.current.scrollHeight,
+            behavior: "smooth"
+          });
+        }
+      }, 80);
+    }
+  }, [showAllTopTreks]);
 
   // Hide floating pill nav on conversion/form pages
   const hideFloatingNav = ["/contact-us", "/plan-a-trip"].some(p => pathname.startsWith(p))
@@ -257,6 +275,9 @@ export default function Navbar() {
   const [treksCount, setTreksCount] = useState<number>(7);
   const [dbTreks, setDbTreks] = useState<any[]>([]);
   const [dbPages, setDbPages] = useState<any[]>([]);
+  const [dbContactPages, setDbContactPages] = useState<any[]>([]);
+  const [dbCompanyPages, setDbCompanyPages] = useState<any[]>([]);
+  const [dbNavbarSettings, setDbNavbarSettings] = useState<any>(null);
 
   // Dynamically compute categorized travel info pages
   const getCategorizedTravelInfo = () => {
@@ -265,7 +286,7 @@ export default function Navbar() {
       const visiblePages = dbPages.filter((p: any) => p.showInNavbar !== false);
 
       const essential = visiblePages
-        .filter((p: any) => p.navbarCategory === "essential" || !p.navbarCategory)
+        .filter((p: any) => p.navbarCategory === "essential")
         .sort((a: any, b: any) => (a.navbarOrder ?? 10) - (b.navbarOrder ?? 10))
         .map((p: any) => ({ slug: p.slug, title: p.title }));
 
@@ -279,13 +300,19 @@ export default function Navbar() {
         .sort((a: any, b: any) => (a.navbarOrder ?? 10) - (b.navbarOrder ?? 10))
         .map((p: any) => ({ slug: p.slug, title: p.title }));
 
-      return [
-        { title: "Essential Planning", items: essential },
-        { title: "Safety & Accommodation", items: safety },
-        { title: "Destinations & Culture", items: destinations }
-      ];
+      // Only use DB data if ALL 3 columns have items properly categorised.
+      // If safety or destinations are empty, the DB pages don't have navbarCategory
+      // set yet — fall back to the curated static list so the dropdown stays full.
+      if (essential.length > 0 && safety.length > 0 && destinations.length > 0) {
+        return [
+          { title: "Essential Planning", items: essential },
+          { title: "Safety & Accommodation", items: safety },
+          { title: "Destinations & Culture", items: destinations }
+        ];
+      }
     }
-    return TRAVEL_INFO_CATEGORIES; // Fallback
+    // Static fallback — always has all 3 columns populated
+    return TRAVEL_INFO_CATEGORIES;
   };
 
   // Get simple flat list for mobile link items
@@ -300,11 +327,69 @@ export default function Navbar() {
     return flatList;
   };
 
-  const getDropdownTreks = () => {
-    if (dbTreks && dbTreks.length > 0) {
-      return dbTreks.slice(0, showAllTopTreks ? 15 : 10);
+  // Get simple flat list for dynamic contact dropdown items
+  const getContactPagesFlatList = () => {
+    if (dbContactPages && dbContactPages.length > 0) {
+      return dbContactPages.map((p: any) => ({
+        label: p.title,
+        href: `/contact-us/${p.slug}`,
+      }));
     }
-    return TOP_BESTSELLERS.slice(0, showAllTopTreks ? 15 : 10);
+    return [
+      { label: "Contact Us", href: "/contact-us" },
+    ];
+  };
+
+  // Get simple flat list for dynamic company dropdown items
+  const getCompanyPagesFlatList = () => {
+    if (dbCompanyPages && dbCompanyPages.length > 0) {
+      return dbCompanyPages.map((p: any) => {
+        const isStatic = ["about-us", "why-us", "csr"].includes(p.slug);
+        return {
+          label: p.title,
+          href: isStatic ? `/${p.slug}` : `/company/${p.slug}`,
+        };
+      });
+    }
+    return [
+      { label: "About Us", href: "/about-us" },
+      { label: "Our Team", href: "/our-team" },
+      { label: "Why Us", href: "/why-us" },
+      { label: "Gallery", href: "/gallery" },
+      { label: "Video Gallery", href: "/video-gallery" },
+      { label: "CSR", href: "/csr" },
+    ];
+  };
+
+  const getDropdownTreks = () => {
+    // Find the treks-list dropdown item to see if it has custom featuredTreks configured
+    const treksListLink = navLinks.find((link: any) => link.key === "top10" || link.key === "treks-list");
+    if (treksListLink && Array.isArray(treksListLink.featuredTreks) && treksListLink.featuredTreks.length > 0) {
+      // Map featuredTreks relationship docs
+      const list = treksListLink.featuredTreks.map((t: any) => {
+        if (typeof t === "object" && t !== null) {
+          return {
+            title: t.title,
+            slug: t.slug,
+            duration: t.duration || 14,
+            difficulty: t.difficulty || "moderate",
+            price: t.price || 1200,
+            discountedPrice: t.discountedPrice,
+          };
+        }
+        return null;
+      }).filter(Boolean);
+      return list.slice(0, showAllTopTreks ? 15 : 10);
+    }
+
+    // Default automatic merging fallback
+    const dbList = dbTreks || [];
+    const dbSlugs = new Set(dbList.map((t: any) => (t.slug || "").toLowerCase()));
+    const fallbackList = TOP_BESTSELLERS.filter(
+      (t: any) => !dbSlugs.has((t.slug || "").toLowerCase())
+    );
+    const combined = [...dbList, ...fallbackList];
+    return combined.slice(0, showAllTopTreks ? 15 : 10);
   };
 
   const getTop5Treks = () => {
@@ -374,10 +459,46 @@ export default function Navbar() {
         console.error("Failed to fetch pages in Navbar:", err);
       }
     }
+    async function fetchContactPages() {
+      try {
+        const res = await fetch("/api/public/contact-pages?limit=100");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setDbContactPages(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch contact pages in Navbar:", err);
+      }
+    }
+    async function fetchCompanyPages() {
+      try {
+        const res = await fetch("/api/public/company-pages?limit=100");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setDbCompanyPages(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch company pages in Navbar:", err);
+      }
+    }
+    async function fetchNavbarSettings() {
+      try {
+        const res = await fetch("/api/navbarSettings");
+        const data = await res.json();
+        if (data && Array.isArray(data.docs) && data.docs.length > 0) {
+          setDbNavbarSettings(data.docs[0]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch navbar settings in Navbar:", err);
+      }
+    }
     fetchData();
     fetchSettings();
     fetchTrips();
     fetchPages();
+    fetchContactPages();
+    fetchCompanyPages();
+    fetchNavbarSettings();
   }, []);
 
   // Scroll effect with direction tracking
@@ -401,6 +522,23 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Track exact bottom edge of nav strip for mega-menu positioning
+  useEffect(() => {
+    function updateNavBottom() {
+      if (navStripRef.current) {
+        const rect = navStripRef.current.getBoundingClientRect();
+        setNavBottom(rect.bottom);
+      }
+    }
+    updateNavBottom();
+    window.addEventListener('scroll', updateNavBottom, { passive: true });
+    window.addEventListener('resize', updateNavBottom);
+    return () => {
+      window.removeEventListener('scroll', updateNavBottom);
+      window.removeEventListener('resize', updateNavBottom);
+    };
+  }, [isScrolled]);
 
   // Close menus on route change
   useEffect(() => {
@@ -455,47 +593,105 @@ export default function Navbar() {
 
   const isActive = (link: any) => {
     if (!link.dropdown && link.href) return pathname === link.href;
-    if (link.key === "trips") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
-    if (link.key === "info") return pathname.startsWith("/travel-info") || pathname.startsWith("/faqs");
-    if (link.key === "company") return ["/about-us", "/our-team", "/gallery", "/video-gallery", "/csr"].includes(pathname);
-    if (link.key === "top10") return pathname === "/bestsellers";
+    const key = link.key;
+    if (key === "trips" || key === "regions-grid") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
+    if (key === "info" || key === "travel-info") return pathname.startsWith("/travel-info") || pathname.startsWith("/faqs");
+    if (key === "contact-pages") return pathname.startsWith("/contact-us");
+    if (key === "company-pages" || key === "company" || key === "custom-links") return pathname.startsWith("/company") || ["/about-us", "/our-team", "/gallery", "/video-gallery", "/csr", "/why-us"].includes(pathname);
+    if (key === "top10" || key === "treks-list") return pathname === "/bestsellers";
     return false;
   };
 
-  const navLinks = [
-    {
-      title: "Nepal Trip",
-      dropdown: true,
-      key: "trips",
-      items: Object.keys(TRIP_DATA).filter(k => k !== "All Trips").map(k => ({ label: k, href: `/regions/${categoryToRegion[k]?.slug || 'everest'}` })),
-    },
-    {
-      title: "Travel Info",
-      dropdown: true,
-      key: "info",
-      items: getTravelInfoFlatList(),
-    },
-    {
-      title: "Company",
-      dropdown: true,
-      key: "company",
-      items: [
-        { label: "About Us", href: "/about-us" },
-        { label: "Our Team", href: "/our-team" },
-        { label: "Responsible Tourism", href: "/csr" },
-        { label: "Terms & Conditions", href: "/terms-and-conditions" },
-        { label: "Legal Documents", href: "/about-us#licensing" },
-        { label: "Privacy Policy", href: "/privacy-policy" }
-      ],
-    },
-    { title: "Blog", href: "/blogs", dropdown: false },
-    { title: "Contact Us", href: "/contact-us", dropdown: false },
-    {
-      title: "Top 10 Treks",
-      dropdown: true,
-      key: "top10",
+  const getDynamicNavLinks = () => {
+    if (dbNavbarSettings && Array.isArray(dbNavbarSettings.navigationMenu)) {
+      return dbNavbarSettings.navigationMenu
+        .filter((item: any) => !item.hide)
+        .map((item: any) => {
+          if (item.type === "single-link") {
+            return {
+              title: item.title,
+              href: item.href || "/",
+              dropdown: false,
+            };
+          }
+          
+          const key = item.dropdownStyle || "custom";
+          let items: any[] = [];
+          
+          if (item.dropdownStyle === "custom-links" && Array.isArray(item.customLinks)) {
+            items = item.customLinks
+              .filter((cl: any) => !cl.hide)
+              .map((cl: any) => ({
+                label: cl.label,
+                href: cl.href,
+              }));
+          } else if (item.dropdownStyle === "travel-info") {
+            items = getTravelInfoFlatList();
+          } else if (item.dropdownStyle === "contact-pages") {
+            items = getContactPagesFlatList();
+          } else if (item.dropdownStyle === "company-pages") {
+            items = getCompanyPagesFlatList();
+          } else if (item.dropdownStyle === "regions-grid") {
+            items = Object.keys(TRIP_DATA)
+              .filter(k => k !== "All Trips")
+              .map(k => ({
+                label: k,
+                href: `/regions/${categoryToRegion[k]?.slug || "everest"}`,
+              }));
+          }
+          
+          return {
+            title: item.title,
+            dropdown: true,
+            key,
+            items,
+            dropdownStyle: item.dropdownStyle,
+            featuredTreks: item.featuredTreks,
+          };
+        });
     }
-  ];
+    
+    return [
+      {
+        title: "Nepal Trip",
+        dropdown: true,
+        key: "trips",
+        dropdownStyle: "regions-grid",
+        items: Object.keys(TRIP_DATA).filter(k => k !== "All Trips").map(k => ({ label: k, href: `/regions/${categoryToRegion[k]?.slug || 'everest'}` })),
+      },
+      {
+        title: "Travel Info",
+        dropdown: true,
+        key: "info",
+        dropdownStyle: "travel-info",
+        items: getTravelInfoFlatList(),
+      },
+      {
+        title: "Company",
+        dropdown: true,
+        key: "company",
+        dropdownStyle: "custom-links",
+        items: [
+          { label: "About Us", href: "/about-us" },
+          { label: "Our Team", href: "/our-team" },
+          { label: "Responsible Tourism", href: "/csr" },
+          { label: "Terms & Conditions", href: "/terms-and-conditions" },
+          { label: "Legal Documents", href: "/about-us#licensing" },
+          { label: "Privacy Policy", href: "/privacy-policy" }
+        ],
+      },
+      { title: "Blog", href: "/blogs", dropdown: false },
+      { title: "Contact Us", href: "/contact-us", dropdown: false },
+      {
+        title: "Top 10 Treks",
+        dropdown: true,
+        key: "top10",
+        dropdownStyle: "treks-list",
+      }
+    ];
+  };
+
+  const navLinks = getDynamicNavLinks();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -526,11 +722,11 @@ export default function Navbar() {
           {/* Left Logo */}
           <Link href="/" className="group flex items-center gap-2.5 shrink-0">
             <div className="relative w-12 h-12 overflow-hidden bg-gray-50 rounded-lg p-0.5 border border-gray-200 shadow-inner transition group-hover:scale-105 shrink-0">
-              <Image src="/finalofficiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
+              <Image src={dbNavbarSettings?.logo?.url || "/finalofficiallogo.jpeg"} alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
             </div>
             <div className="flex flex-col text-left">
               <span className="font-sans text-[13px] font-extrabold text-[#1a2e1f] leading-none uppercase tracking-wide">
-                {(siteSettings?.siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "Nature Heaven"}
+                {(dbNavbarSettings?.siteName || siteSettings?.siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "Nature Heaven"}
               </span>
               <span className="text-[9px] tracking-[0.05em] text-[#6b7280] uppercase font-semibold mt-0.5 leading-none">Trekking &amp; Expedition</span>
             </div>
@@ -634,7 +830,9 @@ export default function Navbar() {
       </div>
 
       {/* Sticky Nav — hidden on booking/contact/plan-a-trip */}
-      <nav className={`transition-all duration-300 z-50 ${
+      <nav
+        ref={navStripRef}
+        className={`transition-all duration-300 z-50 relative ${
         isScrolled && !hideFloatingNav
           ? `fixed left-0 right-0 mx-auto w-[90%] max-w-5xl rounded-full bg-[#1a2e1f]/95 backdrop-blur-md shadow-xl border border-white/10 py-1 px-2 transform transition-all duration-300 ${showNavbar ? "top-3 opacity-100 translate-y-0" : "-top-24 opacity-0 -translate-y-4 pointer-events-none"}`
           : isScrolled && hideFloatingNav
@@ -646,18 +844,23 @@ export default function Navbar() {
           <div className={`transition-all duration-300 ${isScrolled ? "opacity-100 block" : "opacity-100 block lg:opacity-0 lg:hidden"}`}>
             <Link href="/" className="flex items-center gap-1.5">
               <div className="relative w-6 h-6 overflow-hidden bg-white/20 rounded-md p-0.5 shrink-0">
-                <Image src="/finalofficiallogo.jpeg" alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
+                <Image src={dbNavbarSettings?.logo?.url || "/finalofficiallogo.jpeg"} alt="Nature Heaven Logo" fill className="object-contain" unoptimized />
               </div>
               <span className="font-sans text-[10px] font-extrabold text-white uppercase tracking-wide leading-none">
-                Nature Heaven
+                {dbNavbarSettings?.siteName ? dbNavbarSettings.siteName.replace(/\s*(Trekking|Trek).*$/i, "") : "Nature Heaven"}
               </span>
             </Link>
           </div>
 
           {/* Desktop Nav Links — tighter spacing in floating mode */}
           <div className={`hidden lg:flex items-center ${isScrolled ? "gap-4" : "gap-7"}`}>
-            {navLinks.map((link) => (
-              <div key={link.title} className={(link.key === "trips" || link.key === "info") ? "" : "relative"} onMouseEnter={() => link.dropdown && link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave}>
+            {navLinks.map((link: any) => (
+              <div 
+                key={link.title} 
+                className={(link.key === "trips" || link.dropdownStyle === "regions-grid" || link.key === "info" || link.dropdownStyle === "travel-info") ? "" : "relative"} 
+                onMouseEnter={() => link.dropdown && link.key && handleMouseEnter(link.key)} 
+                onMouseLeave={handleMouseLeave}
+              >
                 {link.dropdown ? (
                   <button onClick={() => {
                     if (closeTimeoutRef.current) { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }
@@ -674,85 +877,158 @@ export default function Navbar() {
                 {link.dropdown && (
                   <AnimatePresence>
                     {activeDropdown === link.key && (
-                      link.key === "trips" ? (
-                        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 15 }} transition={{ duration: 0.2 }} onMouseEnter={() => link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave} className="absolute left-0 right-0 top-full mt-1 w-full bg-white border border-gray-200 shadow-2xl rounded-2xl p-6 z-50 flex gap-6 text-charcoal before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent animate-in fade-in slide-in-from-top-3 duration-250">
-                          {/* Left Categories */}
-                          <div className="w-56 flex flex-col gap-0.5 border-r border-gray-100 pr-5 shrink-0 max-h-[400px] overflow-y-auto scrollbar-thin">
-                            <span className="text-[10px] tracking-[0.2em] font-extrabold uppercase text-gray-400 mb-3 block border-b border-gray-100 pb-2 font-sans">
-                              Regions &amp; Categories
-                            </span>
-                            {categories.map((cat) => (
-                              <button 
-                                key={cat} 
-                                onClick={() => setActiveCategory(cat)} 
-                                onMouseEnter={() => setActiveCategory(cat)} 
-                                className={`w-full text-left px-3 py-2 rounded-xl transition duration-200 text-[13px] font-sans font-bold border-l-[3px] ${activeCategory === cat ? "bg-secondary/10 border-secondary text-secondary-dark" : "border-transparent text-gray-900 hover:bg-secondary/5 hover:text-secondary-dark"}`}
-                              >
-                                {cat}
-                              </button>
-                            ))}
-                          </div>
-                          
-                          {/* Center Content: full trek names, no truncation */}
-                          <div className="flex-1 pl-2 min-w-0">
-                            <div className="flex items-center mb-3 pb-2 border-b border-gray-100">
-                              <span className="text-[10px] tracking-[0.2em] font-extrabold uppercase text-gray-400 font-sans">
-                                Popular Trips under {activeCategory} ({TRIP_DATA[activeCategory].length} Options)
-                              </span>
-                            </div>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 font-sans max-h-[360px] overflow-y-auto scrollbar-thin pr-1">
-                              {TRIP_DATA[activeCategory].map((trip) => (
-                                <Link 
-                                  key={trip.slug} 
-                                  href={`/trips/${trip.slug}`} 
-                                  onClick={closeDropdown} 
-                                  className="text-[12px] font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark px-3 py-2 rounded-lg transition duration-200 block leading-snug"
-                                >
-                                  {trip.title}
-                                </Link>
-                              ))}
+                      (link.key === "trips" || link.key === "regions-grid") ? (
+                        // ===== NEPAL TRIP MEGA MENU =====
+                        <motion.div
+                          key="trips-mega"
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.15, ease: "easeOut" }}
+                          onMouseEnter={() => link.key && handleMouseEnter(link.key)}
+                          onMouseLeave={handleMouseLeave}
+                          className="absolute left-0 right-0 top-full mt-1 w-full z-50 flex justify-center pointer-events-none"
+                          style={{ pointerEvents: 'none' }}
+                        >
+                          {/* Floating card limited to screen */}
+                          <div 
+                            className={`bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-gray-150 rounded-2xl overflow-hidden transition-all duration-300 ${
+                              isScrolled && !hideFloatingNav
+                                ? "w-[90%] max-w-5xl"
+                                : "w-[95%] max-w-7xl"
+                            }`}
+                            style={{ pointerEvents: 'auto' }}
+                          >
+                            <div className="flex" style={{ minHeight: 320 }}>
+
+                              {/* Left sidebar — light grey, Regions list */}
+                              <div className="w-[240px] flex-shrink-0 bg-[#f7f9f7] border-r border-gray-100 py-5">
+                                <div className="px-5 mb-3 pb-2 border-b border-gray-200/60">
+                                  <span className="text-[9px] tracking-[0.22em] font-black uppercase text-gray-500 font-sans">
+                                    Regions &amp; Categories
+                                  </span>
+                                </div>
+                                <div className="flex flex-col gap-1 px-3 max-h-[380px] overflow-y-auto">
+                                  {categories.map((cat) => (
+                                    <button
+                                      key={cat}
+                                      onClick={() => setActiveCategory(cat)}
+                                      onMouseEnter={() => setActiveCategory(cat)}
+                                      className={`w-full text-left px-4 py-2.5 text-[13px] font-sans transition-all duration-150 rounded-xl ${
+                                        activeCategory === cat
+                                          ? "bg-[#c8922a]/5 text-[#c8922a] border-l-[3.5px] border-[#c8922a] font-bold"
+                                          : "text-[#1a2e1f] font-bold border-l-[3.5px] border-transparent hover:bg-gray-100 hover:text-[#1a2e1f]"
+                                      }`}
+                                    >
+                                      {cat}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Right panel — Trek list in 2 columns, with padding capped to readable width */}
+                              <div className="flex-1 py-5 px-6 max-w-5xl">
+                                <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                                  <span className="text-[9px] tracking-[0.22em] font-black uppercase text-[#c8922a] font-sans">
+                                    Popular Trips &mdash; {activeCategory}
+                                    <span className="ml-2 text-gray-400 font-medium normal-case tracking-normal text-[10px]">
+                                      ({TRIP_DATA[activeCategory]?.length || 0} options)
+                                    </span>
+                                  </span>
+                                  <Link
+                                    href="/trips"
+                                    onClick={closeDropdown}
+                                    className="text-[10px] font-bold text-[#c8922a] hover:text-[#1a2e1f] transition-colors duration-150"
+                                  >
+                                    View All Trips →
+                                  </Link>
+                                </div>
+                                <div className="grid grid-cols-2 gap-x-6 gap-y-0 max-h-[340px] overflow-y-auto pr-2">
+                                  {(TRIP_DATA[activeCategory] || []).map((trip) => (
+                                    <Link
+                                      key={trip.slug}
+                                      href={`/trips/${trip.slug}`}
+                                      onClick={closeDropdown}
+                                      className="group flex items-center gap-2 px-2 py-[6px] rounded-md text-[12px] font-medium text-gray-600 hover:text-[#1a2e1f] hover:bg-[#f7f9f7] transition-all duration-150"
+                                    >
+                                      <span className="w-1.5 h-1.5 rounded-full bg-[#c8922a] flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
+                                      <span className="leading-snug">{trip.title}</span>
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+
                             </div>
                           </div>
                         </motion.div>
-                      ) : link.key === "info" ? (
-                        // ===== PREMIUM CATEGORIZED TRAVEL INFO DROPDOWN =====
+
+                      ) : (link.key === "info" || link.key === "travel-info") ? (
+                        // ===== TRAVEL INFO MEGA MENU — 3-column compact =====
                         <motion.div
-                          initial={{ opacity: 0, y: 15 }}
+                          key="info-mega"
+                          initial={{ opacity: 0, y: -6 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 15 }}
-                          transition={{ duration: 0.2 }}
-                          onMouseEnter={() => link.key && handleMouseEnter("info")}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.15, ease: "easeOut" }}
+                          onMouseEnter={() => link.key && handleMouseEnter(link.key)}
                           onMouseLeave={handleMouseLeave}
-                          className="absolute left-0 right-0 mx-auto mt-1 w-full max-w-5xl bg-white border border-gray-200 shadow-2xl rounded-2xl p-6 grid grid-cols-3 gap-6 text-charcoal z-50 before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent animate-in fade-in slide-in-from-top-3 duration-250"
+                          className="absolute left-0 top-full mt-1 z-50"
+                          style={{ pointerEvents: 'none', minWidth: '720px', maxWidth: '820px', width: 'max-content' }}
                         >
-                          {getCategorizedTravelInfo().map((category) => (
-                            <div key={category.title} className="flex flex-col">
-                              <span className="text-[10px] tracking-[0.2em] font-extrabold uppercase text-[#c8922a] mb-3.5 block border-b border-gray-100 pb-2 font-sans">
-                                {category.title}
-                              </span>
-                              <div className="flex flex-col gap-1 max-h-[320px] overflow-y-auto scrollbar-none pr-1">
-                                {category.items.map((item) => (
-                                  <Link
-                                    key={item.slug}
-                                    href={`/travel-info/${item.slug}`}
-                                    onClick={closeDropdown}
-                                    className="block px-3 py-2 rounded-lg font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-200"
+                          {/* Compact card — anchored to Travel Info item */}
+                          <div
+                            className="bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-gray-150 rounded-2xl overflow-hidden"
+                            style={{ pointerEvents: 'auto' }}
+                          >
+                            <div className="w-full px-7 py-5">
+                              <div className="grid grid-cols-3 gap-0">
+                                {getCategorizedTravelInfo().map((category, colIdx) => (
+                                  <div
+                                    key={category.title}
+                                    className={`flex flex-col pr-6 ${
+                                      colIdx > 0 ? "pl-6 border-l border-gray-100" : ""
+                                    }`}
                                   >
-                                    {item.title}
-                                  </Link>
+                                    <span className="text-[9px] tracking-[0.22em] font-black uppercase text-[#c8922a] mb-3 block pb-2 border-b border-gray-100 font-sans">
+                                      {category.title}
+                                    </span>
+                                    <div className="flex flex-col gap-0">
+                                      {category.items.map((item) => {
+                                        const itemHref = `/travel-info/${item.slug}`;
+                                        const isItemActive = pathname === itemHref;
+                                        return (
+                                          <Link
+                                            key={item.slug}
+                                            href={itemHref}
+                                            onClick={closeDropdown}
+                                            className={`group flex items-center gap-2 px-2 py-[6px] rounded-md font-sans text-[12px] font-medium transition-all duration-150 ${
+                                              isItemActive
+                                                ? "text-[#c8922a] bg-[#c8922a]/5 font-bold"
+                                                : "text-gray-600 hover:text-[#1a2e1f] hover:bg-[#f7f9f7]"
+                                            }`}
+                                          >
+                                            <span className={`w-1.5 h-1.5 rounded-full bg-[#c8922a] flex-shrink-0 transition-opacity duration-150 ${
+                                              isItemActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                                            }`} />
+                                            {item.title}
+                                          </Link>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
                                 ))}
                               </div>
                             </div>
-                          ))}
+                          </div>
                         </motion.div>
-                      ) : link.key === "top10" ? (
+                      ) : (link.key === "top10" || link.key === "treks-list") ? (
                         // ===== TOP 10 TREKS DROPDOWN =====
                         <motion.div
                           initial={{ opacity: 0, y: 15 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 15 }}
                           transition={{ duration: 0.2 }}
-                          onMouseEnter={() => handleMouseEnter("top10")}
+                          onMouseEnter={() => handleMouseEnter(link.key)}
                           onMouseLeave={handleMouseLeave}
                           className="absolute left-0 mt-1 min-w-[300px] max-w-[340px] bg-white border border-gray-150 shadow-2xl rounded-xl py-3 z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent"
                         >
@@ -761,7 +1037,7 @@ export default function Navbar() {
                               Bestseller Himalayan Treks
                             </span>
                           </div>
-                          <div className="max-h-[380px] overflow-y-auto scrollbar-none flex flex-col">
+                          <div ref={topTreksScrollRef} className="max-h-[380px] overflow-y-auto scrollbar-none flex flex-col">
                             {getDropdownTreks().map((item: any) => (
                               <Link
                                 key={item.slug}
@@ -770,19 +1046,19 @@ export default function Navbar() {
                                 className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-300 border-l-[3px] border-transparent hover:border-secondary"
                               >
                                 <div className="flex flex-col">
-                                  <span className="font-bold text-primary transition duration-200">{item.title}</span>
-                                  <span className="text-[10px] text-charcoal/50 mt-0.5 font-normal">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.price} USD</span>
+                                  <span className="font-bold text-charcoal/90">{item.title}</span>
+                                  <span className="text-[9px] text-muted font-bold mt-1">{item.duration} Days • <span className="capitalize">{item.difficulty}</span> • ${item.price} USD</span>
                                 </div>
                               </Link>
                             ))}
                           </div>
-                          <div className="px-5 pt-2 mt-1 border-t border-gray-150 flex items-center justify-center">
+                          <div className="px-5 py-2 border-t border-gray-100 bg-gray-50/50 flex justify-center">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setShowAllTopTreks(!showAllTopTreks);
                               }}
-                              className="text-xs font-bold text-secondary-dark hover:text-secondary transition-colors duration-200 focus:outline-none flex items-center gap-1"
+                              className="text-xs font-bold text-[#c8922a] hover:text-[#c8922a]/80 transition duration-200 focus:outline-none"
                             >
                               {showAllTopTreks ? "Collapse List" : "+ Show 5 More Bestsellers"}
                             </button>
@@ -790,9 +1066,23 @@ export default function Navbar() {
                         </motion.div>
                       ) : (
                         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 15 }} transition={{ duration: 0.2 }} onMouseEnter={() => link.key && handleMouseEnter(link.key)} onMouseLeave={handleMouseLeave} className="absolute left-0 mt-1 min-w-[220px] bg-white border border-gray-150 shadow-2xl rounded-xl py-2 z-50 overflow-hidden before:content-[''] before:absolute before:top-[-20px] before:left-0 before:right-0 before:h-[20px] before:bg-transparent">
-                          {link.items && link.items.map((item) => (
-                            <Link key={item.label} href={item.href} onClick={closeDropdown} className="block px-5 py-2.5 font-sans text-xs font-semibold text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark transition duration-300">{item.label}</Link>
-                          ))}
+                          {link.items && link.items.map((item: any) => {
+                            const isSubActive = pathname === item.href;
+                            return (
+                              <Link 
+                                key={item.label} 
+                                href={item.href} 
+                                onClick={closeDropdown} 
+                                className={`block px-5 py-2.5 font-sans text-xs font-semibold transition duration-300 ${
+                                  isSubActive 
+                                    ? "bg-[#c8922a]/10 text-[#c8922a] border-l-[3.5px] border-[#c8922a]" 
+                                    : "text-charcoal/80 hover:bg-secondary/10 hover:text-secondary-dark border-l-[3.5px] border-transparent"
+                                }`}
+                              >
+                                {item.label}
+                              </Link>
+                            );
+                          })}
                         </motion.div>
                       )
                     )}
@@ -884,19 +1174,19 @@ export default function Navbar() {
               </div>
               {/* Mobile Links */}
               <div className="flex flex-col gap-5">
-                {navLinks.map((link) => (
+                {navLinks.map((link: any) => (
                   <div key={link.title} className="flex flex-col gap-2">
                     {link.dropdown ? (
                       <>
                         <button onClick={() => setActiveDropdown(activeDropdown === link.key ? null : (link.key || null))} className="flex items-center justify-between font-sans font-bold text-bgOffWhite text-left py-1.5 hover:text-[#c8922a] focus:outline-none transition text-sm">
                           <span className="flex items-center gap-1.5">
-                            {link.key === "top10" && <FaStar className="h-3.5 w-3.5 text-[#c8922a] animate-pulse mr-1" />}
+                            {(link.key === "top10" || link.key === "treks-list") && <FaStar className="h-3.5 w-3.5 text-[#c8922a] animate-pulse mr-1" />}
                             {link.title}
                           </span>
                           <FaChevronDown className={`h-3 w-3 text-[#c8922a] transition-transform duration-300 ${activeDropdown === link.key ? "rotate-180" : ""}`} />
                         </button>
                         <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 ${activeDropdown === link.key ? "max-h-none opacity-100 py-1" : "max-h-0 opacity-0"}`}>
-                          {link.key === "trips" ? (
+                          {(link.key === "trips" || link.key === "regions-grid") ? (
                             <div className="flex flex-col gap-3 py-1 pl-1">
                               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory font-sans">
                                 {categories.map((cat) => (
@@ -909,7 +1199,7 @@ export default function Navbar() {
                                 ))}
                               </div>
                             </div>
-                          ) : link.key === "top10" ? (
+                          ) : (link.key === "top10" || link.key === "treks-list") ? (
                             <div className="flex flex-col gap-1.5 pl-4 font-sans">
                               {getDropdownTreks().map((item: any) => (
                                 <Link
@@ -941,9 +1231,23 @@ export default function Navbar() {
                             </div>
                           ) : (
                             <div className="flex flex-col gap-2 pl-4">
-                              {link.items?.map((item) => (
-                                <Link key={item.label} href={item.href} onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} className="text-xs font-semibold text-bgOffWhite/70 hover:text-[#c8922a] transition py-1">{item.label}</Link>
-                              ))}
+                              {link.items?.map((item: any) => {
+                                const isMobileSubActive = pathname === item.href;
+                                return (
+                                  <Link 
+                                    key={item.label} 
+                                    href={item.href} 
+                                    onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} 
+                                    className={`text-xs font-semibold transition py-1 ${
+                                      isMobileSubActive 
+                                        ? "text-[#c8922a] font-bold" 
+                                        : "text-bgOffWhite/70 hover:text-[#c8922a]"
+                                    }`}
+                                  >
+                                    {item.label}
+                                  </Link>
+                                );
+                              })}
                             </div>
                           )}
                         </div>

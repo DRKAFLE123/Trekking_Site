@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FaChevronRight, FaInfoCircle, FaMapMarkerAlt, FaHeadset, FaEnvelope, FaStar } from "react-icons/fa";
+import { FaChevronRight, FaInfoCircle, FaMapMarkerAlt, FaHeadset, FaEnvelope, FaStar, FaCompass } from "react-icons/fa";
 import { renderLexical } from "@/lib/lexical-renderer";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
@@ -19,7 +19,7 @@ async function getPageData(slug: string) {
   try {
     const payload = await getPayload({ config });
     const result = await payload.find({
-      collection: 'pages',
+      collection: 'companyPages',
       where: {
         slug: {
           equals: slug,
@@ -39,7 +39,7 @@ async function getPagesList() {
   try {
     const payload = await getPayload({ config });
     const result = await payload.find({
-      collection: 'pages',
+      collection: 'companyPages',
       limit: 20,
       depth: 0,
     });
@@ -56,12 +56,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!page) return { title: "Page Not Found | Nature Heaven Treks" };
 
   return {
-    title: page.seoTitle || `${page.title} | Travel Info | Nature Heaven Treks`,
-    description: page.seoDescription || page.excerpt || `Information about ${page.title} for traveling in Nepal.`,
+    title: page.seoTitle || `${page.title} | Company | Nature Heaven Treks`,
+    description: page.seoDescription || page.excerpt || `Learn more about ${page.title} - Nature Heaven Trekking & Expedition.`,
   };
 }
 
-export default async function TravelInfoPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CompanyDynamicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const page = await getPageData(slug);
   if (!page) notFound();
@@ -69,7 +69,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
   const allPages = await getPagesList();
 
   return (
-    <div className="bg-[#f8f5f0] min-h-screen pb-20">
+    <div className="bg-[#f8f5f0] min-h-screen pb-20 pt-24 md:pt-32">
       {/* Hero Section */}
       <div className="relative h-[300px] md:h-[400px] w-full bg-[#1a2e1f]">
         {(page.heroImage as any)?.url ? (
@@ -86,8 +86,8 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
         
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs font-bold uppercase tracking-widest mb-4 border border-white/20">
-            <FaInfoCircle className="text-[#c8922a]" />
-            Travel Information
+            <FaCompass className="text-[#c8922a]" />
+            Company Profile &amp; Ethics
           </div>
           <h1 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4 drop-shadow-lg">
             {page.title}
@@ -105,7 +105,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
         <div className="flex items-center text-sm text-[#6B6B6B] mb-8 font-sans overflow-x-auto whitespace-nowrap pb-2">
           <Link href="/" className="hover:text-[#2E7D32] transition">Home</Link>
           <FaChevronRight className="mx-2 text-xs text-gray-400" />
-          <span className="text-gray-400">Travel Info</span>
+          <span className="text-gray-400">Company</span>
           <FaChevronRight className="mx-2 text-xs text-gray-400" />
           <span className="font-semibold text-[#1a2e1f]">{page.title}</span>
         </div>
@@ -132,7 +132,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
             {page.documents && page.documents.length > 0 && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-6 flex items-center gap-2">
-                  <FaInfoCircle className="text-[#c8922a]" /> Downloadable Resources &amp; PDFs
+                  <FaInfoCircle className="text-[#c8922a]" /> Downloadable Credentials &amp; Documents
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {page.documents.map((doc: any) => (
@@ -173,7 +173,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
                   <svg className="w-6 h-6 text-[#c8922a]" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                   </svg>
-                  Helper Video Guides &amp; Overviews
+                  Featured Company Videos &amp; Documentaries
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {page.videos.map((vid: any, idx: number) => {
@@ -247,33 +247,38 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
 
           {/* Sidebar */}
           <aside className="w-full lg:w-[350px] shrink-0">
-            {/* Sticky wrapper — keeps both cards together while scrolling */}
             <div className="sticky top-24 flex flex-col gap-6">
               {/* ScrollSpy Table of Contents */}
               <ScrollSpyTOC />
 
               {/* Quick Links */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
-                  <FaMapMarkerAlt className="text-[#c8922a]" /> More Topics
-                </h3>
-                <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
-                  {allPages.map((p: any) => (
-                    <li key={p.slug}>
-                      <Link 
-                        href={`/travel-info/${p.slug}`}
-                        className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
-                          p.slug === page.slug 
-                            ? 'bg-[#1a2e1f] text-white' 
-                            : 'text-[#4A4A4A] hover:bg-gray-50 hover:text-[#c8922a]'
-                        }`}
-                      >
-                        {p.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {allPages.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-[#c8922a]" /> Company Info
+                  </h3>
+                  <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
+                    {allPages.map((p: any) => {
+                      const isStatic = ["about-us", "why-us", "csr"].includes(p.slug);
+                      const href = isStatic ? `/${p.slug}` : `/company/${p.slug}`;
+                      return (
+                        <li key={p.slug}>
+                          <Link 
+                            href={href}
+                            className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
+                              p.slug === page.slug 
+                                ? 'bg-[#1a2e1f] text-white' 
+                                : 'text-[#4A4A4A] hover:bg-gray-50 hover:text-[#c8922a]'
+                            }`}
+                          >
+                            {p.title}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
 
               {/* Need Help CTA */}
               <div className="bg-gradient-to-br from-[#1a2e1f] to-[#2E7D32] rounded-2xl p-6 text-white text-center shadow-lg">

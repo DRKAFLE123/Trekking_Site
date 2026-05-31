@@ -68,9 +68,10 @@ const defaultBlogs = [
 export default async function BlogsPage() {
   let blogs: BlogPost[] = [];
   let siteSettings: any = null;
+  let blogSettings: any = null;
   try {
     const payload = await getPayload({ config });
-    const [blogsRes, siteSettingsRes] = await Promise.all([
+    const [blogsRes, siteSettingsRes, blogSettingsRes] = await Promise.all([
       payload.find({
         collection: "blogPosts",
         depth: 1,
@@ -79,9 +80,14 @@ export default async function BlogsPage() {
         collection: "siteSettings",
         depth: 1,
       }),
+      payload.find({
+        collection: "blogSettings",
+        depth: 1,
+      }),
     ]);
     blogs = blogsRes.docs as unknown as BlogPost[];
     siteSettings = siteSettingsRes.docs[0] || null;
+    blogSettings = blogSettingsRes.docs[0] || null;
   } catch (err: any) {
     console.warn("[Blogs Page] Failed to fetch data (relation may not exist yet during build):", err.message);
   }
@@ -96,7 +102,7 @@ export default async function BlogsPage() {
           Loading Himalayan Chronicles...
         </div>
       }>
-        <BlogsPageContent blogs={displayBlogs} siteSettings={siteSettings} />
+        <BlogsPageContent blogs={displayBlogs} siteSettings={siteSettings} blogSettings={blogSettings} />
       </Suspense>
     </div>
   );

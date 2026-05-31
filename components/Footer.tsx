@@ -20,6 +20,7 @@ export default function Footer() {
   const pathname = usePathname();
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [regions, setRegions] = useState<any[]>([]);
+  const [dbFooterSettings, setDbFooterSettings] = useState<any>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -56,11 +57,23 @@ export default function Footer() {
         console.error("Failed to fetch regions in Footer:", err);
       }
     }
+    async function fetchFooterSettings() {
+      try {
+        const res = await fetch("/api/footerSettings");
+        const data = await res.json();
+        if (data && Array.isArray(data.docs) && data.docs.length > 0) {
+          setDbFooterSettings(data.docs[0]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch footer settings in Footer:", err);
+      }
+    }
     fetchData();
     fetchRegions();
+    fetchFooterSettings();
   }, []);
 
-  const { siteName, contactInfo, socialLinks, affiliations, emergencyNumbers } = siteSettings || {};
+  const { siteName, contactInfo, socialLinks, emergencyNumbers } = siteSettings || {};
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,8 +104,10 @@ export default function Footer() {
     }
   };
 
-  // Safe helper to extract emergency numbers from site settings or fallback
   const getSOSNumbers = () => {
+    if (dbFooterSettings?.emergencyNumbers && dbFooterSettings.emergencyNumbers.length > 0) {
+      return dbFooterSettings.emergencyNumbers.map((item: any) => item?.number).filter(Boolean);
+    }
     if (emergencyNumbers && emergencyNumbers.length > 0) {
       return emergencyNumbers.map((item: any) => {
         return typeof item === "string" ? item : item?.number;
@@ -110,17 +125,210 @@ export default function Footer() {
   };
   const blendColor = getBlendColor();
 
+  const renderNavigationColumns = () => {
+    if (dbFooterSettings && Array.isArray(dbFooterSettings.navigationMenu) && dbFooterSettings.navigationMenu.length > 0) {
+      return dbFooterSettings.navigationMenu.map((column: any, idx: number) => {
+        const titleLower = (column.title || "").toLowerCase();
+        const hasLinks = Array.isArray(column.links) && column.links.length > 0;
+
+        return (
+          <div key={idx} className="flex flex-col gap-4">
+            <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)] font-sans">
+              {column.title}
+            </h4>
+            <ul className="flex flex-col gap-2.5 text-xs text-white/80 font-sans">
+              {hasLinks ? (
+                column.links.map((l: any, linkIdx: number) => (
+                  <li key={linkIdx}>
+                    <Link href={l.href} className="hover:text-secondary transition duration-300">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                // Fallbacks if columns have no sub-links in the CMS
+                titleLower.includes("trek") ? (
+                  siteSettings?.top5Treks && Array.isArray(siteSettings.top5Treks) && siteSettings.top5Treks.length > 0 ? (
+                    siteSettings.top5Treks.slice(0, 5).map((t: any, tIdx: number) => {
+                      const trekObj = typeof t === "object" && t !== null ? t : null;
+                      if (!trekObj) return null;
+                      return (
+                        <li key={tIdx}>
+                          <Link href={`/trips/${trekObj.slug}`} className="hover:text-secondary transition duration-300">
+                            {trekObj.title}
+                          </Link>
+                        </li>
+                      );
+                    }).filter(Boolean)
+                  ) : (
+                    <>
+                      <li><Link href="/trips/everest-base-camp-trek-14" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
+                      <li><Link href="/trips/annapurna-circuit-14" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
+                      <li><Link href="/trips/everest-base-camp-gokyo-lakes-15" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
+                      <li><Link href="/trips/annapurna-base-camp-10" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
+                      <li><Link href="/trips/manaslu-circuit-trek-16" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
+                    </>
+                  )
+                ) : titleLower.includes("region") ? (
+                  regions && regions.length > 0 ? (
+                    regions.slice(0, 5).map((r: any, rIdx: number) => (
+                      <li key={rIdx}>
+                        <Link href={`/regions/${r.slug}`} className="hover:text-secondary transition duration-300">
+                          {r.name} Region
+                        </Link>
+                      </li>
+                    ))
+                  ) : (
+                    <>
+                      <li><Link href="/regions/everest" className="hover:text-secondary transition duration-300">Everest Region</Link></li>
+                      <li><Link href="/regions/annapurna" className="hover:text-secondary transition duration-300">Annapurna Region</Link></li>
+                      <li><Link href="/regions/manaslu" className="hover:text-secondary transition duration-300">Manaslu Region</Link></li>
+                      <li><Link href="/regions/langtang" className="hover:text-secondary transition duration-300">Langtang Region</Link></li>
+                      <li><Link href="/regions/mustang" className="hover:text-secondary transition duration-300">Mustang Region</Link></li>
+                    </>
+                  )
+                ) : titleLower.includes("info") ? (
+                  <>
+                    <li><Link href="/why-us" className="hover:text-secondary transition duration-300">Why Choose Us</Link></li>
+                    <li><Link href="/visa-info" className="hover:text-secondary transition duration-300">Nepal Visa Info</Link></li>
+                    <li><Link href="/travel-insurance" className="hover:text-secondary transition duration-300">Travel Insurance</Link></li>
+                    <li><Link href="/packing-list" className="hover:text-secondary transition duration-300">Packing List</Link></li>
+                    <li><Link href="/faqs" className="hover:text-secondary transition duration-300">FAQs</Link></li>
+                  </>
+                ) : titleLower.includes("company") ? (
+                  <>
+                    <li><Link href="/about-us" className="hover:text-secondary transition duration-300">About us</Link></li>
+                    <li><Link href="/our-team" className="hover:text-secondary transition duration-300">Our Team</Link></li>
+                    <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Contact us</Link></li>
+                    <li><Link href="/csr" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
+                    <li><Link href="/about-us#licensing" className="hover:text-secondary transition duration-300">Registrations & Affiliations</Link></li>
+                  </>
+                ) : (
+                  <>
+                    <li><Link href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
+                    <li><Link href="/terms-and-conditions" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
+                    <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
+                    <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
+                    <li><Link href="/gallery" className="hover:text-secondary transition duration-300">Gallery</Link></li>
+                  </>
+                )
+              )}
+            </ul>
+          </div>
+        );
+      });
+    }
+
+    // Default static fallback layout
+    return (
+      <>
+        <div className="flex flex-col gap-4">
+          <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
+            Top 5 Treks
+          </h4>
+          <ul className="flex flex-col gap-2.5 text-xs text-white/80">
+            {siteSettings?.top5Treks && Array.isArray(siteSettings.top5Treks) && siteSettings.top5Treks.length > 0 ? (
+              siteSettings.top5Treks.slice(0, 5).map((t: any, idx: number) => {
+                const trekObj = typeof t === "object" && t !== null ? t : null;
+                if (!trekObj) return null;
+                return (
+                  <li key={idx}>
+                    <Link href={`/trips/${trekObj.slug}`} className="hover:text-secondary transition duration-300">
+                      {trekObj.title}
+                    </Link>
+                  </li>
+                );
+              })
+            ) : (
+              <>
+                <li><Link href="/trips/everest-base-camp-trek-14" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
+                <li><Link href="/trips/annapurna-circuit-14" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
+                <li><Link href="/trips/everest-base-camp-gokyo-lakes-15" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
+                <li><Link href="/trips/annapurna-base-camp-10" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
+                <li><Link href="/trips/manaslu-circuit-trek-16" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
+              </>
+            )}
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
+            Popular Regions
+          </h4>
+          <ul className="flex flex-col gap-2.5 text-xs text-white/80">
+            {regions && regions.length > 0 ? (
+              regions.slice(0, 5).map((r: any, idx: number) => (
+                <li key={idx}>
+                  <Link href={`/regions/${r.slug}`} className="hover:text-secondary transition duration-300">
+                    {r.name} Region
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <>
+                <li><Link href="/regions/everest" className="hover:text-secondary transition duration-300">Everest Region</Link></li>
+                <li><Link href="/regions/annapurna" className="hover:text-secondary transition duration-300">Annapurna Region</Link></li>
+                <li><Link href="/regions/manaslu" className="hover:text-secondary transition duration-300">Manaslu Region</Link></li>
+                <li><Link href="/regions/langtang" className="hover:text-secondary transition duration-300">Langtang Region</Link></li>
+                <li><Link href="/regions/mustang" className="hover:text-secondary transition duration-300">Mustang Region</Link></li>
+              </>
+            )}
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
+            Travel Info
+          </h4>
+          <ul className="flex flex-col gap-2.5 text-xs text-white/80">
+            <li><Link href="/why-us" className="hover:text-secondary transition duration-300">Why Choose Us</Link></li>
+            <li><Link href="/visa-info" className="hover:text-secondary transition duration-300">Nepal Visa Info</Link></li>
+            <li><Link href="/travel-insurance" className="hover:text-secondary transition duration-300">Travel Insurance</Link></li>
+            <li><Link href="/packing-list" className="hover:text-secondary transition duration-300">Packing List</Link></li>
+            <li><Link href="/faqs" className="hover:text-secondary transition duration-300">FAQs</Link></li>
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
+            Company
+          </h4>
+          <ul className="flex flex-col gap-2.5 text-xs text-white/80">
+            <li><Link href="/about-us" className="hover:text-secondary transition duration-300">About us</Link></li>
+            <li><Link href="/our-team" className="hover:text-secondary transition duration-300">Our Team</Link></li>
+            <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Contact us</Link></li>
+            <li><Link href="/csr" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
+            <li><Link href="/about-us#licensing" className="hover:text-secondary transition duration-300">Registrations & Affiliations</Link></li>
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
+            Useful Links
+          </h4>
+          <ul className="flex flex-col gap-2.5 text-xs text-white/80">
+            <li><Link href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
+            <li><Link href="/terms-and-conditions" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
+            <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
+            <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
+            <li><Link href="/gallery" className="hover:text-secondary transition duration-300">Gallery</Link></li>
+          </ul>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="w-full relative z-10 font-sans">
       {/* 1. Main Mountain Section */}
       <section
         className="relative bg-no-repeat bg-cover pt-[180px] md:pt-[380px] lg:pt-[600px] pb-8 md:pb-12 lg:pb-16 text-white overflow-hidden"
         style={{ 
-          backgroundImage: "url('/footernewimage1.png')",
+          backgroundImage: dbFooterSettings?.backgroundImage?.url ? `url("${dbFooterSettings.backgroundImage.url}")` : "url('/footernewimage1.png')",
           backgroundPosition: "65% top"
         }}
       >
-        {/* Top smooth blend gradient from page background through ivory, champagne, and golden amber to transparent */}
+        {/* Top smooth blend gradient */}
         <div
           className="absolute top-0 left-0 w-full h-24 md:h-36 lg:h-48 pointer-events-none z-10"
           style={{
@@ -128,10 +336,8 @@ export default function Footer() {
           }}
         ></div>
 
-        {/* Dark subtle overlay for text readability (gradient overlay, darker on mobile) */}
+        {/* Dark subtle overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/75 to-black/95 md:from-transparent md:via-black/55 md:to-black/90 pointer-events-none z-0"></div>
-
-
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           
@@ -143,7 +349,7 @@ export default function Footer() {
               <Link href="/" className="group flex items-center gap-2.5">
                 <div className="relative w-12 h-12 overflow-hidden bg-white/10 rounded-xl p-1 border border-white/20 shadow-inner transition group-hover:scale-105 shrink-0">
                   <Image
-                    src="/finalofficiallogo.jpeg"
+                    src={dbFooterSettings?.logo?.url || "/finalofficiallogo.jpeg"}
                     alt="Nature Heaven Logo"
                     fill
                     className="object-contain"
@@ -152,7 +358,7 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-serif text-lg font-black text-secondary-light tracking-wide group-hover:text-white transition duration-300 leading-none">
-                    {((siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "NATURE HEAVEN").toUpperCase()}
+                    {((dbFooterSettings?.siteName || siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "NATURE HEAVEN").toUpperCase()}
                   </span>
                   <span className="text-[9px] tracking-[0.25em] text-secondary-light/90 group-hover:text-white uppercase font-sans font-bold mt-1">
                     Trekking &amp; Expedition
@@ -160,14 +366,14 @@ export default function Footer() {
                 </div>
               </Link>
               <p className="text-xs text-white/85 leading-relaxed max-w-sm">
-                {siteSettings?.footerSettings?.bioText || `${siteName || "Nature Heaven Trekking"} is a government-licensed, premier adventure operator in Nepal. We lead customized private trekking, peak climbing, and cultural tours across the Himalayas.`}
+                {dbFooterSettings?.bioText || siteSettings?.footerSettings?.bioText || `${siteName || "Nature Heaven Trekking"} is a government-licensed, premier adventure operator in Nepal. We lead customized private trekking, peak climbing, and cultural tours across the Himalayas.`}
               </p>
             </div>
  
             {/* Center: Newsletter Subscription */}
             <div className="flex flex-col gap-4 w-full">
               <h3 className="text-sm uppercase font-bold tracking-wider text-secondary-light pt-2.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
-                Subscribe our Newsletter
+                {dbFooterSettings?.newsletterTitle || "Subscribe our Newsletter"}
               </h3>
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-stretch gap-2.5 mt-1 w-full max-w-md">
                 <input
@@ -223,20 +429,20 @@ export default function Footer() {
               <div>
                 <h4 className="text-sm uppercase font-bold tracking-wider text-secondary-light pt-2.5 flex items-center gap-1.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
                   <FaPhoneAlt className="h-3.5 w-3.5 text-secondary-light/95" />
-                  <span>Emergency SOS (24/7):</span>
+                  <span>{dbFooterSettings?.emergencyTitle || "Emergency SOS (24/7):"}</span>
                 </h4>
                 <div className="mt-1 flex flex-col gap-1 text-xs text-white/90 pl-5">
                   {sosNumbers.map((num: string, idx: number) => (
                     <p key={idx}>Phone: {num}</p>
                   ))}
                   <a
-                    href={`https://wa.me/${contactInfo?.whatsapp?.replace(/[^0-9]/g, "") || "9779851218358"}`}
+                    href={`https://wa.me/${(dbFooterSettings?.whatsappNumber || contactInfo?.whatsapp || "9779851218358").replace(/[^0-9]/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 hover:text-green-400 transition mt-1"
                   >
                     <FaWhatsapp className="text-green-500 h-4 w-4" />
-                    <span>WhatsApp: {contactInfo?.whatsapp || "+977-9851218358"}</span>
+                    <span>WhatsApp: {dbFooterSettings?.whatsappNumber || contactInfo?.whatsapp || "+977-9851218358"}</span>
                   </a>
                 </div>
               </div>
@@ -248,18 +454,32 @@ export default function Footer() {
                   <span>Email:</span>
                 </h4>
                 <div className="mt-1 flex flex-col gap-1 text-xs text-white/90 pl-5">
-                  <a
-                    href="mailto:natureheaventrek@gmail.com"
-                    className="hover:underline hover:text-secondary transition break-all"
-                  >
-                    natureheaventrek@gmail.com
-                  </a>
-                  <a
-                    href={`mailto:${contactInfo?.email || "info@natureheaventrek.com"}`}
-                    className="hover:underline hover:text-secondary transition break-all"
-                  >
-                    {contactInfo?.email || "info@natureheaventrek.com"}
-                  </a>
+                  {dbFooterSettings && Array.isArray(dbFooterSettings.emails) && dbFooterSettings.emails.length > 0 ? (
+                    dbFooterSettings.emails.map((e: any, idx: number) => (
+                      <a
+                        key={idx}
+                        href={`mailto:${e.email}`}
+                        className="hover:underline hover:text-secondary transition break-all"
+                      >
+                        {e.email}
+                      </a>
+                    ))
+                  ) : (
+                    <>
+                      <a
+                        href="mailto:natureheaventrek@gmail.com"
+                        className="hover:underline hover:text-secondary transition break-all"
+                      >
+                        natureheaventrek@gmail.com
+                      </a>
+                      <a
+                        href={`mailto:${contactInfo?.email || "info@natureheaventrek.com"}`}
+                        className="hover:underline hover:text-secondary transition break-all"
+                      >
+                        {contactInfo?.email || "info@natureheaventrek.com"}
+                      </a>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -272,11 +492,11 @@ export default function Footer() {
                     <span>Head Office - Nepal:</span>
                   </h4>
                   <p className="text-xs text-white/90 pl-5 leading-relaxed">
-                    {siteSettings?.footerSettings?.nepalHeadOfficeAddress || contactInfo?.address || "Pakjonal Marga -16, Thamel, Kathmandu, Nepal"}
+                    {dbFooterSettings?.nepalOfficeAddress || siteSettings?.footerSettings?.nepalHeadOfficeAddress || contactInfo?.address || "Pakjonal Marga -16, Thamel, Kathmandu, Nepal"}
                   </p>
-                  {siteSettings?.footerSettings?.nepalHeadOfficePhone && (
+                  {(dbFooterSettings?.nepalOfficePhone || siteSettings?.footerSettings?.nepalHeadOfficePhone) && (
                     <p className="text-xs text-white/70 pl-5 mt-0.5">
-                      Phone: {siteSettings.footerSettings.nepalHeadOfficePhone}
+                      Phone: {dbFooterSettings?.nepalOfficePhone || siteSettings?.footerSettings?.nepalHeadOfficePhone}
                     </p>
                   )}
                 </div>
@@ -288,11 +508,11 @@ export default function Footer() {
                     <span>Branch Office - UK:</span>
                   </h4>
                   <p className="text-xs text-white/90 pl-5 leading-relaxed">
-                    {siteSettings?.footerSettings?.ukBranchOfficeAddress || "London, United Kingdom"}
+                    {dbFooterSettings?.ukOfficeAddress || siteSettings?.footerSettings?.ukBranchOfficeAddress || "London, United Kingdom"}
                   </p>
-                  {siteSettings?.footerSettings?.ukBranchOfficePhone && (
+                  {(dbFooterSettings?.ukOfficePhone || siteSettings?.footerSettings?.ukBranchOfficePhone) && (
                     <p className="text-xs text-white/70 pl-5 mt-0.5">
-                      Phone: {siteSettings.footerSettings.ukBranchOfficePhone}
+                      Phone: {dbFooterSettings?.ukOfficePhone || siteSettings?.footerSettings?.ukBranchOfficePhone}
                     </p>
                   )}
                 </div>
@@ -304,214 +524,14 @@ export default function Footer() {
 
           {/* Navigation Links Grid */}
           <div className="relative pt-6 pb-2">
-
-            {/* Links Columns */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 relative z-10 md:pr-48 lg:pr-64">
-              
-              {/* TOP 5 TREKS */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-                  Top 5 Treks
-                </h4>
-                <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-                  {siteSettings?.top5Treks && Array.isArray(siteSettings.top5Treks) && siteSettings.top5Treks.length > 0 ? (
-                    siteSettings.top5Treks.slice(0, 5).map((t: any, idx: number) => {
-                      const trekObj = typeof t === "object" && t !== null ? t : null;
-                      if (!trekObj) return null;
-                      return (
-                        <li key={idx}>
-                          <Link href={`/trips/${trekObj.slug}`} className="hover:text-secondary transition duration-300">
-                            {trekObj.title}
-                          </Link>
-                        </li>
-                      );
-                    })
-                  ) : (
-                    <>
-                      <li>
-                        <Link href="/trips/everest-base-camp-trek-14" className="hover:text-secondary transition duration-300">
-                          Everest Base Camp Trek
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/trips/annapurna-circuit-14" className="hover:text-secondary transition duration-300">
-                          Annapurna Circuit Trek
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/trips/everest-base-camp-gokyo-lakes-15" className="hover:text-secondary transition duration-300">
-                          EBC via Gokyo Lakes
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/trips/annapurna-base-camp-10" className="hover:text-secondary transition duration-300">
-                          Annapurna Base Camp Trek
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/trips/manaslu-circuit-trek-16" className="hover:text-secondary transition duration-300">
-                          Manaslu Circuit Trek
-                        </Link>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
-
-              {/* POPULAR REGIONS */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-                  Popular Regions
-                </h4>
-                <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-                  {regions && regions.length > 0 ? (
-                    regions.slice(0, 5).map((r: any, idx: number) => (
-                      <li key={idx}>
-                        <Link href={`/regions/${r.slug}`} className="hover:text-secondary transition duration-300">
-                          {r.name} Region
-                        </Link>
-                      </li>
-                    ))
-                  ) : (
-                    <>
-                      <li>
-                        <Link href="/regions/everest" className="hover:text-secondary transition duration-300">
-                          Everest Region
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/regions/annapurna" className="hover:text-secondary transition duration-300">
-                          Annapurna Region
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/regions/manaslu" className="hover:text-secondary transition duration-300">
-                          Manaslu Region
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/regions/langtang" className="hover:text-secondary transition duration-300">
-                          Langtang Region
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/regions/mustang" className="hover:text-secondary transition duration-300">
-                          Mustang Region
-                        </Link>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
-
-              {/* TRAVEL INFO */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-                  Travel Info
-                </h4>
-                <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-                  <li>
-                    <Link href="/why-us" className="hover:text-secondary transition duration-300">
-                      Why Choose Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/visa-info" className="hover:text-secondary transition duration-300">
-                      Nepal Visa Info
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/travel-insurance" className="hover:text-secondary transition duration-300">
-                      Travel Insurance
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/packing-list" className="hover:text-secondary transition duration-300">
-                      Packing List
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/faqs" className="hover:text-secondary transition duration-300">
-                      FAQs
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              {/* COMPANY */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-                  Company
-                </h4>
-                <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-                  <li>
-                    <Link href="/about-us" className="hover:text-secondary transition duration-300">
-                      About us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/our-team" className="hover:text-secondary transition duration-300">
-                      Our Team
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/contact-us" className="hover:text-secondary transition duration-300">
-                      Contact us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/csr" className="hover:text-secondary transition duration-300">
-                      Responsible Tourism
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/about-us#licensing" className="hover:text-secondary transition duration-300">
-                      Registrations & Affiliations
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              {/* USEFUL LINKS */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-secondary-light border-b border-secondary-light/20 pb-1.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-                  Useful Links
-                </h4>
-                <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-                  <li>
-                    <Link href="/privacy-policy" className="hover:text-secondary transition duration-300">
-                      Privacy Policy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/terms-and-conditions" className="hover:text-secondary transition duration-300">
-                      Terms & Conditions
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/contact-us" className="hover:text-secondary transition duration-300">
-                      B2B Partner
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/contact-us" className="hover:text-secondary transition duration-300">
-                      Make a Payment
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/gallery" className="hover:text-secondary transition duration-300">
-                      Gallery
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
+              {renderNavigationColumns()}
+            </div>
           </div>
 
         </div>
-      </div>
 
-      {/* SVG Blend: Snowy Peaks Layer (Top, White, stretched 100% width without hiker) */}
+      {/* SVG Blend: Snowy Peaks Layer */}
       <div className="absolute bottom-0 left-0 right-0 w-full h-24 md:h-32 lg:h-40 pointer-events-none select-none z-20 overflow-hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -524,7 +544,7 @@ export default function Footer() {
         </svg>
       </div>
 
-      {/* Climber Silhouette (Positioned 10% from the right edge, aspect ratio preserved) */}
+      {/* Climber Silhouette */}
       <img
         src="/hiker-silhouette.svg"
         alt="Hiker Silhouette"
@@ -532,8 +552,8 @@ export default function Footer() {
       />
       </section>
 
-    {/* 2. Lower Payments, Associations, Social Media Band */}
-    <section className="bg-white py-8 relative z-10 text-gray-700 border-t border-gray-100">
+      {/* 2. Lower Payments, Associations, Social Media Band */}
+      <section className="bg-white py-8 relative z-10 text-gray-700 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-between text-center md:text-left">
           
           {/* We Accept Column */}
@@ -547,30 +567,40 @@ export default function Footer() {
             >
               
               {/* Sectigo Badge */}
-              <div className="border border-green-200 bg-green-50/80 rounded-md px-2 flex items-center gap-1 text-[8px] text-green-700 font-extrabold font-sans h-[26px] shrink-0 shadow-sm">
-                <FaLock className="h-2 w-2 text-green-600" />
-                <span>SECURED BY SECTIGO</span>
-              </div>
+              {(dbFooterSettings?.acceptedPayments?.enableSectigo ?? true) && (
+                <div className="border border-green-200 bg-green-50/80 rounded-md px-2 flex items-center gap-1 text-[8px] text-green-700 font-extrabold font-sans h-[26px] shrink-0 shadow-sm">
+                  <FaLock className="h-2 w-2 text-green-600" />
+                  <span>SECURED BY SECTIGO</span>
+                </div>
+              )}
 
               {/* PayPal */}
-              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[48px] relative shrink-0 p-1 shadow-sm">
-                <Image src="/paypal.svg" alt="PayPal" fill className="object-contain p-0.5" unoptimized />
-              </div>
+              {(dbFooterSettings?.acceptedPayments?.enablePaypal ?? true) && (
+                <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[48px] relative shrink-0 p-1 shadow-sm">
+                  <Image src="/paypal.svg" alt="PayPal" fill className="object-contain p-0.5" unoptimized />
+                </div>
+              )}
 
               {/* Mastercard */}
-              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[40px] relative shrink-0 p-0.5 shadow-sm">
-                <Image src="/mastercard.svg" alt="Mastercard" fill className="object-contain" unoptimized />
-              </div>
+              {(dbFooterSettings?.acceptedPayments?.enableMastercard ?? true) && (
+                <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[40px] relative shrink-0 p-0.5 shadow-sm">
+                  <Image src="/mastercard.svg" alt="Mastercard" fill className="object-contain" unoptimized />
+                </div>
+              )}
 
               {/* SWIFT */}
-              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[44px] relative shrink-0 p-0.5 shadow-sm">
-                <Image src="/swift.svg" alt="SWIFT Transfer" fill className="object-contain" unoptimized />
-              </div>
+              {(dbFooterSettings?.acceptedPayments?.enableSwift ?? true) && (
+                <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[44px] relative shrink-0 p-0.5 shadow-sm">
+                  <Image src="/swift.svg" alt="SWIFT Transfer" fill className="object-contain" unoptimized />
+                </div>
+              )}
 
               {/* Visa */}
-              <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[40px] relative shrink-0 p-0.5 shadow-sm">
-                <Image src="/visa.svg" alt="Visa" fill className="object-contain" unoptimized />
-              </div>
+              {(dbFooterSettings?.acceptedPayments?.enableVisa ?? true) && (
+                <div className="bg-white border border-gray-200 rounded-md flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition h-[26px] w-[40px] relative shrink-0 p-0.5 shadow-sm">
+                  <Image src="/visa.svg" alt="Visa" fill className="object-contain" unoptimized />
+                </div>
+              )}
 
             </div>
           </div>
@@ -584,23 +614,46 @@ export default function Footer() {
               className="flex flex-nowrap items-center gap-3 justify-center md:justify-center overflow-x-auto md:overflow-x-visible w-full max-w-full pb-1 md:pb-0 scrollbar-none"
               style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
             >
-              {footerAssociations.map((aff, idx) => (
-                <a
-                  key={idx}
-                  href={aff.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative h-6 w-11 hover:scale-105 active:scale-95 transition-transform duration-300 flex items-center justify-center shrink-0"
-                >
-                  <Image
-                    src={aff.logo}
-                    alt={`${aff.name} Logo`}
-                    fill
-                    className="object-contain"
-                    unoptimized
-                  />
-                </a>
-              ))}
+              {dbFooterSettings && Array.isArray(dbFooterSettings.affiliations) && dbFooterSettings.affiliations.length > 0 ? (
+                dbFooterSettings.affiliations.map((aff: any, idx: number) => {
+                  const logoUrl = aff.logo?.url || footerAssociations.find(a => a.name === aff.name)?.logo || "/taan.webp";
+                  return (
+                    <a
+                      key={idx}
+                      href={aff.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative h-6 w-11 hover:scale-105 active:scale-95 transition-transform duration-300 flex items-center justify-center shrink-0"
+                    >
+                      <Image
+                        src={logoUrl}
+                        alt={`${aff.name} Logo`}
+                        fill
+                        className="object-contain"
+                        unoptimized
+                      />
+                    </a>
+                  );
+                })
+              ) : (
+                footerAssociations.map((aff, idx) => (
+                  <a
+                    key={idx}
+                    href={aff.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative h-6 w-11 hover:scale-105 active:scale-95 transition-transform duration-300 flex items-center justify-center shrink-0"
+                  >
+                    <Image
+                      src={aff.logo}
+                      alt={`${aff.name} Logo`}
+                      fill
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </a>
+                ))
+              )}
             </div>
           </div>
 
@@ -611,7 +664,7 @@ export default function Footer() {
             </span>
             <div className="flex gap-2">
               <a
-                href={socialLinks?.youtube || "https://youtube.com"}
+                href={dbFooterSettings?.socialLinks?.youtube || socialLinks?.youtube || "https://youtube.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-8 w-8 rounded-full bg-[#FF0000] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
@@ -620,7 +673,7 @@ export default function Footer() {
                 <FaYoutube className="h-4 w-4" />
               </a>
               <a
-                href={socialLinks?.instagram || "https://instagram.com"}
+                href={dbFooterSettings?.socialLinks?.instagram || socialLinks?.instagram || "https://instagram.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
@@ -629,7 +682,7 @@ export default function Footer() {
                 <FaInstagram className="h-4 w-4" />
               </a>
               <a
-                href={socialLinks?.facebook || "https://facebook.com"}
+                href={dbFooterSettings?.socialLinks?.facebook || socialLinks?.facebook || "https://facebook.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-8 w-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
@@ -638,7 +691,7 @@ export default function Footer() {
                 <FaFacebook className="h-4 w-4" />
               </a>
               <a
-                href={socialLinks?.tiktok || "https://tiktok.com"}
+                href={dbFooterSettings?.socialLinks?.tiktok || socialLinks?.tiktok || "https://tiktok.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-8 w-8 rounded-full bg-[#000000] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-sm"
@@ -652,26 +705,25 @@ export default function Footer() {
         </div>
       </section>
 
-
       {/* 3. Deep Teal Copyright Bottom Bar */}
       <footer className="bg-[#10251c] py-5 text-[11px] text-white/50 relative z-10 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div>
             <p>
               © {new Date().getFullYear()}{" "}
-              <span className="text-secondary font-medium">{siteName || "Nature Heaven Trekking"}</span>.
+              <span className="text-secondary font-medium">{dbFooterSettings?.siteName || siteName || "Nature Heaven Trekking"}</span>.
               All Rights Reserved.
             </p>
             <p className="text-[10px] text-white/30 mt-1">
-              {siteSettings?.footerSettings?.governmentRegNo || "Government Registration No. 4893. Bonded & insured through Everest Insurance. Authorized by Ministry of Tourism, Government of Nepal."}
+              {dbFooterSettings?.governmentRegNo || siteSettings?.footerSettings?.governmentRegNo || "Government Registration No. 4893. Bonded & insured through Everest Insurance. Authorized by Ministry of Tourism, Government of Nepal."}
             </p>
           </div>
           <div className="md:max-w-md text-[10px] leading-relaxed text-white/40">
-            The copyright to all content on this website, including photographs, belongs to{" "}
-            {siteName || "Nature Heaven Trekking"} and cannot be reproduced without our permission.
+            {dbFooterSettings?.copyrightNotice || siteSettings?.footerSettings?.copyrightNotice || `The copyright to all content on this website, including photographs, belongs to ${siteName || "Nature Heaven Trekking"} and cannot be reproduced without our permission.`}
           </div>
         </div>
       </footer>
     </div>
   );
 }
+

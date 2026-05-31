@@ -1861,6 +1861,59 @@ body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
 }
 
 /* ============================================================
+   14. WIDER INNER CONTENT FOR INCLUSION / EXCLUSION CATEGORY GROUPS
+   ============================================================ */
+
+/*
+  Inside each "Inclusion Category Group" card the fields (Category Heading,
+  Icon Code, Inclusion Points sub-array) are rendered inside a collapsible
+  row that Payload wraps with left/right gutters. We remove those gutters so
+  every field stretches edge-to-edge inside the card.
+*/
+
+/* Remove horizontal padding on the collapsible/draggable row body */
+[class*="array-field"] [class*="collapsible__content"],
+[class*="array-field"] [class*="draggable-row__content"],
+[class*="array-field"] [class*="row-fields"],
+[class*="array-field"] [class*="render-fields"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Payload gutter / fields-container wrappers inside nested arrays */
+[class*="array-field"] [class*="gutter"],
+[class*="array-field"] [class*="fields-container"],
+[class*="array-field"] [class*="field-type--row"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Category Heading input + Icon Code select — full card width */
+[class*="array-field"] [class*="field-type"] input[type="text"],
+[class*="array-field"] [class*="field-type"] .react-select__control,
+[class*="array-field"] [class*="field-type"] [class*="rs__control"],
+[class*="array-field"] [class*="field-type"] select {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Sub-array (Inclusion Points / Exclusion Points) — full width */
+[class*="array-field"] [class*="array-field"],
+[class*="array-field"] [class*="array-field"] [class*="draggable-row"],
+[class*="array-field"] [class*="array-field"] [class*="array-row"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================================
    15. BLOG ADMIN — BUG FIXES + WORDPRESS-STYLE POLISH
    ============================================================
    Goal: make the blog edit/create experience feel like the

@@ -39,7 +39,7 @@ export const checkPermission = (
 
         if (roleDoc && roleDoc.permissions) {
           const permissionKey = `${collectionSlug}_${action}`;
-          return Boolean(roleDoc.permissions[permissionKey]);
+          return Boolean((roleDoc.permissions as any)[permissionKey]);
         }
       } catch (err) {
         console.error(`[Access Check] Error fetching role ${roleId} permissions:`, err);
