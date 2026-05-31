@@ -185,7 +185,7 @@ export default async function AboutUsPage() {
   const allPages = await getPagesList();
 
   return (
-    <div className="bg-[#f8f5f0] min-h-screen pb-20 pt-24 md:pt-32">
+    <div className="bg-[#f8f5f0] min-h-screen pb-20">
       {/* Hero Section */}
       <div className="relative h-[300px] md:h-[400px] w-full bg-[#1a2e1f]">
         {(page.heroImage as any)?.url ? (
@@ -200,7 +200,7 @@ export default async function AboutUsPage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e1f] via-transparent to-black/30"></div>
         
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pt-24 md:pt-32">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs font-bold uppercase tracking-widest mb-4 border border-white/20">
             <FaCompass className="text-[#c8922a]" />
             Company Profile &amp; Ethics
