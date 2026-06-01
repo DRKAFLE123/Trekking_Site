@@ -285,8 +285,8 @@ async function main() {
       ],
     },
     {
-      slug: 'csr',
-      title: 'CSR (Eco-Ethics & Community)',
+      slug: 'responsible-tourism',
+      title: 'Responsible Tourism',
       excerpt: 'We believe in leaving the mountains cleaner than we found them. Our CSR initiatives focus on eco-ethics, supporting local schools/healthcare in the Everest Solukhumbu region, carbon-neutral treks, and women\'s guiding scholarships.',
       content: csrBody,
       videos: [

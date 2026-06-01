@@ -1,28 +1,29 @@
 import React from "react";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { FaChevronRight, FaInfoCircle, FaMapMarkerAlt, FaHeadset, FaEnvelope, FaStar, FaCompass } from "react-icons/fa";
+import { FaChevronRight, FaInfoCircle, FaMapMarkerAlt, FaHeadset, FaEnvelope, FaCompass } from "react-icons/fa";
 import { renderLexical } from "@/lib/lexical-renderer";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
+import CertificateGallery from "./CertificateGallery";
 
-function extractYoutubeId(url: string) {
-  if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : url;
-}
+export const revalidate = 60;
 
-async function getPageData(slug: string) {
+export const metadata: Metadata = {
+  title: "Legal Documents & Licensing | Nature Heaven Trekking & Expedition",
+  description: "Verify the legal registration, licensing, and association memberships of Nature Heaven Trekking & Expedition under the Government of Nepal.",
+};
+
+async function getPageData() {
   try {
     const payload = await getPayload({ config });
     const result = await payload.find({
       collection: 'companyPages',
       where: {
         slug: {
-          equals: slug,
+          equals: 'legal-documents',
         },
       },
       depth: 2,
@@ -50,23 +51,28 @@ async function getPagesList() {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const page = await getPageData(slug);
-  if (!page) return { title: "Page Not Found | Nature Heaven Treks" };
-
-  return {
-    title: page.seoTitle || `${page.title} | Company | Nature Heaven Treks`,
-    description: page.seoDescription || page.excerpt || `Learn more about ${page.title} - Nature Heaven Trekking & Expedition.`,
-  };
-}
-
-export default async function CompanyDynamicPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const page = await getPageData(slug);
-  if (!page) notFound();
+export default async function LegalDocumentsPage() {
+  const page = await getPageData();
+  
+  if (!page) {
+    return (
+      <div className="bg-[#fcfbfa] min-h-screen pt-24 md:pt-32 pb-16 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="font-serif text-3xl font-bold text-primary mb-4">Legal Documents</h1>
+          <p className="text-charcoal/80">Please ensure the Legal Documents are seeded in the CMS admin panel.</p>
+        </div>
+      </div>
+    );
+  }
 
   const allPages = await getPagesList();
+
+  const certificates = page.legalCertificates
+    ? (page.legalCertificates as any[]).map((c: any) => ({
+        title: c.title,
+        imageUrl: c.image && typeof c.image === "object" ? c.image.url : "/legal_license_mockup.png",
+      }))
+    : [];
 
   return (
     <div className="bg-[#f8f5f0] min-h-screen pb-20">
@@ -122,10 +128,12 @@ export default async function CompanyDynamicPage({ params }: { params: Promise<{
                 prose-a:text-[#c8922a] prose-a:font-semibold hover:prose-a:text-[#b07820]
                 prose-li:text-[#4A4A4A] prose-li:marker:text-[#c8922a]
                 prose-strong:text-[#1a2e1f]
-                prose-img:rounded-xl prose-img:shadow-md"
+                prose-img:rounded-xl prose-img:shadow-md mb-8"
               >
                 {renderLexical(page.content)}
               </article>
+
+              <CertificateGallery certificates={certificates} />
             </div>
 
             {/* Downloadable Documents / PDFs Section */}
@@ -161,84 +169,6 @@ export default async function CompanyDynamicPage({ params }: { params: Promise<{
                         </svg>
                       </div>
                     </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* YouTube Helper Videos Section */}
-            {page.videos && page.videos.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-6 flex items-center gap-2">
-                  <svg className="w-6 h-6 text-[#c8922a]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                  </svg>
-                  Featured Company Videos &amp; Documentaries
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {page.videos.map((vid: any, idx: number) => {
-                    const videoId = extractYoutubeId(vid.youtubeUrl);
-                    if (!videoId) return null;
-                    return (
-                      <div key={idx} className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col h-full hover:shadow-md transition">
-                        <div className="relative aspect-video w-full bg-black">
-                          <iframe
-                            src={`https://www.youtube.com/embed/${videoId}`}
-                            title={vid.title}
-                            className="absolute inset-0 w-full h-full border-0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          ></iframe>
-                        </div>
-                        <div className="p-4 flex-1 bg-gray-50/50 border-t border-gray-100 flex items-center">
-                          <span className="font-sans text-sm font-bold text-[#1a2e1f] leading-snug">{vid.title}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Recommended Treks / Trips Section */}
-            {page.relatedTreks && page.relatedTreks.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-6 flex items-center gap-2">
-                  <FaStar className="text-[#c8922a]" /> Recommended Trips &amp; Itineraries
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {page.relatedTreks.map((trek: any) => (
-                    <div key={trek.slug} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col h-full">
-                      {/* Trek Image */}
-                      <div className="relative h-48 w-full bg-[#1a2e1f]">
-                        {trek.coverImage?.url ? (
-                          <Image src={trek.coverImage.url} alt={trek.coverImage.alt || trek.title} fill className="object-cover" />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-white/40"><FaMapMarkerAlt className="text-4xl" /></div>
-                        )}
-                        <div className="absolute top-4 right-4 bg-[#c8922a] text-white px-2.5 py-1 rounded-lg text-xs font-bold font-sans uppercase tracking-wider">
-                          {trek.difficulty || 'Moderate'}
-                        </div>
-                      </div>
-                      {/* Trek Content */}
-                      <div className="p-5 flex-1 flex flex-col justify-between">
-                        <div>
-                          <h4 className="font-serif text-lg font-bold text-[#1a2e1f] mb-2 hover:text-[#c8922a] transition duration-200">
-                            <Link href={`/trips/${trek.slug}`}>{trek.title}</Link>
-                          </h4>
-                          <p className="text-xs text-gray-500 font-sans mb-4">{trek.duration || 14} Days duration</p>
-                        </div>
-                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">From</span>
-                            <span className="text-lg font-extrabold text-[#2E7D32] font-sans">${trek.price || 1200} <span className="text-xs text-gray-400 font-normal">USD</span></span>
-                          </div>
-                          <Link href={`/trips/${trek.slug}`} className="bg-[#1a2e1f] hover:bg-[#c8922a] text-white font-sans font-bold text-xs px-4 py-2.5 rounded-lg transition duration-200 uppercase tracking-wider">
-                            View Details
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
                   ))}
                 </div>
               </div>

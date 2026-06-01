@@ -1490,6 +1490,34 @@ export interface CompanyPage {
    * Link PDFs, visa guidelines, or maps for travelers to download.
    */
   documents?: (number | Media)[] | null;
+  /**
+   * Add photos/images of government registration certificates, licenses, and tax documents (displays on the Legal Documents page).
+   */
+  legalCertificates?:
+    | {
+        title: string;
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Add team members directly inside this page document (displays on the Our Team page).
+   */
+  teamMembers?:
+    | {
+        name: string;
+        role: string;
+        photo?: (number | null) | Media;
+        bio?: string | null;
+        socialLinks?: {
+          facebook?: string | null;
+          instagram?: string | null;
+          linkedin?: string | null;
+          twitter?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
   videos?:
     | {
         title: string;
@@ -1497,6 +1525,19 @@ export interface CompanyPage {
          * Paste watch URL or 11-char ID.
          */
         youtubeUrl: string;
+        id?: string | null;
+      }[]
+    | null;
+  csrQuote?: {
+    text?: string | null;
+    author?: string | null;
+    image?: (number | null) | Media;
+  };
+  csrCommitments?:
+    | {
+        title: string;
+        icon?: ('education' | 'welfare' | 'eco' | 'economy' | 'community' | 'safety') | null;
+        description: string;
         id?: string | null;
       }[]
     | null;
@@ -2445,11 +2486,50 @@ export interface CompanyPagesSelect<T extends boolean = true> {
   seoDescription?: T;
   relatedTreks?: T;
   documents?: T;
+  legalCertificates?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        id?: T;
+      };
+  teamMembers?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        photo?: T;
+        bio?: T;
+        socialLinks?:
+          | T
+          | {
+              facebook?: T;
+              instagram?: T;
+              linkedin?: T;
+              twitter?: T;
+            };
+        id?: T;
+      };
   videos?:
     | T
     | {
         title?: T;
         youtubeUrl?: T;
+        id?: T;
+      };
+  csrQuote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        image?: T;
+      };
+  csrCommitments?:
+    | T
+    | {
+        title?: T;
+        icon?: T;
+        description?: T;
         id?: T;
       };
   updatedAt?: T;

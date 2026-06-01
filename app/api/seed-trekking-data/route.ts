@@ -979,9 +979,9 @@ export async function GET(request: Request) {
               customLinks: [
                 { label: 'About Us', href: '/about-us', hide: false },
                 { label: 'Our Team', href: '/our-team', hide: false },
-                { label: 'Responsible Tourism', href: '/csr', hide: false },
-                { label: 'Terms & Conditions', href: '/terms-and-conditions', hide: false },
-                { label: 'Legal Documents', href: '/about-us#licensing', hide: false },
+                { label: 'Responsible Tourism', href: '/responsible-tourism', hide: false },
+                { label: 'Terms & Conditions', href: '/terms-conditions', hide: false },
+                { label: 'Legal Documents', href: '/legal-documents', hide: false },
                 { label: 'Privacy Policy', href: '/privacy-policy', hide: false },
               ],
             },

@@ -344,7 +344,7 @@ export default function Navbar() {
   const getCompanyPagesFlatList = () => {
     if (dbCompanyPages && dbCompanyPages.length > 0) {
       return dbCompanyPages.map((p: any) => {
-        const isStatic = ["about-us", "why-us", "csr"].includes(p.slug);
+        const isStatic = ["about-us", "why-us", "responsible-tourism", "our-team", "terms-conditions", "privacy-policy", "legal-documents"].includes(p.slug);
         return {
           label: p.title,
           href: isStatic ? `/${p.slug}` : `/company/${p.slug}`,
@@ -357,7 +357,10 @@ export default function Navbar() {
       { label: "Why Us", href: "/why-us" },
       { label: "Gallery", href: "/gallery" },
       { label: "Video Gallery", href: "/video-gallery" },
-      { label: "CSR", href: "/csr" },
+      { label: "Responsible Tourism", href: "/responsible-tourism" },
+      { label: "Terms & Conditions", href: "/terms-conditions" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Legal Documents", href: "/legal-documents" },
     ];
   };
 
@@ -597,7 +600,7 @@ export default function Navbar() {
     if (key === "trips" || key === "regions-grid") return pathname.startsWith("/regions") || pathname.startsWith("/trips");
     if (key === "info" || key === "travel-info") return pathname.startsWith("/travel-info") || pathname.startsWith("/faqs");
     if (key === "contact-pages") return pathname.startsWith("/contact-us");
-    if (key === "company-pages" || key === "company" || key === "custom-links") return pathname.startsWith("/company") || ["/about-us", "/our-team", "/gallery", "/video-gallery", "/csr", "/why-us"].includes(pathname);
+    if (key === "company-pages" || key === "company" || key === "custom-links") return pathname.startsWith("/company") || ["/about-us", "/our-team", "/gallery", "/video-gallery", "/responsible-tourism", "/why-us"].includes(pathname);
     if (key === "top10" || key === "treks-list") return pathname === "/bestsellers";
     return false;
   };
@@ -674,9 +677,9 @@ export default function Navbar() {
         items: [
           { label: "About Us", href: "/about-us" },
           { label: "Our Team", href: "/our-team" },
-          { label: "Responsible Tourism", href: "/csr" },
-          { label: "Terms & Conditions", href: "/terms-and-conditions" },
-          { label: "Legal Documents", href: "/about-us#licensing" },
+          { label: "Responsible Tourism", href: "/responsible-tourism" },
+          { label: "Terms & Conditions", href: "/terms-conditions" },
+          { label: "Legal Documents", href: "/legal-documents" },
           { label: "Privacy Policy", href: "/privacy-policy" }
         ],
       },

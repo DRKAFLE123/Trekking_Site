@@ -7,11 +7,12 @@ import { renderLexical } from "@/lib/lexical-renderer";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "CSR & Sustainability | Nature Heaven Trekking & Expedition",
+  title: "Responsible Tourism | Nature Heaven Trekking & Expedition",
   description: "Learn about our corporate social responsibility initiatives: supporting schools, ensuring porter welfare, and operating eco-friendly treks.",
 };
 
@@ -29,7 +30,7 @@ async function getPageData() {
       collection: 'companyPages',
       where: {
         slug: {
-          equals: 'csr',
+          equals: 'responsible-tourism',
         },
       },
       depth: 2,
@@ -71,7 +72,7 @@ export default async function CSRPage() {
               Responsible Tourism in Action
             </span>
             <h1 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-6">
-              CSR & Sustainability
+              Responsible Tourism
             </h1>
             <div className="h-0.5 w-16 bg-secondary mx-auto mb-6"></div>
             <p className="text-sm md:text-base text-charcoal/80 leading-relaxed">
@@ -229,6 +230,64 @@ export default async function CSRPage() {
               </article>
             </div>
 
+            {/* Dynamic Quote Split */}
+            {page.csrQuote?.text && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white border border-gray-100 p-6 md:p-10 rounded-2xl shadow-sm">
+                <div className="flex flex-col gap-4">
+                  <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f]">
+                    Our Philosophy
+                  </h3>
+                  <div className="border-l-4 border-[#c8922a] pl-4 italic text-sm text-[#4A4A4A] my-2 leading-relaxed">
+                    &quot;{page.csrQuote.text}&quot;
+                    {page.csrQuote.author && (
+                      <span className="font-sans font-bold text-[#1a2e1f] not-italic block mt-2 text-xs">— {page.csrQuote.author}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50">
+                  <Image
+                    src={getMediaUrl(page.csrQuote.image) || "/manaslu_region_cover.png"}
+                    alt="CSR Quote Image"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Dynamic Commitments Grid */}
+            {page.csrCommitments && page.csrCommitments.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10">
+                <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-8 text-center">
+                  Our Core Commitments
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {page.csrCommitments.map((item: any, idx: number) => {
+                    let IconComponent = FaSeedling;
+                    if (item.icon === 'education') IconComponent = FaGraduationCap;
+                    if (item.icon === 'welfare') IconComponent = FaTshirt;
+                    if (item.icon === 'eco') IconComponent = FaSeedling;
+                    if (item.icon === 'economy') IconComponent = FaMoneyBillWave;
+                    if (item.icon === 'community') IconComponent = FaStar;
+                    if (item.icon === 'safety') IconComponent = FaCompass;
+
+                    return (
+                      <div key={idx} className="bg-[#fcfbfa] border border-gray-100 p-6 rounded-xl flex gap-4 items-start hover:shadow-sm transition">
+                        <span className="p-3 bg-[#c8922a]/10 text-[#c8922a] rounded-xl text-lg shrink-0">
+                          <IconComponent />
+                        </span>
+                        <div>
+                          <h4 className="font-serif font-bold text-[#1a2e1f] text-base mb-1.5">{item.title}</h4>
+                          <p className="text-xs text-[#4A4A4A] leading-relaxed">{item.description}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Downloadable Documents / PDFs Section */}
             {page.documents && page.documents.length > 0 && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
@@ -360,7 +419,7 @@ export default async function CSRPage() {
                   </h3>
                   <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
                     {allPages.map((p: any) => {
-                      const isStatic = ["about-us", "why-us", "csr"].includes(p.slug);
+                      const isStatic = ["about-us", "why-us", "responsible-tourism", "our-team", "terms-conditions", "privacy-policy", "legal-documents"].includes(p.slug);
                       const href = isStatic ? `/${p.slug}` : `/company/${p.slug}`;
                       return (
                         <li key={p.slug}>
