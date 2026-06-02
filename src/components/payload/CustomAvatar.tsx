@@ -26,8 +26,9 @@ interface UserType {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'editor' | 'viewer';
+  role: 'admin' | 'editor' | 'viewer' | 'custom';
   avatar?: string | Media;
+  customRole?: any;
 }
 
 export const CustomAvatar: React.FC = () => {
@@ -35,6 +36,7 @@ export const CustomAvatar: React.FC = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [customRoleName, setCustomRoleName] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   
   // Modals state
@@ -116,6 +118,34 @@ export const CustomAvatar: React.FC = () => {
         .catch((err) => {
           console.error('Error fetching user avatar:', err);
           setAvatarUrl(null);
+        });
+    }
+  }, [user]);
+
+  // Fetch custom role name if user has a custom role
+  useEffect(() => {
+    if (!user || user.role !== 'custom' || !user.customRole) {
+      setCustomRoleName(null);
+      return;
+    }
+
+    if (typeof user.customRole === 'object' && user.customRole !== null && 'name' in user.customRole) {
+      setCustomRoleName(user.customRole.name);
+    } else {
+      const roleId = typeof user.customRole === 'object' ? user.customRole.id : user.customRole;
+      fetch(`/api/roles/${roleId}`)
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch role');
+          return res.json();
+        })
+        .then((data) => {
+          if (data && data.name) {
+            setCustomRoleName(data.name);
+          }
+        })
+        .catch((err) => {
+          console.error('Error fetching custom role name:', err);
+          setCustomRoleName('Custom');
         });
     }
   }, [user]);
@@ -249,6 +279,7 @@ export const CustomAvatar: React.FC = () => {
       case 'admin': return 'Administrator';
       case 'editor': return 'Editor';
       case 'viewer': return 'Viewer';
+      case 'custom': return customRoleName || 'Custom';
       default: return user.role;
     }
   };

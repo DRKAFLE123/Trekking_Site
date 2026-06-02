@@ -190,7 +190,10 @@ const overviewSection = {
           name: 'highlight',
           type: 'textarea' as const,
           required: true,
-          admin: { description: 'e.g. "Stand at Everest Base Camp (5,364m)"' },
+          admin: { 
+            width: '100%',
+            description: 'e.g. "Stand at Everest Base Camp (5,364m)"' 
+          },
         },
       ],
     },
