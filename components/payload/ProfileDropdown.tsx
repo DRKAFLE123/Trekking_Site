@@ -181,7 +181,9 @@ export const ProfileDropdown: React.FC = () => {
       // 1. Upload file to media collection
       const formData = new FormData();
       formData.append('file', selectedFile);
-      formData.append('alt', `${user.name}'s Profile Avatar`);
+      const cleanName = (user.name || user.email || 'User').replace(/[^a-zA-Z0-9\s@.]/g, '');
+      formData.append('alt', `${cleanName} Profile Avatar`);
+      formData.append('category', 'uncategorized');
 
       const mediaRes = await fetch('/api/media', {
         method: 'POST',
