@@ -224,6 +224,39 @@ async function main() {
       documents: documentIds,
     };
 
+    if (pageInfo.slug === 'our-team') {
+      dataToSave.teamMembers = [
+        { name: 'Paul Gurung', role: 'CEO/ FOUNDER', bio: 'Paul Gurung is the visionary founder and CEO of Nature Heaven Trekking. With over two decades of high-altitude climbing and operations leadership, he ensures every trek is safe and life-changing.' },
+        { name: 'Bimal Gurung', role: 'Executive Director', bio: 'Bimal manages the daily operations, logistics, and partner relations of Nature Heaven. His administrative excellence guarantees seamless customer experiences.' },
+        { name: 'Dol Gurung', role: 'Trekking Leader', bio: 'A veteran trek leader with over 50 successful Everest and Annapurna crossings. Licensed and certified in high-altitude medicine.' },
+        { name: 'Siddhanta Gurung', role: 'Trekking Leader', bio: 'Specializes in the Langtang and Manaslu circuits. Known for his profound knowledge of local Buddhist culture.' },
+        { name: 'Manish Gurung', role: 'Trekking Leader', bio: 'Expert wilderness first-aid responder. Dedicated to guiding off-the-beaten-path treks.' },
+        { name: 'Hari Gurung', role: 'Trekking Leader', bio: 'Over 10 years of experience leading Everest base camp treks. Extremely friendly and knowledgeable.' },
+        { name: 'Prem Tamang', role: 'Trek Leader', bio: 'An energetic guide from the Tamang heritage, offering deep insights into native lifestyles and mountain flora.' },
+        { name: 'Chhanda Ghale', role: 'Trek Leader', bio: 'Chhanda is certified in wilderness rescue and leads climbing trips up Island Peak and Mera Peak.' },
+        { name: 'Dil Gurung', role: 'Trekking Leader', bio: 'Dil leads cultural treks across the Mustang and Annapurna foothills with care and responsibility.' },
+        { name: 'Mansingh Gurung', role: 'Trekking Leader', bio: 'Mansingh has guided hundreds of clients safely over the challenging Thorong La pass.' },
+        { name: 'Gakul Ghale', role: 'Trek Leader', bio: 'Specializes in birdwatching and eco-tourism treks in national parks.' },
+        { name: 'Suresh Gurung', role: 'Trek Leader', bio: 'Dedicated guide for high-altitude treks. Always carrying an oximeter and safety kit.' },
+        { name: 'Nabin Gurung', role: 'Trek Leader', bio: 'Enthusiastic explorer who loves sharing tales of Nepalese mythology under the stars.' },
+        { name: 'Kershing Gurung', role: 'Trek Leader', bio: 'Kershing leads with a gentle spirit, ensuring children and elderly hikers feel safe.' },
+        { name: 'Prabhat Gurung', role: 'Trek Leader', bio: 'An experienced guide with extensive mountaineering rescue training.' },
+        { name: 'Man Kumar Tamang', role: 'Trek Leader', bio: 'Specializes in the Everest region, highly praised for his mountain cooking tips.' },
+        { name: 'Nigma Tamang', role: 'Trek Leader', bio: 'Veteran guide with a deep love for the Sherpa valleys.' },
+        { name: 'Binod Gurung', role: 'Trek Leader', bio: 'Binod is dedicated to Leave No Trace ethics and eco-trekking.' },
+        { name: 'Aryan Gurung', role: 'Trekking Leader', bio: 'Known for his athletic pace and deep passion for peak climbing.' },
+        { name: 'Sanajay Magar', role: 'Trek Leader', bio: 'A certified first-responder guide who knows the Annapurna region inside out.' },
+        { name: 'Phurba Tamang', role: 'Trek Leader', bio: 'Phurba is a local guide who brings an authentic voice to Solukhumbu expeditions.' },
+        { name: 'Kaji Gurung', role: 'Trek Leader', bio: 'Friendly, patient, and highly trained in high-altitude mountain sickness prevention.' },
+        { name: 'Dev Gurung', role: 'Trek Leader', bio: 'An active trekking guide with specialized knowledge of alpine topography.' },
+        { name: 'Jit Gurung', role: 'Trek Leader', bio: 'Logistics expert on the trails, ensuring tea house bookings are perfect.' },
+        { name: 'Durga Gurung', role: 'Trek Leader', bio: 'Durga loves photography and helps trekkers capture the best Himalayan views.' },
+        { name: 'Milan Gurung', role: 'Trek Leader', bio: 'Extremely well-versed in English and cultural history of the Gurung people.' },
+        { name: 'Bhim Gurung', role: 'Trek Leader', bio: 'Over 15 years in tourism, guiding safely through wild Himalayan storms.' },
+        { name: 'Rupesh Gurung', role: 'Trek Leader', bio: 'Rupesh is dedicated to porters rights and sustainable eco-trekking.' }
+      ];
+    }
+
     if (pageInfo.slug === 'responsible-tourism') {
       dataToSave.csrQuote = {
         text: "We don't just lead tours; we support the children and porters whose ancestors have cared for these mountains for centuries.",

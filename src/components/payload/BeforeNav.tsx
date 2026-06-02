@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@payloadcms/ui';
+import { AdminDeleteInterceptor } from './AdminDeleteInterceptor';
 
 export const BeforeNav = () => {
   const pathname = usePathname();
@@ -192,6 +193,7 @@ export const BeforeNav = () => {
 
   return (
     <>
+      <AdminDeleteInterceptor />
       {/* Hide edit and api tabs at top right for non-admin roles */}
       {mounted && !isSuperAdminOrAdmin && (
         <style dangerouslySetInnerHTML={{ __html: `

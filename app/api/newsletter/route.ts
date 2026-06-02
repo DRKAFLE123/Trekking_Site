@@ -31,6 +31,54 @@ export async function POST(request: Request) {
 
     console.log(`[NEWSLETTER SUBSCRIBE] Email: ${email}`);
 
+    // Fetch blogSettings to retrieve PDF file link if configured
+    let pdfUrl: string | null = null;
+    try {
+      const blogSettingsRes = await payload.find({
+        collection: "blogSettings",
+        depth: 1,
+      });
+      const blogSettings = blogSettingsRes.docs[0] || null;
+      const pdfFile = blogSettings?.guideSettings?.pdfFile;
+      if (pdfFile && typeof pdfFile === 'object') {
+        pdfUrl = pdfFile.url || null;
+      } else if (pdfFile) {
+        // If it's just an ID, fetch the media document
+        const mediaDoc = await payload.findByID({
+          collection: "media",
+          id: pdfFile,
+          depth: 0,
+        });
+        pdfUrl = mediaDoc?.url || null;
+      }
+    } catch (e: any) {
+      console.warn("Failed to fetch blogSettings or pdfFile for welcome email:", e.message);
+    }
+
+    // Build Welcome Email HTML content
+    let emailHtml = `
+      <p>Thank you for subscribing to our newsletter.</p>
+      <p>We are excited to share our latest high Himalayan adventures, exclusive travel tips, and special offers with you.</p>
+    `;
+
+    if (pdfUrl) {
+      emailHtml += `
+        <p>As promised, here is the link to download your free travel guide:</p>
+        <p style="margin: 22px 0;">
+          <a href="${pdfUrl}" target="_blank" style="background-color: #c8922a; color: #1a3c2e; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+            📥 Download Free Travel Guide (PDF)
+          </a>
+        </p>
+        <p style="font-size: 11px; color: #6b7280; margin-top: 10px;">If the button above does not work, copy and paste this URL into your browser: <br/><a href="${pdfUrl}" style="color: #c8922a;">${pdfUrl}</a></p>
+      `;
+    }
+
+    emailHtml += `
+      <p>Stay tuned for our upcoming updates!</p>
+      <br />
+      <p>Best regards,<br/><strong>The Nature Heaven Treks Team</strong></p>
+    `;
+
     // Send Welcome Email
     await sendEmail({
       to: email,
@@ -38,13 +86,7 @@ export async function POST(request: Request) {
       html: getPremiumEmailTemplate(
         "Newsletter Subscription",
         "Welcome to Nature Heaven Treks!",
-        `
-        <p>Thank you for subscribing to our newsletter.</p>
-        <p>We are excited to share our latest high Himalayan adventures, exclusive travel tips, and special offers with you.</p>
-        <p>Stay tuned for our upcoming updates!</p>
-        <br />
-        <p>Best regards,<br/><strong>The Nature Heaven Treks Team</strong></p>
-        `
+        emailHtml
       ),
     });
 
@@ -65,7 +107,10 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { message: "Successfully subscribed to our newsletter." },
+      { 
+        message: "Successfully subscribed to our newsletter.",
+        pdfUrl: pdfUrl 
+      },
       { status: 200 }
     );
   } catch (error) {

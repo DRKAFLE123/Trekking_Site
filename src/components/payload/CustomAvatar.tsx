@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@payloadcms/ui';
 import { useRouter } from 'next/navigation';
 import { 
@@ -34,6 +35,7 @@ export const CustomAvatar: React.FC = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   
   // Modals state
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -51,11 +53,38 @@ export const CustomAvatar: React.FC = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const updatePosition = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      const left = Math.max(16, Math.min(window.innerWidth - 296, rect.right - 280));
+      setCoords({
+        top: rect.bottom + 8,
+        left: left,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+    }
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [isOpen]);
 
   // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const clickedTrigger = dropdownRef.current?.contains(event.target as Node);
+      const clickedMenu = menuRef.current?.contains(event.target as Node);
+      if (!clickedTrigger && !clickedMenu) {
         setIsOpen(false);
       }
     };
@@ -242,6 +271,7 @@ export const CustomAvatar: React.FC = () => {
       {/* Profile Trigger button */}
       <button 
         type="button"
+        ref={triggerRef}
         className="profile-dropdown-trigger"
         onClick={(e) => {
           e.preventDefault();
@@ -268,8 +298,18 @@ export const CustomAvatar: React.FC = () => {
       </button>
 
       {/* Profile Dropdown Menu */}
-      {isOpen && (
-        <div className="profile-dropdown-menu">
+      {isOpen && coords && createPortal(
+        <div 
+          className="profile-dropdown-menu"
+          ref={menuRef}
+          style={{
+            position: 'fixed',
+            top: `${coords.top}px`,
+            left: `${coords.left}px`,
+            margin: 0,
+            transformOrigin: 'top right',
+          }}
+        >
           {/* User Profile Summary Card */}
           <div className="profile-dropdown-menu__header">
             <div className="profile-dropdown-menu__header-avatar-wrap">
@@ -358,11 +398,12 @@ export const CustomAvatar: React.FC = () => {
               <span>Sign Out</span>
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Change Password Modal */}
-      {isPasswordModalOpen && (
+      {isPasswordModalOpen && createPortal(
         <div className="profile-modal-overlay">
           <div className="profile-modal">
             <div className="profile-modal__header">
@@ -440,11 +481,12 @@ export const CustomAvatar: React.FC = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Logout Confirmation Modal */}
-      {isLogoutModalOpen && (
+      {isLogoutModalOpen && createPortal(
         <div className="profile-modal-overlay">
           <div className="profile-modal">
             <div className="profile-modal__header">
@@ -482,7 +524,8 @@ export const CustomAvatar: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

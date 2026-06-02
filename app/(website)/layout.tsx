@@ -19,11 +19,32 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Nature Heaven Trek & Expedition | Private Trekking Agency Nepal",
-  description: "Nature Heaven Trek & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.",
-  metadataBase: new URL("https://natureheaventreks.com"),
-};
+import { getPayload } from "payload";
+import config from "@/payload/payload.config";
+
+export async function generateMetadata(): Promise<Metadata> {
+  let allowIndexing = true;
+  try {
+    const payload = await getPayload({ config });
+    const siteSettings = await payload.find({
+      collection: 'siteSettings',
+      depth: 0,
+    });
+    allowIndexing = (siteSettings.docs[0] as any)?.allowIndexing ?? true;
+  } catch (error) {
+    console.error('Error fetching site settings for layout metadata:', error);
+  }
+
+  return {
+    title: "Nature Heaven Trek & Expedition | Private Trekking Agency Nepal",
+    description: "Nature Heaven Trek & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.",
+    metadataBase: new URL("https://natureheaventreks.com"),
+    robots: {
+      index: allowIndexing,
+      follow: allowIndexing,
+    },
+  };
+}
 
 export default function RootLayout({
   children,

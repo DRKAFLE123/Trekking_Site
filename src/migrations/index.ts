@@ -8,6 +8,8 @@ import * as migration_20260531_163146_add_company_pages from './20260531_163146_
 import * as migration_20260601_151815_add_legal_certificates_to_company_pages from './20260601_151815_add_legal_certificates_to_company_pages';
 import * as migration_20260601_152656_add_team_members_array_to_company_pages from './20260601_152656_add_team_members_array_to_company_pages';
 import * as migration_20260601_153321_add_csr_fields_to_company_pages from './20260601_153321_add_csr_fields_to_company_pages';
+import * as migration_20260602_073228_add_allow_indexing from './20260602_073228_add_allow_indexing';
+import * as migration_20260602_075656_add_guide_settings from './20260602_075656_add_guide_settings';
 
 export const migrations = [
   {
@@ -58,6 +60,16 @@ export const migrations = [
   {
     up: migration_20260601_153321_add_csr_fields_to_company_pages.up,
     down: migration_20260601_153321_add_csr_fields_to_company_pages.down,
-    name: '20260601_153321_add_csr_fields_to_company_pages'
+    name: '20260601_153321_add_csr_fields_to_company_pages',
+  },
+  {
+    up: migration_20260602_073228_add_allow_indexing.up,
+    down: migration_20260602_073228_add_allow_indexing.down,
+    name: '20260602_073228_add_allow_indexing',
+  },
+  {
+    up: migration_20260602_075656_add_guide_settings.up,
+    down: migration_20260602_075656_add_guide_settings.down,
+    name: '20260602_075656_add_guide_settings'
   },
 ];

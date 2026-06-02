@@ -283,5 +283,14 @@ export const SiteSettings: CollectionConfig = {
         description: 'Select travel info pages to feature in a card list on the homepage.',
       },
     },
+    {
+      name: 'allowIndexing',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Allow Search Engine Indexing (Google, Bing, etc.)',
+      admin: {
+        description: 'If disabled, search engines will be instructed not to index or crawl the website (adds "noindex, nofollow" meta tags and disallows crawling in robots.txt).',
+      },
+    },
   ],
 };

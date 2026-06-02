@@ -257,10 +257,11 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   let blog: BlogPost | null = null;
   let allBlogs: BlogPost[] = [];
   let siteSettings: any = null;
+  let blogSettings: any = null;
 
   try {
     const payload = await getPayload({ config });
-    const [res, siteSettingsRes, allBlogsRes] = await Promise.all([
+    const [res, siteSettingsRes, allBlogsRes, blogSettingsRes] = await Promise.all([
       payload.find({
         collection: "blogPosts",
         where: { slug: { equals: slug } },
@@ -274,12 +275,17 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         collection: "blogPosts",
         depth: 1,
         limit: 100,
+      }),
+      payload.find({
+        collection: "blogSettings",
+        depth: 2,
       })
     ]);
 
     blog = (res.docs[0] || null) as unknown as BlogPost | null;
     siteSettings = siteSettingsRes.docs[0] || null;
     allBlogs = allBlogsRes.docs as unknown as BlogPost[];
+    blogSettings = blogSettingsRes.docs[0] || null;
   } catch (err: any) {
     console.warn("[Blog Detail Page] Failed to query blog details:", err.message);
   }
@@ -384,6 +390,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       otherBlogsByAuthor={otherBlogsByAuthor}
       expertWhatsApp={expertWhatsApp}
       expertName={expertName}
+      blogSettings={blogSettings}
     />
   );
 }

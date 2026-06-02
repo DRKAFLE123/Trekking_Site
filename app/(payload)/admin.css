@@ -35,6 +35,12 @@ body.login,
 .login-template {
   background: radial-gradient(circle at 50% 50%, #102619 0%, #050d08 100%) !important;
   min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px 20px !important;
+  box-sizing: border-box !important;
 }
 
 /* The outer page shell that Payload v3 wraps login in */
@@ -46,19 +52,19 @@ html body {
 .template-minimal__wrap,
 .login__wrap,
 [class*="template-minimal__wrap"] {
-  position: relative;
-  z-index: 10;
-  background: rgba(11, 20, 14, 0.85) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(16, 185, 129, 0.2) !important;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6),
-              inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
-  border-radius: 20px !important;
-  padding: 45px 35px !important;
-  width: 100% !important;
-  max-width: 450px !important;
-  margin: 0 auto !important;
+   position: relative;
+   z-index: 10;
+   background: rgba(11, 20, 14, 0.85) !important;
+   backdrop-filter: blur(20px) !important;
+   -webkit-backdrop-filter: blur(20px) !important;
+   border: 1px solid rgba(16, 185, 129, 0.2) !important;
+   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6),
+               inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+   border-radius: 20px !important;
+   padding: 30px 25px !important;
+   width: 100% !important;
+   max-width: 440px !important;
+   margin: 6vh auto !important;
 }
 
 .template-minimal__wrap:hover,
@@ -1304,7 +1310,7 @@ div[class*="select-actions"] a[class*="delete"]:hover,
    actual drawer content — which was the "transparent black overlay"
    blocking image selection. We therefore restrict the rule to DIV
    modal containers only, and exclude common UI parts. */
-div[class*="modal"]:not([class*="modal__content"]):not([class*="confirm-modal"]):not([class*="confirm-modal__content"]):not([class*="close"]):not([class*="header"]):not([class*="actions"]):not([class*="toggler"]):not([class*="button"]) {
+div[class*="modal"]:not([class*="modal__content"]):not([class*="confirm-modal"]):not([class*="confirm-modal__content"]):not([class*="close"]):not([class*="header"]):not([class*="actions"]):not([class*="toggler"]):not([class*="button"]):not([class*="custom-delete"]):not([class*="profile-modal"]) {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
