@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload';
+import { isAdmin } from '../access';
 
 export const users: CollectionConfig = {
   slug: 'users',
@@ -7,11 +8,10 @@ export const users: CollectionConfig = {
     group: 'System Admin',
     useAsTitle: 'name',
     defaultColumns: ['name', 'email', 'role', 'createdAt'],
+    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
   },
   access: {
-    read: ({ req: { user } }) => {
-      return Boolean(user); // Any logged-in user can read users
-    },
+    read: isAdmin,
     create: ({ req: { user } }) => {
       // Allow creation if no users exist yet (first user registration) or if the actor is an admin
       return !user || user?.role === 'admin';

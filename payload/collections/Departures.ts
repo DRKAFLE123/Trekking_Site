@@ -4,7 +4,7 @@ import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission } from '../a
 export const departures: CollectionConfig = {
   slug: 'departures',
   access: {
-    read: () => true,
+    read: checkPermission('departures', 'read'),
     create: checkPermission('departures', 'create'),
     update: checkPermission('departures', 'update'),
     delete: checkPermission('departures', 'delete'),

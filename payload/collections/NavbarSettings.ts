@@ -13,6 +13,7 @@ export const NavbarSettings: CollectionConfig = {
     group: 'System Admin',
     useAsTitle: 'siteName',
     description: 'Configure global navigation headers, brand assets, and multi-level dropdowns.',
+    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
   },
   fields: [
     {

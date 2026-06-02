@@ -4,7 +4,7 @@ import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission } from '../a
 export const regions: CollectionConfig = {
   slug: 'regions',
   access: {
-    read: () => true,
+    read: checkPermission('regions', 'read'),
     create: checkPermission('regions', 'create'),
     update: checkPermission('regions', 'update'),
     delete: checkPermission('regions', 'delete'),

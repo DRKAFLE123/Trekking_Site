@@ -4,7 +4,7 @@ import { isAdmin, isAdminOrEditor, checkPermission } from '../access';
 export const testimonials: CollectionConfig = {
   slug: 'testimonials',
   access: {
-    read: () => true,
+    read: checkPermission('testimonials', 'read'),
     create: checkPermission('testimonials', 'create'),
     update: checkPermission('testimonials', 'update'),
     delete: checkPermission('testimonials', 'delete'),

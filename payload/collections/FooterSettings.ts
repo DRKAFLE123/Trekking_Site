@@ -13,6 +13,7 @@ export const FooterSettings: CollectionConfig = {
     group: 'System Admin',
     useAsTitle: 'siteName',
     description: 'Configure dynamic footer menus, emergency contacts, branch addresses, accepted payments, and partner affiliations.',
+    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
   },
   fields: [
     {

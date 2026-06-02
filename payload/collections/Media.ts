@@ -185,7 +185,7 @@ export const media: CollectionConfig = {
     mimeTypes: ['image/*', 'application/pdf', 'video/*'],
   },
   access: {
-    read: () => true, // Media must be publicly accessible
+    read: checkPermission('media', 'read'),
     create: checkPermission('media', 'create'),
     update: checkPermission('media', 'update'),
     delete: checkPermission('media', 'delete'),

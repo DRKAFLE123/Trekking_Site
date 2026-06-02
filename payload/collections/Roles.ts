@@ -7,6 +7,7 @@ export const roles: CollectionConfig = {
     useAsTitle: 'name',
     group: 'System Admin',
     defaultColumns: ['name', 'createdAt', 'updatedAt'],
+    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
   },
   access: {
     // Only superadmin can create/update/delete roles

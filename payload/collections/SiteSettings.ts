@@ -24,6 +24,7 @@ export const SiteSettings: CollectionConfig = {
   admin: {
     group: 'System Admin',
     useAsTitle: 'siteName',
+    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
   },
   fields: [
     {
