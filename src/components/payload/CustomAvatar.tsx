@@ -228,6 +228,7 @@ export const CustomAvatar: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('alt', `${user.name}'s Profile Avatar`);
+      formData.append('category', 'uncategorized');
 
       const mediaRes = await fetch('/api/media', {
         method: 'POST',
