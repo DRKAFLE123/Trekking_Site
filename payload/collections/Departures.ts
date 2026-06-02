@@ -1,13 +1,13 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
+import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission } from '../access';
 
 export const departures: CollectionConfig = {
   slug: 'departures',
   access: {
     read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    create: checkPermission('departures', 'create'),
+    update: checkPermission('departures', 'update'),
+    delete: checkPermission('departures', 'delete'),
   },
   admin: {
     group: 'Trekking & Operations',

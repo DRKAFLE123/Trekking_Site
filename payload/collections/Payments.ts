@@ -1,13 +1,13 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
+import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission } from '../access';
 
 export const payments: CollectionConfig = {
   slug: 'payments',
   access: {
     read: isAuthenticated,
     create: () => true,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    update: checkPermission('payments', 'update'),
+    delete: checkPermission('payments', 'delete'),
   },
   admin: {
     group: 'Enquiries & Leads',

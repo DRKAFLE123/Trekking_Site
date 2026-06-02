@@ -141,7 +141,7 @@ const uploadToCloudinary: CollectionAfterChangeHook = async ({
 export const media: CollectionConfig = {
   slug: 'media',
   admin: {
-    group: 'System Admin',
+    group: 'Website Content',
     useAsTitle: 'filename',
     defaultColumns: ['filename', 'alt', 'category', 'tags'],
   },

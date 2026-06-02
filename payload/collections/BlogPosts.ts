@@ -97,17 +97,22 @@ export const blogPosts: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ data }) => {
-        if (data && data.body) {
-          const text = getLexicalText(data.body);
-          const words = text.trim() ? text.trim().split(/\s+/) : [];
-          const wordCount = words.length;
-          data.wordCount = wordCount;
-          
-          const minutes = Math.max(1, Math.ceil(wordCount / 200));
-          data.readTime = `${minutes} min read`;
-        } else {
-          data.wordCount = 0;
-          data.readTime = '0 min read';
+        if (data) {
+          if (data._status) {
+            data.status = data._status;
+          }
+          if (data.body) {
+            const text = getLexicalText(data.body);
+            const words = text.trim() ? text.trim().split(/\s+/) : [];
+            const wordCount = words.length;
+            data.wordCount = wordCount;
+            
+            const minutes = Math.max(1, Math.ceil(wordCount / 200));
+            data.readTime = `${minutes} min read`;
+          } else {
+            data.wordCount = 0;
+            data.readTime = '0 min read';
+          }
         }
         return data;
       }
@@ -212,6 +217,19 @@ export const blogPosts: CollectionConfig = {
       admin: {
         position: 'sidebar',
       },
+      hooks: {
+        beforeValidate: [
+          ({ value, data }: any) => {
+            if (value) {
+              return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            }
+            if (data?.title) {
+              return data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            }
+            return value;
+          }
+        ]
+      }
     },
     {
       name: 'author',

@@ -119,6 +119,15 @@ export const roles: CollectionConfig = {
                 { name: 'teamMembers_delete', type: 'checkbox', label: 'Delete Team', defaultValue: false },
               ],
             },
+            {
+              type: 'row',
+              fields: [
+                { name: 'media_read', type: 'checkbox', label: 'Read Media', defaultValue: true },
+                { name: 'media_create', type: 'checkbox', label: 'Create Media', defaultValue: true },
+                { name: 'media_update', type: 'checkbox', label: 'Update Media', defaultValue: true },
+                { name: 'media_delete', type: 'checkbox', label: 'Delete Media', defaultValue: false },
+              ],
+            },
           ],
         },
         {
@@ -163,15 +172,6 @@ export const roles: CollectionConfig = {
               fields: [
                 { name: 'siteSettings_read', type: 'checkbox', label: 'Read Site Settings', defaultValue: true },
                 { name: 'siteSettings_update', type: 'checkbox', label: 'Update Site Settings', defaultValue: false },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                { name: 'media_read', type: 'checkbox', label: 'Read Media', defaultValue: true },
-                { name: 'media_create', type: 'checkbox', label: 'Create Media', defaultValue: true },
-                { name: 'media_update', type: 'checkbox', label: 'Update Media', defaultValue: true },
-                { name: 'media_delete', type: 'checkbox', label: 'Delete Media', defaultValue: false },
               ],
             },
             {

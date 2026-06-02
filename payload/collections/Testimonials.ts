@@ -1,13 +1,13 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
+import { isAdmin, isAdminOrEditor, checkPermission } from '../access';
 
 export const testimonials: CollectionConfig = {
   slug: 'testimonials',
   access: {
     read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    create: checkPermission('testimonials', 'create'),
+    update: checkPermission('testimonials', 'update'),
+    delete: checkPermission('testimonials', 'delete'),
   },
   admin: {
     group: 'Website Content',

@@ -44,11 +44,35 @@ export async function generateMetadata({ params }: TripDetailPageProps): Promise
     if (!trek) {
       return { title: "Trip Not Found | Nature Heaven Trekking & Expedition" };
     }
+
+    // Determine fallback social share image
+    let heroImageUrl = "";
+    if (trek.heroImage && typeof trek.heroImage === "object") {
+      heroImageUrl = (trek.heroImage as any).url || "";
+    } else if (trek.heroImage && typeof trek.heroImage === "string") {
+      heroImageUrl = trek.heroImage;
+    }
+
+    const title = trek.metaTitle || `${trek.title} - ${trek.duration} Days | Nature Heaven Trekking & Expedition`;
+    const description = trek.metaDescription || `Join our private, customizable ${trek.duration}-day ${trek.title}. Guided by native Sherpa experts with optimized adaptation schedules.`;
+    const openGraphImages = heroImageUrl ? [{ url: heroImageUrl, alt: trek.title }] : [];
+
     return {
-      title: trek.metaTitle || `${trek.title} - ${trek.duration} Days | Nature Heaven Trekking & Expedition`,
-      description:
-        trek.metaDescription ||
-        `Join our private, customizable ${trek.duration}-day ${trek.title}. Guided by native Sherpa experts with optimized adaptation schedules.`,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "website",
+        url: `/trips/${trek.slug}`,
+        images: openGraphImages,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: heroImageUrl ? [heroImageUrl] : [],
+      },
     };
   } catch (err: any) {
     return {

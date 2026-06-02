@@ -226,7 +226,7 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
       where: { slug: { equals: slug } },
       depth: 1,
     });
-    const blog = (res.docs[0] || null) as unknown as BlogPost | null;
+    const blog = (res.docs[0] || null) as any;
 
     if (!blog) {
       const matchedDefault = defaultBlogs.find(b => b.slug === slug);
@@ -241,9 +241,42 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
       };
     }
 
+    // Determine fallback social share image
+    let metaImageUrl = "";
+    if (blog.seo?.metaImage && typeof blog.seo.metaImage === "object") {
+      metaImageUrl = blog.seo.metaImage.url || "";
+    } else if (blog.seo?.metaImage && typeof blog.seo.metaImage === "string") {
+      metaImageUrl = blog.seo.metaImage;
+    }
+
+    if (!metaImageUrl && blog.coverImage) {
+      if (typeof blog.coverImage === "object") {
+        metaImageUrl = blog.coverImage.url || "";
+      } else if (typeof blog.coverImage === "string") {
+        metaImageUrl = blog.coverImage;
+      }
+    }
+
+    const title = blog.seo?.metaTitle || `${blog.title} | Nature Heaven Chronicles`;
+    const description = blog.seo?.metaDescription || blog.excerpt;
+    const openGraphImages = metaImageUrl ? [{ url: metaImageUrl, alt: blog.title }] : [];
+
     return {
-      title: `${blog.title} | Nature Heaven Chronicles`,
-      description: blog.excerpt,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "article",
+        url: `/blogs/${blog.slug}`,
+        images: openGraphImages,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: metaImageUrl ? [metaImageUrl] : [],
+      },
     };
   } catch (err: any) {
     return {

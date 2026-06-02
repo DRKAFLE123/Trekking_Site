@@ -41,6 +41,19 @@ const basicInfoSection = {
           required: true,
           unique: true,
           admin: { description: 'URL identifier, no spaces. e.g. "everest-base-camp-trek-14"' },
+          hooks: {
+            beforeValidate: [
+              ({ value, data }: any) => {
+                if (value) {
+                  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                }
+                if (data?.title) {
+                  return data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                }
+                return value;
+              }
+            ]
+          }
         },
       ],
     },

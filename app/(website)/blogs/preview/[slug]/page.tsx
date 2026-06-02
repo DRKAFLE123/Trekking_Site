@@ -45,13 +45,46 @@ export async function generateMetadata({ params }: BlogPreviewPageProps): Promis
     };
   }
 
-  const blogTyped = blog as unknown as BlogPost;
+  const blogTyped = blog as any;
+
+  // Determine fallback social share image
+  let metaImageUrl = "";
+  if (blogTyped.seo?.metaImage && typeof blogTyped.seo.metaImage === "object") {
+    metaImageUrl = blogTyped.seo.metaImage.url || "";
+  } else if (blogTyped.seo?.metaImage && typeof blogTyped.seo.metaImage === "string") {
+    metaImageUrl = blogTyped.seo.metaImage;
+  }
+
+  if (!metaImageUrl && blogTyped.coverImage) {
+    if (typeof blogTyped.coverImage === "object") {
+      metaImageUrl = blogTyped.coverImage.url || "";
+    } else if (typeof blogTyped.coverImage === "string") {
+      metaImageUrl = blogTyped.coverImage;
+    }
+  }
+
+  const title = `[DRAFT PREVIEW] ${blogTyped.title || 'Untitled Draft'} | Nature Heaven Chronicles`;
+  const description = blogTyped.excerpt;
+  const openGraphImages = metaImageUrl ? [{ url: metaImageUrl, alt: blogTyped.title || "Preview" }] : [];
+
   return {
-    title: `[DRAFT PREVIEW] ${blogTyped.title || 'Untitled Draft'} | Nature Heaven Chronicles`,
-    description: blogTyped.excerpt,
+    title,
+    description,
     robots: {
       index: false,
       follow: false,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: openGraphImages,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: metaImageUrl ? [metaImageUrl] : [],
     },
   };
 }
