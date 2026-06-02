@@ -439,6 +439,7 @@ export interface SiteSetting {
    * Select travel info pages to feature in a card list on the homepage.
    */
   featuredTravelInfo?: (number | Page)[] | null;
+  allowIndexing?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1437,6 +1438,14 @@ export interface BlogSetting {
   coverImage: number | Media;
   title: string;
   subtitle: string;
+  guideSettings?: {
+    title: string;
+    subtitle: string;
+    badgeText: string;
+    footerText: string;
+    description: string;
+    pdfFile: number | Media;
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1901,6 +1910,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         id?: T;
       };
   featuredTravelInfo?: T;
+  allowIndexing?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2469,6 +2479,7 @@ export interface BlogSettingsSelect<T extends boolean = true> {
   coverImage?: T;
   title?: T;
   subtitle?: T;
+  guideSettings?: T;
   updatedAt?: T;
   createdAt?: T;
 }
