@@ -11,6 +11,7 @@ import { getMediaUrl } from '@/lib/cloudinary-loader';
 interface HeadingItem {
   id: string;
   text: string;
+  level?: number;
 }
 
 interface BlogDetailClientProps {
@@ -222,15 +223,30 @@ export default function BlogDetailClient({
                   <nav className="relative pl-4 border-l-[1.5px] border-slate-100 flex flex-col gap-2.5">
                     {headings.map((heading) => {
                       const isActive = activeId === heading.id;
+                      const level = heading.level || 2;
+                      
+                      // Dynamic indentation based on heading level
+                      const indentClass = 
+                        level === 3 ? 'ml-3' : 
+                        level === 4 ? 'ml-6' : 
+                        level === 5 ? 'ml-9' : 
+                        level >= 6 ? 'ml-12' : '';
+
+                      // Typography scale and styling depending on level to create visual hierarchy
+                      const textClass = 
+                        level === 2 ? 'text-[14.5px] font-semibold' :
+                        level === 3 ? 'text-[13.5px] font-medium text-charcoal/80' :
+                        'text-[12.5px] font-medium text-charcoal/65';
+
                       return (
                         <a
                           key={heading.id}
                           href={`#${heading.id}`}
                           onClick={(e) => scrollToHeading(e, heading.id)}
-                          className={`group relative flex flex-col text-[14.5px] font-sans leading-snug transition-all duration-300 -ml-[21.5px] pl-6 py-0.5 select-none ${
+                          className={`group relative flex flex-col font-sans leading-snug transition-all duration-300 -ml-[21.5px] pl-6 py-0.5 select-none ${textClass} ${
                             isActive
                               ? 'text-[#c8922a] font-bold tracking-tight'
-                              : 'text-charcoal/70 hover:text-primary font-semibold'
+                              : 'hover:text-primary'
                           }`}
                         >
                           {/* Indicator Dot */}
@@ -241,7 +257,7 @@ export default function BlogDetailClient({
                                 : 'bg-white border-slate-300 group-hover:border-primary'
                             }`}
                           />
-                          <span>{heading.text}</span>
+                          <span className={indentClass}>{heading.text}</span>
                         </a>
                       );
                     })}
@@ -355,18 +371,21 @@ export default function BlogDetailClient({
             </div>
 
             {/* Cover Photo */}
-            {blog.coverImage && (
-              <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-secondary/15 shadow-lg">
-                <Image
-                  src={getMediaUrl(blog.coverImage)}
-                  alt={blog.title}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 75vw"
-                />
-              </div>
-            )}
+            {(() => {
+              const coverUrl = getMediaUrl(blog.coverImage);
+              return coverUrl ? (
+                <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-secondary/15 shadow-lg">
+                  <Image
+                    src={coverUrl}
+                    alt={blog.title}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 75vw"
+                  />
+                </div>
+              ) : null;
+            })()}
 
             {/* Article Body Content */}
             <article className="bg-white border border-secondary/10 shadow-lg rounded-2xl p-6 md:p-10 prose prose-emerald max-w-none">
@@ -381,16 +400,19 @@ export default function BlogDetailClient({
                     href={`/blogs?author=${encodeURIComponent(blog.author.name || "Summit Guide")}`}
                     className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden bg-primary/10 border-2 border-secondary shrink-0 shadow-sm hover:scale-105 transition duration-300"
                   >
-                    {blog.author.photo ? (
-                      <Image
-                        src={getMediaUrl(blog.author.photo)}
-                        alt={blog.author.name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <FaUser className="h-10 w-10 m-5 text-primary" />
-                    )}
+                    {(() => {
+                      const photoUrl = getMediaUrl(blog.author.photo);
+                      return photoUrl ? (
+                        <Image
+                          src={photoUrl}
+                          alt={blog.author.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <FaUser className="h-10 w-10 m-5 text-primary" />
+                      );
+                    })()}
                   </Link>
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">

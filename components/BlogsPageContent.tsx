@@ -188,20 +188,23 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
               
               {/* Image Column */}
               <div className="lg:col-span-7 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full overflow-hidden bg-primary/10">
-                {featuredPost.coverImage ? (
-                  <Image
-                    src={getMediaUrl(featuredPost.coverImage)}
-                    alt={featuredPost.title}
-                    fill
-                    className="object-cover group-hover:scale-103 transition duration-700 ease-out"
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-primary/5 font-serif text-primary/30">
-                    Nature Heaven Chronicles
-                  </div>
-                )}
+                {(() => {
+                  const coverUrl = getMediaUrl(featuredPost.coverImage);
+                  return coverUrl ? (
+                    <Image
+                      src={coverUrl}
+                      alt={featuredPost.title}
+                      fill
+                      className="object-cover group-hover:scale-103 transition duration-700 ease-out"
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-primary/5 font-serif text-primary/30">
+                      Nature Heaven Chronicles
+                    </div>
+                  );
+                })()}
                 {/* Category Badge overlay */}
                 <span className="absolute top-4 left-4 bg-secondary text-primary font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-md">
                   {featuredPost.category}
@@ -239,16 +242,19 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                       href={`/blogs?author=${encodeURIComponent(featuredPost.author?.name || "Summit Guide")}`}
                       className="relative h-10 w-10 rounded-full overflow-hidden border border-secondary/20 bg-primary/5 flex items-center justify-center shrink-0 hover:scale-105 transition"
                     >
-                      {featuredPost.author?.photo ? (
-                        <Image
-                          src={getMediaUrl(featuredPost.author.photo)}
-                          alt={featuredPost.author.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <FaUser className="text-primary/30 h-4 w-4" />
-                      )}
+                      {(() => {
+                        const photoUrl = featuredPost.author?.photo ? getMediaUrl(featuredPost.author.photo) : null;
+                        return photoUrl ? (
+                          <Image
+                            src={photoUrl}
+                            alt={featuredPost.author.name}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <FaUser className="text-primary/30 h-4 w-4" />
+                        );
+                      })()}
                     </Link>
                     <div className="flex flex-col">
                       <Link 
@@ -362,19 +368,22 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                   <div>
                     {/* Cover image */}
                     <div className="relative aspect-[16/9] w-full overflow-hidden bg-primary/10">
-                      {blog.coverImage ? (
-                        <Image
-                          src={getMediaUrl(blog.coverImage)}
-                          alt={blog.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition duration-500"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary/5 font-serif text-primary/30">
-                          Nature Heaven Blog
-                        </div>
-                      )}
+                      {(() => {
+                        const coverUrl = getMediaUrl(blog.coverImage);
+                        return coverUrl ? (
+                          <Image
+                            src={coverUrl}
+                            alt={blog.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition duration-500"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-primary/5 font-serif text-primary/30">
+                            Nature Heaven Blog
+                          </div>
+                        );
+                      })()}
                       {/* Category Badge */}
                       <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-full shadow-md">
                         {blog.category}
@@ -412,16 +421,19 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                         href={`/blogs?author=${encodeURIComponent(blog.author?.name || "Summit Guide")}`}
                         className="relative h-7 w-7 rounded-full overflow-hidden border border-secondary/20 bg-primary/5 flex items-center justify-center shrink-0 hover:scale-105 transition"
                       >
-                        {blog.author?.photo ? (
-                          <Image
-                            src={getMediaUrl(blog.author.photo)}
-                            alt={blog.author.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <FaUser className="text-primary/30 h-3 w-3" />
-                        )}
+                        {(() => {
+                          const photoUrl = blog.author?.photo ? getMediaUrl(blog.author.photo) : null;
+                          return photoUrl ? (
+                            <Image
+                              src={photoUrl}
+                              alt={blog.author.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <FaUser className="text-primary/30 h-3 w-3" />
+                          );
+                        })()}
                       </Link>
                       <Link 
                         href={`/blogs?author=${encodeURIComponent(blog.author?.name || "Summit Guide")}`}

@@ -9,6 +9,7 @@ import { Region, Trek } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import TrekCard from "@/components/TrekCard";
+import { getMediaUrl } from "@/lib/cloudinary-loader";
 
 
 export const revalidate = 60; // Revalidate every minute
@@ -87,21 +88,23 @@ export default async function RegionDetailPage({ params }: RegionDetailPageProps
         {/* Background Image and overlay */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/45 z-10 bg-gradient-to-t from-black/80 via-black/10 to-black/30"></div>
-          {region.coverImage ? (
-            <Image
-              src={region.coverImage}
-              alt={region.name}
-              fill
-              priority
-
-              className="object-cover object-center"
-              sizes="100vw"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-primary/40 font-serif">
-              Nature Heaven Trekking
-            </div>
-          )}
+          {(() => {
+            const coverUrl = getMediaUrl(region.coverImage);
+            return coverUrl ? (
+              <Image
+                src={coverUrl}
+                alt={region.name}
+                fill
+                priority
+                className="object-cover object-center"
+                sizes="100vw"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-primary/40 font-serif">
+                Nature Heaven Trekking
+              </div>
+            );
+          })()}
         </div>
 
         {/* Content */}

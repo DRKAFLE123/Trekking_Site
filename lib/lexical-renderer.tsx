@@ -4,6 +4,7 @@ import { getMediaUrl } from './cloudinary-loader';
 export interface HeadingItem {
   id: string;
   text: string;
+  level: number;
 }
 
 export const slugify = (text: string): string =>
@@ -17,20 +18,22 @@ export function extractHeadings(body: any): HeadingItem[] {
   const headings: HeadingItem[] = [];
 
   const traverse = (node: any) => {
-    if (node.type === 'heading' && node.tag === 'h2' && node.children) {
+    if (node.type === 'heading' && /^h[2-6]$/.test(node.tag || '') && node.children) {
       const text = node.children
         .filter((c: any) => c.type === 'text')
         .map((c: any) => c.text)
         .join('');
       if (text) {
-        headings.push({ id: slugify(text), text });
+        const level = parseInt(node.tag.substring(1), 10);
+        headings.push({ id: slugify(text), text, level });
       }
     }
     // PortableText fallback style
-    if (node._type === 'block' && node.style === 'h2' && node.children) {
+    if (node._type === 'block' && /^h[2-6]$/.test(node.style || '') && node.children) {
       const text = node.children.map((c: any) => c.text).join('');
       if (text) {
-        headings.push({ id: slugify(text), text });
+        const level = parseInt(node.style.substring(1), 10);
+        headings.push({ id: slugify(text), text, level });
       }
     }
 
@@ -66,18 +69,24 @@ export function renderLexical(body: any): React.ReactNode {
     return body.map((block: any, idx: number) => {
       if (block._type === 'block' && block.children) {
         const text = block.children.map((c: any) => c.text).join('');
-        if (block.style === 'h2') {
+        if (/^h[2-6]$/.test(block.style || '')) {
+          const Tag = block.style as 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+          const fontSize = 
+            Tag === 'h2' ? 'text-2xl' : 
+            Tag === 'h3' ? 'text-xl' : 
+            Tag === 'h4' ? 'text-lg' : 
+            Tag === 'h5' ? 'text-base' : 'text-sm';
+          const borderStyle = Tag === 'h2' ? 'border-b border-secondary/10 pb-2 scroll-mt-28' : 'scroll-mt-28';
+          const spacingClass = Tag === 'h2' ? 'mt-8 mb-4' : Tag === 'h3' ? 'mt-6 mb-3' : 'mt-4 mb-2';
+          
           return (
-            <h2 id={slugify(text)} key={idx} className="font-serif text-2xl font-bold text-primary mt-8 mb-4 border-b border-secondary/10 pb-2 scroll-mt-28">
+            <Tag 
+              id={slugify(text)} 
+              key={idx} 
+              className={`font-serif ${fontSize} font-bold text-primary ${spacingClass} ${borderStyle}`}
+            >
               {text}
-            </h2>
-          );
-        }
-        if (block.style === 'h3') {
-          return (
-            <h3 key={idx} className="font-serif text-xl font-bold text-primary mt-6 mb-3">
-              {text}
-            </h3>
+            </Tag>
           );
         }
         return (
@@ -186,25 +195,48 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
     }
     if (node.type === 'heading' && node.children) {
       const text = renderLexicalChildren(node.children);
+      const textStr = node.children
+        .filter((c: any) => c.type === 'text')
+        .map((c: any) => c.text)
+        .join('');
+      const headingId = slugify(textStr);
+
       if (node.tag === 'h2') {
-        const textStr = node.children
-          .filter((c: any) => c.type === 'text')
-          .map((c: any) => c.text)
-          .join('');
         return (
-          <h2 id={slugify(textStr)} key={idx} className="font-serif text-2xl font-bold text-primary mt-8 mb-4 border-b border-secondary/10 pb-2 scroll-mt-28">
+          <h2 id={headingId} key={idx} className="font-serif text-2xl font-bold text-primary mt-8 mb-4 border-b border-secondary/10 pb-2 scroll-mt-28">
             {text}
           </h2>
         );
       }
       if (node.tag === 'h3') {
         return (
-          <h3 key={idx} className="font-serif text-xl font-bold text-primary mt-6 mb-3">
+          <h3 id={headingId} key={idx} className="font-serif text-xl font-bold text-primary mt-6 mb-3 scroll-mt-28">
             {text}
           </h3>
         );
       }
-      return <h4 key={idx} className="font-serif text-lg font-bold text-primary mt-4 mb-2">{text}</h4>;
+      if (node.tag === 'h4') {
+        return (
+          <h4 id={headingId} key={idx} className="font-serif text-lg font-bold text-primary mt-4 mb-2 scroll-mt-28">
+            {text}
+          </h4>
+        );
+      }
+      if (node.tag === 'h5') {
+        return (
+          <h5 id={headingId} key={idx} className="font-serif text-base font-bold text-primary mt-4 mb-2 scroll-mt-28">
+            {text}
+          </h5>
+        );
+      }
+      if (node.tag === 'h6') {
+        return (
+          <h6 id={headingId} key={idx} className="font-serif text-sm font-bold text-primary mt-4 mb-2 scroll-mt-28">
+            {text}
+          </h6>
+        );
+      }
+      return <h4 id={headingId} key={idx} className="font-serif text-lg font-bold text-primary mt-4 mb-2 scroll-mt-28">{text}</h4>;
     }
     if (node.type === 'list' && node.children) {
       const listItems = node.children.map((li: any, liIdx: number) => (
