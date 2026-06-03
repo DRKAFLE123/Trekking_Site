@@ -85,6 +85,11 @@ const uploadToCloudinary: CollectionAfterChangeHook = async ({
 }) => {
   if (operation !== 'create' && operation !== 'update') return;
 
+  // Prevent recursion if already updating or uploaded
+  if (req?.context?.preventCloudinary) {
+    return;
+  }
+
   // Prevent infinite loop if already uploaded to Cloudinary
   if (doc.url && doc.url.includes('res.cloudinary.com')) {
     return;
@@ -117,15 +122,31 @@ const uploadToCloudinary: CollectionAfterChangeHook = async ({
 
     console.log(`[Media Cloudinary Upload] Successful! URL: ${uploadResult.secure_url}`);
 
-    // Update document URL to refer to Cloudinary secure CDN endpoint
-    await req.payload.update({
-      collection: 'media',
-      id: doc.id,
-      data: {
-        url: uploadResult.secure_url,
-      },
-      overrideAccess: true,
-    });
+    // Update document URL directly via raw SQL to bypass Payload's auto-generated URL mapping
+    const dbAdapter = req?.payload?.db as any;
+    const drizzle = (req?.transactionID && dbAdapter?.sessions?.[req.transactionID]?.db) || dbAdapter?.drizzle;
+    if (drizzle?.execute) {
+      await drizzle.execute(
+        `UPDATE media SET url = '${uploadResult.secure_url}' WHERE id = ${Number(doc.id)}`
+      );
+      console.log(`[Media Cloudinary Upload] Successfully updated database url field via raw SQL.`);
+    } else {
+      console.warn('[Media Cloudinary Upload] Drizzle client not found, falling back to payload update.');
+      // Set context flag to prevent infinite recursion on nested update
+      if (req) {
+        req.context = req.context || {};
+        req.context.preventCloudinary = true;
+      }
+      await req.payload.update({
+        collection: 'media',
+        id: doc.id,
+        data: {
+          url: uploadResult.secure_url,
+        },
+        req,
+        overrideAccess: true,
+      });
+    }
 
     // Optionally delete the local file after upload to save local disk space:
     // try {

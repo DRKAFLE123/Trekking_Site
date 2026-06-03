@@ -150,19 +150,17 @@ export default async function TeamPage() {
       </div>
 
       {/* ─── Breadcrumb ─── */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-[1160px] mx-auto px-4 sm:px-6">
-          <nav className="flex items-center gap-2 py-3 text-sm font-sans overflow-x-auto whitespace-nowrap">
-            <Link
-              href="/"
-              className="text-gray-400 hover:text-[#2E7D32] transition"
-            >
-              Home
-            </Link>
-            <FaChevronRight className="text-[10px] text-gray-300" />
-            <span className="font-bold text-[#1a2e1f]">Our Team</span>
-          </nav>
-        </div>
+      <div className="max-w-[1110px] mx-auto px-4 sm:px-6 pt-6">
+        <nav className="flex items-center gap-2 text-sm font-sans overflow-x-auto whitespace-nowrap text-[#6B6B6B]">
+          <Link
+            href="/"
+            className="hover:text-[#2E7D32] transition"
+          >
+            Home
+          </Link>
+          <FaChevronRight className="text-[10px] text-gray-400" />
+          <span className="font-semibold text-[#1a2e1f]">Our Team</span>
+        </nav>
       </div>
 
       {/* ─── Intro Section (Centered) ─── */}
