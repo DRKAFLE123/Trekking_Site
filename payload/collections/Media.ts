@@ -124,7 +124,7 @@ const uploadToCloudinary: CollectionAfterChangeHook = async ({
 
     // Update document URL directly via raw SQL to bypass Payload's auto-generated URL mapping
     const dbAdapter = req?.payload?.db as any;
-    const drizzle = (req?.transactionID && dbAdapter?.sessions?.[req.transactionID]?.db) || dbAdapter?.drizzle;
+    const drizzle = (req?.transactionID && dbAdapter?.sessions?.[req.transactionID as any]?.db) || dbAdapter?.drizzle;
     if (drizzle?.execute) {
       await drizzle.execute(
         `UPDATE media SET url = '${uploadResult.secure_url}' WHERE id = ${Number(doc.id)}`

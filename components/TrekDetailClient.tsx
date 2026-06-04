@@ -282,11 +282,9 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
   const exclusionGroups  = cmsGroupsToRender(trek.exclusions,  "Other Exclusions");
 
 
-  // Packing list: CMS or default
-  const packingChecklist: PackingCategory[] =
-    trek.packingList && trek.packingList.length > 0
-      ? trek.packingList
-      : DEFAULT_PACKING_LIST;
+  // Packing list: CMS or empty (hide if empty)
+  const hasPackingList = !!(trek.packingList && trek.packingList.length > 0);
+  const packingChecklist: PackingCategory[] = hasPackingList ? trek.packingList! : [];
 
   // Gallery
   const computedGallery = (trek.gallery || []).map((g: any) => {
@@ -294,11 +292,8 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
     return getMediaUrl(rawImage);
   }).filter(Boolean) as string[];
 
-  const galleryList = computedGallery.length > 0 ? computedGallery : [
-    "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200",
-    "https://images.unsplash.com/photo-1585016495481-91613a3ab1bc?q=80&w=800",
-    "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=800",
-  ];
+  const hasGallery = computedGallery.length > 0;
+  const galleryList = computedGallery;
 
   // Group discounts
   const groupDiscounts = trek.groupDiscounts && trek.groupDiscounts.length > 0
@@ -392,7 +387,18 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        const sections = ["overview","schedule","video","itinerary","includes","map","packing","info","reviews","faqs"];
+        const sections = [
+          "overview",
+          "schedule",
+          trek.youtubeVideoId ? "video" : "",
+          dayByDayItinerary.length > 0 ? "itinerary" : "",
+          (inclusionGroups.length > 0 || exclusionGroups.length > 0) ? "includes" : "",
+          (mapImageUrl || (trek.gpsCoordinates && trek.gpsCoordinates.length > 0)) ? "map" : "",
+          hasPackingList ? "packing" : "",
+          (trek.tripInfoSections && trek.tripInfoSections.length > 0) ? "info" : "",
+          testimonials.length > 0 ? "reviews" : "",
+          faqs.length > 0 ? "faqs" : ""
+        ].filter(Boolean);
         const scrollPos = window.scrollY + 140;
         for (const id of sections) {
           const el = document.getElementById(id);
@@ -408,7 +414,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [dayByDayItinerary.length, inclusionGroups.length, exclusionGroups.length, mapImageUrl, trek.gpsCoordinates, hasPackingList, trek.tripInfoSections, testimonials.length, faqs.length, trek.youtubeVideoId]);
 
   // Scrollspy for FAQ category nav
   useEffect(() => {
@@ -447,7 +453,8 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
   // ── Hero images ────────────────────────────────────────────────────────────
   const cover = getMediaUrl(trek.heroImage) || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200";
   const heroImages = (() => {
-    const extras = galleryList.filter(g => g !== cover);
+    // Filter out the cover image ONLY at its first occurrence to allow duplicates in the gallery grid
+    const extras = galleryList.filter((g, idx) => g !== cover || galleryList.indexOf(g) !== idx);
     const arr = [cover, ...extras].slice(0, 5);
     const fallbacks = [
       "https://images.unsplash.com/photo-1585016495481-91613a3ab1bc?q=80&w=800",
@@ -455,10 +462,12 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
       "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?q=80&w=800",
       "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=800",
     ];
-    while (arr.length < 5) arr.push(fallbacks[(arr.length - 1) % fallbacks.length]);
+    while (arr.length < 5) {
+      arr.push(fallbacks[(arr.length - 1) % fallbacks.length]);
+    }
     return arr;
   })();
-  const allLightboxImages = [...heroImages, ...galleryList.filter(g => !heroImages.includes(g))].map(src => ({ src }));
+  const allLightboxImages = Array.from(new Set([cover, ...galleryList, ...heroImages])).map(src => ({ src }));
 
   // ── Schedule calendar renderer ─────────────────────────────────────────────
   const renderScheduleMonth = (mDate: Date) => {
@@ -574,42 +583,68 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
           1. HERO PHOTO GALLERY
           ════════════════════════════════════════════════════════════════════ */}
       <section className="relative w-full bg-[#1a2e1f] overflow-hidden">
-        {/* Desktop: split grid */}
-        <div className="hidden md:grid md:grid-cols-[60fr_40fr] gap-1 h-[72vh] max-h-[620px]">
-          <div className="relative overflow-hidden cursor-pointer group" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>
-            <Image src={heroImages[0]} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center transition duration-700 group-hover:scale-105" unoptimized />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent pointer-events-none" />
+        {/* Desktop: single image or split grid */}
+        {heroImages.length > 1 ? (
+          <div className="hidden md:grid md:grid-cols-[60fr_40fr] gap-1 h-[72vh] max-h-[620px]">
+            <div className="relative overflow-hidden cursor-pointer group" onClick={() => {
+              const targetIdx = allLightboxImages.findIndex(slide => slide.src === heroImages[0]);
+              setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
+              setLightboxOpen(true);
+            }}>
+              <Image src={heroImages[0]} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center transition duration-700 group-hover:scale-105" unoptimized />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent pointer-events-none" />
+            </div>
+            <div className="grid grid-cols-2 grid-rows-2 gap-1">
+              {heroImages.slice(1,5).map((img, idx) => (
+                <div key={idx} className="relative overflow-hidden cursor-pointer group" onClick={() => {
+                  const targetIdx = allLightboxImages.findIndex(slide => slide.src === img);
+                  setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
+                  setLightboxOpen(true);
+                }}>
+                  <Image src={img} alt={`${trek.title} photo ${idx+2}`} fill className="object-cover object-center transition duration-700 group-hover:scale-110" unoptimized />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition duration-300" />
+                </div>
+              ))}
+            </div>
+            <button onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }} className="absolute bottom-5 right-5 z-20 bg-white/95 backdrop-blur-sm hover:bg-white text-[#1a2e1f] font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transition hover:scale-105 active:scale-95 border border-white/50">
+              <FaRegImage className="text-sm" /> View All Photos ({allLightboxImages.length})
+            </button>
           </div>
-          <div className="grid grid-cols-2 grid-rows-2 gap-1">
-            {heroImages.slice(1,5).map((img, idx) => (
-              <div key={idx} className="relative overflow-hidden cursor-pointer group" onClick={() => { setLightboxIndex(idx+1); setLightboxOpen(true); }}>
-                <Image src={img} alt={`${trek.title} photo ${idx+2}`} fill className="object-cover object-center transition duration-700 group-hover:scale-110" unoptimized />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition duration-300" />
+        ) : (
+          <div className="hidden md:block relative h-[72vh] max-h-[620px] w-full overflow-hidden cursor-pointer" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>
+            <Image src={cover} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center transition duration-700 hover:scale-102" unoptimized />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+          </div>
+        )}
+
+        {/* Mobile: single image or swipe carousel */}
+        {heroImages.length > 1 ? (
+          <div className="relative md:hidden h-[55vw] min-h-[260px] max-h-[400px] overflow-hidden select-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+            {heroImages.map((img, idx) => (
+              <div key={idx} className={`absolute inset-0 transition-opacity duration-500 ${idx === carouselIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`} onClick={() => {
+                const targetIdx = allLightboxImages.findIndex(slide => slide.src === img);
+                setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
+                setLightboxOpen(true);
+              }}>
+                <Image src={img} alt={`${trek.title} photo ${idx+1}`} fill priority={idx===0} className="object-cover object-center" unoptimized />
               </div>
             ))}
-          </div>
-          <button onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }} className="absolute bottom-5 right-5 z-20 bg-white/95 backdrop-blur-sm hover:bg-white text-[#1a2e1f] font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transition hover:scale-105 active:scale-95 border border-white/50">
-            <FaRegImage className="text-sm" /> View All Photos ({allLightboxImages.length})
-          </button>
-        </div>
-
-        {/* Mobile: swipe carousel */}
-        <div className="relative md:hidden h-[55vw] min-h-[260px] max-h-[400px] overflow-hidden select-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-          {heroImages.map((img, idx) => (
-            <div key={idx} className={`absolute inset-0 transition-opacity duration-500 ${idx === carouselIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`} onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}>
-              <Image src={img} alt={`${trek.title} photo ${idx+1}`} fill priority={idx===0} className="object-cover object-center" unoptimized />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-20" />
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex gap-1.5">
+              {heroImages.map((_, idx) => (
+                <button key={idx} onClick={e => { e.stopPropagation(); setCarouselIndex(idx); }} className={`rounded-full transition-all duration-300 ${idx===carouselIndex ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"}`} />
+              ))}
             </div>
-          ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-20" />
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex gap-1.5">
-            {heroImages.map((_, idx) => (
-              <button key={idx} onClick={e => { e.stopPropagation(); setCarouselIndex(idx); }} className={`rounded-full transition-all duration-300 ${idx===carouselIndex ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"}`} />
-            ))}
+            <button onClick={() => { setLightboxIndex(carouselIndex); setLightboxOpen(true); }} className="absolute bottom-3 right-3 z-30 bg-black/50 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm">
+              <FaRegImage className="h-3 w-3" /> {allLightboxImages.length} Photos
+            </button>
           </div>
-          <button onClick={() => { setLightboxIndex(carouselIndex); setLightboxOpen(true); }} className="absolute bottom-3 right-3 z-30 bg-black/50 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm">
-            <FaRegImage className="h-3 w-3" /> {allLightboxImages.length} Photos
-          </button>
-        </div>
+        ) : (
+          <div className="relative md:hidden h-[55vw] min-h-[260px] max-h-[400px] overflow-hidden select-none" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>
+            <Image src={cover} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center" unoptimized />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-20" />
+          </div>
+        )}
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
@@ -675,17 +710,17 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
       <nav className={`sticky top-0 bg-[#F1F3F5] border-b border-slate-200 shadow-md z-40 overflow-x-auto scrollbar-none font-sans font-bold text-xs transition-all duration-300 ${hideSubNav ? "-translate-y-full opacity-0 pointer-events-none" : ""}`}>
         <div className="max-w-[1240px] mx-auto flex items-center justify-start h-12">
           {[
-            { id: "overview",  label: "Overview",  icon: <FaRegEye className="text-sm shrink-0" /> },
-            { id: "schedule",  label: "Schedule",  icon: <FaRegCalendarCheck className="text-sm shrink-0" /> },
-            { id: "video",     label: "Video",     icon: <FaPlay className="text-xs shrink-0" /> },
-            { id: "itinerary", label: "Itinerary", icon: <FaListUl className="text-sm shrink-0" /> },
-            { id: "includes",  label: "Includes",  icon: <FaRegCheckCircle className="text-sm shrink-0" /> },
-            { id: "map",       label: "Map",       icon: <FaMap className="text-sm shrink-0" /> },
-            { id: "packing",   label: "Equipment", icon: <FaHiking className="text-sm shrink-0" /> },
-            { id: "info",      label: "Trip Info", icon: <FaInfoCircle className="text-sm shrink-0" /> },
-            { id: "reviews",   label: "Reviews",   icon: <FaRegComments className="text-sm shrink-0" /> },
-            { id: "faqs",      label: "FAQs",      icon: <FaQuestionCircle className="text-sm shrink-0" /> },
-          ].map(sec => (
+            { id: "overview",  label: "Overview",  icon: <FaRegEye className="text-sm shrink-0" />, visible: true },
+            { id: "schedule",  label: "Schedule",  icon: <FaRegCalendarCheck className="text-sm shrink-0" />, visible: true },
+            { id: "video",     label: "Video",     icon: <FaPlay className="text-xs shrink-0" />, visible: !!trek.youtubeVideoId },
+            { id: "itinerary", label: "Itinerary", icon: <FaListUl className="text-sm shrink-0" />, visible: dayByDayItinerary.length > 0 },
+            { id: "includes",  label: "Includes",  icon: <FaRegCheckCircle className="text-sm shrink-0" />, visible: (inclusionGroups.length > 0 || exclusionGroups.length > 0) },
+            { id: "map",       label: "Map",       icon: <FaMap className="text-sm shrink-0" />, visible: !!(mapImageUrl || (trek.gpsCoordinates && trek.gpsCoordinates.length > 0)) },
+            { id: "packing",   label: "Equipment", icon: <FaHiking className="text-sm shrink-0" />, visible: hasPackingList },
+            { id: "info",      label: "Trip Info", icon: <FaInfoCircle className="text-sm shrink-0" />, visible: !!(trek.tripInfoSections && trek.tripInfoSections.length > 0) },
+            { id: "reviews",   label: "Reviews",   icon: <FaRegComments className="text-sm shrink-0" />, visible: testimonials.length > 0 },
+            { id: "faqs",      label: "FAQs",      icon: <FaQuestionCircle className="text-sm shrink-0" />, visible: faqs.length > 0 },
+          ].filter(sec => sec.visible).map(sec => (
             <button key={sec.id} onClick={() => scrollToSection(sec.id)} className={`h-full flex items-center gap-2 px-5 transition-all duration-200 whitespace-nowrap border-r border-slate-200/80 last:border-r-0 select-none ${activeSection===sec.id ? "bg-[#1a2e1f] text-white font-black" : "text-slate-700 hover:bg-slate-200/60 hover:text-slate-900"}`}>
               {sec.icon}<span>{sec.label}</span>
             </button>
@@ -758,55 +793,63 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               </div>
             </div>
 
-            {/* ── FLIGHT INFO (always shown; CMS richText overrides defaults) ─ */}
-            <div id="flight-info" className="bg-[#eef5fb] rounded-2xl border border-[#dce8f3] p-6 md:p-10 shadow-sm scroll-mt-24">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
-                <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaPaperPlane className="text-base" /></span>
-                {trek.flightInfoTitle || 'Flight Information'}
-              </h2>
-              <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
-                {trek.flightInfo ? (
-                  renderLexical(trek.flightInfo)
-                ) : (
-                  <p>
-                    Detailed flight and transport information for this trek will be shared with you upon booking.
-                    Please contact our team for the latest schedule, seasonal considerations, and recommended buffer days
-                    for your international itinerary.
-                  </p>
-                )}
+            {/* ── FLIGHT INFO (conditionally rendered) ─ */}
+            {trek.flightInfo && (
+              <div id="flight-info" className="bg-[#eef5fb] rounded-2xl border border-[#dce8f3] p-6 md:p-10 shadow-sm scroll-mt-24">
+                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaPaperPlane className="text-base" /></span>
+                  {trek.flightInfoTitle || 'Flight Information'}
+                </h2>
+                <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
+                  {renderLexical(trek.flightInfo)}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* ── TRIP BRIEFING (always shown; CMS richText overrides defaults) ─ */}
-            <div id="trip-briefing" className="bg-[#fdf7ec] rounded-2xl border border-[#f1e6cf] p-6 md:p-10 shadow-sm scroll-mt-24">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
-                <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaRegCalendarCheck className="text-base" /></span>
-                {trek.briefingInfoTitle || 'Online Trip Briefing'}
-              </h2>
-              <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
-                {trek.briefingInfo ? (
-                  renderLexical(trek.briefingInfo)
-                ) : (
-                  <p>
-                    Once your booking is confirmed, we&apos;ll schedule a free online briefing on WhatsApp or Zoom.
-                    Your trek leader will walk you through the itinerary, gear checklist, weather expectations,
-                    and answer your questions so you feel fully prepared and confident before the trek begins.
-                  </p>
-                )}
+            {/* ── TRIP BRIEFING (conditionally rendered) ─ */}
+            {trek.briefingInfo && (
+              <div id="trip-briefing" className="bg-[#fdf7ec] rounded-2xl border border-[#f1e6cf] p-6 md:p-10 shadow-sm scroll-mt-24">
+                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaRegCalendarCheck className="text-base" /></span>
+                  {trek.briefingInfoTitle || 'Online Trip Briefing'}
+                </h2>
+                <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
+                  {renderLexical(trek.briefingInfo)}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* ── PHOTO GALLERY ─────────────────────────────────────────── */}
-            <div id="gallery" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">Photo Gallery</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {galleryList.map((img, idx) => (
-                  <div key={idx} className="relative aspect-square md:aspect-[4/3] rounded-xl overflow-hidden shadow-sm group bg-slate-100" onClick={() => { setLightboxIndex(heroImages.length+idx); setLightboxOpen(true); }}>
-                    <Image src={img} alt={`${trek.title} gallery ${idx+1}`} fill sizes="(max-width:768px) 50vw, 33vw" className="object-cover hover:scale-105 transition duration-300 cursor-pointer" unoptimized />
+            {/* ── PHOTO GALLERY (conditionally rendered) ─────────────────── */}
+            {hasGallery && (
+              <div id="gallery" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">Photo Gallery</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {galleryList.slice(0, 3).map((img, idx) => (
+                    <div key={idx} className="relative aspect-square md:aspect-[4/3] rounded-xl overflow-hidden shadow-sm group bg-slate-100" onClick={() => {
+                      const targetIdx = allLightboxImages.findIndex(slide => slide.src === img);
+                      setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
+                      setLightboxOpen(true);
+                    }}>
+                      <Image src={img} alt={`${trek.title} gallery ${idx+1}`} fill sizes="(max-width:768px) 50vw, 33vw" className="object-cover hover:scale-105 transition duration-300 cursor-pointer" unoptimized />
+                    </div>
+                  ))}
+                </div>
+                {galleryList.length > 3 && (
+                  <div className="flex justify-center mt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLightboxIndex(0);
+                        setLightboxOpen(true);
+                      }}
+                      className="bg-white hover:bg-slate-50 border border-[#2E7D32] text-[#2E7D32] hover:text-[#1B5E20] font-black text-xs uppercase px-6 py-3 rounded-xl shadow-sm hover:shadow transition duration-300 flex items-center gap-2 cursor-pointer select-none"
+                    >
+                      <FaRegImage className="text-sm" /> See All Photos ({galleryList.length})
+                    </button>
                   </div>
-                ))}
+                )}
               </div>
-            </div>
+            )}
 
             {/* ── SCHEDULE / PLAN YOUR DATES ───────────────────────────── */}
             <div id="schedule" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
@@ -892,18 +935,16 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             )}
 
             {/* ── DAY-BY-DAY ITINERARY ─────────────────────────────────── */}
-            <div id="itinerary" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Detailed Itinerary</h2>
-                <div className="flex items-center gap-3 text-xs font-bold text-[#2E7D32]">
-                  <button onClick={expandAllDays} className="hover:underline">Expand All</button>
-                  <span className="h-3 w-px bg-[#E5E5E5]" />
-                  <button onClick={collapseAllDays} className="hover:underline">Collapse All</button>
+            {dayByDayItinerary.length > 0 && (
+              <div id="itinerary" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Detailed Itinerary</h2>
+                  <div className="flex items-center gap-3 text-xs font-bold text-[#2E7D32]">
+                    <button onClick={expandAllDays} className="hover:underline">Expand All</button>
+                    <span className="h-3 w-px bg-[#E5E5E5]" />
+                    <button onClick={collapseAllDays} className="hover:underline">Collapse All</button>
+                  </div>
                 </div>
-              </div>
-              {dayByDayItinerary.length === 0 ? (
-                <p className="text-sm text-[#6B6B6B] italic">Itinerary details will be published soon. Please contact us for the day-by-day schedule.</p>
-              ) : (
                 <div className="flex flex-col gap-4">
                   {dayByDayItinerary.map(day => {
                     const isOpen = !!openDays[day.day];
@@ -1065,75 +1106,80 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                     );
                   })}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* ── INCLUSIONS & EXCLUSIONS ───────────────────────────────── */}
-            <div id="includes" className="flex flex-col gap-6 scroll-mt-24">
-              {renderPackageCard("What is Included in This Package", inclusionGroups, true)}
-              {renderPackageCard("What is Excluded from This Package", exclusionGroups, false)}
-            </div>
+            {(inclusionGroups.length > 0 || exclusionGroups.length > 0) && (
+              <div id="includes" className="flex flex-col gap-6 scroll-mt-24">
+                {inclusionGroups.length > 0 && renderPackageCard("What is Included in This Package", inclusionGroups, true)}
+                {exclusionGroups.length > 0 && renderPackageCard("What is Excluded from This Package", exclusionGroups, false)}
+              </div>
+            )}
 
             {/* ── ROUTE MAP ─────────────────────────────────────────────── */}
-            <div id="map" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <div className="flex items-center justify-between gap-4 border-b border-[#E5E5E5] pb-4 flex-wrap">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Trek Route Map</h2>
-                {mapImageUrl && (
-                  <button type="button" onClick={handleDownloadMap} className="inline-flex items-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 shrink-0">
-                    <FaDownload /> Download Map
-                  </button>
-                )}
+            {(!!mapImageUrl || (trek.gpsCoordinates && trek.gpsCoordinates.length > 0)) && (
+              <div id="map" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                <div className="flex items-center justify-between gap-4 border-b border-[#E5E5E5] pb-4 flex-wrap">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Trek Route Map</h2>
+                  {mapImageUrl && (
+                    <button type="button" onClick={handleDownloadMap} className="inline-flex items-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 shrink-0">
+                      <FaDownload /> Download Map
+                    </button>
+                  )}
+                </div>
+                {mapImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={mapImageUrl} alt={`${trek.title} Route Map`} className="w-full h-auto rounded-xl border border-[#E5E5E5] bg-slate-50" />
+                ) : trek.gpsCoordinates && trek.gpsCoordinates.length > 0 ? (
+                  <TrekMap waypoints={trek.gpsCoordinates} center={trek.region?.mapCenter} />
+                ) : null}
               </div>
-              {mapImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={mapImageUrl} alt={`${trek.title} Route Map`} className="w-full h-auto rounded-xl border border-[#E5E5E5] bg-slate-50" />
-              ) : trek.gpsCoordinates && trek.gpsCoordinates.length > 0 ? (
-                <TrekMap waypoints={trek.gpsCoordinates} center={trek.region?.mapCenter} />
-              ) : (
-                <div className="h-[300px] bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 text-sm">No route map available. Upload one in the CMS under Media → Route Map Image.</div>
-              )}
-            </div>
+            )}
 
             {/* ── PACKING / EQUIPMENT LIST ─────────────────────────────── */}
-            <div id="packing" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Required Equipment List</h2>
-                <div className="flex items-center gap-2 text-xs font-bold text-[#2E7D32]">
-                  <span>Progress: {totalPackedItems}/{totalChecklistItems} packed ({packedPercentage}%)</span>
+            {/* ── PACKING / EQUIPMENT LIST ─────────────────────────────── */}
+            {hasPackingList && (
+              <div id="packing" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Required Equipment List</h2>
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#2E7D32]">
+                    <span>Progress: {totalPackedItems}/{totalChecklistItems} packed ({packedPercentage}%)</span>
+                  </div>
+                </div>
+                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-green-500 transition-all duration-500" style={{ width: `${packedPercentage}%` }} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-2">
+                  {packingChecklist.map((cat, idx) => (
+                    <div key={idx} className="flex flex-col gap-3">
+                      <h4 className="font-serif text-base font-bold text-[#1A1A2E] border-b border-[#E5E5E5] pb-1.5">{cat.category}</h4>
+                      <div className="flex flex-col gap-2">
+                        {cat.items.map((itemObj, itemIdx) => {
+                          const itemText = typeof itemObj === "string" ? itemObj : itemObj.item;
+                          const isPacked = !!packedItems[itemText];
+                          return (
+                            <label key={itemIdx} className={`flex items-start gap-2.5 text-xs cursor-pointer p-1 rounded hover:bg-slate-50 select-none ${isPacked ? "text-[#6B6B6B] line-through font-medium" : "text-[#3D3D3D] font-semibold"}`}>
+                              <input type="checkbox" checked={isPacked} onChange={() => toggleChecklistItem(itemText)} className="mt-0.5 rounded accent-[#2E7D32] cursor-pointer" />
+                              <span>{itemText}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500 transition-all duration-500" style={{ width: `${packedPercentage}%` }} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-2">
-                {packingChecklist.map((cat, idx) => (
-                  <div key={idx} className="flex flex-col gap-3">
-                    <h4 className="font-serif text-base font-bold text-[#1A1A2E] border-b border-[#E5E5E5] pb-1.5">{cat.category}</h4>
-                    <div className="flex flex-col gap-2">
-                      {cat.items.map((itemObj, itemIdx) => {
-                        const itemText = typeof itemObj === "string" ? itemObj : itemObj.item;
-                        const isPacked = !!packedItems[itemText];
-                        return (
-                          <label key={itemIdx} className={`flex items-start gap-2.5 text-xs cursor-pointer p-1 rounded hover:bg-slate-50 select-none ${isPacked ? "text-[#6B6B6B] line-through font-medium" : "text-[#3D3D3D] font-semibold"}`}>
-                            <input type="checkbox" checked={isPacked} onChange={() => toggleChecklistItem(itemText)} className="mt-0.5 rounded accent-[#2E7D32] cursor-pointer" />
-                            <span>{itemText}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
 
             {/* ── TRIP INFO — Named Topic Cards ─────────────────────────── */}
-            <div id="info" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-3">
-                <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaInfoCircle className="text-base" /></span>
-                {trek.title} — Important Trip Info
-              </h2>
+            {trek.tripInfoSections && trek.tripInfoSections.length > 0 && (
+              <div id="info" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaInfoCircle className="text-base" /></span>
+                  {trek.title} — Important Trip Info
+                </h2>
 
-              {trek.tripInfoSections && trek.tripInfoSections.length > 0 ? (
                 <div className="flex flex-col gap-3">
                   {trek.tripInfoSections.map((section, idx) => {
                     const isOpen = !!openInfoCards[idx];
@@ -1169,50 +1215,51 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                     );
                   })}
                 </div>
-              ) : (
-                <p className="text-sm text-[#6B6B6B] italic">Trip information topics will be added soon. Contact us for details about accommodation, meals, permits, and more.</p>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* ── REVIEWS ───────────────────────────────────────────────── */}
-            <div id="reviews" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-              <div className="border-b border-[#E5E5E5] pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Customer Reviews</h2>
-                <div className="flex items-center gap-1.5 text-xs text-[#6B6B6B] font-bold">
-                  <div className="flex text-[#F5A623] gap-0.5"><FaStar /><FaStar /><FaStar /><FaStar /><FaStar /></div>
-                  <span>4.9/5 based on 320 reviews</span>
+            {/* ── REVIEWS (conditionally rendered) ───────────────────────── */}
+            {testimonials.length > 0 && (
+              <div id="reviews" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+                <div className="border-b border-[#E5E5E5] pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Customer Reviews</h2>
+                  <div className="flex items-center gap-1.5 text-xs text-[#6B6B6B] font-bold">
+                    <div className="flex text-[#F5A623] gap-0.5"><FaStar /><FaStar /><FaStar /><FaStar /><FaStar /></div>
+                    <span>4.9/5 based on 320 reviews</span>
+                  </div>
+                </div>
+                <div className="flex border-b border-[#E5E5E5] gap-2 overflow-x-auto scrollbar-none">
+                  {[{ id:"tripadvisor",label:"TripAdvisor",rating:"5.0 ★"},{ id:"google",label:"Google",rating:"4.9 ★"},{ id:"facebook",label:"Facebook",rating:"5.0 ★"}].map(tab => (
+                    <button key={tab.id} onClick={() => setActiveReviewTab(tab.id as any)} className={`px-4 py-2 border-b-2 font-sans font-bold text-xs transition whitespace-nowrap focus:outline-none ${activeReviewTab===tab.id ? "border-[#2E7D32] text-[#2E7D32]" : "border-transparent text-[#6B6B6B] hover:text-[#2E7D32]"}`}>
+                      {tab.label} <span className="ml-1 text-[9px] bg-slate-100 rounded px-1">{tab.rating}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-col gap-5 mt-4">
+                  {reviewCards[activeReviewTab].map((rev, idx) => {
+                    const isExpanded = !!expandedReviews[idx];
+                    const shouldTruncate = rev.text.length > 220;
+                    const displayStr = shouldTruncate && !isExpanded ? `${rev.text.substring(0,220)}...` : rev.text;
+                    return (
+                      <div key={idx} className="bg-slate-50 border border-[#E5E5E5] rounded-xl p-5 md:p-6 flex flex-col gap-2 shadow-sm hover:shadow transition duration-300">
+                        <div className="flex justify-between items-center flex-wrap gap-2">
+                          <div className="flex text-[#F5A623] gap-0.5 text-xs">{[...Array(rev.stars)].map((_,i)=><FaStar key={i}/>)}</div>
+                          <span className="text-[10px] text-[#6B6B6B] font-bold uppercase tracking-wider">{rev.author} ({rev.country})</span>
+                        </div>
+                        <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{rev.title}</h4>
+                        <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">&ldquo;{displayStr}&rdquo;</p>
+                        {shouldTruncate && (
+                          <button onClick={() => setExpandedReviews(p=>({...p,[idx]:!p[idx]}))} className="text-xs font-bold text-[#2E7D32] self-start hover:underline mt-1 focus:outline-none">
+                            {isExpanded ? "Show Less" : "Read Full Review"}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-              <div className="flex border-b border-[#E5E5E5] gap-2 overflow-x-auto scrollbar-none">
-                {[{ id:"tripadvisor",label:"TripAdvisor",rating:"5.0 ★"},{ id:"google",label:"Google",rating:"4.9 ★"},{ id:"facebook",label:"Facebook",rating:"5.0 ★"}].map(tab => (
-                  <button key={tab.id} onClick={() => setActiveReviewTab(tab.id as any)} className={`px-4 py-2 border-b-2 font-sans font-bold text-xs transition whitespace-nowrap focus:outline-none ${activeReviewTab===tab.id ? "border-[#2E7D32] text-[#2E7D32]" : "border-transparent text-[#6B6B6B] hover:text-[#2E7D32]"}`}>
-                    {tab.label} <span className="ml-1 text-[9px] bg-slate-100 rounded px-1">{tab.rating}</span>
-                  </button>
-                ))}
-              </div>
-              <div className="flex flex-col gap-5 mt-4">
-                {reviewCards[activeReviewTab].map((rev, idx) => {
-                  const isExpanded = !!expandedReviews[idx];
-                  const shouldTruncate = rev.text.length > 220;
-                  const displayStr = shouldTruncate && !isExpanded ? `${rev.text.substring(0,220)}...` : rev.text;
-                  return (
-                    <div key={idx} className="bg-slate-50 border border-[#E5E5E5] rounded-xl p-5 md:p-6 flex flex-col gap-2 shadow-sm hover:shadow transition duration-300">
-                      <div className="flex justify-between items-center flex-wrap gap-2">
-                        <div className="flex text-[#F5A623] gap-0.5 text-xs">{[...Array(rev.stars)].map((_,i)=><FaStar key={i}/>)}</div>
-                        <span className="text-[10px] text-[#6B6B6B] font-bold uppercase tracking-wider">{rev.author} ({rev.country})</span>
-                      </div>
-                      <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{rev.title}</h4>
-                      <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">&ldquo;{displayStr}&rdquo;</p>
-                      {shouldTruncate && (
-                        <button onClick={() => setExpandedReviews(p=>({...p,[idx]:!p[idx]}))} className="text-xs font-bold text-[#2E7D32] self-start hover:underline mt-1 focus:outline-none">
-                          {isExpanded ? "Show Less" : "Read Full Review"}
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            )}
 
           </div>{/* end LEFT COLUMN */}
 
@@ -1348,102 +1395,91 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          5. FAQs — FULL WIDTH
+          5. FAQs — FULL WIDTH (conditionally rendered)
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="faqs" className="max-w-[1240px] mx-auto px-4 md:px-6 pb-16 scroll-mt-24">
-        {(() => {
-          const faqData = (faqs && faqs.length > 0)
-            ? faqs.map((f: any) => ({
-                id: f.id || f._id || `faq-${Math.random()}`,
-                question: f.question,
-                answer: typeof f.answer === "string"
-                  ? f.answer
-                  : (f.answer?.root?.children
-                      ? (() => { const extract = (nodes: any[]): string => nodes.map(n => n.type==="text"?(n.text||""):(n.children?extract(n.children):"")).join(" "); return extract(f.answer.root.children); })()
-                      : (Array.isArray(f.answer) ? f.answer.map((b:any) => b?.children?.map((c:any)=>c?.text).join("")||"").join(" ") : "")),
-                category: f.category || "general",
-              }))
-            : trek.faqs && trek.faqs.length > 0
-            ? trek.faqs.map((f: any, idx: number) => ({
-                id: f.id || `trek-faq-${idx}`,
-                question: f.question,
-                answer: typeof f.answer === "string"
-                  ? f.answer
-                  : (f.answer?.root?.children
-                      ? (() => { const extract = (nodes: any[]): string => nodes.map(n => n.type==="text"?(n.text||""):(n.children?extract(n.children):"")).join(" "); return extract(f.answer.root.children); })()
-                      : ""),
-                category: f.category || "general",
-              }))
-            : DEFAULT_FAQS;
+      {faqs && faqs.length > 0 && (
+        <section id="faqs" className="max-w-[1240px] mx-auto px-4 md:px-6 pb-16 scroll-mt-24">
+          {(() => {
+            const faqData = faqs.map((f: any) => ({
+              id: f.id || f._id || `faq-${Math.random()}`,
+              question: f.question,
+              answer: typeof f.answer === "string"
+                ? f.answer
+                : (f.answer?.root?.children
+                    ? (() => { const extract = (nodes: any[]): string => nodes.map(n => n.type==="text"?(n.text||""):(n.children?extract(n.children):"")).join(" "); return extract(f.answer.root.children); })()
+                    : (Array.isArray(f.answer) ? f.answer.map((b:any) => b?.children?.map((c:any)=>c?.text).join("")||"").join(" ") : "")),
+              category: f.category || "general",
+            }));
 
-          const grouped: Record<string,any[]> = {};
-          faqData.forEach((f:any) => { if (!grouped[f.category]) grouped[f.category]=[]; grouped[f.category].push(f); });
-          const activeCats = Object.keys(FAQ_CATEGORIES).filter(cat => grouped[cat]?.length > 0);
+            const grouped: Record<string,any[]> = {};
+            faqData.forEach((f:any) => { if (!grouped[f.category]) grouped[f.category]=[]; grouped[f.category].push(f); });
+            const activeCats = Object.keys(FAQ_CATEGORIES).filter(cat => grouped[cat]?.length > 0);
 
-          const toggleFaq = (id: string) => setExpandedFaqs(p => ({ ...p, [id]: !p[id] }));
-          const expandCat = (catKey: string) => { const e: Record<string,boolean>={}; (grouped[catKey]||[]).forEach((f:any)=>{e[f.id]=true;}); setExpandedFaqs(p=>({...p,...e})); };
-          const scrollToCat = (catKey: string) => { const el=document.getElementById(`faq-cat-${catKey}`); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-100,behavior:"smooth"}); };
+            const toggleFaq = (id: string) => setExpandedFaqs(p => ({ ...p, [id]: !p[id] }));
+            const expandCat = (catKey: string) => { const e: Record<string,boolean>={}; (grouped[catKey]||[]).forEach((f:any)=>{e[f.id]=true;}); setExpandedFaqs(p=>({...p,...e})); };
+            const scrollToCat = (catKey: string) => { const el=document.getElementById(`faq-cat-${catKey}`); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-100,behavior:"smooth"}); };
 
-          return (
-            <>
-              <h2 className="font-serif text-3xl md:text-4xl font-black text-[#1a2e1f] mb-8">FAQs For {trek.title}</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 items-start">
-                {/* Sticky category nav */}
-                <nav className="hidden lg:block lg:sticky lg:top-[80px] self-start">
-                  <div className="flex flex-col gap-1 bg-white border border-[#E5E5E5] rounded-2xl p-2 shadow-sm">
+            return (
+              <>
+                <h2 className="font-serif text-3xl md:text-4xl font-black text-[#1a2e1f] mb-8">FAQs For {trek.title}</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 items-start">
+                  {/* Sticky category nav */}
+                  <nav className="hidden lg:block lg:sticky lg:top-[80px] self-start">
+                    <div className="flex flex-col gap-1 bg-white border border-[#E5E5E5] rounded-2xl p-2 shadow-sm">
+                      {activeCats.map(catKey => {
+                        const cat = FAQ_CATEGORIES[catKey as keyof typeof FAQ_CATEGORIES];
+                        if (!cat) return null;
+                        const active = activeFaqCat === catKey;
+                        return (
+                          <button key={catKey} onClick={() => scrollToCat(catKey)} className={`flex items-center gap-2.5 w-full px-3.5 py-2.5 rounded-xl text-sm font-bold text-left transition-all duration-200 ${active ? "bg-[#1a3c2e] text-white shadow-md" : "text-[#3D3D3D] hover:bg-[#2E7D32]/10"}`}>
+                            <span className="text-base shrink-0">{cat.icon}</span>
+                            <span>{cat.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </nav>
+                  {/* FAQ sections */}
+                  <div className="flex flex-col gap-10">
                     {activeCats.map(catKey => {
                       const cat = FAQ_CATEGORIES[catKey as keyof typeof FAQ_CATEGORIES];
                       if (!cat) return null;
-                      const active = activeFaqCat === catKey;
                       return (
-                        <button key={catKey} onClick={() => scrollToCat(catKey)} className={`flex items-center gap-2.5 w-full px-3.5 py-2.5 rounded-xl text-sm font-bold text-left transition-all duration-200 ${active ? "bg-[#1a3c2e] text-white shadow-md" : "text-[#3D3D3D] hover:bg-[#2E7D32]/10"}`}>
-                          <span className="text-base shrink-0">{cat.icon}</span>
-                          <span>{cat.label}</span>
-                        </button>
+                        <div key={catKey} id={`faq-cat-${catKey}`} data-faq-cat={catKey} className="scroll-mt-28 flex flex-col gap-4">
+                          <div className="flex items-center justify-between gap-3 border-b border-[#E5E5E5] pb-3">
+                            <h3 className="font-serif text-xl md:text-2xl font-black text-[#1a3c2e] flex items-center gap-2.5">
+                              <span className="text-lg">{cat.icon}</span>{cat.label}
+                            </h3>
+                            <button onClick={() => expandCat(catKey)} className="text-xs font-bold text-[#c8922a] hover:underline shrink-0">Expand All</button>
+                          </div>
+                          <div className="flex flex-col gap-3">
+                            {grouped[catKey].map((faq: any) => {
+                              const isOpen = !!expandedFaqs[faq.id];
+                              return (
+                                <div key={faq.id} className={`border rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? "border-[#2E7D32]/30 bg-[#2E7D32]/[0.02] shadow-sm" : "border-[#E5E5E5] bg-white"}`}>
+                                  <button onClick={() => toggleFaq(faq.id)} className="w-full flex items-center justify-between gap-3 p-4 text-left group">
+                                    <h4 className={`font-serif font-black text-sm md:text-base transition-colors ${isOpen ? "text-[#2E7D32]" : "text-[#1A1A2E] group-hover:text-[#2E7D32]"}`}>{faq.question}</h4>
+                                    <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? "bg-[#2E7D32] text-white rotate-180" : "bg-[#E5E5E5] text-[#6B6B6B] group-hover:bg-[#2E7D32]/20 group-hover:text-[#2E7D32]"}`}>
+                                      <FaChevronDown className="text-[10px]" />
+                                    </span>
+                                  </button>
+                                  <div className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
+                                    <p className="px-4 pb-4 text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/40 pt-3">{faq.answer}</p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
-                </nav>
-                {/* FAQ sections */}
-                <div className="flex flex-col gap-10">
-                  {activeCats.map(catKey => {
-                    const cat = FAQ_CATEGORIES[catKey as keyof typeof FAQ_CATEGORIES];
-                    if (!cat) return null;
-                    return (
-                      <div key={catKey} id={`faq-cat-${catKey}`} data-faq-cat={catKey} className="scroll-mt-28 flex flex-col gap-4">
-                        <div className="flex items-center justify-between gap-3 border-b border-[#E5E5E5] pb-3">
-                          <h3 className="font-serif text-xl md:text-2xl font-black text-[#1a3c2e] flex items-center gap-2.5">
-                            <span className="text-lg">{cat.icon}</span>{cat.label}
-                          </h3>
-                          <button onClick={() => expandCat(catKey)} className="text-xs font-bold text-[#c8922a] hover:underline shrink-0">Expand All</button>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                          {grouped[catKey].map((faq: any) => {
-                            const isOpen = !!expandedFaqs[faq.id];
-                            return (
-                              <div key={faq.id} className={`border rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? "border-[#2E7D32]/30 bg-[#2E7D32]/[0.02] shadow-sm" : "border-[#E5E5E5] bg-white"}`}>
-                                <button onClick={() => toggleFaq(faq.id)} className="w-full flex items-center justify-between gap-3 p-4 text-left group">
-                                  <h4 className={`font-serif font-black text-sm md:text-base transition-colors ${isOpen ? "text-[#2E7D32]" : "text-[#1A1A2E] group-hover:text-[#2E7D32]"}`}>{faq.question}</h4>
-                                  <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? "bg-[#2E7D32] text-white rotate-180" : "bg-[#E5E5E5] text-[#6B6B6B] group-hover:bg-[#2E7D32]/20 group-hover:text-[#2E7D32]"}`}>
-                                    <FaChevronDown className="text-[10px]" />
-                                  </span>
-                                </button>
-                                <div className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
-                                  <p className="px-4 pb-4 text-xs md:text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E5E5E5]/40 pt-3">{faq.answer}</p>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
                 </div>
-              </div>
-            </>
-          );
-        })()}
-      </section>
+              </>
+            );
+          })()}
+        </section>
+      )}
 
       {/* ══════════════════════════════════════════════════════════════════════
           6. MOBILE STICKY BOTTOM BAR

@@ -2347,3 +2347,77 @@ body.nav-collapsed .nature-nav-collapse-toggle {
   color: #1a2e1f !important;
 }
 
+/* ============================================================
+   16. UPLOAD PREVIEW IMAGE FIX
+   ============================================================ */
+/* Fix Payload CMS Upload / Gallery Image Preview stretching */
+.file-details,
+[class*="file-details"] {
+  display: flex !important;
+  flex-direction: column !important; /* Stack preview vertically */
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 16px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  max-width: 100% !important;
+}
+
+.file-details__media,
+.file-details__thumbnail,
+[class*="file-details__media"],
+[class*="file-details__thumbnail"],
+[class*="file-details"] img,
+.file-details img {
+  width: auto !important;
+  height: auto !important;
+  max-width: 240px !important; /* Elegant maximum preview width */
+  max-height: 160px !important; /* Elegant maximum preview height */
+  object-fit: contain !important; /* Maintain original aspect ratio, no stretching! */
+  border-radius: 6px !important;
+  border: 1px solid #cbd5e1 !important;
+  display: block !important;
+}
+
+/* Fix Payload CMS Upload / Gallery Image Preview stretching in relation fields */
+.upload-relationship-details,
+[class*="upload-relationship-details"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  max-width: 100% !important;
+  margin: 0 !important; /* Reset any negative margins that cause left overflow */
+  padding: 16px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix text overflow for extremely long filenames */
+.upload-relationship-details,
+.upload-relationship-details *,
+[class*="upload-relationship-details"],
+[class*="upload-relationship-details"] * {
+  word-break: break-all !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+.upload-relationship-details__thumbnail,
+[class*="upload-relationship-details__thumbnail"],
+.upload-relationship-details img,
+[class*="upload-relationship-details"] img {
+  width: auto !important;
+  height: auto !important;
+  max-width: 240px !important; /* Elegant maximum preview width */
+  max-height: 160px !important; /* Keep it neat and small */
+  object-fit: contain !important; /* Maintain original aspect ratio, no stretching! */
+  border-radius: 6px !important;
+  border: 1px solid #cbd5e1 !important;
+  display: block !important;
+}
+
+
