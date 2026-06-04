@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { checkPermission } from '../access';
+import { revalidatePage, revalidatePageDelete } from '../hooks/revalidate';
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -17,6 +18,10 @@ export const Pages: CollectionConfig = {
     create: checkPermission('pages', 'create'),
     update: checkPermission('pages', 'update'),
     delete: checkPermission('pages', 'delete'),
+  },
+  hooks: {
+    afterChange: [revalidatePage],
+    afterDelete: [revalidatePageDelete],
   },
   fields: [
     {

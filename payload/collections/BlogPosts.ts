@@ -1,6 +1,7 @@
 import { CollectionConfig, Block } from 'payload';
 import { checkPermission } from '../access';
 import { lexicalEditor, BlocksFeature, EXPERIMENTAL_TableFeature } from '@payloadcms/richtext-lexical';
+import { revalidateBlog, revalidateBlogDelete } from '../hooks/revalidate';
 
 const TrekCardBlock: Block = {
   slug: 'trekCardBlock',
@@ -116,7 +117,9 @@ export const blogPosts: CollectionConfig = {
         }
         return data;
       }
-    ]
+    ],
+    afterChange: [revalidateBlog],
+    afterDelete: [revalidateBlogDelete],
   },
   versions: {
     drafts: {

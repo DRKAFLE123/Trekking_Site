@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { isAdmin } from '../access';
+import { revalidateGlobalSettings } from '../hooks/revalidate';
 
 export const NavbarSettings: CollectionConfig = {
   slug: 'navbarSettings',
@@ -14,6 +15,9 @@ export const NavbarSettings: CollectionConfig = {
     useAsTitle: 'siteName',
     description: 'Configure global navigation headers, brand assets, and multi-level dropdowns.',
     hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalSettings],
   },
   fields: [
     {

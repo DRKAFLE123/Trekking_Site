@@ -1,6 +1,7 @@
 import { CollectionConfig } from 'payload';
 import { lexicalEditor, EXPERIMENTAL_TableFeature } from '@payloadcms/richtext-lexical';
 import { checkPermission } from '../access';
+import { revalidateTrek, revalidateTrekDelete } from '../hooks/revalidate';
 
 const parseYoutubeId = (args: any) => {
   const value = args.value;
@@ -845,18 +846,18 @@ const faqsSection = {
           label: 'Category',
           defaultValue: 'general',
           options: [
-            { label: 'ℹ️ General Info', value: 'general' },
-            { label: '💪 Prep & Fitness', value: 'prep_fitness' },
-            { label: '🎫 Permits', value: 'permits' },
-            { label: '📋 Insurance & Visa', value: 'insurance_visa' },
-            { label: '👥 Guides & Staff', value: 'guides_staff' },
-            { label: '🏨 Lodging & Facilities', value: 'accommodation_facilities' },
-            { label: '🍽️ Food & Drinks', value: 'food_drinks' },
-            { label: '☀️ Weather & Seasons', value: 'weather_seasons' },
-            { label: '🏥 Health & Safety', value: 'health_safety' },
-            { label: '🎒 Packing & Gear', value: 'packing_gear' },
-            { label: '💳 Booking & Payments', value: 'booking_payments' },
-            { label: '✈️ Transport & Flights', value: 'transportation_flights' },
+            { label: 'ℹ️ Basic Information', value: 'general' },
+            { label: '💪 Physical Readiness & Training', value: 'prep_fitness' },
+            { label: '🎫 Entry permit', value: 'permits' },
+            { label: '📋 Assurance and Travel permit', value: 'insurance_visa' },
+            { label: '👥 Himalayan Guide & Support Team', value: 'guides_staff' },
+            { label: '🏨 Where You Stay & What’s Included', value: 'accommodation_facilities' },
+            { label: '🍽️ Meals and Refreshments', value: 'food_drinks' },
+            { label: '☀️ Weather Patterns & Seasonal Changes', value: 'weather_seasons' },
+            { label: '🏥 Health Protection & Safety', value: 'health_safety' },
+            { label: '🎒 Equipment & Packing List', value: 'packing_gear' },
+            { label: '💳 Trip Booking & Payment Policy', value: 'booking_payments' },
+            { label: '✈️ Flights & Ground Transport', value: 'transportation_flights' },
           ],
         },
         {
@@ -919,6 +920,10 @@ export const treks: CollectionConfig = {
     group: 'Trekking & Operations',
     useAsTitle: 'title',
     description: 'Manage all trek packages. Each section below corresponds to a section on the trek detail page.',
+  },
+  hooks: {
+    afterChange: [revalidateTrek],
+    afterDelete: [revalidateTrekDelete],
   },
   fields: [
     basicInfoSection,

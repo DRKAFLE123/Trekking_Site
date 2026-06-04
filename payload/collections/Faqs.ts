@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { checkPermission } from '../access';
+import { revalidateFaq, revalidateFaqDelete } from '../hooks/revalidate';
 
 export const faqs: CollectionConfig = {
   slug: 'faqs',
@@ -9,6 +10,10 @@ export const faqs: CollectionConfig = {
     create: checkPermission('faqs', 'create'),
     update: checkPermission('faqs', 'update'),
     delete: checkPermission('faqs', 'delete'),
+  },
+  hooks: {
+    afterChange: [revalidateFaq],
+    afterDelete: [revalidateFaqDelete],
   },
   admin: {
     group: 'Website Content',
@@ -48,18 +53,18 @@ export const faqs: CollectionConfig = {
               name: 'category',
               type: 'select',
               options: [
-                { label: 'General Information', value: 'general' },
-                { label: 'Preparation & Fitness', value: 'prep_fitness' },
-                { label: 'Permits', value: 'permits' },
-                { label: 'Insurance and Visa', value: 'insurance_visa' },
-                { label: 'Guides & Support Staff', value: 'guides_staff' },
-                { label: 'Accommodation and Facilities', value: 'accommodation_facilities' },
-                { label: 'Food and Drinks', value: 'food_drinks' },
-                { label: 'Weather & Seasons', value: 'weather_seasons' },
-                { label: 'Health & Safety', value: 'health_safety' },
-                { label: 'Packing & Gear', value: 'packing_gear' },
-                { label: 'Booking & Payments', value: 'booking_payments' },
-                { label: 'Transportation & Flights', value: 'transportation_flights' },
+                { label: 'Basic Information', value: 'general' },
+                { label: 'Physical Readiness & Training', value: 'prep_fitness' },
+                { label: 'Entry permit', value: 'permits' },
+                { label: 'Assurance and Travel permit', value: 'insurance_visa' },
+                { label: 'Himalayan Guide & Support Team', value: 'guides_staff' },
+                { label: 'Where You Stay & What’s Included', value: 'accommodation_facilities' },
+                { label: 'Meals and Refreshments', value: 'food_drinks' },
+                { label: 'Weather Patterns & Seasonal Changes', value: 'weather_seasons' },
+                { label: 'Health Protection & Safety', value: 'health_safety' },
+                { label: 'Equipment & Packing List', value: 'packing_gear' },
+                { label: 'Trip Booking & Payment Policy', value: 'booking_payments' },
+                { label: 'Flights & Ground Transport', value: 'transportation_flights' },
                 { label: 'Everest Region', value: 'everest' },
                 { label: 'Annapurna Region', value: 'annapurna' },
                 { label: 'Manaslu Region', value: 'manaslu' },

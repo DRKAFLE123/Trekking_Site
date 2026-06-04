@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { checkPermission } from '../access';
+import { revalidateGlobalSettings } from '../hooks/revalidate';
 
 const parseYoutubeId = (args: any) => {
   const value = args.value;
@@ -25,6 +26,9 @@ export const SiteSettings: CollectionConfig = {
     group: 'System Admin',
     useAsTitle: 'siteName',
     hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalSettings],
   },
   fields: [
     {

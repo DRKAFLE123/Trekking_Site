@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { isAdmin, isAdminOrEditor, checkPermission } from '../access';
+import { revalidateTeam, revalidateTeamDelete } from '../hooks/revalidate';
 
 export const teamMembers: CollectionConfig = {
   slug: 'teamMembers',
@@ -8,6 +9,10 @@ export const teamMembers: CollectionConfig = {
     create: checkPermission('teamMembers', 'create'),
     update: checkPermission('teamMembers', 'update'),
     delete: checkPermission('teamMembers', 'delete'),
+  },
+  hooks: {
+    afterChange: [revalidateTeam],
+    afterDelete: [revalidateTeamDelete],
   },
   admin: {
     group: 'Website Content',

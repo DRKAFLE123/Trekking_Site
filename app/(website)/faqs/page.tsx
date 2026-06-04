@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const DEFAULT_FAQS = [
   {
-    category: "Before Your Trek",
+    category: "Basic Information",
     faqs: [
       {
         q: "What is the best time of year to trek in Nepal?",
@@ -34,7 +34,7 @@ const DEFAULT_FAQS = [
     ],
   },
   {
-    category: "Health & Safety",
+    category: "Health Protection & Safety",
     faqs: [
       {
         q: "What is Acute Mountain Sickness (AMS) and how do you prevent it?",
@@ -47,7 +47,7 @@ const DEFAULT_FAQS = [
     ],
   },
   {
-    category: "Costs & Booking",
+    category: "Trip Booking & Payment Policy",
     faqs: [
       {
         q: "What does the package price include?",
@@ -119,18 +119,18 @@ export default async function FAQsPage() {
 
     // 3. Process standalone FAQs
     const FAQ_CATEGORY_LABELS: Record<string, string> = {
-      general: 'General Information',
-      prep_fitness: 'Preparation & Fitness',
-      permits: 'Permits',
-      insurance_visa: 'Insurance and Visa',
-      guides_staff: 'Guides & Support Staff',
-      accommodation_facilities: 'Accommodation and Facilities',
-      food_drinks: 'Food and Drinks',
-      weather_seasons: 'Weather & Seasons',
-      health_safety: 'Health & Safety',
-      packing_gear: 'Packing & Gear',
-      booking_payments: 'Booking & Payments',
-      transportation_flights: 'Transportation & Flights',
+      general: 'Basic Information',
+      prep_fitness: 'Physical Readiness & Training',
+      permits: 'Entry permit',
+      insurance_visa: 'Assurance and Travel permit',
+      guides_staff: 'Himalayan Guide & Support Team',
+      accommodation_facilities: 'Where You Stay & What’s Included',
+      food_drinks: 'Meals and Refreshments',
+      weather_seasons: 'Weather Patterns & Seasonal Changes',
+      health_safety: 'Health Protection & Safety',
+      packing_gear: 'Equipment & Packing List',
+      booking_payments: 'Trip Booking & Payment Policy',
+      transportation_flights: 'Flights & Ground Transport',
       'everest': 'Everest Region',
       'annapurna': 'Annapurna Region',
       'manaslu': 'Manaslu Region',
@@ -211,18 +211,18 @@ export default async function FAQsPage() {
 
     // 5. Sort categories: general categories first, then alphabetically for regions
     const CATEGORY_WEIGHTS: Record<string, number> = {
-      'General Information': 1,
-      'Preparation & Fitness': 2,
-      'Permits': 3,
-      'Insurance and Visa': 4,
-      'Guides & Support Staff': 5,
-      'Accommodation and Facilities': 6,
-      'Food and Drinks': 7,
-      'Weather & Seasons': 8,
-      'Health & Safety': 9,
-      'Packing & Gear': 10,
-      'Booking & Payments': 11,
-      'Transportation & Flights': 12,
+      'Basic Information': 1,
+      'Physical Readiness & Training': 2,
+      'Entry permit': 3,
+      'Assurance and Travel permit': 4,
+      'Himalayan Guide & Support Team': 5,
+      'Where You Stay & What’s Included': 6,
+      'Meals and Refreshments': 7,
+      'Weather Patterns & Seasonal Changes': 8,
+      'Health Protection & Safety': 9,
+      'Equipment & Packing List': 10,
+      'Trip Booking & Payment Policy': 11,
+      'Flights & Ground Transport': 12,
     };
 
     const sortedCategories = Object.keys(groups).sort((catA, catB) => {

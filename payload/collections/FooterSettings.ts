@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { isAdmin } from '../access';
+import { revalidateGlobalSettings } from '../hooks/revalidate';
 
 export const FooterSettings: CollectionConfig = {
   slug: 'footerSettings',
@@ -14,6 +15,9 @@ export const FooterSettings: CollectionConfig = {
     useAsTitle: 'siteName',
     description: 'Configure dynamic footer menus, emergency contacts, branch addresses, accepted payments, and partner affiliations.',
     hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalSettings],
   },
   fields: [
     {

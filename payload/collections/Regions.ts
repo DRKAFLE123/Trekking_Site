@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission } from '../access';
+import { revalidateRegion, revalidateRegionDelete } from '../hooks/revalidate';
 
 export const regions: CollectionConfig = {
   slug: 'regions',
@@ -8,6 +9,10 @@ export const regions: CollectionConfig = {
     create: checkPermission('regions', 'create'),
     update: checkPermission('regions', 'update'),
     delete: checkPermission('regions', 'delete'),
+  },
+  hooks: {
+    afterChange: [revalidateRegion],
+    afterDelete: [revalidateRegionDelete],
   },
   admin: {
     group: 'Trekking & Operations',

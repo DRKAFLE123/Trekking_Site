@@ -1,5 +1,6 @@
 import { CollectionConfig } from 'payload';
 import { isAdmin, isAdminOrEditor, checkPermission } from '../access';
+import { revalidateTestimonial, revalidateTestimonialDelete } from '../hooks/revalidate';
 
 export const testimonials: CollectionConfig = {
   slug: 'testimonials',
@@ -8,6 +9,10 @@ export const testimonials: CollectionConfig = {
     create: checkPermission('testimonials', 'create'),
     update: checkPermission('testimonials', 'update'),
     delete: checkPermission('testimonials', 'delete'),
+  },
+  hooks: {
+    afterChange: [revalidateTestimonial],
+    afterDelete: [revalidateTestimonialDelete],
   },
   admin: {
     group: 'Website Content',
