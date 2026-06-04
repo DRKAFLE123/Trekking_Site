@@ -103,18 +103,18 @@ const TRIP_INFO_ICONS: Record<string, React.ReactNode> = {
 
 // ── FAQ categories ───────────────────────────────────────────────────────────
 const FAQ_CATEGORIES = {
-  general:                  { label: "General Info",        icon: "ℹ️" },
-  prep_fitness:             { label: "Prep & Fitness",      icon: "💪" },
-  permits:                  { label: "Permits",             icon: "🎫" },
-  insurance_visa:           { label: "Insurance & Visa",    icon: "📋" },
-  guides_staff:             { label: "Guides & Staff",      icon: "👥" },
-  accommodation_facilities: { label: "Lodging & Facilities",icon: "🏨" },
-  food_drinks:              { label: "Food & Drinks",       icon: "🍽️" },
-  weather_seasons:          { label: "Weather & Seasons",   icon: "☀️" },
-  health_safety:            { label: "Health & Safety",     icon: "🏥" },
-  packing_gear:             { label: "Packing & Gear",      icon: "🎒" },
-  booking_payments:         { label: "Booking & Payments",  icon: "💳" },
-  transportation_flights:   { label: "Transport & Flights", icon: "✈️" },
+  general:                  { label: "Basic Information",                 icon: "ℹ️" },
+  prep_fitness:             { label: "Physical Readiness & Training",     icon: "💪" },
+  permits:                  { label: "Entry permit",                      icon: "🎫" },
+  insurance_visa:           { label: "Assurance and Travel permit",       icon: "📋" },
+  guides_staff:             { label: "Himalayan Guide & Support Team",    icon: "👥" },
+  accommodation_facilities: { label: "Where You Stay & What’s Included",  icon: "🏨" },
+  food_drinks:              { label: "Meals and Refreshments",            icon: "🍽️" },
+  weather_seasons:          { label: "Weather Patterns & Seasonal Changes",icon: "☀️" },
+  health_safety:            { label: "Health Protection & Safety",        icon: "🏥" },
+  packing_gear:             { label: "Equipment & Packing List",          icon: "🎒" },
+  booking_payments:         { label: "Trip Booking & Payment Policy",     icon: "💳" },
+  transportation_flights:   { label: "Flights & Ground Transport",        icon: "✈️" },
 };
 
 // ── Inclusion / Exclusion category grouping ─────────────────────────────────
@@ -1452,15 +1452,15 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                             </h3>
                             <button onClick={() => expandCat(catKey)} className="text-xs font-bold text-[#c8922a] hover:underline shrink-0">Expand All</button>
                           </div>
-                          <div className="flex flex-col gap-3">
+                          <div className="border border-[#E5E5E5] rounded-2xl overflow-hidden divide-y divide-[#E5E5E5] bg-white shadow-sm">
                             {grouped[catKey].map((faq: any) => {
                               const isOpen = !!expandedFaqs[faq.id];
                               return (
-                                <div key={faq.id} className={`border rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? "border-[#2E7D32]/30 bg-[#2E7D32]/[0.02] shadow-sm" : "border-[#E5E5E5] bg-white"}`}>
-                                  <button onClick={() => toggleFaq(faq.id)} className="w-full flex items-center justify-between gap-3 p-4 text-left group">
+                                <div key={faq.id} className={`transition-colors duration-200 ${isOpen ? "bg-[#2E7D32]/[0.02]" : "bg-white"}`}>
+                                  <button onClick={() => toggleFaq(faq.id)} className="w-full flex items-center justify-between gap-4 p-4 text-left group">
                                     <h4 className={`font-serif font-black text-sm md:text-base transition-colors ${isOpen ? "text-[#2E7D32]" : "text-[#1A1A2E] group-hover:text-[#2E7D32]"}`}>{faq.question}</h4>
-                                    <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? "bg-[#2E7D32] text-white rotate-180" : "bg-[#E5E5E5] text-[#6B6B6B] group-hover:bg-[#2E7D32]/20 group-hover:text-[#2E7D32]"}`}>
-                                      <FaChevronDown className="text-[10px]" />
+                                    <span className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 text-[#6B6B6B] group-hover:text-[#2E7D32]">
+                                      <FaChevronDown className={`text-[10px] transition-transform duration-300 ${isOpen ? "rotate-180 text-[#2E7D32]" : ""}`} />
                                     </span>
                                   </button>
                                   <div className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
