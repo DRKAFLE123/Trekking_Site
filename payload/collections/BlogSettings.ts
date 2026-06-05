@@ -13,7 +13,10 @@ export const BlogSettings: CollectionConfig = {
     description: 'Manage the blogs listing page header title, subtitle, and hero cover image.',
   },
   access: {
-    read: () => true, // Publicly readable for dynamic blogs landing page
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('blogSettings', 'read')(args);
+    },
     create: checkPermission('blogSettings', 'create'),
     update: checkPermission('blogSettings', 'update'),
     delete: checkPermission('blogSettings', 'delete'),

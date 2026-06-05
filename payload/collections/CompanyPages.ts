@@ -14,7 +14,10 @@ export const CompanyPages: CollectionConfig = {
     group: 'Website Content',
   },
   access: {
-    read: () => true, // Publicly readable for dynamic frontend routing
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('companyPages', 'read')(args);
+    },
     create: checkPermission('companyPages', 'create'),
     update: checkPermission('companyPages', 'update'),
     delete: checkPermission('companyPages', 'delete'),

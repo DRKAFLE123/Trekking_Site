@@ -14,7 +14,10 @@ export const ContactPages: CollectionConfig = {
     group: 'Website Content',
   },
   access: {
-    read: () => true, // Publicly readable for dynamic frontend route
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('contactPages', 'read')(args);
+    },
     create: checkPermission('contactPages', 'create'),
     update: checkPermission('contactPages', 'update'),
     delete: checkPermission('contactPages', 'delete'),

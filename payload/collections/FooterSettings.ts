@@ -5,7 +5,10 @@ import { revalidateGlobalSettings } from '../hooks/revalidate';
 export const FooterSettings: CollectionConfig = {
   slug: 'footerSettings',
   access: {
-    read: () => true, // Publicly readable for rendering the footer
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('footerSettings', 'read')(args);
+    },
     create: checkPermission('footerSettings', 'create'),
     update: checkPermission('footerSettings', 'update'),
     delete: checkPermission('footerSettings', 'delete'),

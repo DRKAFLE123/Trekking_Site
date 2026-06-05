@@ -9,7 +9,10 @@ import { revalidateGlobalSettings } from '../hooks/revalidate';
 export const HomepageSettings: CollectionConfig = {
   slug: 'homepageSettings',
   access: {
-    read: () => true, // Publicly readable for SSG homepage rendering
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('homepageSettings', 'read')(args);
+    },
     create: checkPermission('homepageSettings', 'create'),
     update: checkPermission('homepageSettings', 'update'),
     delete: checkPermission('homepageSettings', 'delete'),

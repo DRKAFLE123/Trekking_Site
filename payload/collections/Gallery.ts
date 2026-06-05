@@ -4,7 +4,10 @@ import { checkPermission } from '../access';
 export const gallery: CollectionConfig = {
   slug: 'gallery',
   access: {
-    read: () => true, // Publicly readable for the website masonry
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('gallery', 'read')(args);
+    },
     create: checkPermission('gallery', 'create'),
     update: checkPermission('gallery', 'update'),
     delete: checkPermission('gallery', 'delete'),

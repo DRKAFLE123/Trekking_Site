@@ -17,7 +17,10 @@ const parseYoutubeId = (args: any) => {
 export const SiteSettings: CollectionConfig = {
   slug: 'siteSettings',
   access: {
-    read: () => true, // Public read needed for SSG homepage
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('siteSettings', 'read')(args);
+    },
     create: checkPermission('siteSettings', 'create'),
     update: checkPermission('siteSettings', 'update'),
     delete: checkPermission('siteSettings', 'delete'),

@@ -65,6 +65,26 @@ export const users: CollectionConfig = {
         condition: (data: any) => data?.role === 'custom',
         description: 'Select a custom role managed in the Roles collection.',
       },
+      hooks: {
+        afterRead: [
+          async ({ value, req }) => {
+            if (!value) return value;
+            if (typeof value === 'object') return value;
+            if (!req?.payload) return value;
+            try {
+              const role = await req.payload.findByID({
+                collection: 'roles',
+                id: value,
+                depth: 0,
+                overrideAccess: true,
+              });
+              return role;
+            } catch (err) {
+              return value;
+            }
+          },
+        ],
+      },
     },
   ],
 };

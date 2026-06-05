@@ -4,8 +4,11 @@ import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission, fromTrusted
 export const payments: CollectionConfig = {
   slug: 'payments',
   access: {
-    read: isAuthenticated,
-    create: fromTrustedRouteOrAuthenticated,
+    read: checkPermission('payments', 'read'),
+    create: (args) => {
+      if ((args.req as any)?.context?.fromTrustedRoute === true) return true;
+      return checkPermission('payments', 'create')(args);
+    },
     update: checkPermission('payments', 'update'),
     delete: checkPermission('payments', 'delete'),
   },

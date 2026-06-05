@@ -5,7 +5,10 @@ import { revalidateGlobalSettings } from '../hooks/revalidate';
 export const NavbarSettings: CollectionConfig = {
   slug: 'navbarSettings',
   access: {
-    read: () => true, // Publicly readable for rendering the header navbar
+    read: (args) => {
+      if (!args.req.user) return true;
+      return checkPermission('navbarSettings', 'read')(args);
+    },
     create: checkPermission('navbarSettings', 'create'),
     update: checkPermission('navbarSettings', 'update'),
     delete: checkPermission('navbarSettings', 'delete'),

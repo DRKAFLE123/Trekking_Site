@@ -1,13 +1,16 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated, fromTrustedRouteOrAuthenticated } from '../access';
+import { isAdmin, isAdminOrEditor, isAuthenticated, fromTrustedRouteOrAuthenticated, checkPermission } from '../access';
 
 export const bookings: CollectionConfig = {
   slug: 'bookings',
   access: {
-    read: isAuthenticated,
-    create: fromTrustedRouteOrAuthenticated,
-    update: isAdminOrEditor,
-    delete: isAdmin,
+    read: checkPermission('bookings', 'read'),
+    create: (args) => {
+      if ((args.req as any)?.context?.fromTrustedRoute === true) return true;
+      return checkPermission('bookings', 'create')(args);
+    },
+    update: checkPermission('bookings', 'update'),
+    delete: checkPermission('bookings', 'delete'),
   },
   admin: {
     group: 'Enquiries & Leads',
