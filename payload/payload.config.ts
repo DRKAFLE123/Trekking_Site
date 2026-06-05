@@ -97,6 +97,12 @@ export default buildConfig({
   }),
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'change_this_secret_1234567890',
+  // Cap multipart uploads at 25 MB to protect disk + Cloudinary quota.
+  // Images shouldn't exceed a few MB after compression; PDFs/videos can be
+  // larger but a hard cap blocks accidental + abusive multi-GB uploads.
+  upload: {
+    limits: { fileSize: 25 * 1024 * 1024 },
+  },
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

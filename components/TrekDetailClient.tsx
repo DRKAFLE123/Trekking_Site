@@ -680,7 +680,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                   <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); setShowShare(false); }} className="text-left text-xs flex items-center gap-2 hover:bg-slate-100 p-2 rounded transition"><FaEnvelope /> Copy Link</button>
                 </div>
               )}
-              <a href="/packing-list" className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:shadow-md"><FaDownload /> PDF Brochure</a>
+              <Link href="/packing-list" className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:shadow-md"><FaDownload /> PDF Brochure</Link>
             </div>
           </div>
 

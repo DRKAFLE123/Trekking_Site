@@ -168,10 +168,6 @@ export const media: CollectionConfig = {
   },
   upload: {
     staticDir: 'public/uploads',
-    // Cap upload size to protect disk + Cloudinary quota. Images shouldn't
-    // exceed a few MB after compression; PDFs/videos can be larger but a
-    // 25 MB hard cap blocks accidental + abusive multi-GB uploads.
-    maxFileSize: 25 * 1024 * 1024,
     imageSizes: [
       {
         name: 'thumbnail',

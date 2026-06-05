@@ -88,6 +88,7 @@ export interface Config {
     contactPages: ContactPage;
     blogSettings: BlogSetting;
     companyPages: CompanyPage;
+    homepageSettings: any;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -116,6 +117,7 @@ export interface Config {
     contactPages: ContactPagesSelect<false> | ContactPagesSelect<true>;
     blogSettings: BlogSettingsSelect<false> | BlogSettingsSelect<true>;
     companyPages: CompanyPagesSelect<false> | CompanyPagesSelect<true>;
+    homepageSettings: any;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
