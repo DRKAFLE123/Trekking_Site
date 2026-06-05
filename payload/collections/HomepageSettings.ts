@@ -2,6 +2,18 @@ import { CollectionConfig } from 'payload';
 import { checkPermission } from '../access';
 import { revalidateGlobalSettings } from '../hooks/revalidate';
 
+const parseYoutubeId = (args: any) => {
+  const value = args.value;
+  if (value) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = value.match(regExp);
+    if (match && match[2].length === 11) {
+      return match[2];
+    }
+  }
+  return value;
+};
+
 // Singleton-style collection (one document) that drives the editable parts
 // of the homepage: the "Why Travel With Us" section and the "Exclusive
 // Private Treks" USP grid. Frontend falls back to the hardcoded design when
@@ -207,6 +219,83 @@ export const HomepageSettings: CollectionConfig = {
                 },
                 { name: 'title', type: 'text', required: true },
                 { name: 'description', type: 'textarea', required: true },
+              ],
+            },
+          ],
+        },
+        // -----------------------------------------------------------------
+        // Tab 3 — Featured Video Gallery
+        // -----------------------------------------------------------------
+        {
+          label: 'Featured Videos',
+          description: 'Featured video stories shown on the homepage.',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'featuredVideoKicker',
+                  type: 'text',
+                  label: 'Kicker / Eyebrow',
+                  defaultValue: 'Watch the Journey',
+                },
+                {
+                  name: 'featuredVideoTitle',
+                  type: 'text',
+                  label: 'Section Title',
+                  defaultValue: 'Himalayan Trek Experience',
+                },
+              ],
+            },
+            {
+              name: 'featuredVideoDescription',
+              type: 'textarea',
+              label: 'Section Description',
+              defaultValue: "Watch real journeys through Nepal's most iconic mountain trails.",
+            },
+            {
+              name: 'videoGallery',
+              type: 'array',
+              label: 'Trek Videos',
+              admin: {
+                description: 'Add and order videos. If you paste a full YouTube link, the ID will be parsed automatically.',
+                initCollapsed: true,
+              },
+              fields: [
+                {
+                  name: 'youtubeId',
+                  type: 'text',
+                  required: true,
+                  label: 'YouTube URL or Video ID',
+                  hooks: {
+                    beforeValidate: [parseYoutubeId],
+                  },
+                },
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: true,
+                  label: 'Video Title Story (e.g. Everest Base Camp Expedition)',
+                },
+                {
+                  name: 'trek',
+                  type: 'relationship',
+                  relationTo: 'treks',
+                  required: false,
+                  label: 'Linked Trek (Used to dynamically load specs like Days and Altitude)',
+                },
+                {
+                  name: 'trekName',
+                  type: 'text',
+                  required: true,
+                  label: 'Trek Name / Region Fallback (e.g. Everest Region)',
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  required: false,
+                  label: 'Video Short Description / Overview',
+                },
               ],
             },
           ],

@@ -18,20 +18,23 @@ export default async function VideoGalleryPage() {
   try {
     const payload = await getPayload({ config });
     const settingsRes = await payload.find({
-      collection: "siteSettings",
+      collection: "homepageSettings",
       limit: 1,
-      depth: 0,
+      depth: 2,
       overrideAccess: true,
     });
 
     const settings = settingsRes.docs[0] as any;
 
     if (settings?.videoGallery && settings.videoGallery.length > 0) {
-      videos = settings.videoGallery.map((v: any) => ({
-        id: v.youtubeId,
-        title: v.title,
-        trekName: v.trekName || "Nepal Trek",
-      }));
+      videos = settings.videoGallery.map((v: any) => {
+        const trekDoc = v.trek && typeof v.trek === "object" ? v.trek : null;
+        return {
+          id: v.youtubeId,
+          title: v.title,
+          trekName: v.trekName || trekDoc?.title || "Nepal Trek",
+        };
+      });
     }
   } catch (err: any) {
     console.warn("[Video Gallery Page] Failed to query videos from CMS:", err.message);
