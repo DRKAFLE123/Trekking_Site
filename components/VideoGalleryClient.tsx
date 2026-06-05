@@ -215,10 +215,10 @@ export default function VideoGalleryClient({
               <div className="absolute inset-0 bg-gradient-to-t from-[#090f0a] via-[#090f0a]/85 to-transparent md:bg-gradient-to-r md:from-[#090f0a] md:via-[#090f0a]/90 md:to-transparent z-0" />
 
               {/* Pulsating Center Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                 <button
                   onClick={() => setIsLightboxOpen(true)}
-                  className="w-16 h-16 md:w-20 md:h-20 bg-[#c8922a] hover:bg-[#b07820] text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-2xl relative cursor-pointer"
+                  className="w-16 h-16 md:w-20 md:h-20 bg-[#c8922a] hover:bg-[#b07820] text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-2xl relative cursor-pointer pointer-events-auto"
                 >
                   {/* Outer Pulsating Rings */}
                   <span className="absolute inset-0 rounded-full bg-[#c8922a] opacity-35 animate-ping" />
