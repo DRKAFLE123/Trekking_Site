@@ -13,6 +13,8 @@ import * as migration_20260602_075656_add_guide_settings from './20260602_075656
 import * as migration_20260605_090000_add_homepage_settings from './20260605_090000_add_homepage_settings';
 import * as migration_20260605_120000_add_roles_audit_permissions from './20260605_120000_add_roles_audit_permissions';
 import * as migration_20260605_163738_add_homepage_video_gallery from './20260605_163738_add_homepage_video_gallery';
+import * as migration_20260605_172103_add_expert_relationship from './20260605_172103_add_expert_relationship';
+import * as migration_20260605_172653_add_is_expert_checkbox from './20260605_172653_add_is_expert_checkbox';
 
 export const migrations = [
   {
@@ -88,6 +90,16 @@ export const migrations = [
   {
     up: migration_20260605_163738_add_homepage_video_gallery.up,
     down: migration_20260605_163738_add_homepage_video_gallery.down,
-    name: '20260605_163738_add_homepage_video_gallery'
+    name: '20260605_163738_add_homepage_video_gallery',
+  },
+  {
+    up: migration_20260605_172103_add_expert_relationship.up,
+    down: migration_20260605_172103_add_expert_relationship.down,
+    name: '20260605_172103_add_expert_relationship',
+  },
+  {
+    up: migration_20260605_172653_add_is_expert_checkbox.up,
+    down: migration_20260605_172653_add_is_expert_checkbox.down,
+    name: '20260605_172653_add_is_expert_checkbox'
   },
 ];

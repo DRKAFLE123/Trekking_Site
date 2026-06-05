@@ -124,6 +124,16 @@ export const SiteSettings: CollectionConfig = {
       name: 'headerSettings',
       type: 'group',
       fields: [
+        {
+          name: 'expert',
+          type: 'relationship',
+          relationTo: 'teamMembers',
+          required: false,
+          label: 'Primary Expert Specialist (Team Member)',
+          admin: {
+            description: 'Choose a team member to dynamically load the expert profile (name, avatar, phone, WhatsApp). If unselected, defaults to the text values below.',
+          },
+        },
         { name: 'expertName', type: 'text', defaultValue: 'Kafle' },
         { name: 'expertPhone', type: 'text', defaultValue: '+977 9851218358' },
         { name: 'expertWhatsApp', type: 'text', defaultValue: '+977 9851218358' },

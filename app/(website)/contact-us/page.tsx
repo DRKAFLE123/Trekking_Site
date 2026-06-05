@@ -1,42 +1,99 @@
 import React from "react";
 import { Metadata } from "next";
-import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaWhatsapp, FaDirections } from "react-icons/fa";
+import { FaPhoneAlt, FaEnvelope, FaWhatsapp } from "react-icons/fa";
 import ContactForm from "@/components/ContactForm";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 
-export const metadata: Metadata = {
-  title: "Contact Us | Nature Heaven Trekking & Expedition",
-  description: "Get in touch with Nature Heaven Trekking & Expedition Kathmandu office. Call us, email us, or send a WhatsApp message to start customizing your private Himalayan trek.",
-};
+export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const payload = await getPayload({ config });
+    const cpRes = await payload.find({
+      collection: "contactPages",
+      where: { slug: { equals: "contact-us" } },
+      depth: 0,
+      limit: 1,
+    });
+    const cp = cpRes.docs[0] as any;
+    if (cp?.seoTitle || cp?.title) {
+      return {
+        title: cp.seoTitle || `${cp.title} | Nature Heaven Trekking & Expedition`,
+        description:
+          cp.seoDescription ||
+          cp.excerpt ||
+          "Get in touch with Nature Heaven Trekking & Expedition. Call, email, or WhatsApp us.",
+      };
+    }
+  } catch {}
+  return {
+    title: "Contact Us | Nature Heaven Trekking & Expedition",
+    description:
+      "Get in touch with Nature Heaven Trekking & Expedition Kathmandu office. Call us, email us, or send a WhatsApp message to start customizing your private Himalayan trek.",
+  };
+}
 
 export default async function ContactPage() {
   let siteSettings: any = null;
+  let contactPage: any = null;
   try {
     const payload = await getPayload({ config });
-    const res = await payload.find({
-      collection: "siteSettings",
-      depth: 1,
-    });
-    siteSettings = res.docs[0] || null;
+    const [settingsRes, cpRes] = await Promise.all([
+      payload.find({ collection: "siteSettings", depth: 2, limit: 1 }),
+      payload.find({
+        collection: "contactPages",
+        where: { slug: { equals: "contact-us" } },
+        depth: 1,
+        limit: 1,
+      }),
+    ]);
+    siteSettings = settingsRes.docs[0] || null;
+    contactPage = cpRes.docs[0] || null;
   } catch (err: any) {
-    console.warn("[Contact Page] Failed to fetch site settings:", err.message);
+    console.warn("[Contact Page] Failed to fetch data:", err.message);
   }
 
-  // Get Map Coordinates dynamically from CMS or use default fallback
-  const mapCoordinates = siteSettings?.contactInfo?.mapCoordinates || "27.71672384712074, 85.30808857301508";
+  // ── Map ──────────────────────────────────────────────────────────────────
+  const mapCoordinates =
+    siteSettings?.contactInfo?.mapCoordinates || "27.71672384712074, 85.30808857301508";
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapCoordinates)}&z=17&output=embed`;
   const directionLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapCoordinates)}`;
 
-  // Extract address and offices settings
-  const headOfficeAddress = siteSettings?.footerSettings?.nepalHeadOfficeAddress || "Pakjonal Marga -16, Thamel, Kathmandu, Nepal";
-  const ukOfficeAddress = siteSettings?.footerSettings?.ukBranchOfficeAddress || "London, United Kingdom";
+  // ── Office Addresses ──────────────────────────────────────────────────────
+  const headOfficeAddress =
+    siteSettings?.footerSettings?.nepalHeadOfficeAddress ||
+    "Pakjonal Marga -16, Thamel, Kathmandu, Nepal";
+  const ukOfficeAddress =
+    siteSettings?.footerSettings?.ukBranchOfficeAddress || "London, United Kingdom";
+
+  // ── Dynamic contact details ───────────────────────────────────────────────
+  const mainPhone = siteSettings?.contactInfo?.phone || "+977 9851218358";
+  const mainEmail = siteSettings?.contactInfo?.email || "info@natureheaventrek.com";
+  const secondEmail = "natureheaventrek@gmail.com";
+  const landline = "+977 01-4385821";
+
+  // Resolve WhatsApp: prefer linked team-member doc, then static text field
+  const linkedMember = siteSettings?.headerSettings?.expert;
+  const expertWhatsApp =
+    linkedMember && typeof linkedMember === "object" && linkedMember.whatsApp
+      ? linkedMember.whatsApp
+      : siteSettings?.headerSettings?.expertWhatsApp ||
+        siteSettings?.contactInfo?.whatsapp ||
+        "+977 9851218358";
+  const cleanWa = expertWhatsApp.replace(/[^0-9]/g, "");
+
+  // ── Page heading overrides from contactPage CMS entry ─────────────────────
+  const pageTitle = contactPage?.title || "Contact An Expert";
+  const pageSubtitle =
+    contactPage?.excerpt ||
+    "Have questions about acclimatization, customized itineraries, or booking deposits? Contact our local Sherpa team directly.";
 
   const googleProfileLink = "https://maps.app.goo.gl/X45yuwgc9aCehw2G9";
 
   return (
     <div className="bg-[#fcfbfa] min-h-screen pt-24 md:pt-32 pb-16">
-      
+
       {/* 1. Full-width Google Map Cover Header with Floating Card */}
       <div className="relative w-full h-[350px] md:h-[500px] bg-primary/5 -mt-24 md:-mt-32 mb-12 border-b border-secondary/15 z-0">
         <iframe
@@ -51,12 +108,12 @@ export default async function ContactPage() {
           className="w-full h-full relative z-0"
         ></iframe>
 
-        {/* Floating Office Details Card (Desktop Overlay) - Styled Compactly */}
+        {/* Floating Office Details Card (Desktop Overlay) */}
         <div className="absolute right-6 top-24 md:top-36 z-10 w-96 bg-white/95 backdrop-blur-md border border-secondary/15 rounded-2xl shadow-2xl p-4 hidden md:flex flex-col gap-3 h-fit max-h-[440px] transition-all duration-300">
           <h3 className="font-serif font-bold text-primary text-base border-b border-primary/5 pb-1">
             Our Offices
           </h3>
-          
+
           <div className="flex flex-col gap-1 text-left">
             <span className="text-[9px] uppercase font-extrabold text-secondary tracking-wider">
               Headquarters Office
@@ -85,27 +142,27 @@ export default async function ContactPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6">
-        
+
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
             Start Your Journey
           </span>
           <h1 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-4">
-            Contact An Expert
+            {pageTitle}
           </h1>
           <div className="h-0.5 w-16 bg-secondary mx-auto mb-6"></div>
           <p className="text-sm md:text-base text-charcoal/80 leading-relaxed">
-            Have questions about acclimatization, customized itineraries, or booking deposits? Contact our local Sherpa team directly.
+            {pageSubtitle}
           </p>
         </div>
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start max-w-6xl mx-auto">
-          
+
           {/* Column 1: Info Cards (1/3 width) */}
           <div className="flex flex-col gap-6">
-            
+
             {/* Phone & Chat Support */}
             <div className="bg-white border border-secondary/10 p-6 rounded-2xl shadow-sm flex flex-col gap-3">
               <h4 className="font-serif font-bold text-primary text-base border-b border-primary/5 pb-2">
@@ -113,27 +170,27 @@ export default async function ContactPage() {
               </h4>
               <div className="flex flex-col gap-3 text-xs text-charcoal/80">
                 <a
-                  href="tel:+9779851218358"
+                  href={`tel:${mainPhone.replace(/[^0-9+]/g, "")}`}
                   className="flex items-center gap-2.5 hover:text-secondary transition font-semibold"
                 >
                   <FaPhoneAlt className="text-secondary text-sm shrink-0" />
-                  <span>Mobile/WhatsApp: +977 9851218358</span>
+                  <span>Mobile/WhatsApp: {mainPhone}</span>
                 </a>
                 <a
-                  href="tel:+977014385821"
+                  href={`tel:${landline.replace(/[^0-9+]/g, "")}`}
                   className="flex items-center gap-2.5 hover:text-secondary transition font-semibold"
                 >
                   <FaPhoneAlt className="text-secondary text-sm shrink-0" />
-                  <span>Office Landline: +977 01-4385821</span>
+                  <span>Office Landline: {landline}</span>
                 </a>
                 <a
-                  href="https://wa.me/9779851218358"
+                  href={`https://wa.me/${cleanWa}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-2.5 text-green-700 hover:text-green-800 transition font-bold"
                 >
                   <FaWhatsapp className="text-green-500 text-base shrink-0" />
-                  <span>WhatsApp Chat: +977 9851218358</span>
+                  <span>WhatsApp Chat: {expertWhatsApp}</span>
                 </a>
               </div>
             </div>
@@ -145,23 +202,23 @@ export default async function ContactPage() {
               </h4>
               <div className="flex flex-col gap-3 text-xs text-charcoal/80">
                 <a
-                  href="mailto:info@natureheaventrek.com"
+                  href={`mailto:${mainEmail}`}
                   className="flex items-center gap-2.5 hover:text-secondary transition font-semibold"
                 >
                   <FaEnvelope className="text-secondary text-sm shrink-0" />
-                  <span>info@natureheaventrek.com</span>
+                  <span>{mainEmail}</span>
                 </a>
                 <a
-                  href="mailto:natureheaventrek@gmail.com"
+                  href={`mailto:${secondEmail}`}
                   className="flex items-center gap-2.5 hover:text-secondary transition font-semibold"
                 >
                   <FaEnvelope className="text-secondary text-sm shrink-0" />
-                  <span>natureheaventrek@gmail.com</span>
+                  <span>{secondEmail}</span>
                 </a>
               </div>
             </div>
 
-            {/* Headquarters Card - Sidebar */}
+            {/* Headquarters Card */}
             <div className="bg-white border border-secondary/10 p-5 rounded-2xl shadow-sm flex flex-col gap-2.5 text-left">
               <span className="text-[10px] uppercase font-extrabold text-secondary tracking-wider ml-1">
                 Headquarters Office
@@ -176,7 +233,7 @@ export default async function ContactPage() {
               </div>
             </div>
 
-            {/* UK Branch Card - Sidebar */}
+            {/* UK Branch Card */}
             <div className="bg-white border border-secondary/10 p-5 rounded-2xl shadow-sm flex flex-col gap-2.5 text-left">
               <span className="text-[10px] uppercase font-extrabold text-secondary tracking-wider ml-1">
                 UK Branch Office
@@ -242,12 +299,7 @@ function GoogleBusinessCard({
             <span className="text-[#202124] font-bold">{rating}</span>
             <span className="text-[#f4b400] text-xs leading-none">★</span>
             {profileUrl ? (
-              <a
-                href={profileUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#1a73e8] hover:underline font-medium"
-              >
+              <a href={profileUrl} target="_blank" rel="noreferrer" className="text-[#1a73e8] hover:underline font-medium">
                 ({reviewsCount})
               </a>
             ) : (
@@ -259,12 +311,8 @@ function GoogleBusinessCard({
       </div>
 
       <div className="flex items-center gap-1.5 shrink-0">
-        {/* View Profile Button */}
         {profileUrl ? (
-          <a
-            href={profileUrl}
-            target="_blank"
-            rel="noreferrer"
+          <a href={profileUrl} target="_blank" rel="noreferrer"
             className="w-7 h-7 rounded-full bg-[#f1f3f4] hover:bg-[#e8eaed] text-[#1a73e8] flex items-center justify-center transition duration-200"
             title="View Business Profile"
           >
@@ -284,12 +332,8 @@ function GoogleBusinessCard({
           </div>
         )}
 
-        {/* Directions Button */}
         {directionUrl ? (
-          <a
-            href={directionUrl}
-            target="_blank"
-            rel="noreferrer"
+          <a href={directionUrl} target="_blank" rel="noreferrer"
             className="w-7 h-7 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white flex items-center justify-center shadow-sm hover:shadow transition duration-200"
             title="Get Directions"
           >

@@ -93,8 +93,12 @@ export default async function CountryPage({ params }: { params: Params }) {
     console.warn("[Country Page] Failed to query database:", err.message);
   }
   const countryTreks = slug.toLowerCase() === "nepal" ? allTreks : [];
-  const whatsappNum = siteSettings?.headerSettings?.expertWhatsApp || "9779851218358";
-  const formattedWhatsapp = whatsappNum.replace(/[^0-9]/g, "");
+  // Resolve WhatsApp: prefer linked team member's whatsApp field
+  const linkedMember = siteSettings?.headerSettings?.expert;
+  const rawWhatsApp = (linkedMember && typeof linkedMember === "object" && linkedMember.whatsApp)
+    ? linkedMember.whatsApp
+    : (siteSettings?.headerSettings?.expertWhatsApp || "9779851218358");
+  const formattedWhatsapp = rawWhatsApp.replace(/[^0-9]/g, "");
 
   return (
     <div className="w-full">

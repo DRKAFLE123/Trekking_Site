@@ -1334,14 +1334,22 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             </div>
 
             {/* EXPERT ADVISOR */}
+            {(() => {
+              const hs = siteSettings?.headerSettings || {};
+              const member = hs.expert && typeof hs.expert === "object" ? hs.expert : null;
+              const expertName     = (member?.name)     || hs.expertName     || "Kafle";
+              const expertWhatsApp = (member?.whatsApp) || hs.expertWhatsApp || "9779851218358";
+              const expertEmail    = hs.quickEmail || "info@natureheaventrek.com";
+              const cleanWa        = expertWhatsApp.replace(/[^0-9]/g, "");
+              return (
             <div className="bg-[#1a2e1f] text-white rounded-2xl shadow-md p-6 flex flex-col gap-4 border border-white/10">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#2E7D32] to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-md border-2 border-green-500 shrink-0 select-none">
-                  {(siteSettings?.headerSettings?.expertName || "K")[0]}
+                  {expertName[0]}
                 </div>
                 <div>
                   <span className="text-[9px] uppercase tracking-wider text-green-400 font-bold">Expert Advisor</span>
-                  <h4 className="font-serif font-black text-base text-white">{siteSettings?.headerSettings?.expertName || "Kafle"}</h4>
+                  <h4 className="font-serif font-black text-base text-white">{expertName}</h4>
                   <p className="text-[10px] text-white/60 font-semibold">Senior Himalayan Specialist</p>
                 </div>
               </div>
@@ -1349,10 +1357,12 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                 &ldquo;Namaste! I have been guiding in the Himalayas for over 15 years. Contact me directly to customize your itinerary or check live trail conditions.&rdquo;
               </p>
               <div className="flex flex-col gap-2 mt-1">
-                <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g,"")}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 rounded-xl text-xs transition duration-300 shadow-sm"><FaWhatsapp /> WhatsApp Specialist</a>
-                <a href={`mailto:${siteSettings?.headerSettings?.quickEmail || "info@natureheaventrek.com"}`} className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-2.5 rounded-xl text-xs transition duration-300"><FaEnvelope /> Email Consultation</a>
+                <a href={`https://wa.me/${cleanWa}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 rounded-xl text-xs transition duration-300 shadow-sm"><FaWhatsapp /> WhatsApp Specialist</a>
+                <a href={`mailto:${expertEmail}`} className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-2.5 rounded-xl text-xs transition duration-300"><FaEnvelope /> Email Consultation</a>
               </div>
             </div>
+              );
+            })()}
 
             {/* TRUST METRICS */}
             <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 flex flex-col gap-4 shadow-sm">

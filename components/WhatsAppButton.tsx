@@ -11,12 +11,17 @@ export default function WhatsAppButton() {
       try {
         const res = await fetch("/api/site-settings");
         const data = await res.json();
+
+        // Prefer the linked team member's whatsApp field
+        const linkedMember = data?.headerSettings?.expert;
+        if (linkedMember && typeof linkedMember === "object" && linkedMember.whatsApp) {
+          const cleanNum = linkedMember.whatsApp.replace(/[^0-9]/g, "");
+          if (cleanNum) { setWhatsappNumber(cleanNum); return; }
+        }
+        // Fallback: static expertWhatsApp text field
         if (data?.headerSettings?.expertWhatsApp) {
-          // Keep only numbers
           const cleanNum = data.headerSettings.expertWhatsApp.replace(/[^0-9]/g, "");
-          if (cleanNum) {
-            setWhatsappNumber(cleanNum);
-          }
+          if (cleanNum) setWhatsappNumber(cleanNum);
         }
       } catch (err) {
         console.error("Failed to fetch WhatsApp number for float button:", err);

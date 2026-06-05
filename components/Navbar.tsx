@@ -225,6 +225,20 @@ TRIP_DATA["All Trips"] = Array.from(allTripsMap.values());
 
 const categories = Object.keys(TRIP_DATA);
 
+// Helper: resolve the active expert info from site settings
+// Prefers linked team-member document fields, falls back to static text fields
+function resolveExpert(siteSettings: any) {
+  const hs = siteSettings?.headerSettings || {};
+  const member = hs.expert;
+  const isLinked = member && typeof member === "object";
+  return {
+    name:     (isLinked && member.name)     || hs.expertName     || "Kafle",
+    phone:    (isLinked && member.phone)    || hs.expertPhone    || "+977 9851218358",
+    whatsApp: (isLinked && member.whatsApp) || hs.expertWhatsApp || "+977 9851218358",
+    email:    hs.quickEmail || "info@natureheaventrek.com",
+  };
+}
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -807,18 +821,20 @@ export default function Navbar() {
           {/* Right: Talk to Expert Card & Stepper CTA (Aligned dynamically) */}
           <div className="flex items-center gap-6 justify-center shrink-0">
             {/* Talk to Expert Card (Original beloved design!) */}
+            {(() => { const ex = resolveExpert(siteSettings); return (
             <div className="flex items-center gap-3 shrink-0">
               <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold text-[13px] shadow-sm select-none">
-                {(siteSettings?.headerSettings?.expertName || "K")[0]}
+                {ex.name[0]}
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert ({siteSettings?.headerSettings?.expertName || "Kafle"})</span>
+                <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert ({ex.name})</span>
                 <div className="flex items-center gap-1.5">
                   <div className="w-[14px] h-[14px] rounded-full bg-[#25D366] flex items-center justify-center text-white font-black text-[9px] leading-none select-none">W</div>
-                  <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#c8922a] transition">{siteSettings?.headerSettings?.expertWhatsApp || "+977 9851218358"}</a>
+                  <a href={`https://wa.me/${ex.whatsApp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#c8922a] transition">{ex.whatsApp}</a>
                 </div>
               </div>
             </div>
+            ); })()}
 
             {/* Plan Your Trip CTA Button (Styled in secondary gold) */}
             <Link 
@@ -1112,7 +1128,7 @@ export default function Navbar() {
 
             {/* Mobile/Tablet WhatsApp CTA */}
             <a 
-              href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`}
+              href={`https://wa.me/${resolveExpert(siteSettings).whatsApp.replace(/[^0-9]/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="lg:hidden p-1.5 text-[#25D366] hover:scale-105 transition-transform duration-200"
@@ -1272,8 +1288,8 @@ export default function Navbar() {
                 <FaPaperPlane className="h-4 w-4" />
                 <span>Plan Your Trip</span>
               </Link>
-              <a href={`https://wa.me/${(siteSettings?.headerSettings?.expertWhatsApp || "9779851218358").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm transition duration-300"><FaWhatsapp className="h-5 w-5" /><span>WhatsApp Chat</span></a>
-              <div className="text-center text-xs text-white/50 flex flex-col gap-1"><span>Emergency 24/7 Support</span><a href={`tel:${(siteSettings?.headerSettings?.expertPhone || "9779851218358").replace(/[^0-9]/g, "")}`} className="text-[#c8922a] font-bold hover:underline">{siteSettings?.headerSettings?.expertPhone || "+977 9851218358"}</a></div>
+              <a href={`https://wa.me/${resolveExpert(siteSettings).whatsApp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm transition duration-300"><FaWhatsapp className="h-5 w-5" /><span>WhatsApp Chat</span></a>
+              <div className="text-center text-xs text-white/50 flex flex-col gap-1"><span>Emergency 24/7 Support</span><a href={`tel:${resolveExpert(siteSettings).phone.replace(/[^0-9]/g, "")}`} className="text-[#c8922a] font-bold hover:underline">{resolveExpert(siteSettings).phone}</a></div>
             </div>
           </motion.div>
         </div>
