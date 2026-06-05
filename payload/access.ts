@@ -43,6 +43,9 @@ export const checkPermission = (
 
     // 2. Custom Role check (queries the Roles collection in DB)
     if (user.role === 'custom' && user.customRole) {
+      if (['siteSettings', 'navbarSettings', 'footerSettings'].includes(collectionSlug)) {
+        return false;
+      }
       const rawRoleId = typeof user.customRole === 'object' ? user.customRole.id : user.customRole;
       const roleId = typeof rawRoleId === 'string' && !isNaN(Number(rawRoleId)) ? Number(rawRoleId) : rawRoleId;
       try {

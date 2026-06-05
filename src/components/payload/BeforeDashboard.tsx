@@ -26,6 +26,9 @@ export const BeforeDashboard = () => {
     if (user.role === 'admin') return true;
 
     if (user.role === 'custom') {
+      if (['siteSettings', 'navbarSettings', 'footerSettings'].includes(collectionSlug)) {
+        return false;
+      }
       const permissions = user.customRole?.permissions;
       return Boolean(permissions?.[`${collectionSlug}_read`]);
     }
