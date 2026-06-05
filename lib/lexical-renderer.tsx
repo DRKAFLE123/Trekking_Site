@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { getMediaUrl } from './cloudinary-loader';
 
 export interface HeadingItem {
@@ -400,7 +401,7 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
             <p style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#1A3F5E', lineHeight: '1.4' }}>
               {headline}
             </p>
-            <a
+            <Link
               href="/plan-a-trip"
               className="blog-cta-btn"
               style={{
@@ -417,7 +418,7 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
               }}
             >
               {buttonText}
-            </a>
+            </Link>
             {whatsappNumber && (
               <a
                 href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}

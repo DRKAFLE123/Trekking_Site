@@ -276,6 +276,15 @@ export const SiteSettings: CollectionConfig = {
             { name: 'stars', type: 'number', required: true, defaultValue: 5, label: 'Stars (1-5)' },
           ],
         },
+        {
+          name: 'url',
+          type: 'text',
+          label: 'Platform Review Profile Link (URL)',
+          admin: {
+            description:
+              'Optional. Full URL to your TripAdvisor / Google / Booking.com profile. When set, the card becomes a clickable link that opens in a new tab.',
+          },
+        },
       ],
     },
     {

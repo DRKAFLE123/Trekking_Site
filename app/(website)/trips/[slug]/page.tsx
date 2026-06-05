@@ -198,13 +198,17 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
       {/* Inject Schema tags dynamically */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema).replace(/</g, "\\u003c"),
+        }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(trekSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(trekSchema).replace(/</g, "\\u003c"),
+        }}
       />
-      
+
       <TrekDetailClient
         trek={trek}
         similarTreks={similarTreks}

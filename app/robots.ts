@@ -27,8 +27,16 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       rules: {
         userAgent: '*',
         allow: '/',
+        disallow: [
+          '/admin',          // Payload CMS admin
+          '/admin/*',
+          '/api/',           // Server routes, never indexable content
+          '/blogs/preview/', // Draft preview routes
+          '/_next/',         // Build artifacts
+        ],
       },
       sitemap: 'https://natureheaventreks.com/sitemap.xml',
+      host: 'https://natureheaventreks.com',
     };
   } catch (error) {
     console.error('Error fetching site settings for robots.ts:', error);
@@ -37,8 +45,10 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       rules: {
         userAgent: '*',
         allow: '/',
+        disallow: ['/admin', '/admin/*', '/api/', '/blogs/preview/', '/_next/'],
       },
       sitemap: 'https://natureheaventreks.com/sitemap.xml',
+      host: 'https://natureheaventreks.com',
     };
   }
 }

@@ -1,12 +1,20 @@
 import { getPayload } from 'payload';
 import config from '@/payload/payload.config';
 import { NextResponse } from 'next/server';
+import { headers as nextHeaders } from 'next/headers';
+import { apiErrorBody } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     const payload = await getPayload({ config });
+
+    const requestHeaders = await nextHeaders();
+    const { user } = await payload.auth({ headers: requestHeaders });
+    if (!user || (user.role !== 'admin' && user.role !== 'editor' && user.role !== 'viewer' && user.role !== 'custom')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     // Run highly optimized SELECT COUNT(*) queries in parallel on the server database
     const [
@@ -50,9 +58,9 @@ export async function GET() {
       }
     });
   } catch (err: any) {
-    console.error('[Dashboard Stats API] Error fetching stats:', err);
-    return NextResponse.json({ 
-      error: err.message || 'Failed to fetch dashboard stats' 
-    }, { status: 500 });
+    return NextResponse.json(
+      apiErrorBody(err, 'Failed to fetch dashboard stats', 'Dashboard Stats'),
+      { status: 500 },
+    );
   }
 }

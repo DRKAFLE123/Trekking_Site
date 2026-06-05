@@ -1,20 +1,21 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin } from '../access';
+import { checkPermission } from '../access';
 import { revalidateGlobalSettings } from '../hooks/revalidate';
 
 export const NavbarSettings: CollectionConfig = {
   slug: 'navbarSettings',
   access: {
     read: () => true, // Publicly readable for rendering the header navbar
-    create: isAdmin,  // Superadmin only
-    update: isAdmin,  // Superadmin only
-    delete: isAdmin,  // Superadmin only
+    create: checkPermission('navbarSettings', 'create'),
+    update: checkPermission('navbarSettings', 'update'),
+    delete: checkPermission('navbarSettings', 'delete'),
   },
   admin: {
     group: 'System Admin',
     useAsTitle: 'siteName',
     description: 'Configure global navigation headers, brand assets, and multi-level dropdowns.',
-    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
+    hidden: ({ user }: any) =>
+      Boolean(user && user.role !== 'admin' && user.role !== 'custom'),
   },
   hooks: {
     afterChange: [revalidateGlobalSettings],

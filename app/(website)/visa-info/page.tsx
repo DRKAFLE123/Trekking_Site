@@ -2,12 +2,33 @@ import React from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { FaPassport, FaCheckCircle, FaExclamationTriangle, FaInfoCircle, FaArrowRight } from "react-icons/fa";
+import { getPayload } from "payload";
+import config from "@/payload/payload.config";
+import CmsLexicalPage from "@/components/CmsLexicalPage";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Nepal Visa Information — On-Arrival Guide | Nature Heaven Trekking",
   description:
     "Everything you need to know about obtaining a Nepal tourist visa on arrival: fees, requirements, passport validity, and special country exemptions.",
 };
+
+async function getCmsPage() {
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "pages",
+      where: { slug: { equals: "visa-info" } },
+      depth: 2,
+      limit: 1,
+      overrideAccess: true,
+    });
+    return res.docs[0] || null;
+  } catch {
+    return null;
+  }
+}
 
 const visaFees = [
   { duration: "15 Days", fee: "$30 USD", detail: "Short holiday or transit" },
@@ -38,7 +59,11 @@ const ports = [
   { name: "Belahiya (Bhairahawa/Sunauli)", city: "Rupandehi", type: "Land Border" },
 ];
 
-export default function VisaInfoPage() {
+export default async function VisaInfoPage() {
+  const cmsPage = await getCmsPage();
+  if (cmsPage) {
+    return <CmsLexicalPage page={cmsPage as any} />;
+  }
   return (
     <div className="bg-[#fcfbfa] min-h-screen">
       {/* Hero Banner */}

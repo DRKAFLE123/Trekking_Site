@@ -129,6 +129,42 @@ export const roles: CollectionConfig = {
                 { name: 'media_delete', type: 'checkbox', label: 'Delete Media', defaultValue: false },
               ],
             },
+            {
+              type: 'row',
+              fields: [
+                { name: 'companyPages_read', type: 'checkbox', label: 'Read Company Pages', defaultValue: true },
+                { name: 'companyPages_create', type: 'checkbox', label: 'Create Company Pages', defaultValue: false },
+                { name: 'companyPages_update', type: 'checkbox', label: 'Update Company Pages', defaultValue: false },
+                { name: 'companyPages_delete', type: 'checkbox', label: 'Delete Company Pages', defaultValue: false },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'contactPages_read', type: 'checkbox', label: 'Read Contact Pages', defaultValue: true },
+                { name: 'contactPages_create', type: 'checkbox', label: 'Create Contact Pages', defaultValue: false },
+                { name: 'contactPages_update', type: 'checkbox', label: 'Update Contact Pages', defaultValue: false },
+                { name: 'contactPages_delete', type: 'checkbox', label: 'Delete Contact Pages', defaultValue: false },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'blogSettings_read', type: 'checkbox', label: 'Read Blog Settings', defaultValue: true },
+                { name: 'blogSettings_create', type: 'checkbox', label: 'Create Blog Settings', defaultValue: false },
+                { name: 'blogSettings_update', type: 'checkbox', label: 'Update Blog Settings', defaultValue: false },
+                { name: 'blogSettings_delete', type: 'checkbox', label: 'Delete Blog Settings', defaultValue: false },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'homepageSettings_read', type: 'checkbox', label: 'Read Homepage Settings', defaultValue: true },
+                { name: 'homepageSettings_create', type: 'checkbox', label: 'Create Homepage Settings', defaultValue: false },
+                { name: 'homepageSettings_update', type: 'checkbox', label: 'Update Homepage Settings', defaultValue: false },
+                { name: 'homepageSettings_delete', type: 'checkbox', label: 'Delete Homepage Settings', defaultValue: false },
+              ],
+            },
           ],
         },
         {
@@ -191,6 +227,24 @@ export const roles: CollectionConfig = {
                 { name: 'roles_create', type: 'checkbox', label: 'Create Roles', defaultValue: false },
                 { name: 'roles_update', type: 'checkbox', label: 'Update Roles', defaultValue: false },
                 { name: 'roles_delete', type: 'checkbox', label: 'Delete Roles', defaultValue: false },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'navbarSettings_read', type: 'checkbox', label: 'Read Navbar Settings', defaultValue: false },
+                { name: 'navbarSettings_create', type: 'checkbox', label: 'Create Navbar Settings', defaultValue: false },
+                { name: 'navbarSettings_update', type: 'checkbox', label: 'Update Navbar Settings', defaultValue: false },
+                { name: 'navbarSettings_delete', type: 'checkbox', label: 'Delete Navbar Settings', defaultValue: false },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'footerSettings_read', type: 'checkbox', label: 'Read Footer Settings', defaultValue: false },
+                { name: 'footerSettings_create', type: 'checkbox', label: 'Create Footer Settings', defaultValue: false },
+                { name: 'footerSettings_update', type: 'checkbox', label: 'Update Footer Settings', defaultValue: false },
+                { name: 'footerSettings_delete', type: 'checkbox', label: 'Delete Footer Settings', defaultValue: false },
               ],
             },
           ],

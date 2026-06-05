@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { apiErrorBody } from "@/lib/api-error";
 
 export async function GET(request: Request) {
   try {
@@ -115,7 +116,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ departures: departuresList }, { status: 200 });
   } catch (error: any) {
-    console.error("Fetch departures error:", error);
-    return NextResponse.json({ error: error.message || "Failed to fetch departures" }, { status: 500 });
+    return NextResponse.json(
+      apiErrorBody(error, "Failed to fetch departures", "Departures"),
+      { status: 500 },
+    );
   }
 }

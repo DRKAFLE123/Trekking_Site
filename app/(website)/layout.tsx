@@ -35,14 +35,65 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error('Error fetching site settings for layout metadata:', error);
   }
 
+  const siteUrl = "https://natureheaventreks.com";
+  const defaultTitle = "Nature Heaven Trek & Expedition | Private Trekking Agency Nepal";
+  const defaultDescription =
+    "Nature Heaven Trek & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.";
+
   return {
-    title: "Nature Heaven Trek & Expedition | Private Trekking Agency Nepal",
-    description: "Nature Heaven Trek & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.",
-    metadataBase: new URL("https://natureheaventreks.com"),
+    title: { default: defaultTitle, template: "%s | Nature Heaven Trekking" },
+    description: defaultDescription,
+    metadataBase: new URL(siteUrl),
+    alternates: { canonical: "/" },
+    applicationName: "Nature Heaven Trekking",
+    keywords: [
+      "Nepal trekking",
+      "private trekking Nepal",
+      "Everest Base Camp trek",
+      "Annapurna trek",
+      "Manaslu Circuit",
+      "Himalayan adventure",
+      "Sherpa guide",
+    ],
+    authors: [{ name: "Nature Heaven Trek & Expedition" }],
     robots: {
       index: allowIndexing,
       follow: allowIndexing,
+      googleBot: {
+        index: allowIndexing,
+        follow: allowIndexing,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      siteName: "Nature Heaven Trekking",
+      url: siteUrl,
+      title: defaultTitle,
+      description: defaultDescription,
+      images: [
+        {
+          url: "/Manaslu-Circuit-Trek.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Trekkers approaching the Himalayas with Nature Heaven Trek & Expedition",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: defaultTitle,
+      description: defaultDescription,
+      images: ["/Manaslu-Circuit-Trek.jpg"],
+    },
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/favicon.ico",
+    },
+    manifest: "/manifest.webmanifest",
   };
 }
 

@@ -12,6 +12,20 @@ export const isAuthenticated: Access = ({ req: { user } }) => {
   return Boolean(user);
 };
 
+// Closes the hole where anonymous POSTs to Payload's auto-generated REST
+// endpoints (e.g. POST /api/inquiries) bypassed our reCAPTCHA-gated form
+// handlers. The REST endpoint runs access checks; this rule rejects it.
+//
+// Our own /api/booking, /api/contact, /api/plan-trip, /api/newsletter routes
+// call `payload.create()` via the Local API without passing a `req`, which
+// in Payload v3 bypasses access checks entirely — so they keep working.
+// If anyone later starts passing `req` from those routes, they can opt back
+// in by setting `req.context.fromTrustedRoute = true`.
+export const fromTrustedRouteOrAuthenticated: Access = ({ req }) => {
+  if ((req as any)?.context?.fromTrustedRoute === true) return true;
+  return Boolean(req.user);
+};
+
 /**
  * Dynamically checks user permissions based on their assigned custom role.
  * Fallbacks to legacy static roles if they are not configured as 'custom'.
