@@ -47,6 +47,16 @@ function serializeToPlainText(body: any): string {
 }
 
 export default function FAQAccordion({ faqs }: FAQAccordionProps) {
+  const faqList = faqs || [];
+  const validFaqs = faqList.filter(
+    (faq) =>
+      faq &&
+      faq.question &&
+      faq.question.trim().length > 0 &&
+      faq.answer &&
+      (typeof faq.answer === "string" || (typeof faq.answer === "object" && Object.keys(faq.answer).length > 0))
+  );
+
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggleAccordion = (index: number) => {
@@ -57,7 +67,7 @@ export default function FAQAccordion({ faqs }: FAQAccordionProps) {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
+    "mainEntity": validFaqs.map((faq) => ({
       "@type": "Question",
       "name": faq.question,
       "acceptedAnswer": {
@@ -77,7 +87,7 @@ export default function FAQAccordion({ faqs }: FAQAccordionProps) {
         }}
       />
 
-      {faqs.map((faq, idx) => {
+      {validFaqs.map((faq, idx) => {
         const isOpen = openIndex === idx;
 
         return (

@@ -15,6 +15,17 @@ const parseYoutubeId = (args: any) => {
   return value;
 };
 
+const filterEmptyFaqs = ({ value }: any) => {
+  if (Array.isArray(value)) {
+    return value.filter((item: any) => {
+      const hasQuestion = item.question && item.question.trim().length > 0;
+      const hasAnswer = item.answer && typeof item.answer === 'object' && Object.keys(item.answer).length > 0;
+      return hasQuestion || hasAnswer;
+    });
+  }
+  return value;
+};
+
 // ============================================================
 // MODULARIZED COLLAPSIBLE SECTIONS (CHRONOLOGICAL FRONTEND ORDER)
 // ============================================================
@@ -829,6 +840,9 @@ const faqsSection = {
     {
       name: 'faqs',
       type: 'array' as const,
+      hooks: {
+        beforeValidate: [filterEmptyFaqs],
+      },
       labels: {
         singular: 'FAQ',
         plural: 'FAQs',
