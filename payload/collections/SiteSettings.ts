@@ -25,7 +25,8 @@ export const SiteSettings: CollectionConfig = {
   admin: {
     group: 'System Admin',
     useAsTitle: 'siteName',
-    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
+    hidden: ({ user }: any) =>
+      Boolean(user && user.role !== 'admin' && user.role !== 'custom'),
   },
   hooks: {
     afterChange: [revalidateGlobalSettings],
