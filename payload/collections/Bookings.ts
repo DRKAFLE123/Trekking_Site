@@ -1,11 +1,11 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated } from '../access';
+import { isAdmin, isAdminOrEditor, isAuthenticated, fromTrustedRouteOrAuthenticated } from '../access';
 
 export const bookings: CollectionConfig = {
   slug: 'bookings',
   access: {
     read: isAuthenticated,
-    create: () => true,
+    create: fromTrustedRouteOrAuthenticated,
     update: isAdminOrEditor,
     delete: isAdmin,
   },

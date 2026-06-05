@@ -3,6 +3,7 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
 import { verifyRecaptcha } from "@/lib/recaptcha";
+import { apiErrorBody } from "@/lib/api-error";
 
 // Helper to generate a random uppercase alphanumeric string
 function generateBookingId(trekSlug: string): string {
@@ -326,6 +327,6 @@ export async function POST(request: Request) {
 
   } catch (error: any) {
     console.error("Booking API checkout error:", error);
-    return NextResponse.json({ error: error.message || "Failed to process booking reservation" }, { status: 500 });
+    return NextResponse.json(apiErrorBody(error, "Failed to process booking reservation", "Booking"), { status: 500 });
   }
 }

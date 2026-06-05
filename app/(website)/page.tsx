@@ -1,6 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FaAward, FaCalendarAlt, FaUsers, FaShieldAlt, FaLeaf, FaSmile } from "react-icons/fa";
+import {
+  FaAward,
+  FaCalendarAlt,
+  FaUsers,
+  FaShieldAlt,
+  FaLeaf,
+  FaSmile,
+  FaMountain,
+  FaCompass,
+  FaCheck,
+} from "react-icons/fa";
 // Removed Sanity fetch – using internal API
 import { Trek, BlogPost, Faq, Testimonial, Region } from "@/types";
 import { getPayload } from "payload";
@@ -29,6 +39,7 @@ export default async function HomePage() {
   let faqs: Faq[] = [];
   let galleryItems: any[] = [];
   let siteSettings: any = null;
+  let homepageSettings: any = null;
 
   try {
     const payload = await getPayload({ config });
@@ -115,6 +126,21 @@ export default async function HomePage() {
       console.warn("[Home Page] Failed to query siteSettings collection:", e.message);
     }
 
+    // 7. Fetch Homepage Settings (singleton — drives the "Why Travel With Us"
+    //    and "Exclusive Private Treks" sections). Falls back gracefully when
+    //    no document exists so the page never breaks during early CMS setup.
+    try {
+      const homepageSettingsRes = await payload.find({
+        collection: 'homepageSettings',
+        depth: 2,
+        limit: 1,
+        overrideAccess: true,
+      });
+      homepageSettings = homepageSettingsRes.docs[0] as any;
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query homepageSettings collection:", e.message);
+    }
+
   } catch (err: any) {
     console.warn("[Home Page] Failed to initialize Payload CMS:", err.message);
   }
@@ -166,6 +192,49 @@ export default async function HomePage() {
   // Slice first 5 blogs for homepage preview
   const featuredBlogs = sortedBlogs.slice(0, 5) as unknown as BlogPost[];
 
+  // -------------------------------------------------------------------------
+  // Homepage Settings — graceful fallback to the original static design when
+  // no CMS document has been created yet (so `npm run dev` on a fresh DB
+  // still renders the beautiful homepage).
+  // -------------------------------------------------------------------------
+  const whyKicker = homepageSettings?.whyTravelKicker || "The Nature Heaven Standard";
+  const whyTitle = homepageSettings?.whyTravelTitle || "Why Travel With Us?";
+  const whyDescription =
+    homepageSettings?.whyTravelDescription ||
+    "We are a fully licensed, Nepal-based trekking operator. Unlike booking through multi-national agencies, you book directly with the local Sherpa operator, ensuring higher safety, fair porter treatment, and a 100% authentic journey.";
+  const whyImageUrl =
+    getMediaUrl(homepageSettings?.whyTravelImage) || "/Manaslu-Circuit-Trek.jpg";
+  const whyBadgeIcon = homepageSettings?.whyTravelBadgeIcon || "🏆";
+  const whyBadgeTitle =
+    homepageSettings?.whyTravelBadgeTitle || "100% Native Sherpa Crew";
+  const whyBadgeDescription =
+    homepageSettings?.whyTravelBadgeDescription ||
+    "Our guides are licensed, altitude-first-aid certified local mountain heroes.";
+
+  const DEFAULT_WHY_FEATURES: Array<{ icon: string; title: string; description: string }> = [
+    { icon: "award", title: "Award Winner", description: "Top-rated operator with TripAdvisor Choice Award." },
+    { icon: "calendar", title: "Flexible Itinerary", description: "Change travel pace or routes mid-trek as needed." },
+    { icon: "users", title: "Sherpa Guided", description: "Treks led by native high-altitude Sherpa climbers." },
+    { icon: "shield", title: "Oxygen Supported", description: "Equipped with satellite communication and emergency oxygen." },
+    { icon: "leaf", title: "Eco Trekking", description: "Zero single-use plastic, support local community libraries." },
+    { icon: "smile", title: "100% Satisfaction", description: "Private tours average 5/5 stars rating by past clients." },
+  ];
+  const whyFeatures =
+    homepageSettings?.whyTravelFeatures && homepageSettings.whyTravelFeatures.length > 0
+      ? homepageSettings.whyTravelFeatures
+      : DEFAULT_WHY_FEATURES;
+
+  const WHY_ICON_MAP: Record<string, React.ReactNode> = {
+    award: <FaAward className="h-5 w-5" />,
+    calendar: <FaCalendarAlt className="h-5 w-5" />,
+    users: <FaUsers className="h-5 w-5" />,
+    shield: <FaShieldAlt className="h-5 w-5" />,
+    leaf: <FaLeaf className="h-5 w-5" />,
+    smile: <FaSmile className="h-5 w-5" />,
+    mountain: <FaMountain className="h-5 w-5" />,
+    compass: <FaCompass className="h-5 w-5" />,
+    check: <FaCheck className="h-5 w-5" />,
+  };
 
   return (
     <div className="w-full">
@@ -296,14 +365,14 @@ export default async function HomePage() {
       {/* 4. Region Grid */}
       <RegionGrid regions={regions} />
 
-      {/* 5. Why Choose Us (Split Layout) */}
+      {/* 5. Why Choose Us (Split Layout) — CMS-driven, falls back to defaults */}
       <section className="py-16 md:py-24 px-4 md:px-6 bg-white border-y border-secondary/15">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Image Card */}
           <FadeInUp className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl border-4 border-secondary/10">
             <Image
-              src="/Manaslu-Circuit-Trek.jpg"
-              alt="Himalayan guides and trekkers on Manaslu Circuit"
+              src={whyImageUrl}
+              alt={whyBadgeTitle}
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -311,10 +380,10 @@ export default async function HomePage() {
             />
             {/* Embedded Badge */}
             <div className="absolute bottom-2 left-2 right-2 md:bottom-6 md:left-6 md:right-6 bg-primary/90 backdrop-blur-md p-2 md:p-6 rounded-xl border border-secondary/20 flex gap-1.5 md:gap-4 text-bgOffWhite items-center md:items-start">
-              <span className="text-lg md:text-4xl text-secondary shrink-0">🏆</span>
+              <span className="text-lg md:text-4xl text-secondary shrink-0">{whyBadgeIcon}</span>
               <div>
-                <h4 className="font-serif font-bold text-[10px] md:text-lg leading-tight">100% Native Sherpa Crew</h4>
-                <p className="hidden md:block text-xs text-bgOffWhite/80 mt-1">Our guides are licensed, altitude-first-aid certified local mountain heroes.</p>
+                <h4 className="font-serif font-bold text-[10px] md:text-lg leading-tight">{whyBadgeTitle}</h4>
+                <p className="hidden md:block text-xs text-bgOffWhite/80 mt-1">{whyBadgeDescription}</p>
               </div>
             </div>
           </FadeInUp>
@@ -323,86 +392,30 @@ export default async function HomePage() {
           <div className="flex flex-col gap-8">
             <div>
               <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
-                The Nature Heaven Standard
+                {whyKicker}
               </span>
               <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary">
-                Why Travel With Us?
+                {whyTitle}
               </h2>
               <div className="h-0.5 w-16 bg-secondary mt-4 mb-6"></div>
               <p className="text-sm md:text-base text-charcoal/80 leading-relaxed">
-                We are a fully licensed, Nepal-based trekking operator. Unlike booking through multi-national agencies, you book directly with the local Sherpa operator, ensuring higher safety, fair porter treatment, and a 100% authentic journey.
+                {whyDescription}
               </p>
             </div>
 
             {/* Feature Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              
-              {/* Award Winner */}
-              <div className="flex items-start gap-3">
-                <span className="p-3 bg-secondary/10 text-secondary rounded-xl shrink-0">
-                  <FaAward className="h-5 w-5" />
-                </span>
-                <div>
-                  <h4 className="font-bold text-primary text-sm md:text-base">Award Winner</h4>
-                  <p className="text-xs text-charcoal/70 mt-1">Top-rated operator with TripAdvisor Choice Award.</p>
+              {whyFeatures.map((feat: any, idx: number) => (
+                <div key={idx} className="flex items-start gap-3">
+                  <span className="p-3 bg-secondary/10 text-secondary rounded-xl shrink-0">
+                    {WHY_ICON_MAP[feat.icon] || WHY_ICON_MAP.award}
+                  </span>
+                  <div>
+                    <h4 className="font-bold text-primary text-sm md:text-base">{feat.title}</h4>
+                    <p className="text-xs text-charcoal/70 mt-1">{feat.description}</p>
+                  </div>
                 </div>
-              </div>
-
-              {/* Flexible Itineraries */}
-              <div className="flex items-start gap-3">
-                <span className="p-3 bg-secondary/10 text-secondary rounded-xl shrink-0">
-                  <FaCalendarAlt className="h-5 w-5" />
-                </span>
-                <div>
-                  <h4 className="font-bold text-primary text-sm md:text-base">Flexible Itinerary</h4>
-                  <p className="text-xs text-charcoal/70 mt-1">Change travel pace or routes mid-trek as needed.</p>
-                </div>
-              </div>
-
-              {/* Local Experts */}
-              <div className="flex items-start gap-3">
-                <span className="p-3 bg-secondary/10 text-secondary rounded-xl shrink-0">
-                  <FaUsers className="h-5 w-5" />
-                </span>
-                <div>
-                  <h4 className="font-bold text-primary text-sm md:text-base">Sherpa Guided</h4>
-                  <p className="text-xs text-charcoal/70 mt-1">Treks led by native high-altitude Sherpa climbers.</p>
-                </div>
-              </div>
-
-              {/* Safe & Supported */}
-              <div className="flex items-start gap-3">
-                <span className="p-3 bg-secondary/10 text-secondary rounded-xl shrink-0">
-                  <FaShieldAlt className="h-5 w-5" />
-                </span>
-                <div>
-                  <h4 className="font-bold text-primary text-sm md:text-base">Oxygen Supported</h4>
-                  <p className="text-xs text-charcoal/70 mt-1">Equipped with satellite communication and emergency oxygen.</p>
-                </div>
-              </div>
-
-              {/* Sustainable Travel */}
-              <div className="flex items-start gap-3">
-                <span className="p-3 bg-secondary/10 text-secondary rounded-xl shrink-0">
-                  <FaLeaf className="h-5 w-5" />
-                </span>
-                <div>
-                  <h4 className="font-bold text-primary text-sm md:text-base">Eco Trekking</h4>
-                  <p className="text-xs text-charcoal/70 mt-1">Zero single-use plastic, support local community libraries.</p>
-                </div>
-              </div>
-
-              {/* Happiness Guaranteed */}
-              <div className="flex items-start gap-3">
-                <span className="p-3 bg-secondary/10 text-secondary rounded-xl shrink-0">
-                  <FaSmile className="h-5 w-5" />
-                </span>
-                <div>
-                  <h4 className="font-bold text-primary text-sm md:text-base">100% Satisfaction</h4>
-                  <p className="text-xs text-charcoal/70 mt-1">Private tours average 5/5 stars rating by past clients.</p>
-                </div>
-              </div>
-
+              ))}
             </div>
           </div>
         </div>
@@ -411,8 +424,13 @@ export default async function HomePage() {
       {/* 6. Review Platforms */}
       <ReviewPlatforms platforms={siteSettings?.reviewPlatforms} />
 
-      {/* 7. Exclusive Private Treks */}
-      <ExclusivePrivateTreks />
+      {/* 7. Exclusive Private Treks — CMS-driven, falls back to defaults */}
+      <ExclusivePrivateTreks
+        kicker={homepageSettings?.privateTreksKicker}
+        title={homepageSettings?.privateTreksTitle}
+        description={homepageSettings?.privateTreksDescription}
+        usps={homepageSettings?.privateTreksUSPs}
+      />
 
       {/* 8. Video Gallery */}
       <VideoGallery />

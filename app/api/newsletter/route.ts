@@ -2,13 +2,27 @@ import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email } = body;
+    const { email, recaptchaToken } = body;
 
-    // Basic email validation
+    // reCAPTCHA is optional here (newsletter widget lives in the footer on
+    // every page, so a visible challenge would hurt UX). When a token is
+    // sent we still verify it; otherwise the IP rate-limit in middleware.ts
+    // protects this endpoint from abuse.
+    if (recaptchaToken) {
+      const isValidRecaptcha = await verifyRecaptcha(recaptchaToken);
+      if (!isValidRecaptcha) {
+        return NextResponse.json(
+          { error: "reCAPTCHA verification failed. Please try again." },
+          { status: 400 }
+        );
+      }
+    }
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
         { error: "Please provide a valid email address." },

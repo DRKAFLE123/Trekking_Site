@@ -9,6 +9,27 @@ import {
   FaHelicopter,
   FaHospital,
 } from "react-icons/fa";
+import { getPayload } from "payload";
+import config from "@/payload/payload.config";
+import CmsLexicalPage from "@/components/CmsLexicalPage";
+
+export const revalidate = 60;
+
+async function getCmsPage() {
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "pages",
+      where: { slug: { equals: "travel-insurance" } },
+      depth: 2,
+      limit: 1,
+      overrideAccess: true,
+    });
+    return res.docs[0] || null;
+  } catch {
+    return null;
+  }
+}
 
 export const metadata: Metadata = {
   title: "Travel Insurance for Nepal Trekking | Nature Heaven Trekking",
@@ -74,7 +95,11 @@ const colorMap: Record<string, string> = {
   purple: "bg-purple-50 border-purple-200 text-purple-800",
 };
 
-export default function TravelInsurancePage() {
+export default async function TravelInsurancePage() {
+  const cmsPage = await getCmsPage();
+  if (cmsPage) {
+    return <CmsLexicalPage page={cmsPage as any} />;
+  }
   return (
     <div className="bg-[#fcfbfa] min-h-screen">
       {/* Hero Banner */}

@@ -1,11 +1,11 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission } from '../access';
+import { isAdmin, isAdminOrEditor, isAuthenticated, checkPermission, fromTrustedRouteOrAuthenticated } from '../access';
 
 export const payments: CollectionConfig = {
   slug: 'payments',
   access: {
     read: isAuthenticated,
-    create: () => true,
+    create: fromTrustedRouteOrAuthenticated,
     update: checkPermission('payments', 'update'),
     delete: checkPermission('payments', 'delete'),
   },

@@ -8,6 +8,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { SiteSettings } from './collections/SiteSettings';
 import { NavbarSettings } from './collections/NavbarSettings';
 import { FooterSettings } from './collections/FooterSettings';
+import { HomepageSettings } from './collections/HomepageSettings';
 import { regions } from './collections/Regions';
 import { treks } from './collections/Treks';
 import { blogPosts } from './collections/BlogPosts';
@@ -82,7 +83,8 @@ export default buildConfig({
     Pages,
     ContactPages,
     BlogSettings,
-    CompanyPages
+    CompanyPages,
+    HomepageSettings,
   ],
   db: postgresAdapter({
     pool: {

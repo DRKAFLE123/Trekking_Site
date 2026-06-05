@@ -1,6 +1,7 @@
 import { getPayload } from 'payload';
 import config from '@/payload/payload.config';
 import { NextResponse } from 'next/server';
+import { apiErrorBody } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,15 +51,12 @@ export async function GET() {
       },
     });
   } catch (error: any) {
-    console.error('Error fetching home data from Payload:', error);
     return NextResponse.json({
       bestSellers: [],
       blogs: [],
       faqs: [],
       testimonials: [],
-      error: error.message || 'Internal Server Error',
-    }, {
-      status: 500,
-    });
+      ...apiErrorBody(error, 'Internal Server Error', 'Home'),
+    }, { status: 500 });
   }
 }

@@ -1,25 +1,53 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { 
-  FaQuestionCircle, 
-  FaArrowRight, 
-  FaRunning, 
-  FaUserShield, 
-  FaCalendarAlt, 
-  FaHotel, 
-  FaUserCheck, 
+import {
+  FaQuestionCircle,
+  FaArrowRight,
+  FaRunning,
+  FaUserShield,
+  FaCalendarAlt,
+  FaHotel,
+  FaUserCheck,
   FaShieldAlt,
   FaWhatsapp,
   FaCheckCircle
 } from "react-icons/fa";
+import { getPayload } from "payload";
+import config from "@/payload/payload.config";
+import CmsLexicalPage from "@/components/CmsLexicalPage";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Exclusive Private Treks in Nepal | Nature Heaven Trekking & Expedition",
   description: "Enjoy fully personalized private treks in Nepal with flexible itineraries, dedicated native Sherpa guides, and customized schedules built for your pace.",
 };
 
-export default function PrivateTreksPage() {
+// Try to load this page from the CMS first. When a `companyPages` document
+// with slug `private-treks` exists, we render the dynamic Lexical content
+// instead of the static design below.
+async function getCmsPage() {
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "companyPages",
+      where: { slug: { equals: "private-treks" } },
+      depth: 2,
+      limit: 1,
+      overrideAccess: true,
+    });
+    return res.docs[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function PrivateTreksPage() {
+  const cmsPage = await getCmsPage();
+  if (cmsPage) {
+    return <CmsLexicalPage page={cmsPage as any} />;
+  }
   const benefits = [
     {
       title: "100% Control of Your Pace",

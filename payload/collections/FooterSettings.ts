@@ -1,20 +1,21 @@
 import { CollectionConfig } from 'payload';
-import { isAdmin } from '../access';
+import { checkPermission } from '../access';
 import { revalidateGlobalSettings } from '../hooks/revalidate';
 
 export const FooterSettings: CollectionConfig = {
   slug: 'footerSettings',
   access: {
     read: () => true, // Publicly readable for rendering the footer
-    create: isAdmin,  // Superadmin only
-    update: isAdmin,  // Superadmin only
-    delete: isAdmin,  // Superadmin only
+    create: checkPermission('footerSettings', 'create'),
+    update: checkPermission('footerSettings', 'update'),
+    delete: checkPermission('footerSettings', 'delete'),
   },
   admin: {
     group: 'System Admin',
     useAsTitle: 'siteName',
     description: 'Configure dynamic footer menus, emergency contacts, branch addresses, accepted payments, and partner affiliations.',
-    hidden: ({ user }: any) => Boolean(user && user.role !== 'admin'),
+    hidden: ({ user }: any) =>
+      Boolean(user && user.role !== 'admin' && user.role !== 'custom'),
   },
   hooks: {
     afterChange: [revalidateGlobalSettings],

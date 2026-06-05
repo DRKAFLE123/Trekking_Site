@@ -72,7 +72,9 @@ export default function FAQAccordion({ faqs }: FAQAccordionProps) {
       {/* Inject JSON-LD FAQ Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
+        }}
       />
 
       {faqs.map((faq, idx) => {
