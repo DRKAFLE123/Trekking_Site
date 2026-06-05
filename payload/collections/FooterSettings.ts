@@ -11,7 +11,7 @@ export const FooterSettings: CollectionConfig = {
     delete: checkPermission('footerSettings', 'delete'),
   },
   admin: {
-    group: 'System Admin',
+    group: 'Global Settings',
     useAsTitle: 'siteName',
     description: 'Configure dynamic footer menus, emergency contacts, branch addresses, accepted payments, and partner affiliations.',
     hidden: ({ user }: any) =>

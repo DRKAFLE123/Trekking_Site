@@ -11,7 +11,7 @@ export const NavbarSettings: CollectionConfig = {
     delete: checkPermission('navbarSettings', 'delete'),
   },
   admin: {
-    group: 'System Admin',
+    group: 'Global Settings',
     useAsTitle: 'siteName',
     description: 'Configure global navigation headers, brand assets, and multi-level dropdowns.',
     hidden: ({ user }: any) =>

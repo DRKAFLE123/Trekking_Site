@@ -23,7 +23,7 @@ export const SiteSettings: CollectionConfig = {
     delete: checkPermission('siteSettings', 'delete'),
   },
   admin: {
-    group: 'System Admin',
+    group: 'Global Settings',
     useAsTitle: 'siteName',
     hidden: ({ user }: any) =>
       Boolean(user && user.role !== 'admin' && user.role !== 'custom'),
