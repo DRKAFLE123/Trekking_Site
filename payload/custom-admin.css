@@ -22,9 +22,31 @@
 /* Base body styles */
 body {
   font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
+  font-weight: 400 !important;
   background-color: var(--theme-bg-app) !important;
   color: var(--theme-text-color) !important;
 }
+
+/* ============================================================
+   LEXICAL RICH-TEXT EDITOR: force normal weight so typed text
+   is never bold by default (the Outfit font can inherit 700+
+   from parent rules and make the editor look bold even though
+   no bold formatting is applied).
+   ============================================================ */
+[contenteditable="true"],
+[contenteditable],
+.rich-text__editor,
+[class*="rich-text"] [contenteditable],
+[class*="lexical"] [contenteditable],
+.LexicalEditorTheme__paragraph,
+.PlaygroundEditorTheme__paragraph,
+p[class*="Paragraph"],
+[data-lexical-editor] p,
+[data-lexical-editor] {
+  font-weight: 400 !important;
+  font-style: normal !important;
+}
+
 
 /* ============================================================
    1. PREMIUM LOGIN PAGE - HIGH CONTRAST LIGHT CARD & CENTERED BUTTON

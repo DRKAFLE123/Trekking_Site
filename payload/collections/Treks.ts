@@ -940,6 +940,11 @@ export const treks: CollectionConfig = {
     group: 'Trekking & Operations',
     useAsTitle: 'title',
     description: 'Manage all trek packages. Each section below corresponds to a section on the trek detail page.',
+    components: {
+      beforeListTable: [
+        '@components/payload/ManageTopTreksButton#ManageTopTreksButton',
+      ],
+    },
   },
   hooks: {
     afterChange: [revalidateTrek],
