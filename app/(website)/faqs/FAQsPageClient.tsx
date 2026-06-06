@@ -5,42 +5,105 @@ import Link from "next/link";
 import { FaQuestionCircle, FaChevronDown, FaArrowRight, FaSearch } from "react-icons/fa";
 
 interface FAQItem {
+  id: string;
   q: string;
   a: string;
-}
-
-interface FAQCategory {
   category: string;
-  faqs: FAQItem[];
+  isFeatured: boolean;
+  showOnAllTreks: boolean;
+  trekIds: string[];
 }
 
 interface FAQsPageClientProps {
-  initialFAQs: FAQCategory[];
+  faqs: FAQItem[];
+  treks: { id: string; title: string; slug: string }[];
 }
 
-export default function FAQsPageClient({ initialFAQs }: FAQsPageClientProps) {
+const FAQ_CATEGORY_LABELS: Record<string, string> = {
+  general: 'Basic Information',
+  prep_fitness: 'Physical Readiness & Training',
+  permits: 'Entry permit',
+  insurance_visa: 'Assurance and Travel permit',
+  guides_staff: 'Himalayan Guide & Support Team',
+  accommodation_facilities: 'Where You Stay & What’s Included',
+  food_drinks: 'Meals and Refreshments',
+  weather_seasons: 'Weather Patterns & Seasonal Changes',
+  health_safety: 'Health Protection & Safety',
+  packing_gear: 'Equipment & Packing List',
+  booking_payments: 'Trip Booking & Payment Policy',
+  transportation_flights: 'Flights & Ground Transport',
+};
+
+const CATEGORY_ORDER = [
+  'Basic Information',
+  'Physical Readiness & Training',
+  'Entry permit',
+  'Assurance and Travel permit',
+  'Himalayan Guide & Support Team',
+  'Where You Stay & What’s Included',
+  'Meals and Refreshments',
+  'Weather Patterns & Seasonal Changes',
+  'Health Protection & Safety',
+  'Equipment & Packing List',
+  'Trip Booking & Payment Policy',
+  'Flights & Ground Transport',
+];
+
+export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState<string>("all"); // "all" | "general" | trekId
 
   const toggle = (key: string) =>
     setOpen((p) => ({ ...p, [key]: !p[key] }));
 
-  const filtered = initialFAQs.map((cat) => ({
-    ...cat,
-    faqs: cat.faqs.filter(
-      (f) =>
-        !search ||
-        f.q.toLowerCase().includes(search.toLowerCase()) ||
-        f.a.toLowerCase().includes(search.toLowerCase())
-    ),
-  })).filter((cat) => cat.faqs.length > 0);
+  // 1. Filter FAQs based on search and selected trek/category filter
+  const filteredFaqs = faqs.filter((faq) => {
+    // Search text matching
+    const matchesSearch =
+      !search ||
+      faq.q.toLowerCase().includes(search.toLowerCase()) ||
+      faq.a.toLowerCase().includes(search.toLowerCase());
 
-  const totalFAQs = initialFAQs.reduce((a, c) => a + c.faqs.length, 0);
+    if (!matchesSearch) return false;
+
+    // Filter by trek/general
+    if (selectedFilter === "all") {
+      return true;
+    }
+    if (selectedFilter === "general") {
+      return faq.showOnAllTreks || faq.trekIds.length === 0;
+    }
+    // Specific trek ID
+    return faq.trekIds.includes(selectedFilter) || faq.showOnAllTreks;
+  });
+
+  // 2. Group filtered FAQs by category labels
+  const grouped: Record<string, FAQItem[]> = {};
+  filteredFaqs.forEach((faq) => {
+    const label = FAQ_CATEGORY_LABELS[faq.category] || faq.category || "Basic Information";
+    if (!grouped[label]) {
+      grouped[label] = [];
+    }
+    grouped[label].push(faq);
+  });
+
+  // Get active categories in order
+  const activeCategories = CATEGORY_ORDER.filter((cat) => grouped[cat]?.length > 0);
+  // Add any custom categories not in order list
+  Object.keys(grouped).forEach((cat) => {
+    if (!activeCategories.includes(cat)) {
+      activeCategories.push(cat);
+    }
+  });
+
+  // Find active trek label for helper text
+  const selectedTrek = treks.find((t) => t.id === selectedFilter);
 
   return (
     <div className="bg-[#fcfbfa] min-h-screen">
       {/* Hero */}
-      <div className="relative w-full bg-[#1a2e1f] py-24 md:py-32 overflow-hidden">
+      <div className="relative w-full bg-[#1a2e1f] py-20 md:py-28 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -55,16 +118,15 @@ export default function FAQsPageClient({ initialFAQs }: FAQsPageClientProps) {
           <span className="inline-flex items-center gap-2 bg-[#F5A623]/20 text-[#F5A623] border border-[#F5A623]/30 text-xs font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full mb-5">
             <FaQuestionCircle /> Help Center
           </span>
-          <h1 className="font-serif text-4xl md:text-6xl font-black text-white leading-tight mb-5">
+          <h1 className="font-serif text-4xl md:text-5xl font-black text-white leading-tight mb-5">
             Frequently Asked Questions
           </h1>
           <p className="text-white/70 text-sm md:text-base leading-relaxed max-w-2xl mx-auto mb-8">
-            {totalFAQs} answers to the most common questions about trekking in Nepal — from permits and
-            safety to booking and costs.
+            Find answers to questions about permits, fitness, safety, accommodation, and booking policies for your Nepal trek.
           </p>
 
           {/* Search Bar */}
-          <div className="relative max-w-lg mx-auto">
+          <div className="relative max-w-lg mx-auto mb-6">
             <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm" />
             <input
               type="text"
@@ -73,6 +135,57 @@ export default function FAQsPageClient({ initialFAQs }: FAQsPageClientProps) {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-white/10 border border-white/20 backdrop-blur-sm text-white placeholder-white/40 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-[#F5A623] transition"
             />
+          </div>
+
+          {/* Filters Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-2xl mx-auto">
+            <div className="flex bg-white/10 backdrop-blur-sm border border-white/20 p-1 rounded-xl shrink-0">
+              <button
+                type="button"
+                onClick={() => setSelectedFilter("all")}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition ${
+                  selectedFilter === "all" ? "bg-secondary text-primary shadow" : "text-white/80 hover:text-white"
+                }`}
+              >
+                All FAQs
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedFilter("general")}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition ${
+                  selectedFilter === "general" ? "bg-secondary text-primary shadow" : "text-white/80 hover:text-white"
+                }`}
+              >
+                General Info
+              </button>
+            </div>
+
+            {treks.length > 0 && (
+              <div className="relative w-full sm:w-64">
+                <select
+                  value={selectedFilter !== "all" && selectedFilter !== "general" ? selectedFilter : ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedFilter(val ? val : "all");
+                  }}
+                  className="w-full bg-white/10 border border-white/20 backdrop-blur-sm text-white rounded-xl px-4 py-2 text-xs font-bold focus:outline-none focus:border-[#F5A623] cursor-pointer appearance-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")`,
+                    backgroundPosition: "right 10px center",
+                    backgroundSize: "20px",
+                    backgroundRepeat: "no-repeat",
+                    paddingRight: "30px",
+                  }}
+                >
+                  <option value="" className="text-primary font-bold bg-white">-- Filter by Trek Package --</option>
+                  {treks.map((t) => (
+                    <option key={t.id} value={t.id} className="text-primary font-semibold bg-white">
+                      {t.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -86,34 +199,41 @@ export default function FAQsPageClient({ initialFAQs }: FAQsPageClientProps) {
           <span className="text-[#D0D0D0]">/</span>
           <span className="text-[#1A1A2E] font-medium">FAQs</span>
         </div>
+        {selectedTrek && (
+          <div className="mt-4 bg-[#2E7D32]/5 border border-[#2E7D32]/10 rounded-xl p-3.5 text-xs text-[#1a2e1f] font-semibold">
+            Showing specific FAQs for <span className="font-bold text-[#2E7D32]">{selectedTrek.title}</span> (along with general travel info).
+          </div>
+        )}
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col gap-10">
-
-        {filtered.length === 0 && (
+        {activeCategories.length === 0 && (
           <div className="text-center py-16 text-[#6B6B6B]">
             <FaQuestionCircle className="text-5xl mx-auto mb-4 opacity-20" />
-            <p className="font-semibold">No results found for &ldquo;{search}&rdquo;</p>
+            <p className="font-semibold">No FAQs match your search or filter criteria.</p>
             <button
-              onClick={() => setSearch("")}
+              onClick={() => {
+                setSearch("");
+                setSelectedFilter("all");
+              }}
               className="mt-3 text-sm text-[#2E7D32] hover:underline font-bold"
             >
-              Clear search
+              Reset Filters
             </button>
           </div>
         )}
 
-        {filtered.map((cat) => (
-          <section key={cat.category}>
+        {activeCategories.map((cat) => (
+          <section key={cat}>
             <h2 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-5 flex items-center gap-3">
               <span className="h-px flex-1 bg-gradient-to-r from-[#2E7D32]/30 to-transparent" />
-              {cat.category}
+              {cat}
               <span className="h-px flex-1 bg-gradient-to-l from-[#2E7D32]/30 to-transparent" />
             </h2>
 
             <div className="flex flex-col gap-3">
-              {cat.faqs.map((faq, i) => {
-                const key = `${cat.category}::${i}`;
+              {grouped[cat].map((faq) => {
+                const key = faq.id;
                 const isOpen = !!open[key];
                 return (
                   <div
@@ -143,7 +263,7 @@ export default function FAQsPageClient({ initialFAQs }: FAQsPageClientProps) {
                     </button>
                     {isOpen && (
                       <div className="px-5 pb-5 border-t border-[#E5E5E5] pt-4">
-                        <p className="text-sm text-[#3D3D3D] leading-relaxed">{faq.a}</p>
+                        <p className="text-sm text-[#3D3D3D] leading-relaxed whitespace-pre-line">{faq.a}</p>
                       </div>
                     )}
                   </div>

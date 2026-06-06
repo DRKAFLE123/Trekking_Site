@@ -86,19 +86,45 @@ export default async function HomePage() {
 
     // 4. Fetch FAQs
     try {
+      // Fetch standalone featured FAQs
       const faqsRes = await payload.find({
         collection: 'faqs',
         where: {
-          category: {
-            equals: 'general',
+          isFeatured: {
+            equals: true,
           },
         },
         sort: 'order',
         depth: 1,
+        limit: 100,
       });
-      faqs = faqsRes.docs as unknown as Faq[];
+      const standaloneFeatured = faqsRes.docs as unknown as Faq[];
+
+      // Fetch all treks to find nested featured FAQs
+      const treksRes = await payload.find({
+        collection: 'treks',
+        depth: 0,
+        limit: 300,
+      });
+
+      const trekFeatured: Faq[] = [];
+      treksRes.docs.forEach((trek: any) => {
+        if (trek.faqs && trek.faqs.length > 0) {
+          trek.faqs.forEach((faq: any, idx: number) => {
+            if (faq.isFeatured) {
+              trekFeatured.push({
+                id: `trek-faq-${trek.id}-${idx}`,
+                question: faq.question,
+                answer: faq.answer,
+              } as unknown as Faq);
+            }
+          });
+        }
+      });
+
+      faqs = [...standaloneFeatured, ...trekFeatured];
     } catch (e: any) {
-      console.warn("[Home Page] Failed to query faqs collection:", e.message);
+      console.warn("[Home Page] Failed to query featured faqs:", e.message);
     }
 
     // 5. Fetch Gallery

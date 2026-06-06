@@ -1,6 +1,7 @@
 import { CollectionConfig } from 'payload';
 import { checkPermission } from '../access';
 import { revalidateFaq, revalidateFaqDelete } from '../hooks/revalidate';
+import { lexicalEditor } from '@payloadcms/richtext-lexical';
 
 export const faqs: CollectionConfig = {
   slug: 'faqs',
@@ -35,6 +36,11 @@ export const faqs: CollectionConfig = {
               name: 'answer',
               type: 'richText',
               required: true,
+              editor: lexicalEditor({
+                features: ({ defaultFeatures }) => [
+                  ...defaultFeatures.filter((f) => f.key !== 'bold'),
+                ],
+              }),
             },
             {
               name: 'order',
@@ -42,6 +48,15 @@ export const faqs: CollectionConfig = {
               defaultValue: 0,
               admin: {
                 description: 'Used for sorting FAQs on pages. Smaller numbers appear first.',
+              },
+            },
+            {
+              name: 'isFeatured',
+              type: 'checkbox',
+              label: '⭐ Featured (Show on Homepage)',
+              defaultValue: false,
+              admin: {
+                description: 'Check this to display this FAQ on the homepage FAQ section.',
               },
             },
           ],
@@ -89,13 +104,22 @@ export const faqs: CollectionConfig = {
               },
             },
             {
+              name: 'showOnAllTreks',
+              type: 'checkbox',
+              label: 'General FAQ (Show on all trek pages)',
+              defaultValue: false,
+              admin: {
+                description: 'Check this to make this FAQ show up automatically on all trek pages, regardless of trek selection below.',
+              },
+            },
+            {
               name: 'treks',
               type: 'relationship',
               relationTo: 'treks',
               hasMany: true,
               required: false,
               admin: {
-                description: 'Optional: Select specific treks where this FAQ will appear. If empty, this FAQ is global.',
+                description: 'Optional: Select specific treks where this FAQ will appear.',
               },
             },
           ],

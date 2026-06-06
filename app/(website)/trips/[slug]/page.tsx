@@ -126,11 +126,14 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         .slice(0, 3);
       displayTestimonials = relatedTestimonials.length > 0 ? relatedTestimonials : testimonials.slice(0, 3);
 
-      // Filter FAQs: matches if treks array contains this trek ID OR treks array is empty/undefined (global)
-      const globalAndCategoryFaqs = faqsRes.docs.filter((faq: any) => {
-        if (!faq.treks || faq.treks.length === 0) return true; // global
-        const trekIds = faq.treks.map((t: any) => typeof t === 'object' ? t.id : t);
-        return trekIds.includes(trek!.id);
+      // Filter FAQs: matches if treks array contains this trek ID OR showOnAllTreks is true
+      const generalAndCategoryFaqs = faqsRes.docs.filter((faq: any) => {
+        if (faq.showOnAllTreks === true) return true;
+        if (faq.treks && faq.treks.length > 0) {
+          const trekIds = faq.treks.map((t: any) => typeof t === 'object' ? t.id : t);
+          return trekIds.includes(trek!.id);
+        }
+        return false;
       }) as unknown as Faq[];
 
       // Map trek-specific nested FAQs into the Faq interface format
@@ -140,8 +143,8 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         answer: faq.answer,
       })) as unknown as Faq[];
 
-      // Merge trek-specific FAQs first, then global/category FAQs
-      faqs = [...trekSpecificFaqs, ...globalAndCategoryFaqs];
+      // Merge trek-specific FAQs first, then general/category FAQs
+      faqs = [...trekSpecificFaqs, ...generalAndCategoryFaqs];
     }
   } catch (err: any) {
     console.warn("[Trip Detail Page] Failed to query trip details:", err.message);

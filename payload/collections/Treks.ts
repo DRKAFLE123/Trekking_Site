@@ -880,13 +880,28 @@ const faqsSection = {
           required: true,
           editor: lexicalEditor({
             features: ({ defaultFeatures }) => [
-              ...defaultFeatures,
+              ...defaultFeatures.filter((f) => f.key !== 'bold'),
               EXPERIMENTAL_TableFeature(),
             ],
           }),
           admin: { description: 'Clear, helpful answer. 2–4 sentences is ideal.' },
         },
+        {
+          name: 'isFeatured',
+          type: 'checkbox' as const,
+          label: '⭐ Featured (Show on Homepage)',
+          defaultValue: false,
+        },
       ],
+    },
+    {
+      name: 'linkedFaqs',
+      type: 'join' as const,
+      collection: 'faqs' as const,
+      on: 'treks' as const,
+      admin: {
+        description: 'These are General/Linked FAQs associated with this trek from the main FAQs collection.',
+      },
     },
   ],
 };
