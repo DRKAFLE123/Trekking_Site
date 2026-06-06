@@ -894,15 +894,6 @@ const faqsSection = {
         },
       ],
     },
-    {
-      name: 'linkedFaqs',
-      type: 'join' as const,
-      collection: 'faqs' as const,
-      on: 'treks' as const,
-      admin: {
-        description: 'These are General/Linked FAQs associated with this trek from the main FAQs collection.',
-      },
-    },
   ],
 };
 
