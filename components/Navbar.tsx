@@ -399,15 +399,16 @@ export default function Navbar() {
       return list.slice(0, showAllTopTreks ? 15 : 10);
     }
 
-    // Default automatic merging fallback
+    // Default automatic merging fallback: if we have treks in the CMS, do NOT use static fallbacks.
     const dbList = dbTreks || [];
-    const dbSlugs = new Set(dbList.map((t: any) => (t.slug || "").toLowerCase()));
-    const fallbackList = TOP_BESTSELLERS.filter(
-      (t: any) => !dbSlugs.has((t.slug || "").toLowerCase())
-    );
-    const combined = [...dbList, ...fallbackList];
-    return combined.slice(0, showAllTopTreks ? 15 : 10);
+    if (dbList.length > 0) {
+      return dbList.slice(0, showAllTopTreks ? 15 : 10);
+    }
+
+    // Only fallback if the CMS has no treks data at all.
+    return TOP_BESTSELLERS.slice(0, showAllTopTreks ? 15 : 10);
   };
+
 
   const getTop5Treks = () => {
     if (siteSettings?.top5Treks && Array.isArray(siteSettings.top5Treks) && siteSettings.top5Treks.length > 0) {
@@ -425,6 +426,19 @@ export default function Navbar() {
         return null;
       }).filter(Boolean);
     }
+    // If we have treks in the CMS, use them instead of static fallback
+    if (dbTreks && dbTreks.length > 0) {
+      const bestSellers = dbTreks.filter((t: any) => t.isBestSeller);
+      const listToUse = bestSellers.length > 0 ? bestSellers : dbTreks;
+      return listToUse.slice(0, 5).map((t: any) => ({
+        title: t.title,
+        slug: t.slug,
+        duration: t.duration || 14,
+        difficulty: t.difficulty || "moderate",
+        price: t.price || 1200,
+        discountedPrice: t.discountedPrice,
+      }));
+    }
     return [
       { title: "Everest Base Camp Trek", slug: "everest-base-camp-trek", duration: 14, difficulty: "hard", price: 1399 },
       { title: "Annapurna Circuit Trek", slug: "annapurna-circuit-trek", duration: 14, difficulty: "hard", price: 1199 },
@@ -433,6 +447,7 @@ export default function Navbar() {
       { title: "Mardi Himal Trek", slug: "mardi-himal-trek", duration: 5, difficulty: "moderate", price: 699 },
     ];
   };
+
 
   useEffect(() => {
     async function fetchData() {
