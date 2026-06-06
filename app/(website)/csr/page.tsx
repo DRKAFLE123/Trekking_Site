@@ -30,7 +30,7 @@ async function getPageData() {
       collection: 'companyPages',
       where: {
         slug: {
-          equals: 'responsible-tourism',
+          equals: 'csr',
         },
       },
       depth: 2,
@@ -419,7 +419,7 @@ export default async function CSRPage() {
                   </h3>
                   <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
                     {allPages.map((p: any) => {
-                      const isStatic = ["about-us", "why-us", "responsible-tourism", "our-team", "terms-conditions", "privacy-policy", "legal-documents"].includes(p.slug);
+                      const isStatic = ["about-us", "why-us", "csr", "our-team", "terms-and-condition", "privacy-policy", "legal-documents"].includes(p.slug);
                       const href = isStatic ? `/${p.slug}` : `/company/${p.slug}`;
                       return (
                         <li key={p.slug}>

@@ -28,9 +28,9 @@ const STATIC_ROUTES: Array<{
   { path: "/travel-insurance", changeFrequency: "monthly", priority: 0.6 },
   { path: "/packing-list", changeFrequency: "monthly", priority: 0.6 },
   { path: "/faqs", changeFrequency: "monthly", priority: 0.5 },
-  { path: "/responsible-tourism", changeFrequency: "yearly", priority: 0.4 },
+  { path: "/csr", changeFrequency: "yearly", priority: 0.4 },
   { path: "/privacy-policy", changeFrequency: "yearly", priority: 0.3 },
-  { path: "/terms-conditions", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/terms-and-condition", changeFrequency: "yearly", priority: 0.3 },
   { path: "/legal-documents", changeFrequency: "yearly", priority: 0.3 },
 ];
 

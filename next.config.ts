@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
       { source: "/wp-admin", destination: "/admin/login", permanent: true },
       { source: "/wp-admin/:path*", destination: "/admin/login", permanent: true },
       { source: "/wp-login.php", destination: "/admin/login", permanent: true },
+      { source: "/responsible-tourism", destination: "/csr", permanent: true },
+      { source: "/terms-conditions", destination: "/terms-and-condition", permanent: true },
     ];
   },
   async headers() {

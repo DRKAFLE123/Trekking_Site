@@ -24,7 +24,7 @@ async function getPageData() {
       collection: "companyPages",
       where: {
         slug: {
-          equals: "terms-conditions",
+          equals: "terms-and-condition",
         },
       },
       depth: 2,
@@ -259,9 +259,9 @@ export default async function TermsPage() {
                       const isStatic = [
                         "about-us",
                         "why-us",
-                        "responsible-tourism",
+                        "csr",
                         "our-team",
-                        "terms-conditions",
+                        "terms-and-condition",
                         "privacy-policy",
                         "legal-documents",
                       ].includes(p.slug);

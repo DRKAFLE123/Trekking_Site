@@ -200,13 +200,13 @@ export default function Footer() {
                     <li><Link href="/about-us" className="hover:text-secondary transition duration-300">About us</Link></li>
                     <li><Link href="/our-team" className="hover:text-secondary transition duration-300">Our Team</Link></li>
                     <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Contact us</Link></li>
-                    <li><Link href="/responsible-tourism" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
+                    <li><Link href="/csr" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
                     <li><Link href="/legal-documents" className="hover:text-secondary transition duration-300">Registrations & Affiliations</Link></li>
                   </>
                 ) : (
                   <>
                     <li><Link href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
-                    <li><Link href="/terms-conditions" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
+                    <li><Link href="/terms-and-condition" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
                     <li><Link href="/legal-documents" className="hover:text-secondary transition duration-300">Legal Documents</Link></li>
                     <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
                     <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
@@ -298,7 +298,7 @@ export default function Footer() {
             <li><Link href="/about-us" className="hover:text-secondary transition duration-300">About us</Link></li>
             <li><Link href="/our-team" className="hover:text-secondary transition duration-300">Our Team</Link></li>
             <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Contact us</Link></li>
-            <li><Link href="/responsible-tourism" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
+            <li><Link href="/csr" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
             <li><Link href="/legal-documents" className="hover:text-secondary transition duration-300">Registrations & Affiliations</Link></li>
           </ul>
         </div>
@@ -309,7 +309,7 @@ export default function Footer() {
           </h4>
           <ul className="flex flex-col gap-2.5 text-xs text-white/80">
             <li><Link href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
-            <li><Link href="/terms-conditions" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
+            <li><Link href="/terms-and-condition" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
             <li><Link href="/legal-documents" className="hover:text-secondary transition duration-300">Legal Documents</Link></li>
             <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
             <li><Link href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
