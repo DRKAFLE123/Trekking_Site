@@ -2,19 +2,9 @@ import React from "react";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import VideoGalleryClient from "./VideoGalleryClient";
-import { DEFAULT_VIDEOS } from "../config/defaultVideos";
 
 export default async function VideoGallery() {
-  let videos: any[] = DEFAULT_VIDEOS.map((v) => ({
-    id: v.id,
-    title: v.title,
-    trekName: v.trekName,
-    // Add realistic default specs for fallback default videos
-    duration: v.trekName.includes("Everest") ? "14 Days" : v.trekName.includes("Annapurna") ? "16 Days" : v.trekName.includes("Mardi") ? "6 Days" : v.trekName.includes("Manaslu") ? "14 Days" : "10 Days",
-    maxAltitude: v.trekName.includes("Everest") ? "5,364m" : v.trekName.includes("Annapurna") ? "5,416m" : v.trekName.includes("Mardi") ? "3,580m" : v.trekName.includes("Manaslu") ? "5,106m" : "3,870m",
-    bestSeason: "Mar - May, Sep - Nov",
-    description: "Experience the ultimate Himalayan adventure through remote trails, high-altitude passes, and pristine alpine lakes.",
-  }));
+  let videos: any[] = [];
   let kicker = "Watch the Journey";
   let title = "Himalayan Trek Experience";
   let description = "Watch real journeys through Nepal's most iconic mountain trails.";
@@ -28,15 +18,16 @@ export default async function VideoGallery() {
       overrideAccess: true,
     });
 
-    const settings = settingsRes.docs[0] as any;
+      const settings = settingsRes.docs[0] as any;
+      if (settings) {
+        if (settings.featuredVideoKicker) kicker = settings.featuredVideoKicker;
+        if (settings.featuredVideoTitle) title = settings.featuredVideoTitle;
+        if (settings.featuredVideoDescription) description = settings.featuredVideoDescription;
+      }
 
-    if (settings) {
-      if (settings.featuredVideoKicker) kicker = settings.featuredVideoKicker;
-      if (settings.featuredVideoTitle) title = settings.featuredVideoTitle;
-      if (settings.featuredVideoDescription) description = settings.featuredVideoDescription;
-
+      let hasCmsVideos = false;
       // Use CMS videos if at least one has been configured
-      if (settings.videoGallery && settings.videoGallery.length > 0) {
+      if (settings && settings.videoGallery && settings.videoGallery.length > 0) {
         videos = settings.videoGallery.map((v: any) => {
           const trekDoc = v.trek && typeof v.trek === "object" ? v.trek : null;
           return {
@@ -49,10 +40,40 @@ export default async function VideoGallery() {
             bestSeason: trekDoc?.bestSeason || "Mar - May, Sep - Nov",
           };
         });
+        hasCmsVideos = true;
       }
-    }
+
+      if (!hasCmsVideos) {
+        // Query treks that have a youtubeVideoId from CMS
+        const treksRes = await payload.find({
+          collection: 'treks',
+          where: {
+            youtubeVideoId: {
+              exists: true,
+            },
+          },
+          limit: 12,
+          depth: 0,
+        });
+        const dbTreksWithVideos = (treksRes.docs || []).filter((t: any) => t.youtubeVideoId && t.youtubeVideoId.trim().length > 0);
+        if (dbTreksWithVideos.length > 0) {
+          videos = dbTreksWithVideos.map((t: any) => ({
+            id: t.youtubeVideoId,
+            title: t.title + " Journey",
+            trekName: t.title,
+            description: "Watch action footage captured by our Sherpa guides on the trails.",
+            duration: t.duration ? `${t.duration} Days` : null,
+            maxAltitude: t.maxAltitude ? `${t.maxAltitude.toLocaleString()}m` : null,
+            bestSeason: t.bestSeason || "Mar - May, Sep - Nov",
+          }));
+        }
+      }
   } catch (err: any) {
     console.warn("[Video Gallery] Failed to fetch homepage settings:", err.message);
+  }
+
+  if (!videos || videos.length === 0) {
+    return null;
   }
 
   return (

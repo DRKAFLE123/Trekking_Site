@@ -24,16 +24,16 @@ function getYouTubeId(url: string): string | null {
  */
 export default function HeroVideo({ videoUrl }: HeroVideoProps) {
   const [mounted, setMounted] = React.useState(false);
-  const [activeVideoUrl, setActiveVideoUrl] = React.useState("/hero-bg.mp4");
+  const [activeVideoUrl, setActiveVideoUrl] = React.useState("https://www.youtube.com/watch?v=UiPPGu2gZbY");
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  const ytId = getYouTubeId(videoUrl || "");
+  const ytId = getYouTubeId(activeVideoUrl);
 
   React.useEffect(() => {
-    let url = videoUrl || "/hero-bg.mp4";
+    let url = videoUrl || "https://www.youtube.com/watch?v=UiPPGu2gZbY";
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     
     // Pre-emptively detect and rewrite Cloudinary cloud name if set in env
@@ -45,8 +45,8 @@ export default function HeroVideo({ videoUrl }: HeroVideoProps) {
           url = url.replace(`res.cloudinary.com/${match[1]}`, `res.cloudinary.com/${cloudName}`);
         }
       } else {
-        console.log("Cloudinary cloud name is not set in env. Defaulting to local video: /hero-bg.mp4");
-        url = "/hero-bg.mp4";
+        console.log("Cloudinary cloud name is not set in env. Defaulting to fallback YouTube video.");
+        url = "https://www.youtube.com/watch?v=UiPPGu2gZbY";
       }
     }
     setActiveVideoUrl(url);
@@ -87,9 +87,9 @@ export default function HeroVideo({ videoUrl }: HeroVideoProps) {
           className="absolute inset-0 w-full h-full object-cover scale-105"
           style={{ zIndex: 1 }}
           onError={() => {
-            if (activeVideoUrl !== "/hero-bg.mp4") {
-              console.log("Video player error. Falling back to local video: /hero-bg.mp4");
-              setActiveVideoUrl("/hero-bg.mp4");
+            if (activeVideoUrl !== "https://www.youtube.com/watch?v=UiPPGu2gZbY") {
+              console.log("Video player error. Falling back to default YouTube video.");
+              setActiveVideoUrl("https://www.youtube.com/watch?v=UiPPGu2gZbY");
             }
           }}
         >
@@ -97,9 +97,9 @@ export default function HeroVideo({ videoUrl }: HeroVideoProps) {
             src={activeVideoUrl} 
             type="video/mp4" 
             onError={() => {
-              if (activeVideoUrl !== "/hero-bg.mp4") {
-                console.log("Source tag load error. Falling back to local video: /hero-bg.mp4");
-                setActiveVideoUrl("/hero-bg.mp4");
+              if (activeVideoUrl !== "https://www.youtube.com/watch?v=UiPPGu2gZbY") {
+                console.log("Source tag load error. Falling back to default YouTube video.");
+                setActiveVideoUrl("https://www.youtube.com/watch?v=UiPPGu2gZbY");
               }
             }}
           />

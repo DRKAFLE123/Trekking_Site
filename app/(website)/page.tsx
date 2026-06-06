@@ -174,9 +174,9 @@ export default async function HomePage() {
   // Configure hero fields dynamically from CMS with absolute default fallbacks
   const heroHeadline = siteSettings?.heroHeadline || "Explore the Nepali Himalayas";
   const heroSubheadline = siteSettings?.heroSubheadline || "Private. Personalized. Unforgettable.";
-  const heroVideoUrl = siteSettings?.heroVideoUrl || "/hero-bg.mp4";
+  const heroVideoUrl = siteSettings?.heroVideoUrl || "https://www.youtube.com/watch?v=UiPPGu2gZbY";
   
-  let heroImage = "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200";
+  let heroImage = "";
   if (siteSettings?.heroImage) {
     const mediaUrl = getMediaUrl(siteSettings.heroImage);
     if (mediaUrl) {
@@ -269,16 +269,18 @@ export default async function HomePage() {
         {/* Background video / overlay */}
         <div className="absolute inset-0 z-0">
           {/* Hero image as LCP fallback behind the video */}
-          <Image
-            src={heroImage}
-            alt="Everest Base Camp Hero"
-            fill
-            priority
-            className="object-cover object-center scale-105"
-            sizes="100vw"
-            style={{ zIndex: 0 }}
-            unoptimized
-          />
+          {heroImage && (
+            <Image
+              src={heroImage}
+              alt="Everest Base Camp Hero"
+              fill
+              priority
+              className="object-cover object-center scale-105"
+              sizes="100vw"
+              style={{ zIndex: 0 }}
+              unoptimized
+            />
+          )}
           {/* YouTube background video + animated gradient fallback */}
           <HeroVideo videoUrl={heroVideoUrl} />
           {/* Dark overlay for text contrast */}

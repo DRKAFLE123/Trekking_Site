@@ -98,119 +98,12 @@ export default function UpcomingDepartures() {
     }
   };
 
-  // Safe fallback departures to display if API returns empty
-  const fallbackDepartures: Departure[] = [
-    {
-      id: "fallback-1",
-      startDate: "2026-09-12",
-      endDate: "2026-09-27",
-      availableSeats: 4,
-      bookedSeats: 12,
-      status: "limited",
-      isGuaranteed: true,
-      trek: {
-        id: "fallback-trek-1",
-        title: "Everest Base Camp Trek",
-        slug: "everest-base-camp-trek-14",
-        duration: 14,
-        price: 1599,
-        discountedPrice: 1279,
-        difficulty: "hard",
-      },
-    },
-    {
-      id: "fallback-2",
-      startDate: "2026-10-05",
-      endDate: "2026-10-20",
-      availableSeats: 6,
-      bookedSeats: 10,
-      status: "available",
-      isGuaranteed: true,
-      trek: {
-        id: "fallback-trek-2",
-        title: "Annapurna Circuit Trek",
-        slug: "annapurna-circuit-14",
-        duration: 14,
-        price: 1399,
-        discountedPrice: 1119,
-        difficulty: "moderate",
-      },
-    },
-    {
-      id: "fallback-3",
-      startDate: "2026-10-18",
-      endDate: "2026-11-02",
-      availableSeats: 3,
-      bookedSeats: 13,
-      status: "limited",
-      isGuaranteed: true,
-      trek: {
-        id: "fallback-trek-3",
-        title: "Manaslu Circuit Trek",
-        slug: "manaslu-circuit-trek-16",
-        duration: 16,
-        price: 1699,
-        discountedPrice: 1359,
-        difficulty: "hard",
-      },
-    },
-    {
-      id: "fallback-4",
-      startDate: "2026-11-01",
-      endDate: "2026-11-12",
-      availableSeats: 8,
-      bookedSeats: 4,
-      status: "available",
-      isGuaranteed: true,
-      trek: {
-        id: "fallback-trek-4",
-        title: "Annapurna Base Camp Trek",
-        slug: "annapurna-base-camp-trek",
-        duration: 12,
-        price: 1199,
-        discountedPrice: 959,
-        difficulty: "moderate",
-      },
-    },
-    {
-      id: "fallback-5",
-      startDate: "2026-11-15",
-      endDate: "2026-12-01",
-      availableSeats: 0,
-      bookedSeats: 16,
-      status: "sold_out",
-      isGuaranteed: true,
-      trek: {
-        id: "fallback-trek-5",
-        title: "Langtang Valley Trek",
-        slug: "langtang-valley-trek",
-        duration: 10,
-        price: 999,
-        discountedPrice: 799,
-        difficulty: "moderate",
-      },
-    },
-    {
-      id: "fallback-6",
-      startDate: "2026-12-10",
-      endDate: "2026-12-25",
-      availableSeats: 10,
-      bookedSeats: 6,
-      status: "available",
-      isGuaranteed: false,
-      trek: {
-        id: "fallback-trek-6",
-        title: "Everest Base Camp Trek",
-        slug: "everest-base-camp-trek-14",
-        duration: 14,
-        price: 1599,
-        discountedPrice: 1279,
-        difficulty: "hard",
-      },
-    },
-  ];
 
-  const list = departures.length > 0 ? departures : fallbackDepartures;
+
+  const list = departures;
+  if (!loading && list.length === 0) {
+    return null;
+  }
 
   // Pagination logic
   const totalPages = Math.ceil(list.length / itemsPerPage);
