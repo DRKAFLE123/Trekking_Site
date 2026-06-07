@@ -2446,15 +2446,31 @@ body.nav-collapsed .nature-nav-collapse-toggle {
    16. CMS ADMIN FIELD WIDTH FIXES AND MULTI-COLUMN ROW LAYOUTS
    ============================================================ */
 
-/* 16.1 Force all inputs and textareas inside editing sections to occupy full column width */
+/* 16.1 Force all inputs, selects, and textareas inside editing sections to occupy full container width */
 .collection-edit input[type="text"],
+.collection-edit input[type="number"],
+.collection-edit input[type="email"],
+.collection-edit input[type="password"],
 .collection-edit textarea,
+.collection-edit select,
 [class*="collection-edit"] input[type="text"],
+[class*="collection-edit"] input[type="number"],
+[class*="collection-edit"] input[type="email"],
+[class*="collection-edit"] input[type="password"],
 [class*="collection-edit"] textarea,
+[class*="collection-edit"] select,
 .document-fields input[type="text"],
+.document-fields input[type="number"],
+.document-fields input[type="email"],
+.document-fields input[type="password"],
 .document-fields textarea,
+.document-fields select,
 [class*="document-fields"] input[type="text"],
-[class*="document-fields"] textarea {
+[class*="document-fields"] input[type="number"],
+[class*="document-fields"] input[type="email"],
+[class*="document-fields"] input[type="password"],
+[class*="document-fields"] textarea,
+[class*="document-fields"] select {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important; /* Prevents inputs from stretching parent containers when typing */
@@ -2462,7 +2478,30 @@ body.nav-collapsed .nature-nav-collapse-toggle {
   box-sizing: border-box !important;
 }
 
-/* 16.2 Enable multi-column subfield rows (like 3 columns for day-by-day itinerary specs) inside array cards */
+/* 16.2 Force all standard field wrappers to occupy 100% width, unless they have custom column width styles defined in rows (like 20%, 25%, 33.33%, 75%) */
+.collection-edit .field-type,
+[class*="collection-edit"] .field-type,
+.document-fields .field-type,
+[class*="document-fields"] .field-type {
+  max-width: 100% !important;
+}
+
+.collection-edit .field-type:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]),
+.collection-edit [class*="field-type"]:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]),
+[class*="collection-edit"] .field-type:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]),
+[class*="collection-edit"] [class*="field-type"]:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]),
+.document-fields .field-type:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]),
+.document-fields [class*="field-type"]:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]),
+[class*="document-fields"] .field-type:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]),
+[class*="document-fields"] [class*="field-type"]:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]):not([class*="field-type-row"]):not(.row):not([class*="field-type--row"]) {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 16.3 Enable multi-column subfield rows (like 3 columns for day-by-day itinerary specs) inside array cards */
 .collection-edit [class*="field-type-row"],
 .collection-edit .field-type.row,
 .collection-edit [class*="field-type--row"],
@@ -2477,7 +2516,18 @@ body.nav-collapsed .nature-nav-collapse-toggle {
   margin-bottom: 20px !important;
 }
 
-/* 16.3 Ensure children within row containers occupy their defined width values and do not collapse */
+/* 16.4 Make text fields that are converted to textareas look thin like standard inputs, but allow multiline growth */
+.collection-edit textarea:not([name*="description"]):not([name*="overview"]):not([name*="content"]),
+[class*="collection-edit"] textarea:not([name*="description"]):not([name*="overview"]):not([name*="content"]),
+.document-fields textarea:not([name*="description"]):not([name*="overview"]):not([name*="content"]),
+[class*="document-fields"] textarea:not([name*="description"]):not([name*="overview"]):not([name*="content"]) {
+  min-height: 42px !important;
+  height: auto !important;
+  field-sizing: content !important;
+  resize: vertical !important;
+}
+
+/* 16.5 Ensure children within row containers occupy their defined width values and do not collapse */
 .collection-edit [class*="field-type-row"] > [class*="field-type"],
 .collection-edit .field-type.row > [class*="field-type"],
 .collection-edit [class*="field-type--row"] > [class*="field-type"],
@@ -2486,6 +2536,27 @@ body.nav-collapsed .nature-nav-collapse-toggle {
 [class*="collection-edit"] [class*="field-type--row"] > [class*="field-type"] {
   box-sizing: border-box !important;
   margin-bottom: 0 !important;
+}
+
+/* 16.6 Force full width on array field rows, draggable sections, and their inner wrappers */
+.collection-edit [class*="array-field"] [class*="row"],
+.collection-edit [class*="array-field"] [class*="draggable"],
+.collection-edit [class*="array-field"] [class*="collapsible"],
+[class*="collection-edit"] [class*="array-field"] [class*="row"],
+[class*="collection-edit"] [class*="array-field"] [class*="draggable"],
+[class*="collection-edit"] [class*="array-field"] [class*="collapsible"],
+.document-fields [class*="array-field"] [class*="row"],
+.document-fields [class*="array-field"] [class*="draggable"],
+.document-fields [class*="array-field"] [class*="collapsible"],
+[class*="document-fields"] [class*="array-field"] [class*="row"],
+[class*="document-fields"] [class*="array-field"] [class*="draggable"],
+[class*="document-fields"] [class*="array-field"] [class*="collapsible"],
+.collection-edit [class*="array-field"] *,
+[class*="collection-edit"] [class*="array-field"] *,
+.document-fields [class*="array-field"] *,
+[class*="document-fields"] [class*="array-field"] * {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 
