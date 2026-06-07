@@ -2542,19 +2542,23 @@ body.nav-collapsed .nature-nav-collapse-toggle {
 .collection-edit [class*="array-field"] [class*="row"],
 .collection-edit [class*="array-field"] [class*="draggable"],
 .collection-edit [class*="array-field"] [class*="collapsible"],
+.collection-edit [class*="array-field"] [class*="content"],
+.collection-edit [class*="array-field"] [class*="fields"],
 [class*="collection-edit"] [class*="array-field"] [class*="row"],
 [class*="collection-edit"] [class*="array-field"] [class*="draggable"],
 [class*="collection-edit"] [class*="array-field"] [class*="collapsible"],
+[class*="collection-edit"] [class*="array-field"] [class*="content"],
+[class*="collection-edit"] [class*="array-field"] [class*="fields"],
 .document-fields [class*="array-field"] [class*="row"],
 .document-fields [class*="array-field"] [class*="draggable"],
 .document-fields [class*="array-field"] [class*="collapsible"],
+.document-fields [class*="array-field"] [class*="content"],
+.document-fields [class*="array-field"] [class*="fields"],
 [class*="document-fields"] [class*="array-field"] [class*="row"],
 [class*="document-fields"] [class*="array-field"] [class*="draggable"],
 [class*="document-fields"] [class*="array-field"] [class*="collapsible"],
-.collection-edit [class*="array-field"] *,
-[class*="collection-edit"] [class*="array-field"] *,
-.document-fields [class*="array-field"] *,
-[class*="document-fields"] [class*="array-field"] * {
+[class*="document-fields"] [class*="array-field"] [class*="content"],
+[class*="document-fields"] [class*="array-field"] [class*="fields"] {
   width: 100% !important;
   max-width: 100% !important;
 }
