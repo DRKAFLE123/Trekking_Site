@@ -2538,27 +2538,15 @@ body.nav-collapsed .nature-nav-collapse-toggle {
   margin-bottom: 0 !important;
 }
 
-/* 16.6 Force full width on array field rows, draggable sections, and their inner wrappers */
-.collection-edit [class*="array-field"] [class*="row"],
-.collection-edit [class*="array-field"] [class*="draggable"],
-.collection-edit [class*="array-field"] [class*="collapsible"],
-.collection-edit [class*="array-field"] [class*="content"],
-.collection-edit [class*="array-field"] [class*="fields"],
-[class*="collection-edit"] [class*="array-field"] [class*="row"],
-[class*="collection-edit"] [class*="array-field"] [class*="draggable"],
-[class*="collection-edit"] [class*="array-field"] [class*="collapsible"],
-[class*="collection-edit"] [class*="array-field"] [class*="content"],
-[class*="collection-edit"] [class*="array-field"] [class*="fields"],
-.document-fields [class*="array-field"] [class*="row"],
-.document-fields [class*="array-field"] [class*="draggable"],
-.document-fields [class*="array-field"] [class*="collapsible"],
-.document-fields [class*="array-field"] [class*="content"],
-.document-fields [class*="array-field"] [class*="fields"],
-[class*="document-fields"] [class*="array-field"] [class*="row"],
-[class*="document-fields"] [class*="array-field"] [class*="draggable"],
-[class*="document-fields"] [class*="array-field"] [class*="collapsible"],
-[class*="document-fields"] [class*="array-field"] [class*="content"],
-[class*="document-fields"] [class*="array-field"] [class*="fields"] {
+/* 16.6 Force full width on all layout divs and wrappers inside array fields, while preserving column layouts and standard button sizing */
+.collection-edit [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]),
+[class*="collection-edit"] [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]),
+.document-fields [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]),
+[class*="document-fields"] [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="75%"]),
+.collection-edit [class*="array-field"] section,
+[class*="collection-edit"] [class*="array-field"] section,
+.document-fields [class*="array-field"] section,
+[class*="document-fields"] [class*="array-field"] section {
   width: 100% !important;
   max-width: 100% !important;
 }
