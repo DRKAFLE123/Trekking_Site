@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FaSearch, FaClock, FaDollarSign, FaMapMarkerAlt, FaChevronDown } from "react-icons/fa";
