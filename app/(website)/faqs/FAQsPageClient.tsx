@@ -75,7 +75,7 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
       return faq.showOnAllTreks || faq.trekIds.length === 0;
     }
     // Specific trek ID
-    return faq.trekIds.includes(selectedFilter) || faq.showOnAllTreks;
+    return faq.trekIds.map(String).includes(String(selectedFilter)) || faq.showOnAllTreks;
   });
 
   // 2. Group filtered FAQs by category labels
@@ -98,7 +98,7 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
   });
 
   // Find active trek label for helper text
-  const selectedTrek = treks.find((t) => t.id === selectedFilter);
+  const selectedTrek = treks.find((t) => String(t.id) === String(selectedFilter));
 
   return (
     <div className="bg-[#fcfbfa] min-h-screen">
