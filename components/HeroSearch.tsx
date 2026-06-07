@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FaSearch, FaClock, FaDollarSign, FaMapMarkerAlt, FaChevronDown } from "react-icons/fa";
 
@@ -8,7 +6,42 @@ export default function HeroSearch() {
   const [query, setQuery] = useState("");
   const [duration, setDuration] = useState("all");
   const [budget, setBudget] = useState("all");
+  
+  const [isDurationOpen, setIsDurationOpen] = useState(false);
+  const [isBudgetOpen, setIsBudgetOpen] = useState(false);
+  
+  const durationRef = useRef<HTMLDivElement>(null);
+  const budgetRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (durationRef.current && !durationRef.current.contains(event.target as Node)) {
+        setIsDurationOpen(false);
+      }
+      if (budgetRef.current && !budgetRef.current.contains(event.target as Node)) {
+        setIsBudgetOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const durationOptions = [
+    { value: "all", label: "All Durations" },
+    { value: "short", label: "Short (< 10 Days)" },
+    { value: "medium", label: "Medium (10 - 14 Days)" },
+    { value: "long", label: "Long (14+ Days)" },
+  ];
+
+  const budgetOptions = [
+    { value: "all", label: "All Prices" },
+    { value: "under-1000", label: "Under $1000" },
+    { value: "1000-1500", label: "$1000 - $1500" },
+    { value: "over-1500", label: "Over $1500" },
+  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,47 +79,95 @@ export default function HeroSearch() {
         </div>
 
         {/* 2. Duration Dropdown (Hidden on mobile) */}
-        <div className="hidden md:flex w-56 items-center gap-3 px-4 py-2">
+        <div ref={durationRef} className="hidden md:flex w-56 items-center gap-3 px-4 py-2 relative">
           <FaClock className="text-secondary h-4.5 w-4.5 shrink-0" />
           <div className="flex-1 flex flex-col items-start min-w-0">
             <label className="text-[10px] uppercase font-bold text-muted tracking-wider leading-none mb-1">
               Duration
             </label>
             <div className="relative w-full flex items-center">
-              <select
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                className="w-full bg-transparent text-charcoal focus:outline-none text-sm font-bold cursor-pointer appearance-none pr-6 z-10"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDurationOpen(!isDurationOpen);
+                  setIsBudgetOpen(false);
+                }}
+                className="w-full bg-transparent text-charcoal text-left focus:outline-none text-sm font-bold cursor-pointer pr-6 flex items-center justify-between"
               >
-                <option value="all" className="bg-white text-charcoal">All Durations</option>
-                <option value="short" className="bg-white text-charcoal">Short (&lt; 10 Days)</option>
-                <option value="medium" className="bg-white text-charcoal">Medium (10 - 14 Days)</option>
-                <option value="long" className="bg-white text-charcoal">Long (14+ Days)</option>
-              </select>
-              <FaChevronDown className="absolute right-0 text-muted h-3 w-3 pointer-events-none z-0" />
+                <span className="truncate">
+                  {durationOptions.find((o) => o.value === duration)?.label}
+                </span>
+                <FaChevronDown className={`text-muted h-3 w-3 transition-transform duration-200 ${isDurationOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {isDurationOpen && (
+                <div className="absolute left-0 top-[calc(100%+12px)] w-56 bg-white border border-gray-150 rounded-2xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {durationOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setDuration(opt.value);
+                        setIsDurationOpen(false);
+                      }}
+                      className={`w-full text-left px-5 py-2.5 text-xs md:text-sm font-semibold transition-colors duration-150 flex items-center ${
+                        duration === opt.value
+                          ? "bg-secondary/15 text-primary font-bold"
+                          : "text-charcoal hover:bg-slate-50 hover:text-primary"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* 3. Budget Dropdown (Hidden on mobile) */}
-        <div className="hidden md:flex w-56 items-center gap-3 px-4 py-2">
+        <div ref={budgetRef} className="hidden md:flex w-56 items-center gap-3 px-4 py-2 relative">
           <FaDollarSign className="text-secondary h-4.5 w-4.5 shrink-0" />
           <div className="flex-1 flex flex-col items-start min-w-0">
             <label className="text-[10px] uppercase font-bold text-muted tracking-wider leading-none mb-1">
               Max Budget
             </label>
             <div className="relative w-full flex items-center">
-              <select
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                className="w-full bg-transparent text-charcoal focus:outline-none text-sm font-bold cursor-pointer appearance-none pr-6 z-10"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsBudgetOpen(!isBudgetOpen);
+                  setIsDurationOpen(false);
+                }}
+                className="w-full bg-transparent text-charcoal text-left focus:outline-none text-sm font-bold cursor-pointer pr-6 flex items-center justify-between"
               >
-                <option value="all" className="bg-white text-charcoal">All Prices</option>
-                <option value="under-1000" className="bg-white text-charcoal">Under $1000</option>
-                <option value="1000-1500" className="bg-white text-charcoal">$1000 - $1500</option>
-                <option value="over-1500" className="bg-white text-charcoal">Over $1500</option>
-              </select>
-              <FaChevronDown className="absolute right-0 text-muted h-3 w-3 pointer-events-none z-0" />
+                <span className="truncate">
+                  {budgetOptions.find((o) => o.value === budget)?.label}
+                </span>
+                <FaChevronDown className={`text-muted h-3 w-3 transition-transform duration-200 ${isBudgetOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {isBudgetOpen && (
+                <div className="absolute left-0 top-[calc(100%+12px)] w-56 bg-white border border-gray-150 rounded-2xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {budgetOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setBudget(opt.value);
+                        setIsBudgetOpen(false);
+                      }}
+                      className={`w-full text-left px-5 py-2.5 text-xs md:text-sm font-semibold transition-colors duration-150 flex items-center ${
+                        budget === opt.value
+                          ? "bg-secondary/15 text-primary font-bold"
+                          : "text-charcoal hover:bg-slate-50 hover:text-primary"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

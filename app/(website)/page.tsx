@@ -115,6 +115,7 @@ export default async function HomePage() {
               trekFeatured.push({
                 id: `trek-faq-${trek.id}-${idx}`,
                 question: faq.question,
+                category: faq.category || "general",
                 answer: faq.answer,
               } as unknown as Faq);
             }

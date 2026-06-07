@@ -43,7 +43,15 @@ if (!dbUrl.toLowerCase().startsWith('postgres://') && !dbUrl.toLowerCase().start
   );
 }
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
+
 export default buildConfig({
+  serverURL: siteUrl,
+  csrf: [
+    siteUrl,
+    'https://natureheaventrek.com',
+    'https://www.natureheaventrek.com',
+  ].filter(Boolean),
   admin: {
     user: users.slug,
     importMap: {

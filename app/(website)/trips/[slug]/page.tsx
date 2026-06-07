@@ -140,6 +140,7 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
       const trekSpecificFaqs = (trek.faqs || []).map((faq: any, idx: number) => ({
         id: `trek-faq-${idx}`,
         question: faq.question,
+        category: faq.category || "general",
         answer: faq.answer,
       })) as unknown as Faq[];
 
