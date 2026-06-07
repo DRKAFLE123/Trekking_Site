@@ -29,7 +29,7 @@ export const faqs: CollectionConfig = {
           fields: [
             {
               name: 'question',
-              type: 'text',
+              type: 'textarea',
               required: true,
             },
             {

@@ -2442,4 +2442,50 @@ body.nav-collapsed .nature-nav-collapse-toggle {
   display: block !important;
 }
 
+/* ============================================================
+   16. CMS ADMIN FIELD WIDTH FIXES AND MULTI-COLUMN ROW LAYOUTS
+   ============================================================ */
+
+/* 16.1 Force all inputs and textareas inside editing sections to occupy full column width */
+.collection-edit input[type="text"],
+.collection-edit textarea,
+[class*="collection-edit"] input[type="text"],
+[class*="collection-edit"] textarea,
+.document-fields input[type="text"],
+.document-fields textarea,
+[class*="document-fields"] input[type="text"],
+[class*="document-fields"] textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important; /* Prevents inputs from stretching parent containers when typing */
+  flex-grow: 1 !important;
+  box-sizing: border-box !important;
+}
+
+/* 16.2 Enable multi-column subfield rows (like 3 columns for day-by-day itinerary specs) inside array cards */
+.collection-edit [class*="field-type-row"],
+.collection-edit .field-type.row,
+.collection-edit [class*="field-type--row"],
+[class*="collection-edit"] [class*="field-type-row"],
+[class*="collection-edit"] .field-type.row,
+[class*="collection-edit"] [class*="field-type--row"] {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  gap: 16px !important;
+  margin-bottom: 20px !important;
+}
+
+/* 16.3 Ensure children within row containers occupy their defined width values and do not collapse */
+.collection-edit [class*="field-type-row"] > [class*="field-type"],
+.collection-edit .field-type.row > [class*="field-type"],
+.collection-edit [class*="field-type--row"] > [class*="field-type"],
+[class*="collection-edit"] [class*="field-type-row"] > [class*="field-type"],
+[class*="collection-edit"] .field-type.row > [class*="field-type"],
+[class*="collection-edit"] [class*="field-type--row"] > [class*="field-type"] {
+  box-sizing: border-box !important;
+  margin-bottom: 0 !important;
+}
+
 

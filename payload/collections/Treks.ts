@@ -353,19 +353,19 @@ const itinerarySection = {
               name: 'day',
               type: 'number' as const,
               required: true,
-              admin: { description: 'Day number (1, 2, 3...)' },
+              admin: { 
+                width: '25%',
+                description: 'Day number (1, 2, 3...)' 
+              },
             },
             {
               name: 'title',
-              type: 'text' as const,
+              type: 'textarea' as const,
               required: true,
-              admin: { description: 'Day title, e.g. "Fly to Lukla & Trek to Phakding (2,652m)"' },
-            },
-            {
-              name: 'location',
-              type: 'text' as const,
-              label: 'Location Pin',
-              admin: { description: 'Key location name (e.g. Lukla) to show as a header badge' },
+              admin: { 
+                width: '75%',
+                description: 'Day title, e.g. "Fly to Lukla & Trek to Phakding (2,652m)"' 
+              },
             },
           ],
         },
@@ -373,15 +373,30 @@ const itinerarySection = {
           type: 'row' as const,
           fields: [
             {
+              name: 'location',
+              type: 'text' as const,
+              label: 'Location Pin',
+              admin: { 
+                width: '33.33%',
+                description: 'Key location name (e.g. Lukla) to show as a header badge' 
+              },
+            },
+            {
               name: 'distance',
               type: 'text' as const,
-              admin: { description: 'Distance walked, e.g. "8.5 km (5.3 miles)"' },
+              admin: { 
+                width: '33.33%',
+                description: 'Distance walked, e.g. "8.5 km (5.3 miles)"' 
+              },
             },
             {
               name: 'altitude',
               type: 'number' as const,
               label: 'Altitude (meters)',
-              admin: { description: 'Altitude at end of day in meters, e.g. 2652' },
+              admin: { 
+                width: '33.33%',
+                description: 'Altitude at end of day in meters, e.g. 2652' 
+              },
             },
           ],
         },
@@ -392,13 +407,40 @@ const itinerarySection = {
               name: 'trekDuration',
               type: 'text' as const,
               label: 'Trek Duration',
-              admin: { description: 'e.g. 3 hours' },
+              admin: { 
+                width: '33.33%',
+                description: 'e.g. 3 hours' 
+              },
             },
             {
               name: 'flightHours',
               type: 'text' as const,
               label: 'Flight/Transport Duration',
-              admin: { description: 'e.g. 40/20 Minutes' },
+              admin: { 
+                width: '33.33%',
+                description: 'e.g. 40/20 Minutes' 
+              },
+            },
+            {
+              name: 'accommodation',
+              type: 'text' as const,
+              admin: { 
+                width: '33.33%',
+                description: 'Where you sleep, e.g. "Standard Teahouse"' 
+              },
+            },
+          ],
+        },
+        {
+          type: 'row' as const,
+          fields: [
+            {
+              name: 'meals',
+              type: 'text' as const,
+              admin: { 
+                width: '33.33%',
+                description: 'Meals provided, e.g. "B, L, D" or "Breakfast only"' 
+              },
             },
           ],
         },
@@ -406,22 +448,10 @@ const itinerarySection = {
           name: 'description',
           type: 'textarea' as const,
           required: true,
-          admin: { description: 'What happens on this day. 2–4 sentences is ideal.' },
-        },
-        {
-          type: 'row' as const,
-          fields: [
-            {
-              name: 'accommodation',
-              type: 'text' as const,
-              admin: { description: 'Where you sleep, e.g. "Standard Teahouse"' },
-            },
-            {
-              name: 'meals',
-              type: 'text' as const,
-              admin: { description: 'Meals provided, e.g. "B, L, D" or "Breakfast only"' },
-            },
-          ],
+          admin: { 
+            width: '100%',
+            description: 'What happens on this day. 2–4 sentences is ideal.' 
+          },
         },
         {
           name: 'media',
@@ -531,7 +561,7 @@ const inclusionsExclusionsSection = {
           fields: [
             {
               name: 'point',
-              type: 'text' as const,
+              type: 'textarea' as const,
               required: true,
               label: false as any,
               admin: {
@@ -590,7 +620,7 @@ const inclusionsExclusionsSection = {
           fields: [
             {
               name: 'point',
-              type: 'text' as const,
+              type: 'textarea' as const,
               required: true,
               label: false as any,
               admin: {
@@ -850,7 +880,7 @@ const faqsSection = {
       fields: [
         {
           name: 'question',
-          type: 'text' as const,
+          type: 'textarea' as const,
           required: true,
           admin: { description: 'The question travellers often ask' },
         },
