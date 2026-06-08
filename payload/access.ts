@@ -36,7 +36,31 @@ export const checkPermission = (
 ): Access => {
   return async ({ req }) => {
     const user = req.user;
-    if (!user) return false;
+    if (!user) {
+      // Allow public read access to public/non-sensitive collections
+      if (action === 'read') {
+        const publicCollections = [
+          'treks',
+          'regions',
+          'blogPosts',
+          'teamMembers',
+          'testimonials',
+          'gallery',
+          'faqs',
+          'departures',
+          'media',
+          'pages',
+          'contactPages',
+          'companyPages',
+          'navbarSettings',
+          'footerSettings',
+          'homepageSettings',
+          'blogSettings',
+        ];
+        return publicCollections.includes(collectionSlug);
+      }
+      return false;
+    }
 
     // 1. Superadmin (role = 'admin') gets absolute bypass
     if (user.role === 'admin') return true;

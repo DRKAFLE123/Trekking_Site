@@ -19,32 +19,6 @@ export default function cloudinaryLoader({
 
   // Map default project IDs to beautiful high-res Unsplash landscape photos
   const unsplashMapping: Record<string, string> = {
-    // Treks
-    "treks/ebc_trek_hero": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200",
-    "treks/ebc_gallery_1": "https://images.unsplash.com/photo-1585016495481-91613a3ab1bc?q=80&w=800",
-    "treks/ebc_gallery_2": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=800",
-    "treks/ebc_gallery_3": "https://images.unsplash.com/photo-1486915309851-b0cc1f8a0084?q=80&w=800",
-    
-    "treks/annapurna_circuit_hero": "https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=1200",
-    "treks/annapurna_gallery_1": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800",
-    "treks/annapurna_gallery_2": "https://images.unsplash.com/photo-1501555088652-021faa106b9b?q=80&w=800",
-    
-    "treks/gokyo_trek_hero": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1200",
-    "treks/gokyo_gallery_1": "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=800",
-    "treks/gokyo_gallery_2": "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=800",
-    
-    "treks/abc_trek_hero": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200",
-    "treks/abc_gallery_1": "https://images.unsplash.com/photo-1482862549707-f63cb32c5fd9?q=80&w=800",
-    "treks/abc_gallery_2": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800",
-    
-    "treks/manaslu_trek_hero": "https://images.unsplash.com/photo-1486873249359-2731bd6dafc7?q=80&w=1200",
-    "treks/manaslu_gallery_1": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=800",
-    "treks/manaslu_gallery_2": "https://images.unsplash.com/photo-1501555088652-021faa106b9b?q=80&w=800",
-    
-    "treks/tilicho_trek_hero": "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200",
-    "treks/tilicho_gallery_1": "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=800",
-    "treks/tilicho_gallery_2": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800",
-    
     // Regions
     "regions/everest_region_cover": "https://images.unsplash.com/photo-1585016495481-91613a3ab1bc?q=80&w=800",
     "regions/annapurna_region_cover": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800",

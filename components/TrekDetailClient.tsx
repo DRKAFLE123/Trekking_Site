@@ -451,23 +451,14 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
   const packedPercentage    = Math.round((totalPackedItems / totalChecklistItems) * 100) || 0;
 
   // ── Hero images ────────────────────────────────────────────────────────────
-  const cover = getMediaUrl(trek.heroImage) || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200";
+  const cover = getMediaUrl(trek.heroImage) || "";
   const heroImages = (() => {
     // Filter out the cover image ONLY at its first occurrence to allow duplicates in the gallery grid
     const extras = galleryList.filter((g, idx) => g !== cover || galleryList.indexOf(g) !== idx);
-    const arr = [cover, ...extras].slice(0, 5);
-    const fallbacks = [
-      "https://images.unsplash.com/photo-1585016495481-91613a3ab1bc?q=80&w=800",
-      "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=800",
-      "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?q=80&w=800",
-      "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=800",
-    ];
-    while (arr.length < 5) {
-      arr.push(fallbacks[(arr.length - 1) % fallbacks.length]);
-    }
-    return arr;
+    const arr = [cover, ...extras].filter(Boolean) as string[];
+    return arr.slice(0, 5);
   })();
-  const allLightboxImages = Array.from(new Set([cover, ...galleryList, ...heroImages])).map(src => ({ src }));
+  const allLightboxImages = Array.from(new Set([cover, ...galleryList, ...heroImages])).filter(Boolean).map(src => ({ src }));
 
   // ── Schedule calendar renderer ─────────────────────────────────────────────
   const renderScheduleMonth = (mDate: Date) => {
@@ -583,8 +574,14 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
           1. HERO PHOTO GALLERY
           ════════════════════════════════════════════════════════════════════ */}
       <section className="relative w-full bg-[#1a2e1f] overflow-hidden">
-        {/* Desktop: single image or split grid */}
-        {heroImages.length > 1 ? (
+        {heroImages.length === 0 ? (
+          <div className="relative h-[25vh] min-h-[180px] max-h-[300px] w-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#1a2e1f] to-[#101c13] border-b border-[#cbd5e1]/10">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(200,146,42,0.08),transparent_60%)] pointer-events-none" />
+            <FaRegImage className="text-white/20 text-4xl mb-3" />
+            <h2 className="text-white/60 font-serif text-lg font-bold tracking-wide">Nature Heaven Trekking & Expedition</h2>
+            <p className="text-[#c8922a] text-xs font-semibold mt-1 tracking-wider uppercase">Nepal</p>
+          </div>
+        ) : heroImages.length > 1 ? (
           <div className="hidden md:grid md:grid-cols-[60fr_40fr] gap-1 h-[72vh] max-h-[620px]">
             <div className="relative overflow-hidden cursor-pointer group" onClick={() => {
               const targetIdx = allLightboxImages.findIndex(slide => slide.src === heroImages[0]);
@@ -606,9 +603,11 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                 </div>
               ))}
             </div>
-            <button onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }} className="absolute bottom-5 right-5 z-20 bg-white/95 backdrop-blur-sm hover:bg-white text-[#1a2e1f] font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transition hover:scale-105 active:scale-95 border border-white/50">
-              <FaRegImage className="text-sm" /> View All Photos ({allLightboxImages.length})
-            </button>
+            {allLightboxImages.length > 0 && (
+              <button onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }} className="absolute bottom-5 right-5 z-20 bg-white/95 backdrop-blur-sm hover:bg-white text-[#1a2e1f] font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transition hover:scale-105 active:scale-95 border border-white/50">
+                <FaRegImage className="text-sm" /> View All Photos ({allLightboxImages.length})
+              </button>
+            )}
           </div>
         ) : (
           <div className="hidden md:block relative h-[72vh] max-h-[620px] w-full overflow-hidden cursor-pointer" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>
@@ -618,7 +617,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
         )}
 
         {/* Mobile: single image or swipe carousel */}
-        {heroImages.length > 1 ? (
+        {heroImages.length === 0 ? null : heroImages.length > 1 ? (
           <div className="relative md:hidden h-[55vw] min-h-[260px] max-h-[400px] overflow-hidden select-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             {heroImages.map((img, idx) => (
               <div key={idx} className={`absolute inset-0 transition-opacity duration-500 ${idx === carouselIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`} onClick={() => {
@@ -635,9 +634,11 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                 <button key={idx} onClick={e => { e.stopPropagation(); setCarouselIndex(idx); }} className={`rounded-full transition-all duration-300 ${idx===carouselIndex ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"}`} />
               ))}
             </div>
-            <button onClick={() => { setLightboxIndex(carouselIndex); setLightboxOpen(true); }} className="absolute bottom-3 right-3 z-30 bg-black/50 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm">
-              <FaRegImage className="h-3 w-3" /> {allLightboxImages.length} Photos
-            </button>
+            {allLightboxImages.length > 0 && (
+              <button onClick={() => { setLightboxIndex(carouselIndex); setLightboxOpen(true); }} className="absolute bottom-3 right-3 z-30 bg-black/50 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm">
+                <FaRegImage className="h-3 w-3" /> {allLightboxImages.length} Photos
+              </button>
+            )}
           </div>
         ) : (
           <div className="relative md:hidden h-[55vw] min-h-[260px] max-h-[400px] overflow-hidden select-none" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>

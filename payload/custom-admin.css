@@ -1167,10 +1167,10 @@ input[id*="field-title"]:focus {
 }
 
 /* 1. Reset inner nested divs/wrappers inside the upload zones, explicitly excluding drawers, list tables, modals, popups, or previews */
-.file-field__upload div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]),
-[class*="file-field__upload"] div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]),
-.upload__dropzone div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]),
-[class*="upload__dropzone"] div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]) {
+.file-field__upload div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]):not([class*="file-details"]):not([class*="upload-relationship-details"]),
+[class*="file-field__upload"] div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]):not([class*="file-details"]):not([class*="upload-relationship-details"]),
+.upload__dropzone div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]):not([class*="file-details"]):not([class*="upload-relationship-details"]),
+[class*="upload__dropzone"] div:not([class*="drawer"]):not([class*="list"]):not([class*="table"]):not([class*="popup"]):not([class*="preview"]):not([class*="file-details"]):not([class*="upload-relationship-details"]) {
   border: none !important;
   background-color: transparent !important;
   box-shadow: none !important;
@@ -1865,7 +1865,7 @@ body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
 /* Force textarea/inputs inside highlights cards to be full width, spacious and modern */
 [class*="array-field"] textarea,
 [class*="array-field"] input[type="text"],
-[class*="array-field"] [class*="field-type"] input,
+[class*="array-field"] [class*="field-type"] input:not([type="checkbox"]):not([type="radio"]),
 [class*="array-field"] [class*="field-type"] textarea {
   width: 100% !important;
   max-width: 100% !important;
@@ -2374,72 +2374,105 @@ body.nav-collapsed .nature-nav-collapse-toggle {
    ============================================================ */
 /* Fix Payload CMS Upload / Gallery Image Preview stretching */
 .file-details,
-[class*="file-details"] {
+.upload-relationship-details {
   display: flex !important;
-  flex-direction: column !important; /* Stack preview vertically */
-  align-items: flex-start !important;
-  gap: 12px !important;
-  padding: 16px !important;
+  flex-direction: row !important; /* Photo on left, details on right */
+  align-items: center !important; /* Align vertically in center */
+  justify-content: space-between !important;
+  gap: 16px !important;
+  padding: 12px !important;
   background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
   max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .file-details__media,
 .file-details__thumbnail,
-[class*="file-details__media"],
-[class*="file-details__thumbnail"],
-[class*="file-details"] img,
-.file-details img {
-  width: auto !important;
-  height: auto !important;
-  max-width: 240px !important; /* Elegant maximum preview width */
-  max-height: 160px !important; /* Elegant maximum preview height */
-  object-fit: contain !important; /* Maintain original aspect ratio, no stretching! */
-  border-radius: 6px !important;
+.upload-relationship-details__thumbnail {
+  width: 80px !important; /* Compact thumbnail size */
+  height: 80px !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f8fafc !important;
   border: 1px solid #cbd5e1 !important;
-  display: block !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Fix Payload CMS Upload / Gallery Image Preview stretching in relation fields */
-.upload-relationship-details,
-[class*="upload-relationship-details"] {
+.file-details__media img,
+.file-details__thumbnail img,
+.file-details img,
+.upload-relationship-details__thumbnail img,
+.upload-relationship-details img {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  border-radius: 4px !important;
+  border: none !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.file-details__meta,
+.upload-relationship-details__meta {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
-  gap: 12px !important;
-  max-width: 100% !important;
-  margin: 0 !important; /* Reset any negative margins that cause left overflow */
-  padding: 16px !important;
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 8px !important;
-  box-sizing: border-box !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  flex-grow: 1 !important;
+  min-width: 0 !important;
+  text-align: left !important;
 }
 
-/* Fix text overflow for extremely long filenames */
-.upload-relationship-details,
-.upload-relationship-details *,
-[class*="upload-relationship-details"],
-[class*="upload-relationship-details"] * {
+.file-details__filename,
+.upload-relationship-details__filename {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1a2e1f !important;
+  text-align: left !important;
   word-break: break-all !important;
-  white-space: normal !important;
-  overflow-wrap: break-word !important;
 }
 
-.upload-relationship-details__thumbnail,
-[class*="upload-relationship-details__thumbnail"],
-.upload-relationship-details img,
-[class*="upload-relationship-details"] img {
+.file-details__size,
+.upload-relationship-details__size {
+  font-size: 11px !important;
+  color: #626c64 !important;
+  text-align: left !important;
+}
+
+.file-details__actions,
+.upload-relationship-details__actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.file-details__actions button,
+.upload-relationship-details__actions button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
   width: auto !important;
-  height: auto !important;
-  max-width: 240px !important; /* Elegant maximum preview width */
-  max-height: 160px !important; /* Keep it neat and small */
-  object-fit: contain !important; /* Maintain original aspect ratio, no stretching! */
-  border-radius: 6px !important;
-  border: 1px solid #cbd5e1 !important;
-  display: block !important;
+  flex-grow: 0 !important;
+  padding: 4px 12px !important;
+  height: 28px !important;
+  font-size: 11px !important;
 }
 
 /* ============================================================
@@ -2533,22 +2566,68 @@ body.nav-collapsed .nature-nav-collapse-toggle {
 .collection-edit [class*="field-type--row"] > [class*="field-type"],
 [class*="collection-edit"] [class*="field-type-row"] > [class*="field-type"],
 [class*="collection-edit"] .field-type.row > [class*="field-type"],
-[class*="collection-edit"] [class*="field-type--row"] > [class*="field-type"] {
+[class*="collection-edit"] [class*="field-type--row"] > [class*="field-type"],
+.row__fields > .field-type,
+.row__fields > [class*="field-type"] {
   box-sizing: border-box !important;
   margin-bottom: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  flex: 1 1 0% !important;
+}
+
+.row__fields > .field-type[style*="--field-width"],
+.row__fields > [class*="field-type"][style*="--field-width"] {
+  flex: 0 1 var(--field-width) !important;
+  width: var(--field-width) !important;
+  max-width: var(--field-width) !important;
 }
 
 /* 16.6 Force full width on all layout divs and wrappers inside array fields, while preserving column layouts and standard button sizing */
-.collection-edit [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]),
-[class*="collection-edit"] [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]),
-.document-fields [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]),
-[class*="document-fields"] [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]),
+.collection-edit [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]):not([class*="file-details"]):not([class*="upload-relationship-details"]),
+[class*="collection-edit"] [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]):not([class*="file-details"]):not([class*="upload-relationship-details"]),
+.document-fields [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]):not([class*="file-details"]):not([class*="upload-relationship-details"]),
+[class*="document-fields"] [class*="array-field"] div:not([style*="20%"]):not([style*="25%"]):not([style*="33.33%"]):not([style*="50%"]):not([style*="75%"]):not([class*="file-details"]):not([class*="upload-relationship-details"]),
 .collection-edit [class*="array-field"] section,
 [class*="collection-edit"] [class*="array-field"] section,
 .document-fields [class*="array-field"] section,
 [class*="document-fields"] [class*="array-field"] section {
   width: 100% !important;
   max-width: 100% !important;
+}
+
+/* ============================================================
+   17. NATIVE CHECKBOX & RADIO FIELD ALIGNMENT AND OVERRIDES
+   ============================================================ */
+
+/* Prevent any parent div width overrides from stretching checkbox container divs */
+.collection-edit .field-type.checkbox,
+[class*="collection-edit"] .field-type-checkbox,
+.document-fields .field-type.checkbox,
+[class*="document-fields"] .field-type-checkbox,
+[class*="array-field"] .field-type-checkbox,
+.checkbox-input {
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Prevent checkbox inputs themselves from becoming full-width text-like input fields */
+.collection-edit input[type="checkbox"],
+.document-fields input[type="checkbox"],
+[class*="collection-edit"] input[type="checkbox"],
+[class*="document-fields"] input[type="checkbox"],
+[class*="array-field"] input[type="checkbox"],
+input[type="checkbox"] {
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  min-width: unset !important;
+  flex-grow: 0 !important;
+  margin-right: 8px !important;
+  cursor: pointer !important;
 }
 
 
