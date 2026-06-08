@@ -51,7 +51,7 @@ export async function GET(request: Request) {
       limit: 100,
     });
 
-    let departuresList = departuresRes.docs;
+    const departuresList = departuresRes.docs;
 
     return NextResponse.json({ departures: departuresList }, { status: 200 });
   } catch (error: any) {
