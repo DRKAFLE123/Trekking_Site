@@ -49,11 +49,22 @@ export default function cloudinaryLoader({
     return unsplashMapping[src];
   }
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  let cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   
+  // If the source is already a Cloudinary URL, extract the cloud name from it!
+  if (src.includes("res.cloudinary.com")) {
+    const match = src.match(/res\.cloudinary\.com\/([^/]+)\/image\/upload/);
+    if (match && match[1]) {
+      cloudName = match[1];
+    }
+  }
+
   // No Cloudinary configured — src should have already been handled as a Payload CMS
   // absolute URL above. If we reach here with no cloud name, return a generic fallback.
   if (!cloudName) {
+    if (src.startsWith("http")) {
+      return src;
+    }
     return `https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=${width}`;
   }
 
