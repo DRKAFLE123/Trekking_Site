@@ -547,9 +547,13 @@ export default function Footer() {
       </div>
 
       {/* Climber Silhouette */}
-      <img
+      <Image
         src="/hiker-silhouette.svg"
         alt="Hiker Silhouette"
+        width={160}
+        height={160}
+        loading="lazy"
+        unoptimized
         className="absolute bottom-0 right-[10%] h-24 md:h-32 lg:h-40 w-auto object-contain object-bottom pointer-events-none select-none z-30"
       />
       </section>

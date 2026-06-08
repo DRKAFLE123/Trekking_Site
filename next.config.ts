@@ -34,6 +34,7 @@ const nextConfig: NextConfig = {
   experimental: {
     serverMinification: false,
   },
+  crossOrigin: "anonymous",
   async redirects() {
     return [
       { source: "/wp-admin", destination: "/admin/login", permanent: true },
