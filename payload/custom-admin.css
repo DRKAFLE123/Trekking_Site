@@ -1836,7 +1836,7 @@ body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 10px 0 2px 0 !important;
+  padding: 10px 8px 2px 8px !important;
   border-top: 1.5px dashed #cbd5e1 !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -1853,12 +1853,17 @@ body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
 
 /* Ensure the inner grid, block, or flex wrapper of the fields spans full width */
 [class*="array-field"] [class*="render-fields"],
-[class*="array-field"] [class*="row-fields"],
-[class*="array-field"] [class*="draggable-row__content"] > div,
-[class*="array-field"] [class*="row-content"] > div {
+[class*="array-field"] [class*="row-fields"] {
   width: 100% !important;
   max-width: 100% !important;
-  display: block !important;
+  box-sizing: border-box !important;
+}
+
+/* Do NOT force display:block on direct children of row content — Payload uses flex for row-type fields */
+[class*="array-field"] [class*="draggable-row__content"] > div:not([class*="row__fields"]):not([class*="field-type--row"]):not([class*="field-type-row"]),
+[class*="array-field"] [class*="row-content"] > div:not([class*="row__fields"]):not([class*="field-type--row"]):not([class*="field-type-row"]) {
+  width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
@@ -1890,13 +1895,13 @@ body:has(.live-preview-window--mode-preview) [class*="template-default__wrap"] {
   every field stretches edge-to-edge inside the card.
 */
 
-/* Remove horizontal padding on the collapsible/draggable row body */
+/* Consistent horizontal padding on the collapsible/draggable row body */
 [class*="array-field"] [class*="collapsible__content"],
 [class*="array-field"] [class*="draggable-row__content"],
 [class*="array-field"] [class*="row-fields"],
 [class*="array-field"] [class*="render-fields"] {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
