@@ -8,7 +8,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const trekSlug = searchParams.get("slug");
 
-    const payload = await getPayload({ config });
+    let payload;
+    try {
+      payload = await getPayload({ config });
+    } catch (initErr: any) {
+      console.error('Payload initialization error:', initErr);
+      return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
+    }
 
     if (!trekSlug) {
       const todayStr = new Date().toISOString().split("T")[0];

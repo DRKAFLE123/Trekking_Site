@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -288,6 +288,46 @@ export default function Navbar() {
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [treksCount, setTreksCount] = useState<number>(7);
   const [dbTreks, setDbTreks] = useState<any[]>([]);
+
+  // Dynamically compute the categorized treks based on dbTreks and fallback to static TRIP_DATA
+  const categorizedTrips = useMemo(() => {
+    if (dbTreks && dbTreks.length > 0) {
+      const categorized: Record<string, { title: string; slug: string }[]> = {
+        "All Trips": dbTreks.map(t => ({ title: t.title, slug: t.slug })),
+      };
+
+      // Initialize all other categories with empty arrays
+      Object.keys(categoryToRegion).forEach(cat => {
+        categorized[cat] = [];
+      });
+
+      // Group each trek into its corresponding category
+      dbTreks.forEach((trek: any) => {
+        const regionSlug = trek.region?.slug;
+        if (regionSlug) {
+          const categoryKey = Object.keys(categoryToRegion).find(
+            key => categoryToRegion[key].slug === regionSlug
+          );
+          if (categoryKey) {
+            categorized[categoryKey].push({
+              title: trek.title,
+              slug: trek.slug
+            });
+          }
+        }
+      });
+
+      // For any categories that end up empty in the database, fallback to the static data
+      Object.keys(categoryToRegion).forEach(cat => {
+        if (categorized[cat].length === 0 && TRIP_DATA[cat]) {
+          categorized[cat] = TRIP_DATA[cat];
+        }
+      });
+
+      return categorized;
+    }
+    return TRIP_DATA;
+  }, [dbTreks]);
   const [dbPages, setDbPages] = useState<any[]>([]);
   const [dbContactPages, setDbContactPages] = useState<any[]>([]);
   const [dbCompanyPages, setDbCompanyPages] = useState<any[]>([]);
@@ -966,7 +1006,7 @@ export default function Navbar() {
                                   <span className="text-[9px] tracking-[0.22em] font-black uppercase text-[#c8922a] font-sans">
                                     Popular Trips &mdash; {activeCategory}
                                     <span className="ml-2 text-gray-400 font-medium normal-case tracking-normal text-[10px]">
-                                      ({TRIP_DATA[activeCategory]?.length || 0} options)
+                                      ({categorizedTrips[activeCategory]?.length || 0} options)
                                     </span>
                                   </span>
                                   <Link
@@ -978,7 +1018,7 @@ export default function Navbar() {
                                   </Link>
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-6 gap-y-0 max-h-[340px] overflow-y-auto pr-2">
-                                  {(TRIP_DATA[activeCategory] || []).map((trip) => (
+                                  {(categorizedTrips[activeCategory] || []).map((trip) => (
                                     <Link
                                       key={trip.slug}
                                       href={`/trips/${trip.slug}`}
@@ -1228,7 +1268,7 @@ export default function Navbar() {
                                 ))}
                               </div>
                               <div className="flex flex-col gap-1 pr-1">
-                                {TRIP_DATA[activeCategory].map((trip) => (
+                                {(categorizedTrips[activeCategory] || []).map((trip) => (
                                   <Link key={trip.slug} href={`/trips/${trip.slug}`} onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} className="text-xs font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2.5 rounded-lg transition">{trip.title}</Link>
                                 ))}
                               </div>

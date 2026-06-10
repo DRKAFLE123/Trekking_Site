@@ -32,17 +32,12 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 const rawDbUrl = process.env.DATABASE_URL || process.env.DATABASE_URI || '';
-const dbUrl = rawDbUrl.trim().replace(/^["']|["']$/g, '');
-
-// This project uses a single Supabase Postgres database for both dev and prod.
-// SQLite is no longer supported — `DATABASE_URI` must be a Postgres URL.
-if (!dbUrl.toLowerCase().startsWith('postgres://') && !dbUrl.toLowerCase().startsWith('postgresql://')) {
-  throw new Error(
-    'DATABASE_URI must be a Postgres connection string (postgres:// or postgresql://). ' +
-    'See .env.example and Supabase → Project Settings → Database → Connection pooling.'
-  );
+let dbUrl = rawDbUrl.trim().replace(/^["']|["']$/g, '');
+if (!dbUrl) {
+  console.warn('DATABASE_URL not set; using placeholder DB URL');
+  // Placeholder - will cause payload init to fail later, but server stays up
+  dbUrl = 'postgres://user:pass@localhost:5432/placeholder';
 }
-
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 export default buildConfig({
