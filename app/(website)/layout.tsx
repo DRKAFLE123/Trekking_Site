@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import BackToTop from "@/components/BackToTop";
 import CookieConsent from "@/components/CookieConsent";
+import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,18 +22,47 @@ const dmSans = DM_Sans({
 
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 
 export async function generateMetadata(): Promise<Metadata> {
   let allowIndexing = true;
+  let seoImageUrl = "/Manaslu-Circuit-Trek.jpg";
   try {
     const payload = await getPayload({ config });
     const siteSettings = await payload.find({
       collection: 'siteSettings',
-      depth: 0,
+      depth: 1,
     });
-    allowIndexing = (siteSettings.docs[0] as any)?.allowIndexing ?? true;
-  } catch (error) {
-    console.error('Error fetching site settings for layout metadata:', error);
+    const settingsDoc = siteSettings.docs[0] as any;
+    if (settingsDoc) {
+      allowIndexing = settingsDoc.allowIndexing ?? true;
+      const rawImage = getMediaUrl(settingsDoc.seoImage);
+      if (rawImage) {
+        seoImageUrl = cloudinaryLoader({ src: rawImage, width: 1200 });
+      }
+    }
+
+    // Fallback to "Why Travel with Us" image from HomepageSettings if no explicit seoImage is uploaded
+    if (seoImageUrl === "/Manaslu-Circuit-Trek.jpg") {
+      const homepageSettings = await payload.find({
+        collection: 'homepageSettings',
+        depth: 1,
+      });
+      const homeDoc = homepageSettings.docs[0] as any;
+      if (homeDoc) {
+        const rawHomeImage = getMediaUrl(homeDoc.whyTravelImage);
+        if (rawHomeImage) {
+          seoImageUrl = cloudinaryLoader({ src: rawHomeImage, width: 1200 });
+        }
+      }
+    }
+  } catch (error: any) {
+    const errorMsg = error?.message || '';
+    if (errorMsg.includes('connect') || errorMsg.includes('ENOTFOUND')) {
+      console.warn('Database offline/unavailable for layout metadata; using default fallback image.');
+    } else {
+      console.error('Error fetching settings for layout metadata:', error);
+    }
   }
 
   const siteUrl = "https://natureheaventreks.com";
@@ -76,7 +106,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: defaultDescription,
       images: [
         {
-          url: "/Manaslu-Circuit-Trek.jpg",
+          url: seoImageUrl,
           width: 1200,
           height: 630,
           alt: "Trekkers approaching the Himalayas with Nature Heaven Trek & Expedition",
@@ -87,7 +117,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: defaultTitle,
       description: defaultDescription,
-      images: ["/Manaslu-Circuit-Trek.jpg"],
+      images: [seoImageUrl],
     },
     icons: {
       icon: "/favicon.ico",
@@ -108,6 +138,21 @@ export default function RootLayout({
       className={`${inter.variable} ${dmSans.variable} scroll-smooth`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Google Analytics Script */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-7LZ9XN30TV"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-7LZ9XN30TV');
+          `}
+        </Script>
+      </head>
       <body className="font-sans bg-bgOffWhite text-charcoal min-h-screen flex flex-col" suppressHydrationWarning>
         <Navbar />
         <main className="grow">{children}</main>

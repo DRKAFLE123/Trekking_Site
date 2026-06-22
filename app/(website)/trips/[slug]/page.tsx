@@ -5,6 +5,7 @@ import { Trek, Testimonial, Faq } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import TrekDetailClient from "@/components/TrekDetailClient";
+import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 
 export const revalidate = 86400; // Revalidate every 24 hours (86400 seconds) as requested
 
@@ -47,10 +48,11 @@ export async function generateMetadata({ params }: TripDetailPageProps): Promise
 
     // Determine fallback social share image
     let heroImageUrl = "";
-    if (trek.heroImage && typeof trek.heroImage === "object") {
-      heroImageUrl = (trek.heroImage as any).url || "";
-    } else if (trek.heroImage && typeof trek.heroImage === "string") {
-      heroImageUrl = trek.heroImage;
+    const rawImage = getMediaUrl(trek.heroImage);
+    if (rawImage) {
+      heroImageUrl = cloudinaryLoader({ src: rawImage, width: 1200 });
+    } else {
+      heroImageUrl = "/Manaslu-Circuit-Trek.jpg"; // fallback
     }
 
     const title = trek.metaTitle || `${trek.title} - ${trek.duration} Days | Nature Heaven Trekking & Expedition`;

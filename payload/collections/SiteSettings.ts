@@ -45,6 +45,15 @@ export const SiteSettings: CollectionConfig = {
       type: 'text',
     },
     {
+      name: 'seoImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Default Social Share Image (SEO)',
+      admin: {
+        description: 'Default cover image shown when sharing the website home page or generic pages on social media (Facebook, WhatsApp, Twitter, etc.). Recommended size: 1200x630px.',
+      },
+    },
+    {
       name: 'heroVideoUrl',
       type: 'text',
       admin: {
@@ -138,6 +147,8 @@ export const SiteSettings: CollectionConfig = {
         { name: 'expertPhone', type: 'text', defaultValue: '+977 9851218358' },
         { name: 'expertWhatsApp', type: 'text', defaultValue: '+977 9851218358' },
         { name: 'quickEmail', type: 'text', defaultValue: 'info@natureheaventrek.com' },
+        { name: 'nepalBranchPhone', type: 'text', defaultValue: '+977 9851218358', label: 'Nepal Branch Phone' },
+        { name: 'ukBranchPhone', type: 'text', defaultValue: '+44 7459 313411', label: 'UK Branch Phone' },
       ],
     },
     {
