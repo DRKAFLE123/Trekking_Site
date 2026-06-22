@@ -90,7 +90,7 @@ export default async function CountryPage({ params }: { params: Params }) {
     allTreks = treksRes.docs as unknown as Trek[];
     siteSettings = siteSettingsRes.docs[0] as any;
   } catch (err: any) {
-    console.warn("[Country Page] Failed to query database:", err.message);
+    console.warn("[Country Page] Failed to query database:", err?.message || err);
   }
   const countryTreks = allTreks.filter(
     (trek) => trek.region?.country === slug.toLowerCase()
