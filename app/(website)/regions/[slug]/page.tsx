@@ -80,15 +80,17 @@ export default async function RegionDetailPage({ params }: RegionDetailPageProps
     region = (res.docs[0] || null) as unknown as Region | null;
 
     if (region) {
-      treks = region.treks || [];
-      if (!treks || treks.length === 0) {
-        const resAll = await payload.find({
-          collection: "treks",
-          depth: 1,
-        });
-        const allTreks = resAll.docs as unknown as Trek[];
-        treks = allTreks.filter((t) => t.region?.slug === region!.slug);
-      }
+      // Region has no `treks` field; treks point to regions via their own
+      // `region` relationship. Query by region id directly — works whether
+      // Payload returns `t.region` as an id or an expanded object, and
+      // uses the indexed FK rather than an in-JS slug compare.
+      const trekRes = await payload.find({
+        collection: "treks",
+        where: { region: { equals: (region as any).id } },
+        depth: 1,
+        limit: 100,
+      });
+      treks = trekRes.docs as unknown as Trek[];
     }
   } catch (err: any) {
     console.warn("[Region Detail Page] Failed to query region detail:", err.message);

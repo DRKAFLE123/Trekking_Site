@@ -16,6 +16,7 @@ import * as migration_20260605_163738_add_homepage_video_gallery from './2026060
 import * as migration_20260605_172103_add_expert_relationship from './20260605_172103_add_expert_relationship';
 import * as migration_20260605_172653_add_is_expert_checkbox from './20260605_172653_add_is_expert_checkbox';
 import * as migration_20260606_160916_add_faq_featured_fields from './20260606_160916_add_faq_featured_fields';
+import * as migration_20260623_220000_fix_missing_columns from './20260623_220000_fix_missing_columns';
 
 export const migrations = [
   {
@@ -107,5 +108,10 @@ export const migrations = [
     up: migration_20260606_160916_add_faq_featured_fields.up,
     down: migration_20260606_160916_add_faq_featured_fields.down,
     name: '20260606_160916_add_faq_featured_fields'
+  },
+  {
+    up: migration_20260623_220000_fix_missing_columns.up,
+    down: migration_20260623_220000_fix_missing_columns.down,
+    name: '20260623_220000_fix_missing_columns',
   },
 ];
