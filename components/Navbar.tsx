@@ -239,6 +239,34 @@ function resolveExpert(siteSettings: any) {
   };
 }
 
+// Helper: resolve the branch contact phones from site settings
+function resolveBranchPhones(siteSettings: any) {
+  const hs = siteSettings?.headerSettings || {};
+  return {
+    nepal: hs.nepalBranchPhone || "+977 9851218358",
+    uk: hs.ukBranchPhone || "+44 7459 313411",
+  };
+}
+
+const NepalFlag = () => (
+  <svg className="w-3.5 h-4 shrink-0" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0 v120 h80 L20 70 h50 Z" fill="#DC143C" stroke="#003893" strokeWidth="6" strokeLinejoin="miter" />
+    <circle cx="18" cy="42" r="8" fill="#fff" />
+    <path d="M12 90 Q18 80 24 90 Q18 96 12 90" fill="#fff" />
+  </svg>
+);
+
+const UKFlag = () => (
+  <svg className="w-5 h-3.5 shrink-0 rounded-[2px]" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+    <clipPath id="uk-flag-clip"><path d="M0 0v30h60V0z"/></clipPath>
+    <path d="M0 0v30h60V0z" fill="#012169"/>
+    <path d="M0 0l60 30M60 0L0 30" stroke="#fff" strokeWidth="6"/>
+    <path d="M0 0l60 30M60 0L0 30" stroke="#c8102e" strokeWidth="4"/>
+    <path d="M30 0v30M0 15h60" stroke="#fff" strokeWidth="10"/>
+    <path d="M30 0v30M0 15h60" stroke="#c8102e" strokeWidth="6"/>
+  </svg>
+);
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -875,17 +903,39 @@ export default function Navbar() {
 
           {/* Right: Talk to Expert Card & Stepper CTA (Aligned dynamically) */}
           <div className="flex items-center gap-6 justify-center shrink-0">
-            {/* Talk to Expert Card (Original beloved design!) */}
-            {(() => { const ex = resolveExpert(siteSettings); return (
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold text-[13px] shadow-sm select-none">
-                {ex.name[0]}
+            {/* Branch Office Numbers with flags */}
+            {(() => { const phones = resolveBranchPhones(siteSettings); return (
+            <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+              {/* Nepal Branch */}
+              <div className="flex items-center gap-2">
+                <NepalFlag />
+                <div className="flex flex-col text-left">
+                  <span className="text-[9px] tracking-wider uppercase font-bold text-gray-400 leading-none">Nepal Office</span>
+                  <a 
+                    href={`https://wa.me/${phones.nepal.replace(/[^0-9]/g, "")}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-[12px] font-bold text-charcoal hover:text-[#c8922a] transition leading-none mt-1 font-sans"
+                  >
+                    {phones.nepal}
+                  </a>
+                </div>
               </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[12px] font-bold text-[#1a2e1f] leading-tight mb-0.5">Talk to an Expert ({ex.name})</span>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-[14px] h-[14px] rounded-full bg-[#25D366] flex items-center justify-center text-white font-black text-[9px] leading-none select-none">W</div>
-                  <a href={`https://wa.me/${ex.whatsApp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-charcoal hover:text-[#c8922a] transition">{ex.whatsApp}</a>
+              
+              {/* Vertical Divider */}
+              <div className="h-6 w-[0.5px] bg-[#e5e5e5]"></div>
+
+              {/* UK Branch */}
+              <div className="flex items-center gap-2">
+                <UKFlag />
+                <div className="flex flex-col text-left">
+                  <span className="text-[9px] tracking-wider uppercase font-bold text-gray-400 leading-none">UK Office</span>
+                  <a 
+                    href={`tel:${phones.uk.replace(/[^0-9]/g, "")}`} 
+                    className="text-[12px] font-bold text-charcoal hover:text-[#c8922a] transition leading-none mt-1 font-sans"
+                  >
+                    {phones.uk}
+                  </a>
                 </div>
               </div>
             </div>
@@ -984,18 +1034,22 @@ export default function Navbar() {
                                 </div>
                                 <div className="flex flex-col gap-1 px-3 max-h-[380px] overflow-y-auto">
                                   {categories.map((cat) => (
-                                    <button
+                                    <Link
                                       key={cat}
-                                      onClick={() => setActiveCategory(cat)}
+                                      href={cat === "All Trips" ? "/trips" : `/regions/${categoryToRegion[cat]?.slug || "everest"}`}
+                                      onClick={() => {
+                                        setActiveCategory(cat);
+                                        closeDropdown();
+                                      }}
                                       onMouseEnter={() => setActiveCategory(cat)}
-                                      className={`w-full text-left px-4 py-2.5 text-[13px] font-sans transition-all duration-150 rounded-xl ${
+                                      className={`w-full text-left px-4 py-2.5 text-[13px] font-sans transition-all duration-150 rounded-xl block ${
                                         activeCategory === cat
                                           ? "bg-[#c8922a]/5 text-[#c8922a] border-l-[3.5px] border-[#c8922a] font-bold"
                                           : "text-[#1a2e1f] font-bold border-l-[3.5px] border-transparent hover:bg-gray-100 hover:text-[#1a2e1f]"
                                       }`}
                                     >
                                       {cat}
-                                    </button>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>
@@ -1010,11 +1064,11 @@ export default function Navbar() {
                                     </span>
                                   </span>
                                   <Link
-                                    href="/trips"
+                                    href={activeCategory === "All Trips" ? "/trips" : `/regions/${categoryToRegion[activeCategory]?.slug || "everest"}`}
                                     onClick={closeDropdown}
                                     className="text-[10px] font-bold text-[#c8922a] hover:text-[#1a2e1f] transition-colors duration-150"
                                   >
-                                    View All Trips →
+                                    View All {activeCategory} →
                                   </Link>
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-6 gap-y-0 max-h-[340px] overflow-y-auto pr-2">
@@ -1267,7 +1321,18 @@ export default function Navbar() {
                                   <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap snap-align-start transition ${activeCategory === cat ? "bg-[#c8922a] text-white" : "bg-white/10 text-white/80 hover:bg-white/15"}`}>{cat}</button>
                                 ))}
                               </div>
-                              <div className="flex flex-col gap-1 pr-1">
+                              <div className="flex flex-col gap-2 pr-1">
+                                <Link
+                                  href={activeCategory === "All Trips" ? "/trips" : `/regions/${categoryToRegion[activeCategory]?.slug || "everest"}`}
+                                  onClick={() => {
+                                    setMobileMenuOpen(false);
+                                    closeDropdown();
+                                  }}
+                                  className="text-xs font-bold text-[#c8922a] bg-[#c8922a]/10 hover:bg-[#c8922a]/20 px-3.5 py-2.5 rounded-lg transition flex items-center justify-between"
+                                >
+                                  <span>View All in {activeCategory}</span>
+                                  <span>→</span>
+                                </Link>
                                 {(categorizedTrips[activeCategory] || []).map((trip) => (
                                   <Link key={trip.slug} href={`/trips/${trip.slug}`} onClick={() => { setMobileMenuOpen(false); closeDropdown(); }} className="text-xs font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2.5 rounded-lg transition">{trip.title}</Link>
                                 ))}

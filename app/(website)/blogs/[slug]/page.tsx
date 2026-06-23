@@ -7,7 +7,7 @@ import { BlogPost } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import { renderLexical, extractHeadings } from "@/lib/lexical-renderer";
-import { getMediaUrl } from "@/lib/cloudinary-loader";
+import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 import BlogDetailClient from "@/components/BlogDetailClient";
 
 export const revalidate = 60; // Revalidate every minute
@@ -34,19 +34,12 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
     }
 
     // Determine fallback social share image
+    const rawImage = getMediaUrl(blog.seo?.metaImage) || getMediaUrl(blog.coverImage);
     let metaImageUrl = "";
-    if (blog.seo?.metaImage && typeof blog.seo.metaImage === "object") {
-      metaImageUrl = blog.seo.metaImage.url || "";
-    } else if (blog.seo?.metaImage && typeof blog.seo.metaImage === "string") {
-      metaImageUrl = blog.seo.metaImage;
-    }
-
-    if (!metaImageUrl && blog.coverImage) {
-      if (typeof blog.coverImage === "object") {
-        metaImageUrl = blog.coverImage.url || "";
-      } else if (typeof blog.coverImage === "string") {
-        metaImageUrl = blog.coverImage;
-      }
+    if (rawImage) {
+      metaImageUrl = cloudinaryLoader({ src: rawImage, width: 1200 });
+    } else {
+      metaImageUrl = "/Manaslu-Circuit-Trek.jpg"; // fallback
     }
 
     const title = blog.seo?.metaTitle || `${blog.title} | Nature Heaven Chronicles`;

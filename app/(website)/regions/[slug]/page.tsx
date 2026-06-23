@@ -9,7 +9,7 @@ import { Region, Trek } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import TrekCard from "@/components/TrekCard";
-import { getMediaUrl } from "@/lib/cloudinary-loader";
+import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 
 
 export const revalidate = 60; // Revalidate every minute
@@ -35,11 +35,28 @@ export async function generateMetadata({ params }: RegionDetailPageProps): Promi
       };
     }
 
+    const rawImage = getMediaUrl(region.coverImage);
+    const coverUrl = rawImage ? cloudinaryLoader({ src: rawImage, width: 1200 }) : "/Manaslu-Circuit-Trek.jpg";
+
+    const title = `${region.name} Region Trekking | Nature Heaven Trekking & Expedition`;
+    const description = region.description || `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`;
+
     return {
-      title: `${region.name} Region Trekking | Nature Heaven Trekking & Expedition`,
-      description:
-        region.description ||
-        `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "website",
+        url: `/regions/${region.slug}`,
+        images: [{ url: coverUrl, alt: region.name }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [coverUrl],
+      },
     };
   } catch (err: any) {
     return {

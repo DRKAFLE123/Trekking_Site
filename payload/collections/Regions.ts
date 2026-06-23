@@ -31,6 +31,20 @@ export const regions: CollectionConfig = {
       unique: true,
     },
     {
+      name: 'country',
+      type: 'select',
+      required: true,
+      defaultValue: 'nepal',
+      options: [
+        { label: 'Nepal', value: 'nepal' },
+        { label: 'Tibet', value: 'tibet' },
+        { label: 'Bhutan', value: 'bhutan' },
+      ],
+      admin: {
+        description: 'The country this region belongs to.',
+      },
+    },
+    {
       name: 'description',
       type: 'textarea',
     },

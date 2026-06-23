@@ -7,6 +7,7 @@ import { renderLexical } from "@/lib/lexical-renderer";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
+import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 
 function extractYoutubeId(url: string) {
   if (!url) return null;
@@ -55,9 +56,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const page = await getPageData(slug);
   if (!page) return { title: "Page Not Found | Nature Heaven Treks" };
 
+  const title = page.seoTitle || `${page.title} | Company | Nature Heaven Treks`;
+  const description = page.seoDescription || page.excerpt || `Learn more about ${page.title} - Nature Heaven Trekking & Expedition.`;
+  const rawImage = getMediaUrl(page.heroImage);
+  const coverUrl = rawImage ? cloudinaryLoader({ src: rawImage, width: 1200 }) : "/Manaslu-Circuit-Trek.jpg";
+
   return {
-    title: page.seoTitle || `${page.title} | Company | Nature Heaven Treks`,
-    description: page.seoDescription || page.excerpt || `Learn more about ${page.title} - Nature Heaven Trekking & Expedition.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `/company/${page.slug}`,
+      images: [{ url: coverUrl, alt: page.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [coverUrl],
+    },
   };
 }
 

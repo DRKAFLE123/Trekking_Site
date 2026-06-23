@@ -90,9 +90,11 @@ export default async function CountryPage({ params }: { params: Params }) {
     allTreks = treksRes.docs as unknown as Trek[];
     siteSettings = siteSettingsRes.docs[0] as any;
   } catch (err: any) {
-    console.warn("[Country Page] Failed to query database:", err.message);
+    console.warn("[Country Page] Failed to query database:", err?.message || err);
   }
-  const countryTreks = slug.toLowerCase() === "nepal" ? allTreks : [];
+  const countryTreks = allTreks.filter(
+    (trek) => trek.region?.country === slug.toLowerCase()
+  );
   // Resolve WhatsApp: prefer linked team member's whatsApp field
   const linkedMember = siteSettings?.headerSettings?.expert;
   const rawWhatsApp = (linkedMember && typeof linkedMember === "object" && linkedMember.whatsApp)
@@ -194,16 +196,16 @@ export default async function CountryPage({ params }: { params: Params }) {
         </div>
       </section>
 
-      {/* 3. Content Section: List Trips (Nepal) or Tailored Planner widget (Tibet/Bhutan) */}
-      {slug.toLowerCase() === "nepal" ? (
+      {/* 3. Content Section: List Trips (if available for this country) */}
+      {countryTreks.length > 0 && (
         <section className="py-20 px-6 bg-[#fcfbfa] border-t border-secondary/10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-2 block">
-                Nepal Trekking Packages
+                {country.name} Trekking Packages
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-primary">
-                Popular Nepal Adventures
+                Popular {country.name} Adventures
               </h2>
               <div className="h-0.5 w-16 bg-secondary mx-auto mt-3"></div>
             </div>
@@ -215,34 +217,35 @@ export default async function CountryPage({ params }: { params: Params }) {
             </div>
           </div>
         </section>
-      ) : (
-        <section className="py-20 px-6 bg-[#1a2e1f] text-bgOffWhite border-t border-emerald-950/20">
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
-            {/* Left Prompt */}
-            <div className="md:col-span-5 flex flex-col gap-4 text-left">
-              <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] leading-none">
-                Tailor-Made Adventures
-              </span>
-              <h2 className="font-serif text-3xl font-bold leading-tight">
-                Plan Your Private Custom Tour to {country.name}
-              </h2>
-              <p className="text-xs sm:text-sm text-bgOffWhite/70 leading-relaxed font-light">
-                We organize complete visa invitations, travel clearances, native guides, and boutique lodging in Lhasa, Shigatse, Paro, Thimphu, and beyond.
-              </p>
-              <div className="mt-4 flex flex-col gap-2.5 text-xs text-secondary font-bold">
-                <span className="flex items-center gap-2">✔ Custom Dates & Itinerary</span>
-                <span className="flex items-center gap-2">✔ Hotel Class Choice (3★ to Luxury)</span>
-                <span className="flex items-center gap-2">✔ Full Permit & Visa Coordination</span>
-              </div>
-            </div>
+      )}
 
-            {/* Right Mini Inquiry Form */}
-            <div className="md:col-span-7 bg-white text-charcoal border border-secondary/15 rounded-2xl p-6 shadow-2xl">
-              <CountryInquiryForm countryName={country.name} treks={allTreks} />
+      {/* 4. Tailored Planner Form Section */}
+      <section className="py-20 px-6 bg-[#1a2e1f] text-bgOffWhite border-t border-emerald-950/20">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+          {/* Left Prompt */}
+          <div className="md:col-span-5 flex flex-col gap-4 text-left">
+            <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] leading-none">
+              Tailor-Made Adventures
+            </span>
+            <h2 className="font-serif text-3xl font-bold leading-tight">
+              Plan Your Private Custom Tour to {country.name}
+            </h2>
+            <p className="text-xs sm:text-sm text-bgOffWhite/70 leading-relaxed font-light">
+              We organize complete visa invitations, travel clearances, native guides, and boutique lodging in Lhasa, Shigatse, Paro, Thimphu, and beyond.
+            </p>
+            <div className="mt-4 flex flex-col gap-2.5 text-xs text-secondary font-bold">
+              <span className="flex items-center gap-2">✔ Custom Dates & Itinerary</span>
+              <span className="flex items-center gap-2">✔ Hotel Class Choice (3★ to Luxury)</span>
+              <span className="flex items-center gap-2">✔ Full Permit & Visa Coordination</span>
             </div>
           </div>
-        </section>
-      )}
+
+          {/* Right Mini Inquiry Form */}
+          <div className="md:col-span-7 bg-white text-charcoal border border-secondary/15 rounded-2xl p-6 shadow-2xl">
+            <CountryInquiryForm countryName={country.name} treks={countryTreks.length > 0 ? countryTreks : allTreks} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

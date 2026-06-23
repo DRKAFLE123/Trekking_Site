@@ -34,6 +34,7 @@ export interface Affiliation {
 export interface SiteSettings {
   siteName: string;
   logo?: string; // Cloudinary public ID or URL
+  seoImage?: any;
   heroVideoUrl?: string;
   heroImage?: string | any;
   heroHeadline: string;
@@ -43,6 +44,15 @@ export interface SiteSettings {
   emergencyNumbers?: string[];
   socialLinks?: SocialLinks;
   affiliations?: Affiliation[];
+  headerSettings?: {
+    expert?: any;
+    expertName?: string;
+    expertPhone?: string;
+    expertWhatsApp?: string;
+    quickEmail?: string;
+    nepalBranchPhone?: string;
+    ukBranchPhone?: string;
+  };
   blogsPageSettings?: {
     coverImage?: any;
     title?: string;
@@ -58,6 +68,7 @@ export interface Region {
   slug: string;
   description?: string;
   coverImage?: string; // Cloudinary public ID or URL
+  country: 'nepal' | 'tibet' | 'bhutan';
   mapCenter?: {
     lat: number;
     lng: number;
