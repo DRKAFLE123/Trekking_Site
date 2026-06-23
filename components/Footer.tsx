@@ -40,32 +40,53 @@ export default function Footer() {
     async function fetchData() {
       try {
         const res = await fetch("/api/site-settings");
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Response was not JSON");
+        }
         const data = await res.json();
         setSiteSettings(data);
-      } catch (err) {
-        console.error("Failed to fetch site settings", err);
+      } catch (err: any) {
+        console.warn("Failed to fetch site settings in Footer:", err?.message || err);
       }
     }
     async function fetchRegions() {
       try {
         const res = await fetch("/api/public/regions");
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Response was not JSON");
+        }
         const data = await res.json();
         if (Array.isArray(data)) {
           setRegions(data);
         }
-      } catch (err) {
-        console.error("Failed to fetch regions in Footer:", err);
+      } catch (err: any) {
+        console.warn("Failed to fetch regions in Footer:", err?.message || err);
       }
     }
     async function fetchFooterSettings() {
       try {
         const res = await fetch("/api/footerSettings");
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Response was not JSON");
+        }
         const data = await res.json();
         if (data && Array.isArray(data.docs) && data.docs.length > 0) {
           setDbFooterSettings(data.docs[0]);
         }
-      } catch (err) {
-        console.error("Failed to fetch footer settings in Footer:", err);
+      } catch (err: any) {
+        console.warn("Failed to fetch footer settings in Footer:", err?.message || err);
       }
     }
     fetchData();
