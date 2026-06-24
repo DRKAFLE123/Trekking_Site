@@ -70,12 +70,14 @@ export default async function CountryPage({ params }: { params: Params }) {
     notFound();
   }
 
-  // Fetch treks and site settings from database safely
+  // Fetch treks, site settings, and the CountriesPageSettings singleton
+  // (so the hero background image can be CMS-driven per country).
   let allTreks: Trek[] = [];
   let siteSettings: any = null;
+  let countriesPageDoc: any = null;
   try {
     const payload = await getPayload({ config });
-    const [treksRes, siteSettingsRes] = await Promise.all([
+    const [treksRes, siteSettingsRes, countriesPageRes] = await Promise.all([
       payload.find({
         collection: "treks",
         depth: 1,
@@ -85,13 +87,33 @@ export default async function CountryPage({ params }: { params: Params }) {
         collection: "siteSettings",
         depth: 1,
         limit: 1,
-      })
+      }),
+      payload.find({
+        collection: "countriesPageSettings" as any,
+        depth: 2,
+        limit: 1,
+        overrideAccess: true,
+      }).catch(() => ({ docs: [] })),
     ]);
     allTreks = treksRes.docs as unknown as Trek[];
     siteSettings = siteSettingsRes.docs[0] as any;
+    countriesPageDoc = countriesPageRes.docs[0] as any;
   } catch (err: any) {
     console.warn("[Country Page] Failed to query database:", err?.message || err);
   }
+
+  // Prefer the CMS country-card image for this slug as the hero background
+  // (reuses what the client uploads on the /countries listing), with a
+  // fallback to the existing hardcoded heroImage so we never end up with
+  // an empty grey hero.
+  const cmsCountryCard = (countriesPageDoc?.countries || []).find(
+    (c: any) => c?.slug?.toLowerCase() === slug.toLowerCase(),
+  );
+  const cmsCardImageUrl =
+    cmsCountryCard?.image && typeof cmsCountryCard.image === "object"
+      ? cmsCountryCard.image.url
+      : null;
+  const heroBackgroundUrl = cmsCardImageUrl || country.heroImage;
   const countryTreks = allTreks.filter(
     (trek) => trek.region?.country === slug.toLowerCase()
   );
@@ -108,12 +130,13 @@ export default async function CountryPage({ params }: { params: Params }) {
       <section className="relative w-full h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src={country.heroImage}
+            src={heroBackgroundUrl}
             alt={`${country.name} Landscape Cover`}
             fill
             priority
             className="object-cover object-center scale-105"
             sizes="100vw"
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-[#1a2e1f]/90 z-10 pointer-events-none" />
         </div>
