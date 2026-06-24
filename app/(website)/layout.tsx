@@ -26,7 +26,11 @@ import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 
 export async function generateMetadata(): Promise<Metadata> {
   let allowIndexing = true;
-  let seoImageUrl = "/Manaslu-Circuit-Trek.jpg";
+  // The last-resort fallback is now our own brand-generated OG image at
+  // /opengraph-image (Next ImageResponse). The old hardcoded competitor
+  // placeholder was deleted so it can never come back as a fallback.
+  let seoImageUrl: string | null = null;
+  let lastUpdated: Date | null = null;
   try {
     const payload = await getPayload({ config });
     const siteSettings = await payload.find({
@@ -40,10 +44,12 @@ export async function generateMetadata(): Promise<Metadata> {
       if (rawImage) {
         seoImageUrl = cloudinaryLoader({ src: rawImage, width: 1200 });
       }
+      if (settingsDoc.updatedAt) lastUpdated = new Date(settingsDoc.updatedAt);
     }
 
-    // Fallback to "Why Travel with Us" image from HomepageSettings if no explicit seoImage is uploaded
-    if (seoImageUrl === "/Manaslu-Circuit-Trek.jpg") {
+    // Fallback to "Why Travel with Us" image from HomepageSettings if no
+    // explicit seoImage is uploaded.
+    if (!seoImageUrl) {
       const homepageSettings = await payload.find({
         collection: 'homepageSettings',
         depth: 1,
@@ -53,6 +59,10 @@ export async function generateMetadata(): Promise<Metadata> {
         const rawHomeImage = getMediaUrl(homeDoc.whyTravelImage);
         if (rawHomeImage) {
           seoImageUrl = cloudinaryLoader({ src: rawHomeImage, width: 1200 });
+        }
+        if (homeDoc.updatedAt) {
+          const homeDate = new Date(homeDoc.updatedAt);
+          if (!lastUpdated || homeDate > lastUpdated) lastUpdated = homeDate;
         }
       }
     }
@@ -64,6 +74,9 @@ export async function generateMetadata(): Promise<Metadata> {
       console.error('Error fetching settings for layout metadata:', error);
     }
   }
+
+  // Final fallback: the brand-generated 1200x630 OG image (app/opengraph-image.tsx).
+  if (!seoImageUrl) seoImageUrl = "/opengraph-image";
 
   const siteUrl = "https://natureheaventreks.com";
   const defaultTitle = "Nature Heaven Trek & Expedition | Private Trekking Agency Nepal";
@@ -104,6 +117,10 @@ export async function generateMetadata(): Promise<Metadata> {
       url: siteUrl,
       title: defaultTitle,
       description: defaultDescription,
+      // og:updated_time hints to Facebook / LinkedIn / etc. that the page's
+      // OG content has changed, so they re-scrape sooner than their default
+      // ~7-day cache window. Falls back to "now" if no CMS timestamp.
+      ...(lastUpdated ? { updatedTime: lastUpdated.toISOString() } : {}),
       images: [
         {
           url: seoImageUrl,

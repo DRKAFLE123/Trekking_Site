@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
     if (rawImage) {
       metaImageUrl = cloudinaryLoader({ src: rawImage, width: 1200 });
     } else {
-      metaImageUrl = "/Manaslu-Circuit-Trek.jpg"; // fallback
+      metaImageUrl = "/opengraph-image"; // brand-generated 1200x630 fallback
     }
 
     const title = blog.seo?.metaTitle || `${blog.title} | Nature Heaven Chronicles`;

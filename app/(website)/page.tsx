@@ -230,7 +230,7 @@ export default async function HomePage() {
     homepageSettings?.whyTravelDescription ||
     "We are a fully licensed, Nepal-based trekking operator. Unlike booking through multi-national agencies, you book directly with the local Sherpa operator, ensuring higher safety, fair porter treatment, and a 100% authentic journey.";
   const whyImageUrl =
-    getMediaUrl(homepageSettings?.whyTravelImage) || "/Manaslu-Circuit-Trek.jpg";
+    getMediaUrl(homepageSettings?.whyTravelImage) || "/opengraph-image";
   const whyBadgeIcon = homepageSettings?.whyTravelBadgeIcon || "🏆";
   const whyBadgeTitle =
     homepageSettings?.whyTravelBadgeTitle || "100% Native Sherpa Crew";

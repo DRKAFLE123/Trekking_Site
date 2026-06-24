@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = page.seoTitle || `${page.title} | Company | Nature Heaven Treks`;
   const description = page.seoDescription || page.excerpt || `Learn more about ${page.title} - Nature Heaven Trekking & Expedition.`;
   const rawImage = getMediaUrl(page.heroImage);
-  const coverUrl = rawImage ? cloudinaryLoader({ src: rawImage, width: 1200 }) : "/Manaslu-Circuit-Trek.jpg";
+  const coverUrl = rawImage ? cloudinaryLoader({ src: rawImage, width: 1200 }) : "/opengraph-image";
 
   return {
     title,

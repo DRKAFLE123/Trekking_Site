@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: RegionDetailPageProps): Promi
     }
 
     const rawImage = getMediaUrl(region.coverImage);
-    const coverUrl = rawImage ? cloudinaryLoader({ src: rawImage, width: 1200 }) : "/Manaslu-Circuit-Trek.jpg";
+    const coverUrl = rawImage ? cloudinaryLoader({ src: rawImage, width: 1200 }) : "/opengraph-image";
 
     const title = `${region.name} Region Trekking | Nature Heaven Trekking & Expedition`;
     const description = region.description || `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`;

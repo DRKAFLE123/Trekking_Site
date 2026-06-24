@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: TripDetailPageProps): Promise
     if (rawImage) {
       heroImageUrl = cloudinaryLoader({ src: rawImage, width: 1200 });
     } else {
-      heroImageUrl = "/Manaslu-Circuit-Trek.jpg"; // fallback
+      heroImageUrl = "/opengraph-image"; // brand-generated 1200x630 fallback
     }
 
     const title = trek.metaTitle || `${trek.title} - ${trek.duration} Days | Nature Heaven Trekking & Expedition`;
