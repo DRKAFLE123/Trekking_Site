@@ -17,6 +17,8 @@ import * as migration_20260605_172103_add_expert_relationship from './20260605_1
 import * as migration_20260605_172653_add_is_expert_checkbox from './20260605_172653_add_is_expert_checkbox';
 import * as migration_20260606_160916_add_faq_featured_fields from './20260606_160916_add_faq_featured_fields';
 import * as migration_20260623_220000_fix_missing_columns from './20260623_220000_fix_missing_columns';
+import * as migration_20260624_120000_add_archive_page_settings from './20260624_120000_add_archive_page_settings';
+import * as migration_20260624_140000_add_archive_page_role_perms from './20260624_140000_add_archive_page_role_perms';
 
 export const migrations = [
   {
@@ -113,5 +115,15 @@ export const migrations = [
     up: migration_20260623_220000_fix_missing_columns.up,
     down: migration_20260623_220000_fix_missing_columns.down,
     name: '20260623_220000_fix_missing_columns',
+  },
+  {
+    up: migration_20260624_120000_add_archive_page_settings.up,
+    down: migration_20260624_120000_add_archive_page_settings.down,
+    name: '20260624_120000_add_archive_page_settings',
+  },
+  {
+    up: migration_20260624_140000_add_archive_page_role_perms.up,
+    down: migration_20260624_140000_add_archive_page_role_perms.down,
+    name: '20260624_140000_add_archive_page_role_perms',
   },
 ];

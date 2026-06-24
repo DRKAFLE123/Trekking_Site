@@ -9,6 +9,8 @@ import { SiteSettings } from './collections/SiteSettings';
 import { NavbarSettings } from './collections/NavbarSettings';
 import { FooterSettings } from './collections/FooterSettings';
 import { HomepageSettings } from './collections/HomepageSettings';
+import { RegionsPageSettings } from './collections/RegionsPageSettings';
+import { CountriesPageSettings } from './collections/CountriesPageSettings';
 import { regions } from './collections/Regions';
 import { treks } from './collections/Treks';
 import { blogPosts } from './collections/BlogPosts';
@@ -40,13 +42,26 @@ if (!dbUrl) {
 }
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
 
+// CSRF allow-list. In dev mode we accept any localhost port because Next.js
+// hops ports (3000 → 3001 → 3002…) whenever the previous one is taken, and
+// otherwise every form submission, upload, and logout returns the misleading
+// "Unauthorized" error. In prod we only trust the configured siteUrl plus
+// the two registered domains.
+const isDev = process.env.NODE_ENV !== 'production';
+const csrfTrustList = [
+  siteUrl,
+  'https://natureheaventrek.com',
+  'https://www.natureheaventrek.com',
+  'https://natureheaventreks.com',
+  'https://www.natureheaventreks.com',
+  ...(isDev
+    ? Array.from({ length: 11 }, (_, i) => `http://localhost:${3000 + i}`)
+    : []),
+].filter(Boolean);
+
 export default buildConfig({
   serverURL: siteUrl,
-  csrf: [
-    siteUrl,
-    'https://natureheaventrek.com',
-    'https://www.natureheaventrek.com',
-  ].filter(Boolean),
+  csrf: csrfTrustList,
   admin: {
     user: users.slug,
     importMap: {
@@ -88,6 +103,8 @@ export default buildConfig({
     BlogSettings,
     CompanyPages,
     HomepageSettings,
+    RegionsPageSettings,
+    CountriesPageSettings,
   ],
   db: postgresAdapter({
     pool: {

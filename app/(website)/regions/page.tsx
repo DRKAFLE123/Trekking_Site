@@ -10,11 +10,23 @@ import { getMediaUrl } from "@/lib/cloudinary-loader";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Trekking Regions of the Himalayas | Nature Heaven Trekking & Expedition",
-  description:
+// ─────────────────────────────────────────────────────────────────────────
+// Defaults — used when no CMS row exists yet, so the page never breaks.
+// ─────────────────────────────────────────────────────────────────────────
+const DEFAULTS = {
+  heroKicker: "Explore by Region",
+  heroTitle: "Trekking Regions of the Himalayas",
+  heroDescription:
+    "From the iconic Everest and Annapurna massifs to remote, restricted areas like Upper Mustang and Dolpa — pick the terrain that matches your ambition.",
+  metaTitle: "Trekking Regions of the Himalayas | Nature Heaven Trekking & Expedition",
+  metaDescription:
     "Browse every Himalayan trekking region we operate in — Everest, Annapurna, Manaslu, Langtang, Mustang, Dolpa, Makalu, Kanchenjunga, and more. Pick your terrain.",
-  alternates: { canonical: "/regions" },
+  ctaKicker: "Not sure where to go?",
+  ctaTitle: "Let our Sherpa team build you a custom itinerary",
+  ctaDescription:
+    "Every region has its own character — best season, difficulty, permits, altitude schedule. Tell us what you want and we'll design the trip around you.",
+  ctaButtonLabel: "Plan my trip",
+  ctaButtonHref: "/plan-a-trip",
 };
 
 type RegionWithCount = Region & {
@@ -31,10 +43,25 @@ const COUNTRY_LABEL: Record<string, string> = {
 
 const COUNTRY_ORDER: Array<keyof typeof COUNTRY_LABEL> = ["nepal", "tibet", "bhutan"];
 
+async function fetchPageSettings() {
+  try {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "regionsPageSettings" as any,
+      depth: 1,
+      limit: 1,
+      overrideAccess: true,
+    });
+    return (res.docs[0] as any) || null;
+  } catch (e: any) {
+    console.warn("[Regions Listing] settings fetch failed:", e?.message);
+    return null;
+  }
+}
+
 async function fetchRegionsWithCounts(): Promise<RegionWithCount[]> {
   try {
     const payload = await getPayload({ config });
-
     const [regionsRes, treksRes] = await Promise.all([
       payload.find({
         collection: "regions",
@@ -49,15 +76,12 @@ async function fetchRegionsWithCounts(): Promise<RegionWithCount[]> {
         overrideAccess: true,
       }),
     ]);
-
-    // Tally treks per region in JS (one trek query, no per-region round-trip).
     const counts = new Map<string | number, number>();
     for (const t of treksRes.docs as any[]) {
       const regionId = typeof t.region === "object" ? t.region?.id : t.region;
       if (regionId == null) continue;
       counts.set(regionId, (counts.get(regionId) ?? 0) + 1);
     }
-
     return (regionsRes.docs as unknown as Region[]).map((r) => ({
       ...r,
       country: (r as any).country ?? "nepal",
@@ -70,12 +94,34 @@ async function fetchRegionsWithCounts(): Promise<RegionWithCount[]> {
   }
 }
 
-export default async function RegionsListingPage() {
-  const regions = await fetchRegionsWithCounts();
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await fetchPageSettings();
+  return {
+    title: settings?.metaTitle || DEFAULTS.metaTitle,
+    description: settings?.metaDescription || DEFAULTS.metaDescription,
+    alternates: { canonical: "/regions" },
+  };
+}
 
-  // Group by country in a stable order (Nepal first, then Tibet, Bhutan,
-  // anything else last). Keep the original within-country order so the CMS
-  // controls ordering.
+export default async function RegionsListingPage() {
+  const [settings, regions] = await Promise.all([
+    fetchPageSettings(),
+    fetchRegionsWithCounts(),
+  ]);
+
+  const heroKicker = settings?.heroKicker || DEFAULTS.heroKicker;
+  const heroTitle = settings?.heroTitle || DEFAULTS.heroTitle;
+  const heroDescription = settings?.heroDescription || DEFAULTS.heroDescription;
+  const heroBgUrl = getMediaUrl(settings?.heroBackgroundImage);
+
+  const ctaKicker = settings?.ctaKicker || DEFAULTS.ctaKicker;
+  const ctaTitle = settings?.ctaTitle || DEFAULTS.ctaTitle;
+  const ctaDescription = settings?.ctaDescription || DEFAULTS.ctaDescription;
+  const ctaButtonLabel = settings?.ctaButtonLabel || DEFAULTS.ctaButtonLabel;
+  const ctaButtonHref = settings?.ctaButtonHref || DEFAULTS.ctaButtonHref;
+
+  // Group regions by country in a stable order. CMS controls within-country
+  // ordering through Region creation order.
   const grouped = new Map<string, RegionWithCount[]>();
   for (const r of regions) {
     const key = (r.country ?? "nepal").toLowerCase();
@@ -90,11 +136,26 @@ export default async function RegionsListingPage() {
   return (
     <div className="w-full bg-bgOffWhite">
       {/* Hero header */}
-      <section className="relative w-full pt-28 md:pt-36 pb-12 md:pb-16 px-4 md:px-6 bg-primary text-bgOffWhite overflow-hidden">
-        {/* Subtle topo backdrop */}
+      <section className="relative w-full pt-28 md:pt-36 pb-12 md:pb-20 px-4 md:px-6 text-bgOffWhite overflow-hidden bg-primary">
+        {/* CMS background image (if set) */}
+        {heroBgUrl && (
+          <Image
+            src={heroBgUrl}
+            alt={heroTitle}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center z-0"
+            unoptimized
+          />
+        )}
+        {/* Dark gradient overlay over the image so text stays legible */}
+        <div className="absolute inset-0 z-[5] bg-gradient-to-b from-primary/80 via-primary/55 to-primary/85" />
+
+        {/* Subtle topo decoration */}
         <svg
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full text-secondary/[0.06] pointer-events-none"
+          className="absolute inset-0 w-full h-full text-secondary/[0.06] pointer-events-none z-[6]"
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="xMidYMid slice"
           viewBox="0 0 1400 600"
@@ -112,18 +173,17 @@ export default async function RegionsListingPage() {
           <rect width="100%" height="100%" fill="url(#topo-regions)" />
         </svg>
 
-        <div className="relative max-w-5xl mx-auto text-center flex flex-col items-center gap-4">
-          <div className="inline-flex items-center gap-2 bg-secondary/15 border border-secondary/30 text-secondary font-bold text-[10px] md:text-xs tracking-[0.25em] uppercase px-4 py-1.5 rounded-full">
+        <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center gap-4">
+          <div className="inline-flex items-center gap-2 bg-secondary/15 border border-secondary/30 text-secondary font-bold text-[10px] md:text-xs tracking-[0.25em] uppercase px-4 py-1.5 rounded-full backdrop-blur-sm">
             <FaMapMarkedAlt />
-            <span>Explore by Region</span>
+            <span>{heroKicker}</span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-black leading-tight max-w-3xl">
-            Trekking Regions of the <span className="text-secondary">Himalayas</span>
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-black leading-tight max-w-3xl drop-shadow-lg">
+            {heroTitle}
           </h1>
           <div className="h-0.5 w-20 bg-secondary mx-auto" />
-          <p className="text-sm md:text-base text-bgOffWhite/85 max-w-2xl font-light leading-relaxed">
-            From the iconic Everest and Annapurna massifs to remote, restricted areas like Upper
-            Mustang and Dolpa — pick the terrain that matches your ambition.
+          <p className="text-sm md:text-base text-bgOffWhite/90 max-w-2xl font-light leading-relaxed drop-shadow">
+            {heroDescription}
           </p>
         </div>
       </section>
@@ -149,7 +209,8 @@ export default async function RegionsListingPage() {
         ) : (
           orderedCountries.map((country) => {
             const list = grouped.get(country) ?? [];
-            const label = COUNTRY_LABEL[country] ?? country.charAt(0).toUpperCase() + country.slice(1);
+            const label =
+              COUNTRY_LABEL[country] ?? country.charAt(0).toUpperCase() + country.slice(1);
             return (
               <div key={country} className="flex flex-col gap-6">
                 {/* Country heading */}
@@ -175,7 +236,6 @@ export default async function RegionsListingPage() {
                       href={`/regions/${region.slug}`}
                       className="group relative aspect-[4/5] sm:aspect-[3/4] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-secondary/10 block"
                     >
-                      {/* Cover image */}
                       {region.coverImageUrl ? (
                         <Image
                           src={region.coverImageUrl}
@@ -192,15 +252,12 @@ export default async function RegionsListingPage() {
                         </div>
                       )}
 
-                      {/* Dark gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300 group-hover:from-black/95" />
 
-                      {/* Trek count chip — top right */}
                       <div className="absolute top-4 right-4 bg-secondary text-primary font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-md">
                         {region.trekCount} {region.trekCount === 1 ? "trek" : "treks"}
                       </div>
 
-                      {/* Text overlay — bottom */}
                       <div className="absolute inset-x-0 bottom-0 p-6 text-bgOffWhite z-10">
                         <h3 className="font-serif text-2xl md:text-3xl font-black tracking-tight group-hover:text-secondary transition">
                           {region.name}
@@ -228,20 +285,19 @@ export default async function RegionsListingPage() {
       <section className="bg-white border-t border-secondary/15 py-12 md:py-16 px-4 md:px-6">
         <div className="max-w-3xl mx-auto text-center flex flex-col items-center gap-4">
           <span className="text-secondary uppercase font-bold text-[10px] md:text-xs tracking-[0.25em]">
-            Not sure where to go?
+            {ctaKicker}
           </span>
           <h3 className="font-serif text-2xl md:text-3xl font-black text-primary leading-tight">
-            Let our Sherpa team build you a custom itinerary
+            {ctaTitle}
           </h3>
           <p className="text-sm text-charcoal/70 max-w-xl font-light">
-            Every region has its own character — best season, difficulty, permits, altitude
-            schedule. Tell us what you want and we&apos;ll design the trip around you.
+            {ctaDescription}
           </p>
           <Link
-            href="/plan-a-trip"
+            href={ctaButtonHref}
             className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-bgOffWhite hover:text-secondary font-bold px-7 py-3 rounded-xl text-sm tracking-wider uppercase transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
           >
-            <span>Plan my trip</span>
+            <span>{ctaButtonLabel}</span>
             <FaArrowRight className="text-xs" />
           </Link>
         </div>

@@ -20,7 +20,7 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
     startDate: "",
     travelers: 1,
     trek: treks[0]?._id || treks[0]?.id || "", // Fallback to first trek since DB requires reference or we made it optional
-    message: `Hi Kafle, I am planning a custom, private adventure to ${countryName} and would like to customize an itinerary!`,
+    message: `Hi Nature Heaven Trek, I am planning a custom, private adventure to ${countryName} and would like to customize an itinerary!`,
   });
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");

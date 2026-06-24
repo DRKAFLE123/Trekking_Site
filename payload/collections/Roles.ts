@@ -165,6 +165,24 @@ export const roles: CollectionConfig = {
                 { name: 'homepageSettings_delete', type: 'checkbox', label: 'Delete Homepage Settings', defaultValue: false },
               ],
             },
+            {
+              type: 'row',
+              fields: [
+                { name: 'regionsPageSettings_read', type: 'checkbox', label: 'Read Regions Page Settings', defaultValue: true },
+                { name: 'regionsPageSettings_create', type: 'checkbox', label: 'Create Regions Page Settings', defaultValue: false },
+                { name: 'regionsPageSettings_update', type: 'checkbox', label: 'Update Regions Page Settings', defaultValue: false },
+                { name: 'regionsPageSettings_delete', type: 'checkbox', label: 'Delete Regions Page Settings', defaultValue: false },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'countriesPageSettings_read', type: 'checkbox', label: 'Read Countries Page Settings', defaultValue: true },
+                { name: 'countriesPageSettings_create', type: 'checkbox', label: 'Create Countries Page Settings', defaultValue: false },
+                { name: 'countriesPageSettings_update', type: 'checkbox', label: 'Update Countries Page Settings', defaultValue: false },
+                { name: 'countriesPageSettings_delete', type: 'checkbox', label: 'Delete Countries Page Settings', defaultValue: false },
+              ],
+            },
           ],
         },
         {
