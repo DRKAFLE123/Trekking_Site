@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
@@ -6,6 +7,13 @@ import { Trek } from "@/types";
 import PlanTripForm from "./PlanTripForm";
 
 export const revalidate = 60; // Revalidate every minute
+
+export const metadata: Metadata = {
+  title: "Plan Your Custom Himalayan Trip | Nature Heaven Trekking & Expedition",
+  description:
+    "Tell us your dates, group size, and preferred region. Our Sherpa specialists design a fully private, custom itinerary across Everest, Annapurna, Manaslu, Tibet, or Bhutan — and get back within 6–12 hours.",
+  alternates: { canonical: "/plan-a-trip" },
+};
 
 export default async function PlanATripPage() {
   let treks: Trek[] = [];

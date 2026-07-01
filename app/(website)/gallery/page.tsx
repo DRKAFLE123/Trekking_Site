@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Himalayan Photo Gallery | Nature Heaven Trekking & Expedition",
+  description:
+    "Explore stunning photographs from our Everest, Annapurna, Manaslu, Langtang, and other private Himalayan treks — captured by our native Sherpa guides and clients.",
+  alternates: { canonical: "/gallery" },
+};
 
 export default async function GalleryPage() {
   let galleryItems: any[] = [];

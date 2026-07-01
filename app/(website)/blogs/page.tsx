@@ -10,6 +10,7 @@ export const revalidate = 60; // Revalidate every minute
 export const metadata: Metadata = {
   title: "Trekking Guides & Travel Tips | Nature Heaven Trekking & Expedition",
   description: "Read expert trekking guidelines, physical training tips, packing checklists, and cultural insights for traveling in Nepal.",
+  alternates: { canonical: "/blogs" },
 };
 
 export default async function BlogsPage() {

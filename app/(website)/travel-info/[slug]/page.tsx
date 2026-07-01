@@ -58,6 +58,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: page.seoTitle || `${page.title} | Travel Info | Nature Heaven Treks`,
     description: page.seoDescription || page.excerpt || `Information about ${page.title} for traveling in Nepal.`,
+    alternates: { canonical: `/travel-info/${page.slug}` },
   };
 }
 

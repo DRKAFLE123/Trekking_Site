@@ -24,6 +24,7 @@ export const metadata: Metadata = {
   title: "Meet Our Team | Nature Heaven Trekking & Expedition",
   description:
     "Get to know the guides, operations officers, and safety coordinators of Nature Heaven Trekking & Expedition. Led by veteran Sherpa climbers.",
+  alternates: { canonical: "/our-team" },
 };
 
 // Classify team members into departments based on their role

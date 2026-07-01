@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,6 +11,34 @@ import TrekCard from "@/components/TrekCard";
 import CountryInquiryForm from "./CountryInquiryForm";
 
 type Params = Promise<{ slug: string }>;
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params;
+  const country = COUNTRIES[slug.toLowerCase()];
+  if (!country) {
+    return { title: "Country Not Found | Nature Heaven Trekking & Expedition" };
+  }
+  const title = `${country.name} Treks & Tours | Nature Heaven Trekking & Expedition`;
+  const description = country.description;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/countries/${slug.toLowerCase()}` },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `/countries/${slug.toLowerCase()}`,
+      images: [{ url: country.heroImage, alt: `${country.name} landscape` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [country.heroImage],
+    },
+  };
+}
 
 interface CountryData {
   name: string;

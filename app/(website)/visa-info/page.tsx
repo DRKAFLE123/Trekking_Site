@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "Nepal Visa Information — On-Arrival Guide | Nature Heaven Trekking",
   description:
     "Everything you need to know about obtaining a Nepal tourist visa on arrival: fees, requirements, passport validity, and special country exemptions.",
+  alternates: { canonical: "/visa-info" },
 };
 
 async function getCmsPage() {

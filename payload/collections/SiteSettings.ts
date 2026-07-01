@@ -146,7 +146,7 @@ export const SiteSettings: CollectionConfig = {
         { name: 'expertName', type: 'text', defaultValue: 'Kafle' },
         { name: 'expertPhone', type: 'text', defaultValue: '+977 9851218358' },
         { name: 'expertWhatsApp', type: 'text', defaultValue: '+977 9851218358' },
-        { name: 'quickEmail', type: 'text', defaultValue: 'info@natureheaventrek.com' },
+        { name: 'quickEmail', type: 'text', defaultValue: 'info@natureheaventreks.com' },
         { name: 'nepalBranchPhone', type: 'text', defaultValue: '+977 9851218358', label: 'Nepal Branch Phone' },
         { name: 'ukBranchPhone', type: 'text', defaultValue: '+44 7459 313411', label: 'UK Branch Phone' },
       ],

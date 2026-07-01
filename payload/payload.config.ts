@@ -50,8 +50,6 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').re
 const isDev = process.env.NODE_ENV !== 'production';
 const csrfTrustList = [
   siteUrl,
-  'https://natureheaventrek.com',
-  'https://www.natureheaventrek.com',
   'https://natureheaventreks.com',
   'https://www.natureheaventreks.com',
   ...(isDev

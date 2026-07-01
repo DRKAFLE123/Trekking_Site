@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
           cp.seoDescription ||
           cp.excerpt ||
           "Get in touch with Nature Heaven Trekking & Expedition. Call, email, or WhatsApp us.",
+        alternates: { canonical: "/contact-us" },
       };
     }
   } catch {}
@@ -31,6 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Contact Us | Nature Heaven Trekking & Expedition",
     description:
       "Get in touch with Nature Heaven Trekking & Expedition Kathmandu office. Call us, email us, or send a WhatsApp message to start customizing your private Himalayan trek.",
+    alternates: { canonical: "/contact-us" },
   };
 }
 
@@ -69,7 +71,7 @@ export default async function ContactPage() {
 
   // ── Dynamic contact details ───────────────────────────────────────────────
   const mainPhone = siteSettings?.contactInfo?.phone || "+977 9851218358";
-  const mainEmail = siteSettings?.contactInfo?.email || "info@natureheaventrek.com";
+  const mainEmail = siteSettings?.contactInfo?.email || "info@natureheaventreks.com";
   const secondEmail = "natureheaventrek@gmail.com";
   const landline = "+977 01-4385821";
 

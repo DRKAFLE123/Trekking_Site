@@ -22,6 +22,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Exclusive Private Treks in Nepal | Nature Heaven Trekking & Expedition",
   description: "Enjoy fully personalized private treks in Nepal with flexible itineraries, dedicated native Sherpa guides, and customized schedules built for your pace.",
+  alternates: { canonical: "/private-treks" },
 };
 
 // Try to load this page from the CMS first. When a `companyPages` document

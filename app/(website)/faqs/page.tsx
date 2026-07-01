@@ -9,6 +9,7 @@ export const revalidate = 60; // Revalidate every minute
 export const metadata: Metadata = {
   title: "Frequently Asked Questions (FAQs) | Nature Heaven Trekking & Expedition",
   description: "Get answers to your questions about trekking in Nepal. Learn about visa processes, physical fitness, travel insurance, and packing lists.",
+  alternates: { canonical: "/faqs" },
 };
 
 const DEFAULT_FAQS = [

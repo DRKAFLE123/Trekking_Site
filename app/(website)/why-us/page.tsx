@@ -15,6 +15,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Why Choose Us & Travel Information | Nature Heaven Trekking & Expedition",
   description: "Get comprehensive travel advice for Nepal: tourist visa instructions, travel insurance requirements, packing checklists, and FAQs.",
+  alternates: { canonical: "/why-us" },
 };
 
 function extractYoutubeId(url: string) {

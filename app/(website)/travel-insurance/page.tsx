@@ -35,6 +35,7 @@ export const metadata: Metadata = {
   title: "Travel Insurance for Nepal Trekking | Nature Heaven Trekking",
   description:
     "Comprehensive guide to mandatory travel insurance for high-altitude trekking in Nepal. Learn what coverage you need, recommended providers, and helicopter evacuation policies.",
+  alternates: { canonical: "/travel-insurance" },
 };
 
 const mustHave = [

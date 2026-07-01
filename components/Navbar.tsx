@@ -235,7 +235,7 @@ function resolveExpert(siteSettings: any) {
     name:     (isLinked && member.name)     || hs.expertName     || "Kafle",
     phone:    (isLinked && member.phone)    || hs.expertPhone    || "+977 9851218358",
     whatsApp: (isLinked && member.whatsApp) || hs.expertWhatsApp || "+977 9851218358",
-    email:    hs.quickEmail || "info@natureheaventrek.com",
+    email:    hs.quickEmail || "info@natureheaventreks.com",
   };
 }
 

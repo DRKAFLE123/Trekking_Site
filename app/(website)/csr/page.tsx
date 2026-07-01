@@ -14,6 +14,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Responsible Tourism | Nature Heaven Trekking & Expedition",
   description: "Learn about our corporate social responsibility initiatives: supporting schools, ensuring porter welfare, and operating eco-friendly treks.",
+  alternates: { canonical: "/csr" },
 };
 
 function extractYoutubeId(url: string) {

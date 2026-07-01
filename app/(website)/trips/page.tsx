@@ -11,6 +11,7 @@ export const revalidate = 60; // Revalidate every minute
 export const metadata: Metadata = {
   title: "Trekking Packages in Nepal | Nature Heaven Trekking & Expedition",
   description: "Browse our private, customized trekking packages in Everest, Annapurna, and Manaslu. Search by difficulty, duration, and region to find your perfect hike.",
+  alternates: { canonical: "/trips" },
 };
 
 export default async function TripsPage() {

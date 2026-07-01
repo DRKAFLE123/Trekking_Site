@@ -62,6 +62,7 @@ export async function generateMetadata({ params }: TripDetailPageProps): Promise
     return {
       title,
       description,
+      alternates: { canonical: `/trips/${trek.slug}` },
       openGraph: {
         title,
         description,
@@ -157,6 +158,14 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
     notFound();
   }
 
+  // Extract a plain URL string for the schema `image` field. Passing the
+  // full Payload media object leaks its internal `id` field which JSON-LD
+  // interprets as `@id` (must be an IRI) and Google Search Console flags
+  // as "Structured data with syntax errors detected: Incorrect value type
+  // '@id'". Using getMediaUrl gives us just the string.
+  const trekImageUrl = getMediaUrl(trek.heroImage);
+  const SITE_URL = "https://natureheaventreks.com";
+
   // Schema: Breadcrumbs
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -166,38 +175,46 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://natureheaventrek.com"
+        "item": SITE_URL,
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Trips",
-        "item": "https://natureheaventrek.com/trips"
+        "item": `${SITE_URL}/trips`,
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": trek.title,
-        "item": `https://natureheaventrek.com/trips/${trek.slug}`
-      }
-    ]
+        "item": `${SITE_URL}/trips/${trek.slug}`,
+      },
+    ],
   };
 
   // Schema: Product (TouristTrip)
-  const trekSchema = {
+  const trekSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": trek.title,
-    "image": trek.heroImage || "",
-    "description": trek.metaDescription || `Join our ${trek.duration}-day ${trek.title} in Nepal.`,
+    "sku": trek.slug,
+    "brand": {
+      "@type": "Brand",
+      "name": "Nature Heaven Trekking & Expedition",
+    },
+    "description":
+      trek.metaDescription || `Join our ${trek.duration}-day ${trek.title} in Nepal.`,
     "offers": {
       "@type": "Offer",
       "priceCurrency": "USD",
       "price": trek.discountedPrice || trek.price,
       "availability": "https://schema.org/InStock",
-      "url": `https://natureheaventrek.com/trips/${trek.slug}`
-    }
+      "url": `${SITE_URL}/trips/${trek.slug}`,
+    },
   };
+  // Only include image when we actually have a URL. Omitting keeps the
+  // schema valid; emitting an empty string or the media object breaks it.
+  if (trekImageUrl) trekSchema.image = trekImageUrl;
 
   return (
     <>

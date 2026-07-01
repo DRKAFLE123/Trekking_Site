@@ -1340,7 +1340,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               const member = hs.expert && typeof hs.expert === "object" ? hs.expert : null;
               const expertName     = (member?.name)     || hs.expertName     || "Kafle";
               const expertWhatsApp = (member?.whatsApp) || hs.expertWhatsApp || "9779851218358";
-              const expertEmail    = hs.quickEmail || "info@natureheaventrek.com";
+              const expertEmail    = hs.quickEmail || "info@natureheaventreks.com";
               const cleanWa        = expertWhatsApp.replace(/[^0-9]/g, "");
               return (
             <div className="bg-[#1a2e1f] text-white rounded-2xl shadow-md p-6 flex flex-col gap-4 border border-white/10">

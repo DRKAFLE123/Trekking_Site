@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Trekking Packing List | Nature Heaven Trekking & Expedition",
   description:
     "Comprehensive packing checklist for trekking in Nepal, from base layers and footwear to permits and personal medication.",
+  alternates: { canonical: "/packing-list" },
 };
 
 async function getCmsPage() {

@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: RegionDetailPageProps): Promi
     return {
       title,
       description,
+      alternates: { canonical: `/regions/${region.slug}` },
       openGraph: {
         title,
         description,

@@ -496,10 +496,10 @@ export default function Footer() {
                         natureheaventrek@gmail.com
                       </a>
                       <a
-                        href={`mailto:${contactInfo?.email || "info@natureheaventrek.com"}`}
+                        href={`mailto:${contactInfo?.email || "info@natureheaventreks.com"}`}
                         className="hover:underline hover:text-secondary transition break-all"
                       >
-                        {contactInfo?.email || "info@natureheaventrek.com"}
+                        {contactInfo?.email || "info@natureheaventreks.com"}
                       </a>
                     </>
                   )}

@@ -87,7 +87,10 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: defaultTitle, template: "%s | Nature Heaven Trekking" },
     description: defaultDescription,
     metadataBase: new URL(siteUrl),
-    alternates: { canonical: "/" },
+    // Deliberately no `alternates.canonical` here — Next.js inherits root
+    // metadata to every child page, so setting canonical="/" here would tell
+    // Google every trek / blog / region page is a duplicate of the homepage.
+    // Individual pages (regions, countries) set their own canonical.
     applicationName: "Nature Heaven Trekking",
     keywords: [
       "Nepal trekking",
