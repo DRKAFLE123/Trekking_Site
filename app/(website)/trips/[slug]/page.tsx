@@ -123,11 +123,13 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         .filter((t) => t.region?.slug === trek!.region?.slug && t.slug !== trek!.slug)
         .slice(0, 3);
 
+      // Pass ALL testimonials to the client, sorted so the ones linked to
+      // this specific trek come first, then everything else. The client-side
+      // reviews slider handles pagination + filtering — we don't slice here.
       const testimonials = testimonialsRes.docs as unknown as Testimonial[];
-      const relatedTestimonials = testimonials
-        .filter((t) => t.trek?.slug === trek!.slug)
-        .slice(0, 3);
-      displayTestimonials = relatedTestimonials.length > 0 ? relatedTestimonials : testimonials.slice(0, 3);
+      const trekSpecific = testimonials.filter((t) => t.trek?.slug === trek!.slug);
+      const others = testimonials.filter((t) => t.trek?.slug !== trek!.slug);
+      displayTestimonials = [...trekSpecific, ...others];
 
       // Filter FAQs: matches if treks array contains this trek ID OR showOnAllTreks is true
       const generalAndCategoryFaqs = faqsRes.docs.filter((faq: any) => {

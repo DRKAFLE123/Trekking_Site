@@ -50,6 +50,9 @@ import {
   FaHandshake,
   FaPlug,
   FaCloud,
+  FaChevronLeft,
+  FaChevronRight,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { FiPlusCircle, FiXCircle } from "react-icons/fi";
 import { Trek, Testimonial, Faq, TripInfoSection, PackingCategory } from "@/types";
@@ -200,11 +203,9 @@ const DEFAULT_FAQS = [
   { id: "df3", question: "Is altitude sickness a concern?", answer: "Altitude sickness (AMS) is a potential risk above 3,000m. Our itinerary includes acclimatization rest days. Guides monitor oxygen levels daily and carry emergency medication.", category: "health_safety" },
 ];
 
-// ── Review cards (from CMS testimonials + static) ────────────────────────────
-const STATIC_TRIPADVISOR_REVIEWS = [
-  { author: "Mark S.", country: "Australia", stars: 5, title: "Once in a lifetime experience, flawlessly organized!", text: "Nature Heaven Trek & Expedition exceeded all our expectations. Our guide was knowledgeable and kept a close eye on our oxygen levels every day. Standing at the summit is something I'll never forget." },
-  { author: "Sarah Jenkins", country: "United Kingdom", stars: 5, title: "Incredible Support Team and Safe Trek", text: "I was nervous about altitude sickness, but the guide's slow pace and safety protocols made me feel incredibly secure. When one member needed support, the team handled it with outstanding professionalism." },
-];
+// TripAdvisor profile URL — used on the "Read all on TripAdvisor" button
+// in the reviews slider. Update here if the profile URL ever changes.
+const TRIPADVISOR_URL = "https://www.tripadvisor.com/Attraction_Review-g293890-d19882003-Reviews-Nature_Heaven_Treks_and_Expedition-Kathmandu_Kathmandu_Valley_Bagmati_Zone_Centr.html";
 
 // ────────────────────────────────────────────────────────────────────────────
 export default function TrekDetailClient({ trek, similarTreks, testimonials, faqs = [] }: TrekDetailClientProps) {
@@ -317,8 +318,8 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
   const [openDays, setOpenDays]             = useState<Record<number, boolean>>({ 1: true });
   const [openInfoCards, setOpenInfoCards]   = useState<Record<number, boolean>>({ 0: true });
   const [packedItems, setPackedItems]       = useState<Record<string, boolean>>({});
-  const [activeReviewTab, setActiveReviewTab] = useState<"tripadvisor" | "google" | "facebook">("tripadvisor");
-  const [expandedReviews, setExpandedReviews] = useState<Record<number, boolean>>({});
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [reviewExpanded, setReviewExpanded] = useState(false);
   const [showShare, setShowShare]           = useState(false);
   const [activeFaqCat, setActiveFaqCat]     = useState<string>("");
   const [expandedFaqs, setExpandedFaqs]     = useState<Record<string, boolean>>({});
@@ -553,14 +554,35 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
     );
   };
 
-  // ── Review cards ───────────────────────────────────────────────────────────
-  const reviewCards = {
-    tripadvisor: STATIC_TRIPADVISOR_REVIEWS,
-    google: testimonials && testimonials.length > 0
-      ? testimonials.map(t => ({ author: t.clientName, country: t.country || "Traveler", stars: t.rating || 5, title: "Excellent Experience!", text: t.reviewText }))
-      : [{ author: "David Miller", country: "United States", stars: 5, title: "Professional outfit, fair prices, best guides", text: "From my initial inquiry to the final airport transfer, everything was smooth. Nature Heaven Trekking matched a premium standard in every way. Very fair prices compared to western companies, yet the service is exceptional." }],
-    facebook: [{ author: "Emma Watson", country: "Canada", stars: 5, title: "Highly recommend for solo travelers!", text: "I joined a group trek and had an amazing time. Our Sherpa guide made us feel like family. Safe, eco-friendly, and beautiful trails. I will definitely return to Nepal and trek with them again." }],
+  // ── Review slider data ─────────────────────────────────────────────────────
+  // testimonials arrive from the server pre-sorted: reviews linked to this
+  // specific trek come first, then everything else. We just normalise the
+  // shape here for rendering. No trimming — the slider handles the length.
+  const reviewSlides = (testimonials || []).map((t) => ({
+    author: t.clientName,
+    country: t.country || "Traveler",
+    stars: t.rating || 5,
+    text: t.reviewText,
+    isTrekSpecific:
+      t.trek?.slug !== undefined && t.trek?.slug === trek?.slug,
+  }));
+  const reviewCount = reviewSlides.length;
+  const activeReview =
+    reviewCount > 0 ? reviewSlides[reviewIndex % reviewCount] : null;
+  const goToPrevReview = () => {
+    setReviewExpanded(false);
+    setReviewIndex((i) => (i - 1 + reviewCount) % reviewCount);
   };
+  const goToNextReview = () => {
+    setReviewExpanded(false);
+    setReviewIndex((i) => (i + 1) % reviewCount);
+  };
+  const shouldTruncateReview =
+    activeReview !== null && activeReview.text.length > 320;
+  const displayedReviewText =
+    activeReview && shouldTruncateReview && !reviewExpanded
+      ? activeReview.text.slice(0, 320) + "…"
+      : activeReview?.text || "";
 
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER
@@ -1219,45 +1241,105 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               </div>
             )}
 
-            {/* ── REVIEWS ───────────────────────────────────────────────── */}
-            {/* ── REVIEWS (conditionally rendered) ───────────────────────── */}
-            {testimonials.length > 0 && (
-              <div id="reviews" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
+            {/* ── REVIEWS SLIDER (real TripAdvisor testimonials) ─────────── */}
+            {reviewCount > 0 && activeReview && (
+              <div
+                id="reviews"
+                className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24"
+              >
+                {/* Header */}
                 <div className="border-b border-[#E5E5E5] pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Customer Reviews</h2>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#00af87]">
+                      Verified TripAdvisor reviews
+                    </span>
+                    <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mt-1">
+                      What our travellers say
+                    </h2>
+                  </div>
                   <div className="flex items-center gap-1.5 text-xs text-[#6B6B6B] font-bold">
-                    <div className="flex text-[#F5A623] gap-0.5"><FaStar /><FaStar /><FaStar /><FaStar /><FaStar /></div>
-                    <span>4.9/5 based on 320 reviews</span>
+                    <div className="flex text-[#F5A623] gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} />
+                      ))}
+                    </div>
+                    <span>
+                      5.0/5 from {reviewCount}{" "}
+                      {reviewCount === 1 ? "review" : "reviews"}
+                    </span>
                   </div>
                 </div>
-                <div className="flex border-b border-[#E5E5E5] gap-2 overflow-x-auto scrollbar-none">
-                  {[{ id:"tripadvisor",label:"TripAdvisor",rating:"5.0 ★"},{ id:"google",label:"Google",rating:"4.9 ★"},{ id:"facebook",label:"Facebook",rating:"5.0 ★"}].map(tab => (
-                    <button key={tab.id} onClick={() => setActiveReviewTab(tab.id as any)} className={`px-4 py-2 border-b-2 font-sans font-bold text-xs transition whitespace-nowrap focus:outline-none ${activeReviewTab===tab.id ? "border-[#2E7D32] text-[#2E7D32]" : "border-transparent text-[#6B6B6B] hover:text-[#2E7D32]"}`}>
-                      {tab.label} <span className="ml-1 text-[9px] bg-slate-100 rounded px-1">{tab.rating}</span>
-                    </button>
-                  ))}
-                </div>
-                <div className="flex flex-col gap-5 mt-4">
-                  {reviewCards[activeReviewTab].map((rev, idx) => {
-                    const isExpanded = !!expandedReviews[idx];
-                    const shouldTruncate = rev.text.length > 220;
-                    const displayStr = shouldTruncate && !isExpanded ? `${rev.text.substring(0,220)}...` : rev.text;
-                    return (
-                      <div key={idx} className="bg-slate-50 border border-[#E5E5E5] rounded-xl p-5 md:p-6 flex flex-col gap-2 shadow-sm hover:shadow transition duration-300">
-                        <div className="flex justify-between items-center flex-wrap gap-2">
-                          <div className="flex text-[#F5A623] gap-0.5 text-xs">{[...Array(rev.stars)].map((_,i)=><FaStar key={i}/>)}</div>
-                          <span className="text-[10px] text-[#6B6B6B] font-bold uppercase tracking-wider">{rev.author} ({rev.country})</span>
-                        </div>
-                        <h4 className="font-serif font-black text-sm md:text-base text-[#1A1A2E]">{rev.title}</h4>
-                        <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed">&ldquo;{displayStr}&rdquo;</p>
-                        {shouldTruncate && (
-                          <button onClick={() => setExpandedReviews(p=>({...p,[idx]:!p[idx]}))} className="text-xs font-bold text-[#2E7D32] self-start hover:underline mt-1 focus:outline-none">
-                            {isExpanded ? "Show Less" : "Read Full Review"}
-                          </button>
-                        )}
+
+                {/* Slider */}
+                <div className="relative">
+                  {/* Card */}
+                  <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl p-5 md:p-8 flex flex-col gap-3 shadow-sm min-h-[220px]">
+                    <div className="flex justify-between items-center flex-wrap gap-2">
+                      <div className="flex text-[#F5A623] gap-0.5 text-xs">
+                        {[...Array(activeReview.stars)].map((_, i) => (
+                          <FaStar key={i} />
+                        ))}
                       </div>
-                    );
-                  })}
+                      <div className="flex items-center gap-2">
+                        {activeReview.isTrekSpecific && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider bg-[#2E7D32]/10 text-[#2E7D32] px-2 py-0.5 rounded-full">
+                            This trek
+                          </span>
+                        )}
+                        <span className="text-[10px] text-[#6B6B6B] font-bold uppercase tracking-wider">
+                          {activeReview.author} ({activeReview.country})
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-sm md:text-base text-[#3D3D3D] leading-relaxed whitespace-pre-line">
+                      &ldquo;{displayedReviewText}&rdquo;
+                    </p>
+                    {shouldTruncateReview && (
+                      <button
+                        onClick={() => setReviewExpanded((v) => !v)}
+                        className="text-xs font-bold text-[#2E7D32] self-start hover:underline mt-1 focus:outline-none"
+                      >
+                        {reviewExpanded ? "Show Less" : "Read Full Review"}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Prev / Next arrows */}
+                  {reviewCount > 1 && (
+                    <>
+                      <button
+                        onClick={goToPrevReview}
+                        aria-label="Previous review"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-5 bg-white border border-[#E5E5E5] shadow-md w-10 h-10 rounded-full flex items-center justify-center text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition"
+                      >
+                        <FaChevronLeft />
+                      </button>
+                      <button
+                        onClick={goToNextReview}
+                        aria-label="Next review"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-5 bg-white border border-[#E5E5E5] shadow-md w-10 h-10 rounded-full flex items-center justify-center text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition"
+                      >
+                        <FaChevronRight />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* Counter + TripAdvisor link */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-[#E5E5E5]">
+                  <span className="text-xs text-[#6B6B6B] font-semibold">
+                    Review <span className="text-[#1A1A2E]">{reviewIndex + 1}</span> of{" "}
+                    <span className="text-[#1A1A2E]">{reviewCount}</span>
+                  </span>
+                  <a
+                    href={TRIPADVISOR_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-[#00af87] hover:text-[#008a6b] transition"
+                  >
+                    Read all reviews on TripAdvisor
+                    <FaExternalLinkAlt className="text-[10px]" />
+                  </a>
                 </div>
               </div>
             )}

@@ -28,6 +28,7 @@ import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 import UpcomingDepartures from "@/components/UpcomingDepartures";
 import FAQAccordion from "@/components/FAQAccordion";
 import Affiliations from "@/components/Affiliations";
+import TestimonialMarquee from "@/components/TestimonialMarquee";
 import { FadeInUp } from "@/components/FramerWrap";
 
 export const revalidate = 60; // Revalidate every minute
@@ -40,6 +41,7 @@ export default async function HomePage() {
   let galleryItems: any[] = [];
   let siteSettings: any = null;
   let homepageSettings: any = null;
+  let testimonials: Testimonial[] = [];
 
   try {
     const payload = await getPayload({ config });
@@ -166,6 +168,22 @@ export default async function HomePage() {
       homepageSettings = homepageSettingsRes.docs[0] as any;
     } catch (e: any) {
       console.warn("[Home Page] Failed to query homepageSettings collection:", e.message);
+    }
+
+    // 8. Fetch Testimonials — powers the "Global Happy Family" marquee below
+    //    the review-platforms strip. TestimonialMarquee falls back to demo
+    //    data if the array is empty, but with 17 real reviews imported we
+    //    always want the real ones on the homepage.
+    try {
+      const testimonialsRes = await payload.find({
+        collection: 'testimonials',
+        depth: 1,
+        limit: 50,
+        overrideAccess: true,
+      });
+      testimonials = testimonialsRes.docs as unknown as Testimonial[];
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query testimonials collection:", e.message);
     }
 
   } catch (err: any) {
@@ -452,6 +470,9 @@ export default async function HomePage() {
 
       {/* 6. Review Platforms */}
       <ReviewPlatforms platforms={siteSettings?.reviewPlatforms} />
+
+      {/* 6b. Real Testimonials marquee (17 TripAdvisor reviews) */}
+      <TestimonialMarquee testimonials={testimonials} />
 
       {/* 7. Exclusive Private Treks — CMS-driven, falls back to defaults */}
       <ExclusivePrivateTreks
