@@ -89,7 +89,7 @@ export interface ItineraryDayMedia {
 export interface ItineraryDay {
   day: number;
   title: string;
-  description: string;
+  description: any; // Lexical rich text (legacy rows may still be plain string)
   accommodation?: string;
   meals?: string;
   distance?: string;

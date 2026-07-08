@@ -19,6 +19,7 @@ import * as migration_20260606_160916_add_faq_featured_fields from './20260606_1
 import * as migration_20260623_220000_fix_missing_columns from './20260623_220000_fix_missing_columns';
 import * as migration_20260624_120000_add_archive_page_settings from './20260624_120000_add_archive_page_settings';
 import * as migration_20260624_140000_add_archive_page_role_perms from './20260624_140000_add_archive_page_role_perms';
+import * as migration_20260708_140000_itinerary_description_richtext from './20260708_140000_itinerary_description_richtext';
 
 export const migrations = [
   {
@@ -125,5 +126,10 @@ export const migrations = [
     up: migration_20260624_140000_add_archive_page_role_perms.up,
     down: migration_20260624_140000_add_archive_page_role_perms.down,
     name: '20260624_140000_add_archive_page_role_perms',
+  },
+  {
+    up: migration_20260708_140000_itinerary_description_richtext.up,
+    down: migration_20260708_140000_itinerary_description_richtext.down,
+    name: '20260708_140000_itinerary_description_richtext',
   },
 ];

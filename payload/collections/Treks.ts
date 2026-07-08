@@ -446,11 +446,21 @@ const itinerarySection = {
         },
         {
           name: 'description',
-          type: 'textarea' as const,
+          type: 'richText' as const,
           required: true,
-          admin: { 
+          // Rich text so the client can bold/italic/underline, add headings,
+          // bullet/numbered lists, and hyperlink text to other pages within
+          // each day's description. Default Lexical features already cover
+          // all of these; table feature added for structured day data.
+          editor: lexicalEditor({
+            features: ({ defaultFeatures }) => [
+              ...defaultFeatures,
+              EXPERIMENTAL_TableFeature(),
+            ],
+          }),
+          admin: {
             width: '100%',
-            description: 'What happens on this day. 2–4 sentences is ideal.' 
+            description: 'What happens on this day. Use the toolbar to bold/italic text, add headings, lists, or link words to other pages.',
           },
         },
         {

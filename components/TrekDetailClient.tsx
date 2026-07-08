@@ -1031,8 +1031,12 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                               </div>
                             )}
 
-                            {/* Description paragraph */}
-                            <p className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed mt-1">{day.description}</p>
+                            {/* Description — rich text (bold/italic/headings/
+                                links/lists). renderLexical also handles legacy
+                                plain-string descriptions gracefully. */}
+                            <div className="text-xs md:text-sm text-[#3D3D3D] leading-relaxed mt-1 prose prose-sm max-w-none prose-p:my-2 prose-a:text-[#2E7D32] prose-a:font-semibold hover:prose-a:underline prose-strong:text-[#1A1A2E] prose-headings:text-[#1A1A2E] prose-headings:font-serif prose-ul:my-2 prose-ol:my-2">
+                              {renderLexical(day.description)}
+                            </div>
 
                             {/* Day Media Gallery (Images & YouTube Videos) */}
                             {day.media && day.media.length > 0 && (
