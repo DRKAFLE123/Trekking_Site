@@ -123,6 +123,14 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     error: string | null;
   }>({ fileName: "", url: "", uploading: false, error: null });
 
+  // Optional proof-of-payment upload shown when SWIFT Bank transfer is chosen.
+  const [paymentProof, setPaymentProof] = useState<{
+    fileName: string;
+    url: string;
+    uploading: boolean;
+    error: string | null;
+  }>({ fileName: "", url: "", uploading: false, error: null });
+
 
   // Payment Options (Step 3)
   const [paymentType, setPaymentType] = useState<"full" | "advance_10" | "pay_later">("full");
@@ -510,6 +518,31 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     }
   };
 
+  // Upload a proof-of-payment screenshot / PDF (same endpoint + limits).
+  const handleProofSelect = async (file: File | null) => {
+    if (!file) return;
+    const allowed = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+    if (!allowed.includes(file.type)) {
+      setPaymentProof({ fileName: "", url: "", uploading: false, error: "Only PDF, JPG, or PNG files are allowed." });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setPaymentProof({ fileName: "", url: "", uploading: false, error: "File is too large. Maximum size is 5 MB." });
+      return;
+    }
+    setPaymentProof({ fileName: file.name, url: "", uploading: true, error: null });
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/booking-passport", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error || "Upload failed. Please try again.");
+      setPaymentProof({ fileName: file.name, url: data.url, uploading: false, error: null });
+    } catch (err: any) {
+      setPaymentProof({ fileName: "", url: "", uploading: false, error: err.message || "Upload failed. Please try again." });
+    }
+  };
+
   // ----------------------------------------------------
   // SUBMISSION LOGIC
   // ----------------------------------------------------
@@ -538,6 +571,9 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     // Bookings collection only requires name/nationality/gender/dob, so we
     // pass the lead's country as nationality and neutral placeholders the
     // operations team updates before departure.
+    // NOTE: passportNumber/passportExpiry are omitted entirely (not sent as
+    // empty strings) — passportExpiry maps to a timestamp column and "" is an
+    // invalid timestamp, which was crashing every booking create.
     const mappedTravelers = [
       {
         firstName: contactFirstName,
@@ -546,8 +582,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
         nationality: contactInfo.country || "To be provided",
         gender: "other",
         dob: "1990-01-01",
-        passportNumber: "",
-        passportExpiry: "",
       },
     ];
 
@@ -573,6 +607,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       paymentMethod,
       paymentId: `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
       passportUrl: passport.url || undefined,
+      paymentProofUrl: paymentProof.url || undefined,
       arrivalDate: contactInfo.flightArrivalDate || undefined,
       adminRemarks: `Checkout via website booking stepper. Lead-only booking — collect passport + traveler profiles for all ${guestsCount} traveler(s) before departure.`,
       recaptchaToken
@@ -807,17 +842,19 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-left flex flex-col gap-3 font-sans text-xs">
             <h4 className="font-black text-amber-900 uppercase">🏦 SWIFT Bank Wire Instructions</h4>
             <p className="text-[#3D3D3D] leading-relaxed">
-              Please transfer the due amount of <strong>${paymentDueNow} USD</strong> to our official corporate account listed below within 7 days. Send the wire receipt copy to <strong>billing@summittrailtrekking.com</strong> to confirm the booking.
+              Please transfer the due amount of <strong>${paymentDueNow} USD</strong> to our official corporate account
+              below and include your name in the transfer reference. Your reservation is confirmed once we verify the
+              payment — you can upload your payment proof during checkout or email it to us.
             </p>
-            <div className="grid grid-cols-2 gap-2.5 font-semibold text-[11px] text-[#1A1A2E] bg-white border border-[#E5E5E5] p-4 rounded-xl font-mono mt-1">
-              <span>Account Holder Name:</span>
-              <strong>Nature Heaven Treks Pvt. Ltd.</strong>
+            <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 font-semibold text-[11px] text-[#1A1A2E] bg-white border border-[#E5E5E5] p-4 rounded-xl mt-1">
+              <span>Account Name:</span>
+              <strong className="break-all">M/S NATURE HEAVEN TREKS AND EXPEDITION PVT. LTD.</strong>
               <span>Bank Name:</span>
-              <strong>Global IME Bank Nepal</strong>
+              <strong className="break-all">NIC ASIA BANK LTD. — Thamel Branch, Kathmandu</strong>
               <span>Account Number:</span>
-              <strong>01234567890123</strong>
+              <strong className="font-mono">0484150018112002</strong>
               <span>SWIFT / BIC Code:</span>
-              <strong>GIBNPNKAXXX</strong>
+              <strong className="font-mono">NICENPKA</strong>
             </div>
           </div>
         )}
@@ -1342,11 +1379,59 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                   )}
 
                   {paymentMethod === "bank_transfer" && (
-                    <div className="flex flex-col py-4 text-left gap-3 animate-fade-in text-xs font-semibold">
-                      <h5 className="font-serif font-black text-xs text-[#1a2e1f] uppercase">Corporate Bank SWIFT Transfer</h5>
+                    <div className="flex flex-col py-2 text-left gap-4 animate-fade-in text-xs font-semibold">
+                      <h5 className="font-serif font-black text-xs text-[#1a2e1f] uppercase">Bank SWIFT Transfer Details</h5>
+
+                      {/* Bank details card */}
+                      <div className="bg-white border border-[#E5E5E5] rounded-xl p-4 flex flex-col gap-2.5">
+                        {[
+                          { label: "Bank Name", value: "NIC ASIA BANK LTD. — Thamel Branch, Kathmandu" },
+                          { label: "Account Name", value: "M/S NATURE HEAVEN TREKS AND EXPEDITION PVT. LTD." },
+                          { label: "Account Number", value: "0484150018112002" },
+                          { label: "SWIFT / BIC Code", value: "NICENPKA" },
+                        ].map((row) => (
+                          <div key={row.label} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 border-b border-slate-100 last:border-0 pb-2 last:pb-0">
+                            <span className="text-[10px] uppercase tracking-wider text-[#6B6B6B]">{row.label}</span>
+                            <span className="text-[11px] font-black text-[#1a2e1f] break-all sm:text-right">{row.value}</span>
+                          </div>
+                        ))}
+                      </div>
+
                       <p className="text-[#6B6B6B] leading-relaxed">
-                        Completing checkout registers your trek reservation under <strong>&quot;Pending Bank SWIFT Verification&quot;</strong> status. Official wire invoice sheets are generated for you on the final confirmation receipt screens.
+                        Please transfer the amount shown in your booking summary to the account above. Include your
+                        name in the transfer reference. Your reservation is confirmed once we verify the payment.
                       </p>
+
+                      {/* Proof of payment upload (optional but speeds up verification) */}
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">
+                          Upload Payment Proof <span className="text-[#6B6B6B]/60">(optional — screenshot or receipt)</span>
+                        </label>
+                        <label
+                          className={`border-2 border-dashed rounded-xl p-3.5 text-center cursor-pointer transition flex items-center justify-center gap-3 bg-white hover:bg-slate-50 ${
+                            paymentProof.url ? "border-green-400 bg-green-50/20" : paymentProof.error ? "border-red-300" : "border-slate-200"
+                          }`}
+                        >
+                          <input
+                            type="file"
+                            accept="application/pdf,image/png,image/jpeg"
+                            className="hidden"
+                            onChange={(e) => handleProofSelect(e.target.files?.[0] || null)}
+                          />
+                          {paymentProof.uploading ? (
+                            <span className="text-[11px] font-bold text-[#6B6B6B] animate-pulse">Uploading…</span>
+                          ) : paymentProof.url ? (
+                            <>
+                              <FaCheck className="text-green-500 text-sm shrink-0" />
+                              <span className="text-[11px] font-black text-green-900 truncate max-w-[200px]">{paymentProof.fileName}</span>
+                              <span className="text-[10px] font-bold text-[#6B6B6B] underline">Change</span>
+                            </>
+                          ) : (
+                            <span className="text-[11px] font-bold text-slate-600">Click to upload proof — PDF, JPG or PNG (max 5 MB)</span>
+                          )}
+                        </label>
+                        {paymentProof.error && <span className="text-[10px] font-bold text-red-600">{paymentProof.error}</span>}
+                      </div>
                     </div>
                   )}
                 </div>

@@ -156,6 +156,7 @@ export async function POST(request: Request) {
       paymentMethod: rawPaymentMethod,
       paymentId: rawPaymentId,
       passportUrl,
+      paymentProofUrl,
       arrivalDate
     } = body;
 
@@ -212,6 +213,7 @@ export async function POST(request: Request) {
             : `System checkout via website using ${paymentMethod?.toUpperCase()} with ${paymentType}`,
           arrivalDate ? `Arrival date: ${arrivalDate}` : null,
           passportUrl ? `Passport document: ${passportUrl}` : null,
+          paymentProofUrl ? `Payment proof: ${paymentProofUrl}` : null,
         ].filter(Boolean).join(" | "),
       },
     });
@@ -298,6 +300,7 @@ export async function POST(request: Request) {
               <tr><th>Payment Method</th><td>${paymentMethod}</td></tr>
               <tr><th>Total Price</th><td>$${totalPrice}</td></tr>
               ${passportUrl ? `<tr><th>Passport Document</th><td><a href="${passportUrl}" target="_blank" rel="noopener noreferrer">View / download passport</a></td></tr>` : ""}
+              ${paymentProofUrl ? `<tr><th>Payment Proof</th><td><a href="${paymentProofUrl}" target="_blank" rel="noopener noreferrer">View / download payment proof</a></td></tr>` : ""}
             </tbody>
           </table>
           `,
