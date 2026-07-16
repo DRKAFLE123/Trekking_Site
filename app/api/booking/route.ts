@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
-import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
+import { sendEmail, getPremiumEmailTemplate, NOTIFY_TO, NOTIFY_BCC } from "@/lib/email";
 import { verifyRecaptchaDetailed, recaptchaHint } from "@/lib/recaptcha";
 import { apiErrorBody } from "@/lib/api-error";
 
@@ -87,11 +87,12 @@ export async function POST(request: Request) {
 
       console.log(`[INQUIRY SAVED TO DATABASE] ID: ${inquiry.id}`);
 
-      // Send Emails
-      const adminEmail = process.env.CONTACT_EMAIL;
-      if (adminEmail) {
+      // Send Emails — admin notification to company inbox + client Gmail,
+      // owner BCC'd. Customer always gets their acknowledgement.
+      {
         await sendEmail({
-          to: adminEmail,
+          to: NOTIFY_TO,
+          bcc: NOTIFY_BCC,
           replyTo: email,
           subject: `New Trek Inquiry: ${tripTitle}`,
           html: getPremiumEmailTemplate(
@@ -278,11 +279,12 @@ export async function POST(request: Request) {
       Total Paid: $${paymentRecord ? paymentRecord.amount : 0} USD
     `);
 
-    // Send Emails
-    const adminEmail = process.env.CONTACT_EMAIL;
-    if (adminEmail) {
+    // Send Emails — admin notification goes to the company inbox + client
+    // Gmail, with the owner BCC'd. Customer always gets their confirmation.
+    {
       await sendEmail({
-        to: adminEmail,
+        to: NOTIFY_TO,
+        bcc: NOTIFY_BCC,
         replyTo: customerDetails.email,
         subject: `New Booking Created: ${bookingId} for ${trek.title}`,
         html: getPremiumEmailTemplate(

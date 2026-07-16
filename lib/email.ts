@@ -4,19 +4,31 @@ import { Resend } from 'resend';
 // It is safe to initialize here, but we check if the key exists before sending.
 const resend = new Resend(process.env.RESEND_API_KEY || 'dummy_key');
 
+// Internal recipients for lead/booking notifications.
+//   TO:  company inbox + client Gmail (both are visible recipients)
+//   BCC: owner's Gmail, hidden from the other recipients
+// NOTE: deliberately does NOT use CONTACT_EMAIL (Damodar's personal Gmail) —
+// the client asked for these addresses only.
+export const NOTIFY_TO: string[] = [
+  "info@natureheaventreks.com",
+  "natureadventure603@gmail.com",
+];
+export const NOTIFY_BCC: string[] = ["aryanpariyar8463@gmail.com"];
+
 interface SendEmailParams {
   to: string | string[];
   subject: string;
   html: string;
   replyTo?: string;
+  bcc?: string | string[];
 }
 
 /**
  * Utility to send an email using Resend API.
- * 
+ *
  * Note: If testing locally without a RESEND_API_KEY, this will mock the send and log it.
  */
-export async function sendEmail({ to, subject, html, replyTo }: SendEmailParams) {
+export async function sendEmail({ to, subject, html, replyTo, bcc }: SendEmailParams) {
   const apiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.SENDER_EMAIL || 'onboarding@resend.dev'; // Fallback for local testing
 
@@ -36,6 +48,7 @@ export async function sendEmail({ to, subject, html, replyTo }: SendEmailParams)
       subject,
       html,
       replyTo,
+      ...(bcc ? { bcc } : {}),
     });
 
     if (data.error) {

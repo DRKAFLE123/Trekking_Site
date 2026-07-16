@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
-import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
+import { sendEmail, getPremiumEmailTemplate, NOTIFY_TO, NOTIFY_BCC } from "@/lib/email";
 import { verifyRecaptcha } from "@/lib/recaptcha";
 
 export async function POST(request: Request) {
@@ -57,11 +57,12 @@ export async function POST(request: Request) {
       }
     }
 
-    // Send Emails
-    const adminEmail = process.env.CONTACT_EMAIL;
-    if (adminEmail) {
+    // Send Emails — admin notification to company inbox + client Gmail,
+    // owner BCC'd. Customer always gets their acknowledgement.
+    {
       await sendEmail({
-        to: adminEmail,
+        to: NOTIFY_TO,
+        bcc: NOTIFY_BCC,
         replyTo: email,
         subject: `New Custom Trip Plan Request from ${name}`,
         html: getPremiumEmailTemplate(
