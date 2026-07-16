@@ -153,7 +153,9 @@ export async function POST(request: Request) {
       totalPrice,
       paymentType,
       paymentMethod: rawPaymentMethod,
-      paymentId: rawPaymentId
+      paymentId: rawPaymentId,
+      passportUrl,
+      arrivalDate
     } = body;
 
     const paymentMethod = paymentType === "pay_later" ? null : rawPaymentMethod;
@@ -203,7 +205,13 @@ export async function POST(request: Request) {
         paymentType,
         paymentStatus: paymentType === "pay_later" || paymentMethod === "bank_transfer" ? "unpaid" : "paid",
         bookingStatus: paymentType === "pay_later" || paymentMethod === "bank_transfer" ? "pending" : "confirmed",
-        adminRemarks: paymentType === "pay_later" ? "System checkout via website (Book Now, Pay Later - 0%)" : `System checkout via website using ${paymentMethod?.toUpperCase()} with ${paymentType}`,
+        adminRemarks: [
+          paymentType === "pay_later"
+            ? "System checkout via website (Book Now, Pay Later - 0%)"
+            : `System checkout via website using ${paymentMethod?.toUpperCase()} with ${paymentType}`,
+          arrivalDate ? `Arrival date: ${arrivalDate}` : null,
+          passportUrl ? `Passport document: ${passportUrl}` : null,
+        ].filter(Boolean).join(" | "),
       },
     });
 
@@ -284,9 +292,11 @@ export async function POST(request: Request) {
               <tr><th>Customer</th><td>${customerDetails.firstName} ${customerDetails.lastName}</td></tr>
               <tr><th>Email</th><td>${customerDetails.email}</td></tr>
               <tr><th>Dates</th><td>${startDate} to ${endDate}</td></tr>
+              ${arrivalDate ? `<tr><th>Arrival Date</th><td>${arrivalDate}</td></tr>` : ""}
               <tr><th>Travelers</th><td>${travelersCount}</td></tr>
               <tr><th>Payment Method</th><td>${paymentMethod}</td></tr>
               <tr><th>Total Price</th><td>$${totalPrice}</td></tr>
+              ${passportUrl ? `<tr><th>Passport Document</th><td><a href="${passportUrl}" target="_blank" rel="noopener noreferrer">View / download passport</a></td></tr>` : ""}
             </tbody>
           </table>
           `,

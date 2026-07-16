@@ -114,13 +114,19 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     flightDepartureDate: ""
   });
 
+  // Passport upload (Step 2) — real upload to Cloudinary via /api/booking-passport.
+  // Requiring a genuine passport scan is the anti-spam gate on the booking form.
+  const [passport, setPassport] = useState<{
+    fileName: string;
+    url: string;
+    uploading: boolean;
+    error: string | null;
+  }>({ fileName: "", url: "", uploading: false, error: null });
+
 
   // Payment Options (Step 3)
   const [paymentType, setPaymentType] = useState<"full" | "advance_10" | "pay_later">("full");
-  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal" | "esewa" | "khalti" | "bank_transfer">("stripe");
-  
-  // Gateways inputs
-  const [creditCard, setCreditCard] = useState({ number: "", expiry: "", cvc: "" });
+  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal" | "esewa" | "khalti" | "bank_transfer">("paypal");
   const [walletPhone, setWalletPhone] = useState("");
   const [walletOtp, setWalletOtp] = useState("");
   
@@ -137,17 +143,16 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     const methods = [];
     const settings = siteSettings?.paymentSettings;
 
+    // Credit Card (Stripe) is intentionally disabled until the client
+    // provides live gateway credentials — only PayPal and SWIFT Bank are
+    // offered for now.
     if (!siteSettings) {
       return [
-        { id: "stripe", label: "Credit Card" },
         { id: "paypal", label: "PayPal" },
         { id: "bank_transfer", label: "SWIFT Bank" }
       ];
     }
 
-    if (settings?.enableStripe !== false) {
-      methods.push({ id: "stripe", label: "Credit Card" });
-    }
     if (settings?.enablePaypal !== false) {
       methods.push({ id: "paypal", label: "PayPal" });
     }
@@ -412,29 +417,25 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
         if (shouldSetError) setStepError("Lead Customer Contact: Please select your Country.");
         return false;
       }
-      // Passport / per-traveler profiles are intentionally NOT collected here.
-      // The team gathers passport details and traveler profiles before
-      // departure, keeping the online booking short and high-converting.
+      if (!contactInfo.flightArrivalDate) {
+        if (shouldSetError) setStepError("Please select your arrival date in Nepal.");
+        return false;
+      }
+      if (passport.uploading) {
+        if (shouldSetError) setStepError("Please wait — your passport is still uploading.");
+        return false;
+      }
+      if (!passport.url) {
+        if (shouldSetError) setStepError("Please upload a copy of the lead traveler's passport (PDF, JPG or PNG, max 5 MB).");
+        return false;
+      }
+      // Per-traveler profiles for additional guests are collected in person
+      // before departure — only the lead passport is needed to confirm.
       return true;
     }
     if (currentStep === 3) {
       if (paymentType === "pay_later") return true;
 
-      if (paymentMethod === "stripe") {
-        const cleanCard = creditCard.number.replace(/\s+/g, '');
-        if (cleanCard.length < 15) {
-          if (shouldSetError) setStepError("Payment Details: Please enter a valid Credit Card number.");
-          return false;
-        }
-        if (!creditCard.expiry) {
-          if (shouldSetError) setStepError("Payment Details: Please enter card Expiry Date.");
-          return false;
-        }
-        if (creditCard.cvc.length < 3) {
-          if (shouldSetError) setStepError("Payment Details: Please enter a valid CVC security code.");
-          return false;
-        }
-      }
       if (paymentMethod === "esewa" || paymentMethod === "khalti") {
         if (walletPhone.length < 10) {
           if (shouldSetError) setStepError("Payment Details: Please enter a valid 10-digit mobile number.");
@@ -469,6 +470,36 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
   const handleAddonChange = (addonId: string) => {
     setSelectedAddons(prev => ({ ...prev, [addonId]: !prev[addonId] }));
+  };
+
+  // Validate + upload the passport scan the moment a file is picked, so the
+  // URL is ready by the time the user submits. PDF/JPG/PNG, max 5 MB.
+  const handlePassportSelect = async (file: File | null) => {
+    if (!file) return;
+    setStepError(null);
+    const allowed = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+    if (!allowed.includes(file.type)) {
+      setPassport({ fileName: "", url: "", uploading: false, error: "Only PDF, JPG, or PNG files are allowed." });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setPassport({ fileName: "", url: "", uploading: false, error: "File is too large. Maximum size is 5 MB." });
+      return;
+    }
+
+    setPassport({ fileName: file.name, url: "", uploading: true, error: null });
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/booking-passport", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "Upload failed. Please try again.");
+      }
+      setPassport({ fileName: file.name, url: data.url, uploading: false, error: null });
+    } catch (err: any) {
+      setPassport({ fileName: "", url: "", uploading: false, error: err.message || "Upload failed. Please try again." });
+    }
   };
 
   // ----------------------------------------------------
@@ -533,6 +564,8 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       paymentType,
       paymentMethod,
       paymentId: `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
+      passportUrl: passport.url || undefined,
+      arrivalDate: contactInfo.flightArrivalDate || undefined,
       adminRemarks: `Checkout via website booking stepper. Lead-only booking — collect passport + traveler profiles for all ${guestsCount} traveler(s) before departure.`,
       recaptchaToken
     };
@@ -1075,16 +1108,65 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                     </select>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Arrival Date in Nepal *</label>
+                    <input
+                      type="date"
+                      required
+                      value={contactInfo.flightArrivalDate}
+                      onChange={(e) => setContactInfo({ ...contactInfo, flightArrivalDate: e.target.value })}
+                      className="border border-[#E5E5E5] rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                    />
+                  </div>
+                </div>
+
+                {/* Passport upload — the genuine-intent / anti-spam gate */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">
+                    Lead Traveler Passport Copy *
+                  </label>
+                  <label
+                    className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition flex items-center justify-center gap-3 bg-white hover:bg-slate-50 ${
+                      passport.url ? "border-green-400 bg-green-50/20" : passport.error ? "border-red-300" : "border-slate-200"
+                    }`}
+                  >
+                    <input
+                      type="file"
+                      accept="application/pdf,image/png,image/jpeg"
+                      className="hidden"
+                      onChange={(e) => handlePassportSelect(e.target.files?.[0] || null)}
+                    />
+                    {passport.uploading ? (
+                      <span className="text-[11px] font-bold text-[#6B6B6B] animate-pulse">Uploading…</span>
+                    ) : passport.url ? (
+                      <>
+                        <FaCheck className="text-green-500 text-sm shrink-0" />
+                        <span className="text-[11px] font-black text-green-900 truncate max-w-[220px]">{passport.fileName}</span>
+                        <span className="text-[10px] font-bold text-[#6B6B6B] underline">Change</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaLock className="text-slate-400 text-xs shrink-0" />
+                        <span className="text-[11px] font-bold text-slate-600">Click to upload passport — PDF, JPG or PNG (max 5 MB)</span>
+                      </>
+                    )}
+                  </label>
+                  {passport.error && (
+                    <span className="text-[10px] font-bold text-red-600">{passport.error}</span>
+                  )}
+                </div>
               </div>
 
-              {/* Reassurance — why we don't ask for more now */}
+              {/* Reassurance note */}
               <div className="flex items-start gap-3 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-2xl p-4">
-                <FaCheck className="text-[#2E7D32] text-sm shrink-0 mt-0.5" />
+                <FaLock className="text-[#2E7D32] text-sm shrink-0 mt-0.5" />
                 <p className="text-[11px] text-[#3D3D3D] leading-relaxed font-semibold">
-                  <span className="text-[#1a2e1f] font-black">No passport upload needed to book.</span> Once your
-                  spot is reserved, your dedicated specialist will help you complete passport details, traveler
-                  profiles{guestsCount > 1 ? ` for all ${guestsCount} travelers` : ""}, insurance and any
-                  add-ons — by email or on arrival in Kathmandu. Booking now takes under a minute.
+                  <span className="text-[#1a2e1f] font-black">Your details are safe.</span> We only need the lead
+                  traveler&apos;s passport to confirm your booking.
+                  {guestsCount > 1 ? ` Passport details for your other ${guestsCount - 1} traveler(s) ` : " Any remaining details "}
+                  and add-ons are collected by your specialist before departure — over a 256-bit encrypted connection.
                 </p>
               </div>
             </div>
@@ -1203,55 +1285,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
                 {/* Gateway Inputs */}
                 <div className="bg-[#F8F7F4] border border-[#E5E5E5] p-5 rounded-2xl mt-2">
-                  
-                  {paymentMethod === "stripe" && (
-                    <div className="flex flex-col gap-3 animate-fade-in text-xs font-semibold">
-                      <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-2 mb-1">
-                        <h5 className="font-serif font-black text-xs text-[#1a2e1f]">Secure Credit Card Checkout</h5>
-                        <FaShieldAlt className="text-green-600 text-sm" />
-                      </div>
-                      
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Card Number *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="4111 2222 3333 4444"
-                          maxLength={19}
-                          value={creditCard.number}
-                          onChange={(e) => setCreditCard({ ...creditCard, number: e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim() })}
-                          className="border border-[#E5E5E5] bg-white rounded-xl px-4 py-2.5 text-xs focus:outline-none font-mono"
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Expiration MM/YY *</label>
-                          <input
-                            type="text"
-                            required
-                            placeholder="MM/YY"
-                            maxLength={5}
-                            value={creditCard.expiry}
-                            onChange={(e) => setCreditCard({ ...creditCard, expiry: e.target.value })}
-                            className="border border-[#E5E5E5] bg-white rounded-xl px-4 py-2.5 text-xs focus:outline-none font-mono"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">CVC Code *</label>
-                          <input
-                            type="password"
-                            required
-                            placeholder="123"
-                            maxLength={3}
-                            value={creditCard.cvc}
-                            onChange={(e) => setCreditCard({ ...creditCard, cvc: e.target.value.replace(/\D/g, '') })}
-                            className="border border-[#E5E5E5] bg-white rounded-xl px-4 py-2.5 text-xs focus:outline-none font-mono"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                   {paymentMethod === "paypal" && (
                     <div className="flex flex-col items-center py-6 text-center gap-3 animate-fade-in text-xs font-semibold">

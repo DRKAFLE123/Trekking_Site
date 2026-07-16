@@ -30,6 +30,7 @@ const RATE_RULES: RateRule[] = [
   { match: /^\/api\/contact\/?$/, max: 10, windowMs: 60_000 },       // 10/min/IP
   { match: /^\/api\/plan-trip\/?$/, max: 10, windowMs: 60_000 },     // 10/min/IP
   { match: /^\/api\/booking\/?$/, max: 10, windowMs: 60_000 },       // 10/min/IP
+  { match: /^\/api\/booking-passport\/?$/, max: 12, windowMs: 60_000 }, // 12/min/IP — passport uploads
   // Also rate-limit anonymous writes to Payload's auto endpoints. Even
   // though access control now rejects them, this saves CPU on the rejection.
   { match: /^\/api\/(inquiries|bookings|payments)\/?$/, max: 5, windowMs: 60_000 },
