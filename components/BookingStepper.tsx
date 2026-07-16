@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   FaCheck,
@@ -136,6 +136,14 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   const [bookingResponse, setBookingResponse] = useState<any>(null);
   const [stepError, setStepError] = useState<string | null>(null);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  // Ref so we can RESET the widget after a failed submit. reCAPTCHA tokens
+  // are single-use and expire after ~2 minutes; without a reset, any retry
+  // reuses a dead token and fails forever with "timeout-or-duplicate".
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const resetRecaptcha = () => {
+    try { recaptchaRef.current?.reset(); } catch {}
+    setRecaptchaToken(null);
+  };
 
   const [siteSettings, setSiteSettings] = useState<any>(null);
 
@@ -585,7 +593,11 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
         throw new Error(data.error || "Failed to submit booking transaction.");
       }
     } catch (err: any) {
-      alert(err.message || "An unexpected error occurred during reservation. Please try again.");
+      // Any failed submit consumes the reCAPTCHA token, so reset the widget
+      // and require a fresh tick before the next attempt — otherwise every
+      // retry fails with "timeout-or-duplicate".
+      resetRecaptcha();
+      setStepError(err.message || "An unexpected error occurred during reservation. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -1344,8 +1356,10 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
               {/* ReCAPTCHA */}
               <div className="flex justify-center mt-5 mb-2">
                 <ReCAPTCHA
+                  ref={recaptchaRef}
                   sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy_key"}
                   onChange={(token) => setRecaptchaToken(token)}
+                  onExpired={() => setRecaptchaToken(null)}
                 />
               </div>
 
