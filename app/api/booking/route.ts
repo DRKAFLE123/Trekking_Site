@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import { sendEmail, getPremiumEmailTemplate } from "@/lib/email";
-import { verifyRecaptcha } from "@/lib/recaptcha";
+import { verifyRecaptchaDetailed, recaptchaHint } from "@/lib/recaptcha";
 import { apiErrorBody } from "@/lib/api-error";
 
 // Helper to generate a random uppercase alphanumeric string
@@ -17,11 +17,12 @@ export async function POST(request: Request) {
     const body = await request.json();
     const payload = await getPayload({ config });
 
-    // Verify reCAPTCHA
-    const isValidRecaptcha = await verifyRecaptcha(body.recaptchaToken);
-    if (!isValidRecaptcha) {
+    // Verify reCAPTCHA — surface the specific reason so failures are
+    // diagnosable (missing secret on host vs expired token vs bad token).
+    const recaptcha = await verifyRecaptchaDetailed(body.recaptchaToken);
+    if (!recaptcha.success) {
       return NextResponse.json(
-        { error: "reCAPTCHA verification failed. Please try again." },
+        { error: recaptchaHint(recaptcha.reason), reason: recaptcha.reason },
         { status: 400 }
       );
     }
