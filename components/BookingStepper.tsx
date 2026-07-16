@@ -11,7 +11,6 @@ import {
   FaUsers,
   FaLock,
   FaPrint,
-  FaUpload,
   FaCheckCircle,
   FaPlus,
   FaMinus,
@@ -115,11 +114,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     flightDepartureDate: ""
   });
 
-  // Traveler Details Form list
-  const [travelers, setTravelers] = useState<any[]>([]);
-
-  // Passport photocopies Mock files list
-  const [passportDocs, setPassportDocs] = useState<Record<number, string>>({});
 
   // Payment Options (Step 3)
   const [paymentType, setPaymentType] = useState<"full" | "advance_10" | "pay_later">("full");
@@ -234,42 +228,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     }
     fetchDepartures();
   }, [trek.slug, initialStartDate, initialDepartureId]);
-
-  // Sync Travelers Array with guestsCount
-  useEffect(() => {
-    setTravelers(prev => {
-      const list = [...prev];
-      if (list.length < guestsCount) {
-        for (let i = list.length; i < guestsCount; i++) {
-          list.push({
-            fullName: i === 0 ? contactInfo.fullName : "",
-            nationality: i === 0 ? contactInfo.country : "",
-            gender: "male",
-            dob: "",
-            passportNumber: "",
-            passportExpiry: ""
-          });
-        }
-      } else if (list.length > guestsCount) {
-        list.splice(guestsCount);
-      }
-      return list;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guestsCount]);
-
-  // Sync Lead Customer Contact details with Traveler 1
-  useEffect(() => {
-    setTravelers(prev => {
-      if (prev.length === 0) return prev;
-      const copy = [...prev];
-      if (copy[0]) {
-        if (!copy[0].fullName) copy[0].fullName = contactInfo.fullName;
-        if (!copy[0].nationality) copy[0].nationality = contactInfo.country;
-      }
-      return copy;
-    });
-  }, [contactInfo.fullName, contactInfo.country]);
 
   // Calculate trip end date from the fixed trek duration (inclusive of the start day)
   useEffect(() => {
@@ -411,7 +369,10 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
   const originalPricePP = trek.price || Math.round(paxPrice * 1.15);
   const discountTotal = (originalPricePP - paxPrice) * guestsCount;
-  const taxTotal = Math.round((totalBasePrice + addonsTotal) * 0.05); // 5% tourism fee
+  // Tourism/insurance fee removed from checkout — the team upsells travel
+  // insurance and add-ons in person. Kept as 0 so downstream refs (payload,
+  // summary) stay valid without further changes.
+  const taxTotal = 0;
   const totalPrice = totalBasePrice + addonsTotal + taxTotal;
   
   const advancePercentage = siteSettings?.paymentSettings?.advancePaymentPercentage ?? 10;
@@ -447,39 +408,13 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
         if (shouldSetError) setStepError("Lead Customer Contact: Contact Number is required.");
         return false;
       }
-      if (!contactInfo.emergencyPhone.trim()) {
-        if (shouldSetError) setStepError("Lead Customer Contact: Emergency Contact Number is required.");
-        return false;
-      }
       if (!contactInfo.country.trim()) {
         if (shouldSetError) setStepError("Lead Customer Contact: Please select your Country.");
         return false;
       }
-      
-      for (let i = 0; i < travelers.length; i++) {
-        const t = travelers[i];
-        const label = `Traveler ${i + 1} (${i === 0 ? "Lead Traveler" : `Guest ${i}`})`;
-        if (!t.fullName.trim()) {
-          if (shouldSetError) setStepError(`${label}: Full Name is required.`);
-          return false;
-        }
-        if (!t.nationality.trim()) {
-          if (shouldSetError) setStepError(`${label}: Nationality is required.`);
-          return false;
-        }
-        if (!t.passportNumber.trim()) {
-          if (shouldSetError) setStepError(`${label}: Passport Number is required.`);
-          return false;
-        }
-        if (!t.passportExpiry.trim()) {
-          if (shouldSetError) setStepError(`${label}: Passport Expiry Date is required.`);
-          return false;
-        }
-        if (!passportDocs[i]) {
-          if (shouldSetError) setStepError(`${label}: Please upload a digital scan / photocopy of your passport.`);
-          return false;
-        }
-      }
+      // Passport / per-traveler profiles are intentionally NOT collected here.
+      // The team gathers passport details and traveler profiles before
+      // departure, keeping the online booking short and high-converting.
       return true;
     }
     if (currentStep === 3) {
@@ -536,21 +471,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     setSelectedAddons(prev => ({ ...prev, [addonId]: !prev[addonId] }));
   };
 
-  const handleTravelerChange = (index: number, field: string, value: string) => {
-    setTravelers(prev => {
-      const copy = [...prev];
-      copy[index] = { ...copy[index], [field]: value };
-      return copy;
-    });
-  };
-
-  const handlePassportUpload = (index: number) => {
-    setPassportDocs(prev => ({
-      ...prev,
-      [index]: `passport_${travelers[index]?.fullName.replace(/\s+/g, "_").toLowerCase() || `traveler_${index + 1}`}_copy.jpg`
-    }));
-  };
-
   // ----------------------------------------------------
   // SUBMISSION LOGIC
   // ----------------------------------------------------
@@ -569,25 +489,28 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
     // Map Lead contact full name into firstName/lastName for API compatibility
     const contactParts = contactInfo.fullName.trim().split(" ");
-    const contactFirstName = contactParts[0] || "John";
-    const contactLastName = contactParts.slice(1).join(" ") || "Doe";
+    const contactFirstName = contactParts[0] || "Guest";
+    const contactLastName = contactParts.slice(1).join(" ") || "Traveler";
 
-    // Map Passenger profiles
-    const mappedTravelers = travelers.map((t) => {
-      const tParts = t.fullName.trim().split(" ");
-      const tFirstName = tParts[0] || "Traveler";
-      const tLastName = tParts.slice(1).join(" ") || "Guest";
-      return {
-        firstName: tFirstName,
-        lastName: tLastName,
-        email: t.email || contactInfo.email,
-        nationality: t.nationality,
-        gender: t.gender,
-        dob: t.dob || "1990-01-01",
-        passportNumber: t.passportNumber,
-        passportExpiry: t.passportExpiry
-      };
-    });
+    // We only collect the lead customer online now. Send a single traveler
+    // record built from the lead so the API treats this as a real booking
+    // (an empty travelers array would be routed to the inquiry flow instead).
+    // Passport number/expiry are left blank and collected in person; the
+    // Bookings collection only requires name/nationality/gender/dob, so we
+    // pass the lead's country as nationality and neutral placeholders the
+    // operations team updates before departure.
+    const mappedTravelers = [
+      {
+        firstName: contactFirstName,
+        lastName: contactLastName,
+        email: contactInfo.email,
+        nationality: contactInfo.country || "To be provided",
+        gender: "other",
+        dob: "1990-01-01",
+        passportNumber: "",
+        passportExpiry: "",
+      },
+    ];
 
     const bookingPayload = {
       trekSlug: trek.slug,
@@ -610,7 +533,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       paymentType,
       paymentMethod,
       paymentId: `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
-      adminRemarks: `Checkout via website booking stepper. Emergency Phone: ${contactInfo.emergencyPhone}. Flight Arrival: ${contactInfo.flightArrivalDate || 'None'}. Flight Departure: ${contactInfo.flightDepartureDate || 'None'}`,
+      adminRemarks: `Checkout via website booking stepper. Lead-only booking — collect passport + traveler profiles for all ${guestsCount} traveler(s) before departure.`,
       recaptchaToken
     };
 
@@ -817,16 +740,11 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
             </div>
 
             {addonsTotal > 0 && (
-              <div className="flex justify-between py-1.5 text-[#6B6B6B] font-semibold">
+              <div className="flex justify-between py-1.5 text-[#6B6B6B] font-semibold border-b border-[#E5E5E5] pb-3">
                 <span>Selected Addon Extras</span>
                 <span>+${addonsTotal} USD</span>
               </div>
             )}
-
-            <div className="flex justify-between py-1.5 text-[#6B6B6B] font-semibold border-b border-[#E5E5E5] pb-3">
-              <span>Himalayan Tourism safety fee (5%)</span>
-              <span>+${taxTotal} USD</span>
-            </div>
 
             <div className="flex justify-between py-3 font-black text-sm text-[#1A1A2E]">
               <span>Grand Total Cost:</span>
@@ -902,7 +820,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       <div className="bg-white border border-[#E5E5E5] rounded-2xl p-5 md:p-6 shadow-sm flex items-center justify-between">
         {[
           { step: 1, label: "Select Dates & Size" },
-          { step: 2, label: "Traveler Profiles" },
+          { step: 2, label: "Contact Details" },
           { step: 3, label: "Secure Payment" }
         ].map((s) => {
           const isActive = currentStep === s.step;
@@ -1091,20 +1009,20 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
             </div>
           )}
 
-          {/* STEP 2: TRAVELER PROFILES & LEAD CONTACTS */}
+          {/* STEP 2: LEAD CONTACT (minimal — passport/traveler details taken in person) */}
           {currentStep === 2 && (
             <div className="flex flex-col gap-6 animate-fade-in">
               <div>
-                <h3 className="font-serif text-2xl font-black text-[#1a2e1f]">2. Traveler Profiles & Contact Information</h3>
-                <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">Enter primary contact details for billing & support communications, followed by passport profiles for all passengers.</p>
+                <h3 className="font-serif text-2xl font-black text-[#1a2e1f]">2. Your Contact Details</h3>
+                <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">Just the essentials to confirm your booking. Our team will collect passport &amp; traveler details with you before departure.</p>
               </div>
 
-              {/* Lead Customer Contacts */}
+              {/* Lead Customer Contact — 4 essential fields only */}
               <div className="flex flex-col gap-4 bg-slate-50 border border-[#E5E5E5] p-5 rounded-2xl">
                 <h4 className="font-serif text-sm font-black text-[#1a2e1f] border-b border-[#E5E5E5] pb-1.5 uppercase tracking-wide">
-                  Lead Customer Contacts
+                  Lead Traveler Contact
                 </h4>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Full Name *</label>
@@ -1132,30 +1050,16 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Contact Number *</label>
+                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Contact Number (WhatsApp) *</label>
                     <input
                       type="tel"
                       required
-                      placeholder="Enter your contact number"
+                      placeholder="+1 234 567 8900"
                       value={contactInfo.phone}
                       onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
                       className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
                     />
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Emergency Contact Number *</label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="Enter emergency contact number"
-                      value={contactInfo.emergencyPhone}
-                      onChange={(e) => setContactInfo({ ...contactInfo, emergencyPhone: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Country of Residence *</label>
                     <select
@@ -1170,134 +1074,18 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                       ))}
                     </select>
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Your Flight Arrival Date</label>
-                    <input
-                      type="date"
-                      value={contactInfo.flightArrivalDate}
-                      onChange={(e) => setContactInfo({ ...contactInfo, flightArrivalDate: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Your Flight Departure Date</label>
-                    <input
-                      type="date"
-                      value={contactInfo.flightDepartureDate}
-                      onChange={(e) => setContactInfo({ ...contactInfo, flightDepartureDate: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
-                    />
-                  </div>
                 </div>
               </div>
 
-              {/* Travelers Passport Profiles list */}
-              <div className="flex flex-col gap-6 mt-2 border-t border-[#E5E5E5] pt-5">
-                <h4 className="font-serif text-base font-black text-[#1a2e1f]">Traveler Profiles & Passports</h4>
-                
-                {travelers.map((traveler, idx) => (
-                  <div key={idx} className="border border-[#E5E5E5] rounded-2xl p-5 flex flex-col gap-4 shadow-sm bg-slate-50/20">
-                    <h5 className="font-serif font-black text-xs text-[#2E7D32] border-b border-[#E5E5E5]/60 pb-1 flex items-center gap-1.5 uppercase tracking-wider">
-                      <span>👤 Traveler #{idx + 1} {idx === 0 && "(Lead Guest)"}</span>
-                    </h5>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Full Name *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Exactly as written in passport"
-                          value={traveler.fullName}
-                          onChange={(e) => handleTravelerChange(idx, "fullName", e.target.value)}
-                          className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32] bg-white"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Nationality *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. Canadian"
-                          value={traveler.nationality}
-                          onChange={(e) => handleTravelerChange(idx, "nationality", e.target.value)}
-                          className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32] bg-white"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Gender *</label>
-                        <select
-                          value={traveler.gender}
-                          onChange={(e) => handleTravelerChange(idx, "gender", e.target.value)}
-                          className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold bg-white focus:outline-none cursor-pointer"
-                        >
-                          <option value="male">Male</option>
-                          <option value="female">Female</option>
-                          <option value="other">Other</option>
-                        </select>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Date of Birth *</label>
-                        <input
-                          type="date"
-                          required
-                          value={traveler.dob}
-                          onChange={(e) => handleTravelerChange(idx, "dob", e.target.value)}
-                          className="border border-[#E5E5E5] rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Passport Number *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. AA1234567"
-                          value={traveler.passportNumber}
-                          onChange={(e) => handleTravelerChange(idx, "passportNumber", e.target.value)}
-                          className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32] bg-white"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Passport Expiry Date *</label>
-                        <input
-                          type="date"
-                          required
-                          value={traveler.passportExpiry}
-                          onChange={(e) => handleTravelerChange(idx, "passportExpiry", e.target.value)}
-                          className="border border-[#E5E5E5] rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
-                        />
-                      </div>
-                      
-                      <div className="md:col-span-2 flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Passport Scanned Photocopy *</label>
-                        <div
-                          onClick={() => handlePassportUpload(idx)}
-                          className={`border-2 border-dashed rounded-xl p-3 text-center cursor-pointer transition flex items-center justify-center gap-3 bg-white hover:bg-slate-50 ${
-                            passportDocs[idx] ? "border-green-400 bg-green-50/10" : "border-slate-200"
-                          }`}
-                        >
-                          {passportDocs[idx] ? (
-                            <>
-                              <FaCheck className="text-green-500 text-xs shrink-0" />
-                              <span className="text-[10px] font-black text-green-950 truncate max-w-[180px]">{passportDocs[idx]}</span>
-                            </>
-                          ) : (
-                            <>
-                              <FaUpload className="text-slate-400 text-xs shrink-0" />
-                              <span className="text-[10px] font-bold text-slate-600">Drag photocopy scan or click to browse</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              {/* Reassurance — why we don't ask for more now */}
+              <div className="flex items-start gap-3 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-2xl p-4">
+                <FaCheck className="text-[#2E7D32] text-sm shrink-0 mt-0.5" />
+                <p className="text-[11px] text-[#3D3D3D] leading-relaxed font-semibold">
+                  <span className="text-[#1a2e1f] font-black">No passport upload needed to book.</span> Once your
+                  spot is reserved, your dedicated specialist will help you complete passport details, traveler
+                  profiles{guestsCount > 1 ? ` for all ${guestsCount} travelers` : ""}, insurance and any
+                  add-ons — by email or on arrival in Kathmandu. Booking now takes under a minute.
+                </p>
               </div>
             </div>
           )}
@@ -1660,11 +1448,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                 <span>+${addonsTotal} USD</span>
               </div>
             )}
-
-            <div className="flex justify-between text-white/70">
-              <span>Tourism safety fee (5%)</span>
-              <span>+${taxTotal} USD</span>
-            </div>
           </div>
 
           {/* Due Columns */}

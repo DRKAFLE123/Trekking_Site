@@ -5,7 +5,7 @@ import { revalidateGlobalSettings } from '../hooks/revalidate';
 const parseYoutubeId = (args: any) => {
   const value = args.value;
   if (value) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = value.match(regExp);
     if (match && match[2].length === 11) {
       return match[2];
