@@ -164,6 +164,21 @@ export async function POST(request: Request) {
     const paymentMethod = paymentType === "pay_later" ? null : rawPaymentMethod;
     const paymentId = paymentType === "pay_later" ? null : rawPaymentId;
 
+    // Payment methods whose capture this server has actually verified against a
+    // live gateway. Deliberately EMPTY: no gateway is wired up yet. PayPal is a
+    // manual paypal.me link and bank_transfer is a manual SWIFT wire, so the
+    // client telling us "I chose PayPal" is not evidence that money moved.
+    //
+    // Anything absent from this list stays unpaid/pending until staff verify the
+    // payment proof by hand. Add a method here ONLY once its capture is
+    // confirmed server-side (gateway callback/webhook), never before — otherwise
+    // travellers get confirmed, paid-marked bookings for free.
+    const GATEWAY_VERIFIED_METHODS: string[] = [];
+    const isPaymentVerified =
+      paymentType !== "pay_later" &&
+      !!paymentMethod &&
+      GATEWAY_VERIFIED_METHODS.includes(paymentMethod);
+
     // Validate checkout data
     if (!trekSlug || !startDate || !endDate || !travelers || !customerDetails || !totalPrice) {
       return NextResponse.json({ error: "Missing required checkout specifications" }, { status: 400 });
@@ -206,8 +221,8 @@ export async function POST(request: Request) {
         tax: tax || 0,
         totalPrice,
         paymentType,
-        paymentStatus: paymentType === "pay_later" || paymentMethod === "bank_transfer" ? "unpaid" : "paid",
-        bookingStatus: paymentType === "pay_later" || paymentMethod === "bank_transfer" ? "pending" : "confirmed",
+        paymentStatus: isPaymentVerified ? "paid" : "unpaid",
+        bookingStatus: isPaymentVerified ? "confirmed" : "pending",
         adminRemarks: [
           paymentType === "pay_later"
             ? "System checkout via website (Book Now, Pay Later - 0%)"
@@ -227,9 +242,12 @@ export async function POST(request: Request) {
         data: {
           booking: booking.id,
           paymentId: paymentId || `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
+          // Amount *due* for this booking — not amount received. Until a gateway
+          // confirms capture the status below stays "pending", so this reads as
+          // the outstanding balance rather than a collected payment.
           amount: paymentType === "pay_later" ? 0 : (paymentType === "advance_10" ? Math.round(totalPrice * 0.1) : totalPrice),
           method: paymentMethod,
-          status: (paymentMethod === "bank_transfer" || paymentType === "pay_later") ? "pending" : "success",
+          status: isPaymentVerified ? "success" : "pending",
           transactionDetails: JSON.stringify({
             checkoutTime: new Date().toISOString(),
             paymentType,

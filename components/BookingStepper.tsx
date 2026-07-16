@@ -134,7 +134,10 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
   // Payment Options (Step 3)
   const [paymentType, setPaymentType] = useState<"full" | "advance_10" | "pay_later">("full");
-  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal" | "esewa" | "khalti" | "bank_transfer">("paypal");
+  // Defaults to bank_transfer: PayPal is hidden pending the client's gateway
+  // details, so it must not be the pre-selected method (it would be selected
+  // but have no visible button, and no payment panel would render).
+  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal" | "esewa" | "khalti" | "bank_transfer">("bank_transfer");
   const [walletPhone, setWalletPhone] = useState("");
   const [walletOtp, setWalletOtp] = useState("");
   
@@ -159,24 +162,28 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     const methods = [];
     const settings = siteSettings?.paymentSettings;
 
-    // Credit Card (Stripe) is intentionally disabled until the client
-    // provides live gateway credentials — only PayPal and SWIFT Bank are
-    // offered for now.
+    // Credit Card (Stripe) and PayPal are both intentionally disabled: neither
+    // has live gateway credentials, and PayPal is still pending the client's
+    // answers on the paypal.me account. SWIFT Bank is the only method offered.
+    //
+    // To re-enable PayPal, restore the `settings?.enablePaypal` branch below AND
+    // add "paypal" to GATEWAY_VERIFIED_METHODS in app/api/booking/route.ts only
+    // once its capture is confirmed server-side.
     if (!siteSettings) {
-      return [
-        { id: "paypal", label: "PayPal" },
-        { id: "bank_transfer", label: "SWIFT Bank" }
-      ];
+      return [{ id: "bank_transfer", label: "SWIFT Bank" }];
     }
 
-    if (settings?.enablePaypal !== false) {
-      methods.push({ id: "paypal", label: "PayPal" });
-    }
     if (settings?.enableLocalWallets === true) {
       methods.push({ id: "esewa", label: "eSewa" });
       methods.push({ id: "khalti", label: "Khalti" });
     }
     if (settings?.enableBankTransfer !== false) {
+      methods.push({ id: "bank_transfer", label: "SWIFT Bank" });
+    }
+
+    // Never hand back an empty list — with PayPal hidden, an admin toggling off
+    // bank transfer would otherwise leave checkout with no payment method at all.
+    if (methods.length === 0) {
       methods.push({ id: "bank_transfer", label: "SWIFT Bank" });
     }
 
@@ -746,9 +753,10 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       <div className="bg-white rounded-3xl border border-[#E5E5E5] p-8 md:p-12 shadow-2xl flex flex-col gap-8 text-center animate-fade-in print:border-0 print:shadow-none print:p-0">
         <div className="flex flex-col items-center gap-4 border-b border-[#E5E5E5] pb-8 print:border-b-2 print:pb-4">
           <FaCheckCircle className="h-16 w-16 text-green-500 animate-bounce print:hidden" />
-          <h2 className="font-serif text-3xl font-black text-[#1a2e1f]">Booking Reservation Confirmed!</h2>
+          <h2 className="font-serif text-3xl font-black text-[#1a2e1f]">Booking Reservation Received!</h2>
           <p className="text-sm text-[#6B6B6B] max-w-lg font-medium print:hidden">
-            Your booking details are verified, permits locked, and itinerary reservations activated in our registers.
+            Your reservation is recorded against the booking ID below and our team has been notified.
+            We&apos;ll confirm your trip and lock in permits once your payment has been verified.
           </p>
           <div className="bg-[#1a2e1f] text-white rounded-xl px-5 py-3 mt-2 flex flex-col items-center gap-1 border border-white/10 select-all font-mono font-bold">
             <span className="text-[10px] text-white/60 tracking-widest uppercase">Booking ID Reference Number</span>
@@ -1335,12 +1343,17 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                 {/* Gateway Inputs */}
                 <div className="bg-[#F8F7F4] border border-[#E5E5E5] p-5 rounded-2xl mt-2">
 
+                  {/* PayPal is currently hidden from getActivePaymentMethods(), so
+                      this panel does not render. Kept (with honest copy — there is
+                      no gateway redirect) for when the client's account details are
+                      confirmed and PayPal is switched back on. */}
                   {paymentMethod === "paypal" && (
                     <div className="flex flex-col items-center py-6 text-center gap-3 animate-fade-in text-xs font-semibold">
                       <span className="text-2xl">💳</span>
-                      <h5 className="font-serif font-black text-sm text-[#1a2e1f]">PayPal Checkout Gateways</h5>
+                      <h5 className="font-serif font-black text-sm text-[#1a2e1f]">Pay with PayPal</h5>
                       <p className="text-[#6B6B6B] max-w-sm">
-                        Confirming will route safety procedures directly to secure PayPal interfaces to finalize the checkouts.
+                        After confirming, we&apos;ll email you a secure PayPal payment link for your booking
+                        total. Your trip is confirmed once we&apos;ve verified the payment.
                       </p>
                     </div>
                   )}
