@@ -158,8 +158,18 @@ export async function POST(request: Request) {
       paymentId: rawPaymentId,
       passportUrl,
       paymentProofUrl,
-      arrivalDate
+      arrivalDate,
+      addons
     } = body;
+
+    // Optional upgrades chosen at checkout. Their cost is already inside
+    // totalPrice; this is the itemised record of what the traveller actually
+    // ordered so the team knows what to arrange.
+    const selectedAddons: { title: string; pricePerPerson: number; total: number }[] =
+      Array.isArray(addons) ? addons : [];
+    const addonsSummary = selectedAddons
+      .map((a) => `${a.title} ($${a.pricePerPerson}/pp = $${a.total})`)
+      .join(", ");
 
     const paymentMethod = paymentType === "pay_later" ? null : rawPaymentMethod;
     const paymentId = paymentType === "pay_later" ? null : rawPaymentId;
@@ -228,6 +238,7 @@ export async function POST(request: Request) {
             ? "System checkout via website (Book Now, Pay Later - 0%)"
             : `System checkout via website using ${paymentMethod?.toUpperCase()} with ${paymentType}`,
           arrivalDate ? `Arrival date: ${arrivalDate}` : null,
+          addonsSummary ? `Upgrades: ${addonsSummary}` : null,
           passportUrl ? `Passport document: ${passportUrl}` : null,
           paymentProofUrl ? `Payment proof: ${paymentProofUrl}` : null,
         ].filter(Boolean).join(" | "),
@@ -317,6 +328,7 @@ export async function POST(request: Request) {
               <tr><th>Dates</th><td>${startDate} to ${endDate}</td></tr>
               ${arrivalDate ? `<tr><th>Arrival Date</th><td>${arrivalDate}</td></tr>` : ""}
               <tr><th>Travelers</th><td>${travelersCount}</td></tr>
+              ${selectedAddons.length > 0 ? `<tr><th>Upgrades</th><td>${selectedAddons.map((a) => `${a.title} &mdash; $${a.pricePerPerson}/pp &times; ${travelersCount} = <strong>$${a.total}</strong>`).join("<br />")}</td></tr>` : ""}
               <tr><th>Payment Method</th><td>${paymentMethod}</td></tr>
               <tr><th>Total Price</th><td>$${totalPrice}</td></tr>
               ${passportUrl ? `<tr><th>Passport Document</th><td><a href="${passportUrl}" target="_blank" rel="noopener noreferrer">View / download passport</a></td></tr>` : ""}
@@ -341,6 +353,7 @@ export async function POST(request: Request) {
             <p><strong>Booking Reference:</strong> ${bookingId}</p>
             <p><strong>Dates:</strong> ${startDate} to ${endDate}</p>
             <p><strong>Travelers:</strong> ${travelersCount}</p>
+            ${selectedAddons.length > 0 ? `<p><strong>Upgrades:</strong> ${selectedAddons.map((a) => `${a.title} ($${a.total})`).join(", ")}</p>` : ""}
           </div>
           <p>We will contact you shortly with further details and preparation instructions.</p>
           <br />

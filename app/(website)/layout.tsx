@@ -116,7 +116,10 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "en_US",
-      siteName: "Nature Heaven Trekking",
+      // Must match the WebSite schema `name` on the homepage exactly. Google
+      // cross-checks og:site_name against that schema; when they disagree it
+      // distrusts both and shows the bare domain instead.
+      siteName: "Nature Heaven Treks and Expedition",
       url: siteUrl,
       title: defaultTitle,
       description: defaultDescription,

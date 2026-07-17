@@ -281,8 +281,53 @@ export default async function HomePage() {
     check: <FaCheck className="h-5 w-5" />,
   };
 
+  // Google picks the "site name" shown above the title in search results from
+  // WebSite structured data on the HOMEPAGE (plus og:site_name and <title> as
+  // supporting signals). Without it Google falls back to displaying the bare
+  // domain — which is what natureheaventreks.com was showing. `name` matches the
+  // Google Business Profile and TripAdvisor listing exactly; conflicting names
+  // across signals are a common reason Google ignores them all and uses the URL.
+  // Must stay on the homepage only — Google ignores WebSite schema elsewhere.
+  const siteUrl = "https://natureheaventreks.com";
+  const siteSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        url: siteUrl,
+        name: "Nature Heaven Treks and Expedition",
+        alternateName: ["Nature Heaven Treks", "Nature Heaven Trekking"],
+        publisher: { "@id": `${siteUrl}/#organization` },
+      },
+      {
+        "@type": "TravelAgency",
+        "@id": `${siteUrl}/#organization`,
+        name: "Nature Heaven Treks and Expedition",
+        alternateName: "Nature Heaven Treks",
+        url: siteUrl,
+        logo: `${siteUrl}/opengraph-image`,
+        image: `${siteUrl}/opengraph-image`,
+        email: "info@natureheaventreks.com",
+        telephone: "+977-9851218358",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Pakjonal Marga -16, Thamel",
+          addressLocality: "Kathmandu",
+          addressCountry: "NP",
+        },
+      },
+    ],
+  };
+
   return (
     <div className="w-full">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(siteSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       {/* 1. Hero Section */}
       <section className="relative w-full h-screen min-h-[650px] flex flex-col justify-between items-center bg-primary overflow-hidden">
         {/* Background video / overlay */}

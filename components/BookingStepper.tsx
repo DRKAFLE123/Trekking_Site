@@ -39,10 +39,13 @@ interface BookingStepperProps {
   trek: TrekSummary;
 }
 
+// Optional upgrades offered at checkout. Prices are per person and are
+// multiplied by the guest count in `addonsTotal`.
+// Helicopter Return Upgrade was removed at the client's request — the trek team
+// arranges charters case-by-case rather than selling them at a fixed rate.
 const ADDONS_LIST = [
   { id: "single_supplement", title: "Single Room Supplement", description: "Private rooms in Kathmandu hotels and mountain teahouses", price: 250 },
-  { id: "heli_upgrade", title: "Helicopter Return Upgrade", description: "Scenic chopper return flight directly to Lukla/Kathmandu", price: 450 },
-  { id: "extra_hotel", title: "Extra Kathmandu Hotel Night", description: "Additional night pre/post trek in 3-star boutique hotel", price: 80 }
+  { id: "extra_hotel", title: "Extra Kathmandu Hotel Night", description: "Additional night pre/post trek in 3-star boutique hotel", price: 90 }
 ];
 
 const COUNTRIES_LIST = [
@@ -610,6 +613,15 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       discount: discountTotal,
       tax: taxTotal,
       totalPrice,
+      // Chosen upgrades, resolved to titles/prices here so the booking record and
+      // the admin email say *what* was ordered. Without this the team only sees a
+      // larger totalPrice with nothing explaining the difference.
+      addons: ADDONS_LIST.filter((addon) => selectedAddons[addon.id]).map((addon) => ({
+        id: addon.id,
+        title: addon.title,
+        pricePerPerson: addon.price,
+        total: addon.price * guestsCount,
+      })),
       paymentType,
       paymentMethod,
       paymentId: `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
