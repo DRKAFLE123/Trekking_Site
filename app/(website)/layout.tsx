@@ -150,6 +150,29 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// Admin-managed tracking tags (Site Settings → Tracking & Marketing Scripts).
+// Rendered as raw HTML at the top of <body>: server-rendered <script> tags are
+// part of the initial document, so the browser executes them on parse — no
+// client-side re-injection needed. Only admins can edit this field, and its
+// contents run with full page access, hence the trust warning in the CMS.
+async function TrackingScripts() {
+  try {
+    const payload = await getPayload({ config });
+    const siteSettings = await payload.find({ collection: "siteSettings", depth: 0, limit: 1 });
+    const headScripts = (siteSettings.docs[0] as any)?.trackingSettings?.headScripts;
+    if (!headScripts) return null;
+    return (
+      <div
+        style={{ display: "none" }}
+        dangerouslySetInnerHTML={{ __html: headScripts }}
+      />
+    );
+  } catch {
+    // Never let a tracking-tag fetch failure take down the whole site shell.
+    return null;
+  }
+}
+
 export default function RootLayout({
   children,
   }: Readonly<{
@@ -177,6 +200,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="font-sans bg-bgOffWhite text-charcoal min-h-screen flex flex-col" suppressHydrationWarning>
+        <TrackingScripts />
         <Navbar />
         <main className="grow">{children}</main>
         <Footer />

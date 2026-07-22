@@ -323,6 +323,35 @@ export const SiteSettings: CollectionConfig = {
       },
     },
     {
+      name: 'trackingSettings',
+      type: 'group',
+      label: 'Tracking & Marketing Scripts',
+      admin: {
+        description:
+          'Third-party tracking tags (Google Ads, Analytics, Meta Pixel, etc.). Managed here so new tags never require a code change.',
+      },
+      fields: [
+        {
+          name: 'headScripts',
+          type: 'textarea',
+          label: 'Site-wide Tracking Scripts (HTML)',
+          admin: {
+            description:
+              'Paste complete tags exactly as the provider gives them, including the <script> tags. Injected on every page of the website. WARNING: scripts here run with full access to the page — only paste code from providers you trust (Google, Meta, etc.).',
+          },
+        },
+        {
+          name: 'googleAdsConversionSendTo',
+          type: 'text',
+          label: 'Google Ads Conversion ID/Label (fired on booking success)',
+          admin: {
+            description:
+              "The send_to value from the Google Ads event snippet, e.g. AW-123456789/AbCdEfGhIj. Fired automatically when a visitor completes a booking. Leave empty to disable.",
+          },
+        },
+      ],
+    },
+    {
       name: 'allowIndexing',
       type: 'checkbox',
       defaultValue: true,

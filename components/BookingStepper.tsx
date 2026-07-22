@@ -643,6 +643,17 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       if (res.ok && data.success) {
         setBookingResponse(data);
         setSubmitSuccess(true);
+        // Google Ads conversion ("Submit lead form"). The send_to value is
+        // managed in Site Settings → Tracking & Marketing Scripts, and gtag is
+        // loaded by the site-wide tracking tag — so this no-ops harmlessly if
+        // either is missing.
+        try {
+          const sendTo = siteSettings?.trackingSettings?.googleAdsConversionSendTo;
+          const gtag = (window as any).gtag;
+          if (sendTo && typeof gtag === "function") {
+            gtag("event", "conversion", { send_to: sendTo });
+          }
+        } catch {}
       } else {
         throw new Error(data.error || "Failed to submit booking transaction.");
       }
