@@ -33,6 +33,13 @@ import { FadeInUp } from "@/components/FramerWrap";
 
 export const revalidate = 60; // Revalidate every minute
 
+// Self-canonical for the homepage only (page-level, so child routes don't
+// inherit it). Ends the www/non-www ambiguity that made Google index the www
+// copy: with the 301 in next.config this tells Google the apex URL is the one.
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default async function HomePage() {
   let bestSellers: Trek[] = [];
   let regions: Region[] = [];
@@ -284,9 +291,11 @@ export default async function HomePage() {
   // Google picks the "site name" shown above the title in search results from
   // WebSite structured data on the HOMEPAGE (plus og:site_name and <title> as
   // supporting signals). Without it Google falls back to displaying the bare
-  // domain — which is what natureheaventreks.com was showing. `name` matches the
-  // Google Business Profile and TripAdvisor listing exactly; conflicting names
-  // across signals are a common reason Google ignores them all and uses the URL.
+  // domain — which is what natureheaventreks.com was showing. `name` is the
+  // client's chosen brand ("Nature Heaven Treks & Expedition"); the GBP /
+  // TripAdvisor variant is kept in alternateName. Conflicting names across
+  // signals are a common reason Google ignores them all and uses the URL —
+  // ideally the client also renames GBP/TripAdvisor to match.
   // Must stay on the homepage only — Google ignores WebSite schema elsewhere.
   const siteUrl = "https://natureheaventreks.com";
   const siteSchema = {
@@ -296,8 +305,8 @@ export default async function HomePage() {
         "@type": "WebSite",
         "@id": `${siteUrl}/#website`,
         url: siteUrl,
-        name: "Nature Heaven Treks and Expedition",
-        alternateName: ["Nature Heaven Treks", "Nature Heaven Trekking"],
+        name: "Nature Heaven Treks & Expedition",
+        alternateName: ["Nature Heaven Treks and Expedition", "Nature Heaven Treks", "Nature Heaven Trekking"],
         publisher: { "@id": `${siteUrl}/#organization` },
         creator: { "@id": `${siteUrl}/#creator` },
       },
@@ -319,8 +328,9 @@ export default async function HomePage() {
       {
         "@type": "TravelAgency",
         "@id": `${siteUrl}/#organization`,
-        name: "Nature Heaven Treks and Expedition",
-        alternateName: "Nature Heaven Treks",
+        name: "Nature Heaven Treks & Expedition",
+        legalName: "Nature Heaven Treks and Expedition Pvt. Ltd.",
+        alternateName: "Nature Heaven Treks and Expedition",
         url: siteUrl,
         logo: `${siteUrl}/opengraph-image`,
         image: `${siteUrl}/opengraph-image`,

@@ -43,7 +43,7 @@ export async function sendEmail({ to, subject, html, replyTo, bcc }: SendEmailPa
 
   try {
     const data = await resend.emails.send({
-      from: `Nature Heaven Treks <${fromEmail}>`,
+      from: `Nature Heaven Treks & Expedition <${fromEmail}>`,
       to,
       subject,
       html,
@@ -214,7 +214,7 @@ export function getPremiumEmailTemplate(
   <div class="container">
     <div class="header">
       ${enquiryType ? `<div class="enquiry-type">${enquiryType}</div>` : ''}
-      <h1>Nature Heaven Treks</h1>
+      <h1>Nature Heaven Treks & Expedition</h1>
       <p>Himalayan Adventures</p>
     </div>
     <div class="content">
@@ -228,7 +228,7 @@ export function getPremiumEmailTemplate(
       ` : ''}
     </div>
     <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} Nature Heaven Treks. All rights reserved.</p>
+      <p>&copy; ${new Date().getFullYear()} Nature Heaven Treks & Expedition. All rights reserved.</p>
       <p>Pakjonal Marga -16, Thamel, Kathmandu, Nepal</p>
       <p><a href="https://natureheaventreks.com">Visit our website</a></p>
     </div>

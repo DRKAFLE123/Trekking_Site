@@ -6,7 +6,7 @@
   <xsl:template match="/">
     <html lang="en">
       <head>
-        <title>Sitemap — Nature Heaven Treks and Expedition</title>
+        <title>Sitemap — Nature Heaven Treks &amp; Expedition</title>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -121,7 +121,7 @@
       <body>
         <div class="header">
           <div class="badge">XML Sitemap</div>
-          <h1>Nature Heaven Treks and Expedition</h1>
+          <h1>Nature Heaven Treks &amp; Expedition</h1>
           <p>Himalayan Adventures &#8226; Kathmandu, Nepal</p>
         </div>
         <div class="meta">
@@ -152,7 +152,7 @@
           </table>
         </div>
         <div class="footer">
-          &#169; Nature Heaven Treks and Expedition &#8226; Pakjonal Marga -16, Thamel, Kathmandu
+          &#169; Nature Heaven Treks &amp; Expedition &#8226; Pakjonal Marga -16, Thamel, Kathmandu
           &#8226; <a href="https://natureheaventreks.com">natureheaventreks.com</a><br/>
           <span style="display:inline-block;margin-top:8px;">Build with &#10084;&#65039; by <a href="https://aryanpariyar.com.np/" target="_blank" rel="noopener">Aryan</a></span>
         </div>

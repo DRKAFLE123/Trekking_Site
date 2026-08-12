@@ -79,19 +79,23 @@ export async function generateMetadata(): Promise<Metadata> {
   if (!seoImageUrl) seoImageUrl = "/opengraph-image";
 
   const siteUrl = "https://natureheaventreks.com";
-  const defaultTitle = "Nature Heaven Trek & Expedition | Private Trekking Agency Nepal";
+  // Brand string must be IDENTICAL everywhere Google reads it (title, og:site_name,
+  // WebSite schema on the homepage, sitemap page) — mixed variants make Google
+  // distrust the site name and show the bare URL instead.
+  const brandName = "Nature Heaven Treks & Expedition";
+  const defaultTitle = `${brandName} | Private Trekking Agency Nepal`;
   const defaultDescription =
-    "Nature Heaven Trek & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.";
+    "Nature Heaven Treks & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.";
 
   return {
-    title: { default: defaultTitle, template: "%s | Nature Heaven Trekking" },
+    title: { default: defaultTitle, template: `%s | ${brandName}` },
     description: defaultDescription,
     metadataBase: new URL(siteUrl),
     // Deliberately no `alternates.canonical` here — Next.js inherits root
     // metadata to every child page, so setting canonical="/" here would tell
     // Google every trek / blog / region page is a duplicate of the homepage.
     // Individual pages (regions, countries) set their own canonical.
-    applicationName: "Nature Heaven Trekking",
+    applicationName: brandName,
     keywords: [
       "Nepal trekking",
       "private trekking Nepal",
@@ -101,7 +105,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "Himalayan adventure",
       "Sherpa guide",
     ],
-    authors: [{ name: "Nature Heaven Trek & Expedition" }],
+    authors: [{ name: brandName }],
     // Renders as <meta name="creator"> — crawler-visible, never shown in the UI.
     creator: "Aryan Pariyar (https://aryanpariyar.com.np/)",
     robots: {
@@ -121,7 +125,7 @@ export async function generateMetadata(): Promise<Metadata> {
       // Must match the WebSite schema `name` on the homepage exactly. Google
       // cross-checks og:site_name against that schema; when they disagree it
       // distrusts both and shows the bare domain instead.
-      siteName: "Nature Heaven Treks and Expedition",
+      siteName: brandName,
       url: siteUrl,
       title: defaultTitle,
       description: defaultDescription,

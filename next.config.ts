@@ -37,6 +37,16 @@ const nextConfig: NextConfig = {
   crossOrigin: "anonymous",
   async redirects() {
     return [
+      // Canonical host: www serves the same site without redirecting, so Google
+      // indexed https://www.natureheaventreks.com/ as the canonical homepage
+      // while sitemap/robots/schema all point at the apex ("Duplicate without
+      // user-selected canonical" in GSC). One host must win: 301 www -> apex.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.natureheaventreks.com" }],
+        destination: "https://natureheaventreks.com/:path*",
+        permanent: true,
+      },
       { source: "/wp-admin", destination: "/admin/login", permanent: true },
       { source: "/wp-admin/:path*", destination: "/admin/login", permanent: true },
       { source: "/wp-login.php", destination: "/admin/login", permanent: true },
