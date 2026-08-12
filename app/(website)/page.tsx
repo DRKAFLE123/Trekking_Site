@@ -299,6 +299,22 @@ export default async function HomePage() {
         name: "Nature Heaven Treks and Expedition",
         alternateName: ["Nature Heaven Treks", "Nature Heaven Trekking"],
         publisher: { "@id": `${siteUrl}/#organization` },
+        creator: { "@id": `${siteUrl}/#creator` },
+      },
+      // Site creator credit — machine-readable only (JSON-LD is never rendered),
+      // so crawlers/SEO tools see it but visitors and the CMS don't.
+      {
+        "@type": "Person",
+        "@id": `${siteUrl}/#creator`,
+        name: "Aryan Pariyar",
+        url: "https://aryanpariyar.com.np/",
+        jobTitle: "Full Stack Web Developer",
+        sameAs: [
+          "https://github.com/aryanpariyarofficial",
+          "https://www.linkedin.com/in/aryanpariyar",
+          "https://www.facebook.com/aryanpariyarofficial",
+          "https://www.instagram.com/aryanpariyarofficial",
+        ],
       },
       {
         "@type": "TravelAgency",

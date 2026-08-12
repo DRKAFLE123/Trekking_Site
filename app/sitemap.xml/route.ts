@@ -1,4 +1,3 @@
-import type { MetadataRoute } from "next";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 
@@ -6,15 +5,26 @@ import config from "@/payload/payload.config";
 // the static info pages, plus every Trek, Blog Post, Region, Company Page,
 // Contact Page, and CMS Pages doc that's been published.
 //
+// A custom route handler (instead of app/sitemap.ts) so the XML can carry an
+// xml-stylesheet instruction — /sitemap.xsl renders it as a branded, readable
+// page for humans. Crawlers ignore the stylesheet and read the same XML.
+//
 // Uses a permissive fallback so a CMS hiccup never produces an empty
 // sitemap (Google penalizes that).
 export const revalidate = 3600; // re-build at most once per hour
 
 const SITE_URL = "https://natureheaventreks.com";
 
+type Entry = {
+  url: string;
+  lastModified: Date;
+  changeFrequency: string;
+  priority: number;
+};
+
 const STATIC_ROUTES: Array<{
   path: string;
-  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  changeFrequency: string;
   priority: number;
 }> = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
@@ -44,27 +54,27 @@ const STATIC_ROUTES: Array<{
   { path: "/legal-documents", changeFrequency: "yearly", priority: 0.3 },
 ];
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+async function buildEntries(): Promise<Entry[]> {
   const now = new Date();
 
-  const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({
+  const staticEntries: Entry[] = STATIC_ROUTES.map((r) => ({
     url: `${SITE_URL}${r.path}`,
     lastModified: now,
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));
 
-  let dynamicEntries: MetadataRoute.Sitemap = [];
+  let dynamicEntries: Entry[] = [];
 
   try {
     const payload = await getPayload({ config });
 
-    const safeFind = async <T extends string>(
-      collection: T,
+    const safeFind = async (
+      collection: string,
       prefix: string,
-      changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"],
+      changeFrequency: string,
       priority: number,
-    ): Promise<MetadataRoute.Sitemap> => {
+    ): Promise<Entry[]> => {
       try {
         const res = await payload.find({
           collection: collection as any,
@@ -108,4 +118,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   return [...staticEntries, ...dynamicEntries];
+}
+
+const escapeXml = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+export async function GET() {
+  const entries = await buildEntries();
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries
+  .map(
+    (e) => `  <url>
+    <loc>${escapeXml(e.url)}</loc>
+    <lastmod>${e.lastModified.toISOString().slice(0, 10)}</lastmod>
+    <changefreq>${e.changeFrequency}</changefreq>
+    <priority>${e.priority.toFixed(2)}</priority>
+  </url>`,
+  )
+  .join("\n")}
+</urlset>
+`;
+
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, stale-while-revalidate=600",
+    },
+  });
 }

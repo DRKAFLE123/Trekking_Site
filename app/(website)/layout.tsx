@@ -102,6 +102,8 @@ export async function generateMetadata(): Promise<Metadata> {
       "Sherpa guide",
     ],
     authors: [{ name: "Nature Heaven Trek & Expedition" }],
+    // Renders as <meta name="creator"> — crawler-visible, never shown in the UI.
+    creator: "Aryan Pariyar (https://aryanpariyar.com.np/)",
     robots: {
       index: allowIndexing,
       follow: allowIndexing,
