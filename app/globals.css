@@ -147,3 +147,109 @@
 .blog-cta-btn:hover {
   background-color: #145C38 !important;
 }
+
+/* ============================================================
+   Blog article typography — long-form reading metrics.
+
+   Scoped to .blog-prose because lib/lexical-renderer.tsx is shared
+   with trek / about / CMS pages, which want UI density, not
+   reading density. Element+class selectors (0,1,1) outrank the
+   renderer's Tailwind utilities (0,1,0), so no !important needed.
+   ============================================================ */
+
+/* Cap the measure. The article column runs ~830px wide; at the old
+   16px that was 90-100 characters per line, well past the ~75 where
+   the eye starts losing its place on the return sweep. Text caps,
+   media stays full width (editorial look, and images earn the room). */
+.blog-prose > p,
+.blog-prose > ul,
+.blog-prose > ol,
+.blog-prose > h2,
+.blog-prose > h3,
+.blog-prose > h4,
+.blog-prose > h5,
+.blog-prose > h6,
+.blog-prose > blockquote {
+  max-width: 64ch;
+}
+
+.blog-prose p,
+.blog-prose li {
+  font-size: 1.125rem;   /* 18px, was 16px */
+  line-height: 1.8;      /* was 1.625 */
+  color: #2d2d2d;        /* solid charcoal; was charcoal/85, which read grey */
+}
+
+.blog-prose p {
+  margin-top: 1.5rem;    /* 24px, was 12px — paragraphs need to breathe */
+  margin-bottom: 1.5rem;
+}
+
+.blog-prose li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Heading hierarchy. H2 was 24px against 16px body — only 1.5x, too
+   weak to scan. 30px against 18px reads as a real section break. */
+.blog-prose h2 {
+  font-size: 1.875rem;   /* 30px */
+  line-height: 1.3;
+  margin-top: 3.25rem;
+  margin-bottom: 1rem;
+}
+
+.blog-prose h3 {
+  font-size: 1.375rem;   /* 22px */
+  line-height: 1.4;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-prose h4 {
+  font-size: 1.125rem;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Inline links. The renderer styles them bold + amber with no
+   underline, so a link-dense paragraph reads as confetti. Underline
+   carries the signal instead, and #8f6618 hits 5.1:1 on white
+   (WCAG AA) where the brand #c8922a only manages ~2.9:1. */
+.blog-prose p > a,
+.blog-prose li > a {
+  color: #8f6618;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(143, 102, 24, 0.4);
+}
+
+.blog-prose p > a:hover,
+.blog-prose li > a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Tight editorial corners: 5px on every block the renderer emits,
+   overriding its rounded-xl etc. without touching trek pages. */
+.blog-prose img,
+.blog-prose figure,
+.blog-prose pre,
+.blog-prose table,
+.blog-prose blockquote,
+.blog-prose iframe,
+.blog-prose video,
+.blog-prose [class*="rounded"] {
+  border-radius: 5px;
+}
+
+@media (max-width: 767px) {
+  .blog-prose p,
+  .blog-prose li {
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.75;
+  }
+  .blog-prose h2 { font-size: 1.5rem; margin-top: 2.5rem; }
+  .blog-prose h3 { font-size: 1.25rem; margin-top: 1.75rem; }
+}

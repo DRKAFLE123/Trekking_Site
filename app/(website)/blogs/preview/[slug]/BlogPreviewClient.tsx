@@ -64,7 +64,7 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
         {/* Header content */}
         <div className="max-w-4xl mb-8">
           {blog.category && (
-            <span className="bg-secondary text-primary font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-full w-fit">
+            <span className="bg-secondary text-primary font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-[5px] w-fit">
               {blog.category}
             </span>
           )}
@@ -127,7 +127,7 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
 
         {/* Cover Photo */}
         {coverImageUrl && (
-          <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-secondary/15 shadow-lg mb-12">
+          <div className="relative w-full aspect-[21/9] rounded-[5px] overflow-hidden border border-secondary/15 shadow-lg mb-12">
             <Image
               src={coverImageUrl}
               alt={blog.title || "Cover image"}
@@ -143,7 +143,7 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
           
           {/* Main Body */}
-          <article className="lg:col-span-2 bg-white border border-secondary/10 shadow-lg rounded-2xl p-6 md:p-10 prose prose-emerald max-w-none">
+          <article className="blog-prose lg:col-span-2 bg-white border border-secondary/10 shadow-lg rounded-[5px] p-6 md:p-10">
             {blog.body ? renderLexical(blog.body) : <p className="text-charcoal/50 italic">Start writing your content inside the editor to see it here...</p>}
           </article>
 
@@ -151,7 +151,7 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
           <aside className="flex flex-col gap-8 lg:sticky lg:top-40">
             {/* Author Profile Card */}
             {blog.author && (
-              <div className="bg-white border border-secondary/10 shadow-md rounded-2xl p-6 flex flex-col gap-4 text-center">
+              <div className="bg-white border border-secondary/10 shadow-md rounded-[5px] p-6 flex flex-col gap-4 text-center">
                 <div className="relative h-20 w-20 rounded-full overflow-hidden bg-primary/10 border-2 border-secondary mx-auto">
                   {authorPhotoUrl ? (
                     <Image
@@ -178,7 +178,7 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
 
             {/* Related Treks Card Widget */}
             {blog.relatedTreks && blog.relatedTreks.length > 0 && (
-              <div className="bg-white border border-secondary/10 shadow-md rounded-2xl p-6 flex flex-col gap-4">
+              <div className="bg-white border border-secondary/10 shadow-md rounded-[5px] p-6 flex flex-col gap-4">
                 <h4 className="font-serif font-bold text-primary text-base border-b border-primary/5 pb-2 flex items-center gap-2">
                   <span>🏔️</span>
                   <span>Related Treks</span>
@@ -191,10 +191,10 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
                       <Link
                         key={idx}
                         href={`/trips/${relTrek.slug}`}
-                        className="group flex gap-3.5 hover:bg-bgOffWhite/30 p-2 rounded-xl transition duration-300 border border-transparent hover:border-secondary/15"
+                        className="group flex gap-3.5 hover:bg-bgOffWhite/30 p-2 rounded-[5px] transition duration-300 border border-transparent hover:border-secondary/15"
                       >
                         {trekHeroUrl && (
-                          <div className="relative h-16 w-20 rounded-lg overflow-hidden shrink-0 bg-primary/10">
+                          <div className="relative h-16 w-20 rounded-[5px] overflow-hidden shrink-0 bg-primary/10">
                             <Image
                               src={trekHeroUrl}
                               alt={relTrek.title}

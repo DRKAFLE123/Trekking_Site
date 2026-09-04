@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { FaArrowLeft, FaCalendarAlt, FaUser, FaRegClock, FaFacebookF, FaLink, FaHeadset, FaDownload } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -79,12 +79,12 @@ function NewsletterForm({ onSuccess }: NewsletterFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           required
           disabled={submitting}
-          className="bg-black/35 border border-white/20 rounded-xl px-4 py-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-secondary transition grow min-w-0"
+          className="bg-black/35 border border-white/20 rounded-[5px] px-4 py-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-secondary transition grow min-w-0"
         />
         <button
           type="submit"
           disabled={submitting}
-          className="bg-secondary hover:bg-secondary-dark text-primary font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl transition duration-300 shadow disabled:opacity-50 shrink-0 cursor-pointer"
+          className="bg-secondary hover:bg-secondary-dark text-primary font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow disabled:opacity-50 shrink-0 cursor-pointer"
         >
           {submitting ? "Sending..." : "Get Free Guide"}
         </button>
@@ -117,6 +117,22 @@ export default function BlogDetailClient({
   
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [subscribed, setSubscribed] = useState<boolean>(false);
+
+  // TOC noise control: the sidebar rendered every heading at once (~20 entries,
+  // 3 levels deep), making navigation the loudest element on the page. Map each
+  // sub-heading to the top-level section that governs it, so sub-headings can
+  // be revealed only while the reader is inside that section.
+  const topLevelOf = useMemo(() => {
+    const map: Record<string, string> = {};
+    let current = '';
+    headings.forEach((h) => {
+      if ((h.level || 2) <= 2) current = h.id;
+      map[h.id] = current;
+    });
+    return map;
+  }, [headings]);
+
+  const activeTopId = topLevelOf[activeId] || '';
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -208,8 +224,8 @@ export default function BlogDetailClient({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
           
           {/* Left Sidebar Pane: Extremely Compact Consolidated Sticky Panel */}
-          <aside className="lg:col-span-4 lg:sticky lg:top-24 self-start w-full">
-            <div className="bg-white border border-secondary/15 shadow-md rounded-2xl p-5 md:p-6 flex flex-col gap-4 max-h-[calc(100vh-160px)] overflow-y-auto scrollbar-none">
+          <aside className="lg:col-span-3 lg:sticky lg:top-24 self-start w-full">
+            <div className="bg-white border border-secondary/15 shadow-md rounded-[5px] p-5 md:p-6 flex flex-col gap-4 max-h-[calc(100vh-160px)] overflow-y-auto scrollbar-none">
               
               {/* Table of Contents Section */}
               {headings.length > 0 && (
@@ -224,19 +240,18 @@ export default function BlogDetailClient({
                     {headings.map((heading) => {
                       const isActive = activeId === heading.id;
                       const level = heading.level || 2;
-                      
-                      // Dynamic indentation based on heading level
-                      const indentClass = 
-                        level === 3 ? 'ml-3' : 
-                        level === 4 ? 'ml-6' : 
-                        level === 5 ? 'ml-9' : 
-                        level >= 6 ? 'ml-12' : '';
 
-                      // Typography scale and styling depending on level to create visual hierarchy
-                      const textClass = 
-                        level === 2 ? 'text-[14.5px] font-semibold' :
-                        level === 3 ? 'text-[13.5px] font-medium text-charcoal/80' :
-                        'text-[12.5px] font-medium text-charcoal/65';
+                      // Collapse: only top-level sections, plus the sub-headings
+                      // of whichever section the reader is currently in.
+                      if (level > 2 && topLevelOf[heading.id] !== activeTopId) return null;
+
+                      // Shallow indent — the sidebar is narrower now, and the
+                      // collapse already carries the hierarchy.
+                      const indentClass = level >= 3 ? 'ml-2.5' : '';
+
+                      const textClass =
+                        level === 2 ? 'text-[14px] font-semibold' :
+                        'text-[13px] font-medium text-charcoal/70';
 
                       return (
                         <a
@@ -274,7 +289,7 @@ export default function BlogDetailClient({
                   {/* Facebook */}
                   <button
                     onClick={handleShareFacebook}
-                    className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2] text-[#1877F2] hover:text-white active:scale-95 transition-all duration-200"
+                    className="flex items-center justify-center h-8 w-8 rounded-[5px] bg-[#1877F2]/10 hover:bg-[#1877F2] text-[#1877F2] hover:text-white active:scale-95 transition-all duration-200"
                     title="Share on Facebook"
                   >
                     <FaFacebookF className="h-3.5 w-3.5" />
@@ -283,7 +298,7 @@ export default function BlogDetailClient({
                   {/* X */}
                   <button
                     onClick={handleShareX}
-                    className="flex items-center justify-center h-8 w-8 rounded-lg bg-black/5 hover:bg-black text-charcoal hover:text-white active:scale-95 transition-all duration-200"
+                    className="flex items-center justify-center h-8 w-8 rounded-[5px] bg-black/5 hover:bg-black text-charcoal hover:text-white active:scale-95 transition-all duration-200"
                     title="Share on X"
                   >
                     <FaXTwitter className="h-3.5 w-3.5" />
@@ -293,7 +308,7 @@ export default function BlogDetailClient({
                   <div className="relative">
                     <button
                       onClick={handleCopyLink}
-                      className={`flex items-center justify-center h-8 w-8 rounded-lg active:scale-95 transition-all duration-200 ${
+                      className={`flex items-center justify-center h-8 w-8 rounded-[5px] active:scale-95 transition-all duration-200 ${
                         copied 
                           ? 'bg-green-500 text-white' 
                           : 'bg-primary/5 hover:bg-primary/10 text-charcoal/70'
@@ -303,7 +318,7 @@ export default function BlogDetailClient({
                       <FaLink className="h-3.5 w-3.5" />
                     </button>
                     {copied && (
-                      <span className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-charcoal text-white text-[9px] py-1 px-2 rounded shadow-md whitespace-nowrap z-50 animate-fadeIn">
+                      <span className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-charcoal text-white text-[9px] py-1 px-2 rounded-[5px] shadow-md whitespace-nowrap z-50 animate-fadeIn">
                         Copied!
                       </span>
                     )}
@@ -315,11 +330,11 @@ export default function BlogDetailClient({
           </aside>
 
           {/* Right Main Column: Blog Header, Cover Photo, Article Body, and Profile box below */}
-          <main className="lg:col-span-8 flex flex-col gap-6 md:gap-8">
+          <main className="lg:col-span-9 flex flex-col gap-6 md:gap-8">
             
             {/* Post Header */}
             <div>
-              <span className="bg-secondary text-primary font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-full w-fit">
+              <span className="bg-secondary text-primary font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-[5px] w-fit">
                 {blog.category}
               </span>
               <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black text-primary leading-tight mt-4 mb-6">
@@ -374,7 +389,7 @@ export default function BlogDetailClient({
             {(() => {
               const coverUrl = getMediaUrl(blog.coverImage);
               return coverUrl ? (
-                <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-secondary/15 shadow-lg">
+                <div className="relative w-full aspect-[21/9] rounded-[5px] overflow-hidden border border-secondary/15 shadow-lg">
                   <Image
                     src={coverUrl}
                     alt={blog.title}
@@ -388,13 +403,13 @@ export default function BlogDetailClient({
             })()}
 
             {/* Article Body Content */}
-            <article className="bg-white border border-secondary/10 shadow-lg rounded-2xl p-6 md:p-10 prose prose-emerald max-w-none">
+            <article className="blog-prose bg-white border border-secondary/10 shadow-lg rounded-[5px] p-6 md:p-10">
               {bodyContent}
             </article>
 
             {/* Author Profile Box placed beautiful at the end of post */}
             {blog.author && (
-              <div className="bg-white border border-secondary/12 shadow-md rounded-2xl p-6 md:p-8 flex flex-col gap-6 transition hover:shadow-lg duration-300">
+              <div className="bg-white border border-secondary/12 shadow-md rounded-[5px] p-6 md:p-8 flex flex-col gap-6 transition hover:shadow-lg duration-300">
                 <div className="flex flex-col sm:flex-row gap-5 items-center sm:items-start text-center sm:text-left">
                   <Link 
                     href={`/blogs?author=${encodeURIComponent(blog.author.name || "Summit Guide")}`}
@@ -422,7 +437,7 @@ export default function BlogDetailClient({
                       >
                         {blog.author.name}
                       </Link>
-                      <span className="text-[9px] text-secondary font-bold uppercase tracking-wider bg-secondary/10 px-2.5 py-0.5 rounded-full w-fit mx-auto sm:mx-0 select-none">
+                      <span className="text-[9px] text-secondary font-bold uppercase tracking-wider bg-secondary/10 px-2.5 py-0.5 rounded-[5px] w-fit mx-auto sm:mx-0 select-none">
                         Himalayan Guide
                       </span>
                     </div>
@@ -451,10 +466,10 @@ export default function BlogDetailClient({
                         <Link
                           key={othBlog.id}
                           href={`/blogs/${othBlog.slug}`}
-                          className="group flex gap-3.5 bg-[#fdfdfc] hover:bg-white border border-secondary/10 hover:border-secondary/20 shadow-sm hover:shadow-md rounded-xl p-3 transition duration-300 items-center overflow-hidden"
+                          className="group flex gap-3.5 bg-[#fdfdfc] hover:bg-white border border-secondary/10 hover:border-secondary/20 shadow-sm hover:shadow-md rounded-[5px] p-3 transition duration-300 items-center overflow-hidden"
                         >
                           {othBlog.coverImage && (
-                            <div className="relative h-12 w-20 rounded-lg overflow-hidden shrink-0 bg-primary/10">
+                            <div className="relative h-12 w-20 rounded-[5px] overflow-hidden shrink-0 bg-primary/10">
                               <img
                                 src={getMediaUrl(othBlog.coverImage)}
                                 alt={othBlog.title}
@@ -494,7 +509,7 @@ export default function BlogDetailClient({
           {prevBlog ? (
             <Link
               href={`/blogs/${prevBlog.slug}`}
-              className="group bg-white border border-secondary/10 hover:border-secondary/20 shadow-sm hover:shadow-md rounded-2xl p-5 flex flex-col gap-1.5 transition-all duration-300"
+              className="group bg-white border border-secondary/10 hover:border-secondary/20 shadow-sm hover:shadow-md rounded-[5px] p-5 flex flex-col gap-1.5 transition-all duration-300"
             >
               <span className="text-[10px] text-secondary font-extrabold uppercase tracking-wider flex items-center gap-1">
                 ← Read Previous
@@ -504,13 +519,13 @@ export default function BlogDetailClient({
               </span>
             </Link>
           ) : (
-            <div className="hidden sm:block border border-dashed border-slate-200 rounded-2xl p-5" />
+            <div className="hidden sm:block border border-dashed border-slate-200 rounded-[5px] p-5" />
           )}
 
           {nextBlog ? (
             <Link
               href={`/blogs/${nextBlog.slug}`}
-              className="group bg-white border border-secondary/10 hover:border-secondary/20 shadow-sm hover:shadow-md rounded-2xl p-5 flex flex-col gap-1.5 text-right transition-all duration-300"
+              className="group bg-white border border-secondary/10 hover:border-secondary/20 shadow-sm hover:shadow-md rounded-[5px] p-5 flex flex-col gap-1.5 text-right transition-all duration-300"
             >
               <span className="text-[10px] text-secondary font-extrabold uppercase tracking-wider flex items-center gap-1 justify-end">
                 Read Next →
@@ -520,13 +535,13 @@ export default function BlogDetailClient({
               </span>
             </Link>
           ) : (
-            <div className="hidden sm:block border border-dashed border-slate-200 rounded-2xl p-5" />
+            <div className="hidden sm:block border border-dashed border-slate-200 rounded-[5px] p-5" />
           )}
         </div>
 
         {/* 2. Speak to an Expert Banner (Cinematic Background, Custom Profile, and CTA button) */}
         <div 
-          className="relative rounded-3xl overflow-hidden py-6 px-6 md:py-8 text-center text-white border border-secondary/15 shadow-xl mb-10 z-10 max-w-7xl mx-auto"
+          className="relative rounded-[5px] overflow-hidden py-6 px-6 md:py-8 text-center text-white border border-secondary/15 shadow-xl mb-10 z-10 max-w-7xl mx-auto"
           style={{
             backgroundImage: "linear-gradient(to right, rgba(26,60,46,0.94), rgba(16,37,28,0.88)), url('/cinematic_footer_bg.png')",
             backgroundSize: "cover",
@@ -554,7 +569,7 @@ export default function BlogDetailClient({
               href={`https://wa.me/${expertWhatsApp.replace(/[^0-9]/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1.5 inline-flex items-center gap-2 bg-white hover:bg-secondary text-primary hover:text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer select-none"
+              className="mt-1.5 inline-flex items-center gap-2 bg-white hover:bg-secondary text-primary hover:text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-[5px] shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer select-none"
             >
               <span>Schedule a call 📞</span>
             </a>
@@ -571,7 +586,7 @@ export default function BlogDetailClient({
               {similarBlogs.map((simBlog) => (
                 <article
                   key={simBlog.id}
-                  className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-secondary/10 shadow-md hover:shadow-lg transition-all duration-300 justify-between h-full"
+                  className="group flex flex-col bg-white rounded-[5px] overflow-hidden border border-secondary/10 shadow-md hover:shadow-lg transition-all duration-300 justify-between h-full"
                 >
                   <div>
                     {/* Cover image */}
@@ -587,7 +602,7 @@ export default function BlogDetailClient({
                           Nature Heaven Chronicles
                         </div>
                       )}
-                      <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-full shadow-md">
+                      <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-[5px] shadow-md">
                         {simBlog.category}
                       </span>
                     </div>
@@ -617,7 +632,7 @@ export default function BlogDetailClient({
                   <div className="px-5 pb-5 pt-2 mt-auto">
                     <Link
                       href={`/blogs/${simBlog.slug}`}
-                      className="inline-flex items-center justify-center w-full py-2.5 border border-secondary hover:bg-secondary text-secondary hover:text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl transition duration-300 text-center"
+                      className="inline-flex items-center justify-center w-full py-2.5 border border-secondary hover:bg-secondary text-secondary hover:text-white font-sans font-bold text-xs uppercase tracking-wider rounded-[5px] transition duration-300 text-center"
                     >
                       Continue Reading
                     </Link>
@@ -639,7 +654,7 @@ export default function BlogDetailClient({
           };
           return (
             <div 
-              className="relative rounded-3xl overflow-hidden p-6 md:p-10 text-white border border-secondary/15 shadow-xl flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-7xl mx-auto"
+              className="relative rounded-[5px] overflow-hidden p-6 md:p-10 text-white border border-secondary/15 shadow-xl flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-7xl mx-auto"
               style={{
                 backgroundImage: "linear-gradient(to right, rgba(20,45,35,0.96), rgba(10,22,17,0.92)), url('/cinematic_footer_bg.png')",
                 backgroundSize: "cover",
@@ -647,7 +662,7 @@ export default function BlogDetailClient({
               }}
             >
               {/* Premium Book Cover Mockup */}
-              <div className="relative w-40 h-56 bg-gradient-to-b from-[#132c20] to-[#0a1711] border border-white/15 rounded-l-md rounded-r-sm p-4 flex flex-col justify-between shadow-2xl shrink-0 select-none overflow-hidden group transition-all duration-500 ease-out hover:scale-[1.04] hover:-rotate-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+              <div className="relative w-40 h-56 bg-gradient-to-b from-[#132c20] to-[#0a1711] border border-white/15 rounded-l-[5px] rounded-r-sm p-4 flex flex-col justify-between shadow-2xl shrink-0 select-none overflow-hidden group transition-all duration-500 ease-out hover:scale-[1.04] hover:-rotate-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
                 {/* Book spine highlight */}
                 <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/35 to-transparent border-r border-white/5 z-20" />
                 <div className="absolute left-[3px] top-0 bottom-0 w-[1px] bg-white/10 z-20" />
@@ -726,7 +741,7 @@ export default function BlogDetailClient({
                         download="Nepal_Travel_Guide.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-dark text-primary font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl transition duration-300 shadow cursor-pointer text-center hover:scale-105"
+                        className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-dark text-primary font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow cursor-pointer text-center hover:scale-105"
                       >
                         <FaDownload className="h-3 w-3" />
                         <span>Download PDF Guide</span>
