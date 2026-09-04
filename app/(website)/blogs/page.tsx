@@ -5,7 +5,11 @@ import { BlogPost } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 
-export const revalidate = 60; // Revalidate every minute
+// Reading searchParams below opts this route into dynamic rendering. That is
+// deliberate: BlogsPageContent calls useSearchParams(), and on a statically
+// prerendered route Next bails that Suspense boundary out to client-only
+// rendering — which shipped /blogs with the "Loading..." fallback and ZERO
+// post links in its HTML. Server-rendering restores the internal linking.
 
 export const metadata: Metadata = {
   title: "Trekking Guides & Travel Tips | Nature Heaven Trekking & Expedition",
@@ -13,7 +17,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blogs" },
 };
 
-export default async function BlogsPage() {
+export default async function BlogsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  await searchParams;
+
   let blogs: BlogPost[] = [];
   let siteSettings: any = null;
   let blogSettings: any = null;
@@ -23,6 +33,11 @@ export default async function BlogsPage() {
       payload.find({
         collection: "blogPosts",
         depth: 1,
+        // Payload defaults to limit:10 when omitted, which silently hid 12 of
+        // the 22 published posts — they were unreachable from /blogs entirely.
+        limit: 500,
+        sort: "-publishedAt",
+        where: { _status: { equals: "published" } },
       }),
       payload.find({
         collection: "siteSettings",

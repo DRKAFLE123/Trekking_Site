@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -14,17 +14,38 @@ interface BlogsPageContentProps {
   blogSettings?: any;
 }
 
-const POSTS_PER_PAGE = 6;
+// 12 per page: fewer pagination hops, and each crawlable page carries more
+// internal links to individual posts.
+const POSTS_PER_PAGE = 12;
 
 export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: BlogsPageContentProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
-  const gridSectionRef = useRef<HTMLDivElement>(null);
-
   const searchParams = useSearchParams();
   const router = useRouter();
   const authorQuery = searchParams.get("author");
+
+  // Pagination lives in the URL rather than in state alone, so /blogs?page=2 is
+  // a real address: crawlable by Google, shareable, and correct on back/forward.
+  const pageParam = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  // Seeded from the URL, not defaulted to 1 — effects do not run during SSR, so
+  // initialising to 1 made the server render page 1's posts at /blogs?page=2.
+  const [currentPage, setCurrentPage] = useState(pageParam);
+  const gridSectionRef = useRef<HTMLDivElement>(null);
+
+  // Keep state in step with back/forward navigation.
+  useEffect(() => {
+    setCurrentPage(pageParam);
+  }, [pageParam]);
+
+  const buildPageHref = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (page <= 1) params.delete("page");
+    else params.set("page", String(page));
+    const qs = params.toString();
+    return qs ? `/blogs?${qs}` : "/blogs";
+  };
 
   // Normalize and clean up published blogs
   const publishedBlogs = useMemo(() => {
@@ -78,20 +99,23 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
     setCurrentPage(1);
   };
 
-  // Determine if we should show the Spotlight Featured post
-  // Only show when page is 1, category is 'All', no search query, and no author filter active
-  const showFeaturedSpotlight =
-    currentPage === 1 && 
-    selectedCategory === "All" && 
-    searchQuery === "" && 
-    !authorQuery && 
+  // Spotlight is eligible whenever no filter is narrowing the list. Note this
+  // does NOT depend on the current page: the post must be removed from the grid
+  // pool on every page, or page 2's slice offset shifts by one and the post on
+  // the boundary renders twice (it was also duplicating on page 1 itself).
+  const spotlightEligible =
+    selectedCategory === "All" &&
+    searchQuery === "" &&
+    !authorQuery &&
     filteredBlogs.length > 0;
+
+  const showFeaturedSpotlight = spotlightEligible && currentPage === 1;
 
   // The featured post is the most recent (first item)
   const featuredPost = showFeaturedSpotlight ? filteredBlogs[0] : null;
 
-  // Display all blogs in the grid
-  const displayBlogs = filteredBlogs;
+  // Grid excludes the spotlight post so it never appears twice
+  const displayBlogs = spotlightEligible ? filteredBlogs.slice(1) : filteredBlogs;
 
   // Paginated blogs
   const totalPages = Math.ceil(displayBlogs.length / POSTS_PER_PAGE);
@@ -102,6 +126,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    router.push(buildPageHref(page), { scroll: false });
     if (gridSectionRef.current) {
       const yOffset = -100; // offset to clear floating navbar
       const y = gridSectionRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
@@ -160,7 +185,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
 
         {/* Dynamic Author Filtering Header */}
         {authorQuery && (
-          <div className="mb-8 bg-secondary/10 border border-secondary/20 rounded-2xl p-5 flex items-center justify-between animate-fadeIn max-w-7xl mx-auto shadow-sm">
+          <div className="mb-8 bg-secondary/10 border border-secondary/20 rounded-[5px] p-5 flex items-center justify-between animate-fadeIn max-w-7xl mx-auto shadow-sm">
             <div className="flex items-center gap-3">
               <span className="text-xl">✍️</span>
               <span className="text-xs sm:text-sm font-semibold text-primary">
@@ -171,7 +196,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
               onClick={() => {
                 router.push("/blogs");
               }}
-              className="text-xs font-bold text-[#c8922a] hover:underline cursor-pointer border border-[#c8922a]/30 hover:border-[#c8922a] px-3.5 py-1.5 rounded-xl bg-white hover:bg-secondary/5 transition duration-300"
+              className="text-xs font-bold text-[#c8922a] hover:underline cursor-pointer border border-[#c8922a]/30 hover:border-[#c8922a] px-3.5 py-1.5 rounded-[5px] bg-white hover:bg-secondary/5 transition duration-300"
             >
               Show All Authors
             </button>
@@ -184,7 +209,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
             <span className="text-xs uppercase font-extrabold tracking-widest text-secondary mb-4 block">
               ⭐ Spotlight Post
             </span>
-            <div className="group grid grid-cols-1 lg:grid-cols-12 gap-8 bg-white border border-secondary/15 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-500">
+            <div className="group grid grid-cols-1 lg:grid-cols-12 gap-8 bg-white border border-secondary/15 rounded-[5px] overflow-hidden shadow-lg hover:shadow-2xl transition duration-500">
               
               {/* Image Column */}
               <div className="lg:col-span-7 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full overflow-hidden bg-primary/10">
@@ -206,7 +231,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                   );
                 })()}
                 {/* Category Badge overlay */}
-                <span className="absolute top-4 left-4 bg-secondary text-primary font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-md">
+                <span className="absolute top-4 left-4 bg-secondary text-primary font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-[5px] shadow-md">
                   {featuredPost.category}
                 </span>
               </div>
@@ -269,7 +294,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
 
                   <Link
                     href={`/blogs/${featuredPost.slug}`}
-                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white hover:text-secondary font-bold text-xs px-4 py-2.5 rounded-xl shadow transition duration-300"
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white hover:text-secondary font-bold text-xs px-4 py-2.5 rounded-[5px] shadow transition duration-300"
                   >
                     <span>Read Story</span>
                     <span>→</span>
@@ -293,14 +318,14 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                 <button
                   key={cat}
                   onClick={() => handleCategoryChange(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shadow-sm border ${
+                  className={`px-4 py-2 rounded-[5px] text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shadow-sm border ${
                     isActive
                       ? "bg-primary border-primary text-white"
                       : "bg-white border-secondary/20 text-charcoal hover:bg-secondary/5"
                   }`}
                 >
                   <span>{cat}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-normal ${
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-[5px] font-normal ${
                     isActive ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
                   }`}>
                     {count}
@@ -318,7 +343,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search articles..."
-                className="w-full bg-white border border-secondary/20 rounded-xl py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:border-secondary text-charcoal shadow-sm focus:shadow-md transition-all duration-300"
+                className="w-full bg-white border border-secondary/20 rounded-[5px] py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:border-secondary text-charcoal shadow-sm focus:shadow-md transition-all duration-300"
               />
               <FaSearch className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted h-3.5 w-3.5" />
             </div>
@@ -330,7 +355,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                 <button
                   key={tag}
                   onClick={() => handleSearchChange(tag)}
-                  className="px-2 py-0.5 bg-[#1a3c2e]/5 hover:bg-[#1a3c2e]/10 border border-[#1a3c2e]/10 hover:border-[#c8922a]/30 rounded text-[9px] text-[#1a3c2e] font-semibold transition cursor-pointer"
+                  className="px-2 py-0.5 bg-[#1a3c2e]/5 hover:bg-[#1a3c2e]/10 border border-[#1a3c2e]/10 hover:border-[#c8922a]/30 rounded-[5px] text-[9px] text-[#1a3c2e] font-semibold transition cursor-pointer"
                 >
                   {tag}
                 </button>
@@ -363,7 +388,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
               {paginatedBlogs.map((blog) => (
                 <article
                   key={blog.id}
-                  className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-secondary/10 shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 justify-between h-full"
+                  className="group flex flex-col bg-white rounded-[5px] overflow-hidden border border-secondary/10 shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 justify-between h-full"
                 >
                   <div>
                     {/* Cover image */}
@@ -385,7 +410,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                         );
                       })()}
                       {/* Category Badge */}
-                      <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-full shadow-md">
+                      <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-[5px] shadow-md">
                         {blog.category}
                       </span>
                     </div>
@@ -455,48 +480,62 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
               ))}
             </div>
 
-            {/* 5. Client-Side Pagination Controls */}
+            {/* 5. Pagination — real <a href> links, not buttons.
+                Googlebot follows anchors but never clicks JS handlers, so
+                button-based paging left pages 2+ uncrawlable. onClick still
+                intercepts for a smooth client-side transition. */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-12 pt-8 border-t border-secondary/15">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="p-2.5 rounded-xl border border-secondary/20 bg-white text-primary hover:bg-secondary/10 disabled:opacity-40 disabled:hover:bg-white transition cursor-pointer"
-                  aria-label="Previous page"
-                >
-                  <FaChevronLeft className="h-3 w-3" />
-                </button>
+              <nav
+                aria-label="Blog pagination"
+                className="flex items-center justify-center gap-2 mt-12 pt-8 border-t border-secondary/15"
+              >
+                {currentPage > 1 && (
+                  <a
+                    href={buildPageHref(currentPage - 1)}
+                    onClick={(e) => { e.preventDefault(); handlePageChange(currentPage - 1); }}
+                    rel="prev"
+                    className="p-2.5 rounded-[5px] border border-secondary/20 bg-white text-primary hover:bg-secondary/10 transition cursor-pointer"
+                    aria-label="Previous page"
+                  >
+                    <FaChevronLeft className="h-3 w-3" />
+                  </a>
+                )}
                 {Array.from({ length: totalPages }).map((_, idx) => {
                   const pageNum = idx + 1;
                   const isActive = currentPage === pageNum;
                   return (
-                    <button
+                    <a
                       key={pageNum}
-                      onClick={() => handlePageChange(pageNum)}
-                      className={`h-9 w-9 rounded-xl border text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+                      href={buildPageHref(pageNum)}
+                      onClick={(e) => { e.preventDefault(); handlePageChange(pageNum); }}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`h-9 w-9 rounded-[5px] border text-xs font-bold transition flex items-center justify-center cursor-pointer ${
                         isActive
                           ? "bg-primary border-primary text-white shadow-md"
                           : "bg-white border-secondary/20 text-primary hover:bg-secondary/10"
                       }`}
                     >
                       {pageNum}
-                    </button>
+                    </a>
                   );
                 })}
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="p-2.5 rounded-xl border border-secondary/20 bg-white text-primary hover:bg-secondary/10 disabled:opacity-40 disabled:hover:bg-white transition cursor-pointer"
-                  aria-label="Next page"
-                >
-                  <FaChevronRight className="h-3 w-3" />
-                </button>
-              </div>
+                {currentPage < totalPages && (
+                  <a
+                    href={buildPageHref(currentPage + 1)}
+                    onClick={(e) => { e.preventDefault(); handlePageChange(currentPage + 1); }}
+                    rel="next"
+                    className="p-2.5 rounded-[5px] border border-secondary/20 bg-white text-primary hover:bg-secondary/10 transition cursor-pointer"
+                    aria-label="Next page"
+                  >
+                    <FaChevronRight className="h-3 w-3" />
+                  </a>
+                )}
+              </nav>
             )}
           </div>
         ) : (
           /* Empty state */
-          <div className="text-center py-20 bg-white border border-secondary/10 rounded-3xl p-8 flex flex-col items-center gap-3 shadow-md max-w-lg mx-auto">
+          <div className="text-center py-20 bg-white border border-secondary/10 rounded-[5px] p-8 flex flex-col items-center gap-3 shadow-md max-w-lg mx-auto">
             <span className="text-5xl">🏔️</span>
             <h3 className="font-serif font-bold text-xl text-primary mt-2">No Chronicles Found</h3>
             <p className="text-xs sm:text-sm text-charcoal/70 leading-relaxed font-light">
@@ -509,7 +548,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                 setCurrentPage(1);
                 router.push("/blogs");
               }}
-              className="mt-3 px-5 py-2 bg-primary hover:bg-primary-light text-white font-bold text-xs rounded-xl shadow transition"
+              className="mt-3 px-5 py-2 bg-primary hover:bg-primary-light text-white font-bold text-xs rounded-[5px] shadow transition"
             >
               Reset All Filters
             </button>
