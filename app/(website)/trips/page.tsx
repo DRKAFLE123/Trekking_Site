@@ -15,7 +15,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/trips" },
 };
 
-export default async function TripsPage() {
+// Reading searchParams opts the route into dynamic rendering. TripsPageContent
+// calls useSearchParams(); on a statically prerendered route Next bails that
+// Suspense boundary out to client-only rendering, so only 5 of the trek links
+// reached the HTML Google reads. Same fix as /blogs.
+export default async function TripsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  await searchParams;
   let treks: Trek[] = [];
   let regions: Region[] = [];
   try {

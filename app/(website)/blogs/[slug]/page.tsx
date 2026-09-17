@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
     const payload = await getPayload({ config });
     const res = await payload.find({
       collection: "blogPosts",
-      where: { slug: { equals: slug } },
+      where: { and: [{ slug: { equals: slug } }, { _status: { equals: "published" } }] },
       depth: 1,
     });
     const blog = (res.docs[0] || null) as any;
@@ -84,7 +84,9 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     const [res, siteSettingsRes, allBlogsRes, blogSettingsRes] = await Promise.all([
       payload.find({
         collection: "blogPosts",
-        where: { slug: { equals: slug } },
+        // Published only: drafts were publicly reachable by URL (and one had
+        // already been picked up by Google). Editors use /blogs/preview/[slug].
+        where: { and: [{ slug: { equals: slug } }, { _status: { equals: "published" } }] },
         depth: 2,
         // relatedTreks cards need six fields, not each trek's whole itinerary.
         populate: {
@@ -188,19 +190,63 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const expertWhatsApp = siteSettings?.headerSettings?.expertWhatsApp || "+977 9851218358";
   const expertName = siteSettings?.headerSettings?.expertName || "Kafle";
 
+  // Structured data. Trek pages already emit Product/Offer/Breadcrumb; articles
+  // emitted nothing, so they were ineligible for article rich results, author
+  // attribution and date display. JSON.stringify drops the undefined fields.
+  const SITE_URL = "https://natureheaventreks.com";
+  const BRAND = "Nature Heaven Treks & Expedition";
+  const coverUrl = getMediaUrl(blog.coverImage);
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: blog.title,
+    description: blog.excerpt || undefined,
+    image: coverUrl ? [coverUrl] : undefined,
+    datePublished: blog.publishedAt || undefined,
+    dateModified: (blog as any).updatedAt || blog.publishedAt || undefined,
+    author: blog.author?.name
+      ? { "@type": "Person", name: blog.author.name }
+      : { "@type": "Organization", name: BRAND },
+    publisher: {
+      "@type": "Organization",
+      name: BRAND,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/opengraph-image` },
+    },
+    mainEntityOfPage: `${SITE_URL}/blogs/${blog.slug}`,
+  };
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blogs` },
+      { "@type": "ListItem", position: 3, name: blog.title, item: `${SITE_URL}/blogs/${blog.slug}` },
+    ],
+  };
+
   return (
-    <BlogDetailClient
-      blog={blog}
-      headings={headings}
-      bodyContent={bodyContent}
-      relatedTreksCard={relatedTreksCard}
-      prevBlog={prevBlog}
-      nextBlog={nextBlog}
-      similarBlogs={similarBlogs}
-      otherBlogsByAuthor={otherBlogsByAuthor}
-      expertWhatsApp={expertWhatsApp}
-      expertName={expertName}
-      blogSettings={blogSettings}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c") }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema).replace(/</g, "\\u003c") }}
+      />
+      <BlogDetailClient
+        blog={blog}
+        headings={headings}
+        bodyContent={bodyContent}
+        relatedTreksCard={relatedTreksCard}
+        prevBlog={prevBlog}
+        nextBlog={nextBlog}
+        similarBlogs={similarBlogs}
+        otherBlogsByAuthor={otherBlogsByAuthor}
+        expertWhatsApp={expertWhatsApp}
+        expertName={expertName}
+        blogSettings={blogSettings}
+      />
+    </>
   );
 }

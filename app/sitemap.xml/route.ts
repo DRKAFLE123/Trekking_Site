@@ -74,6 +74,7 @@ async function buildEntries(): Promise<Entry[]> {
       prefix: string,
       changeFrequency: string,
       priority: number,
+      where?: any,
     ): Promise<Entry[]> => {
       try {
         const res = await payload.find({
@@ -81,6 +82,8 @@ async function buildEntries(): Promise<Entry[]> {
           depth: 0,
           limit: 500,
           overrideAccess: true,
+          select: { slug: true, updatedAt: true } as any,
+          ...(where ? { where } : {}),
         });
         return (res.docs || [])
           .filter((d: any) => d?.slug)
@@ -98,18 +101,27 @@ async function buildEntries(): Promise<Entry[]> {
     const [treks, blogs, regions, companyPages, pages, contactPages] =
       await Promise.all([
         safeFind("treks", "/trips", "weekly", 0.9),
-        safeFind("blogPosts", "/blogs", "weekly", 0.7),
+        // overrideAccess would otherwise list unpublished drafts to Google.
+        safeFind("blogPosts", "/blogs", "weekly", 0.7, { _status: { equals: "published" } }),
         safeFind("regions", "/regions", "monthly", 0.7),
         safeFind("companyPages", "/company", "monthly", 0.6),
         safeFind("pages", "/travel-info", "monthly", 0.5),
         safeFind("contactPages", "/contact-us", "monthly", 0.5),
       ]);
 
+    // These seven CMS company pages are also served at root-level static routes
+    // (/about-us, /csr, …) that the navigation links to. The /company/* twins
+    // 301 to them (legacy-redirects.json), so they must not be listed here.
+    const STATIC_COMPANY = new Set([
+      "about-us", "our-team", "why-us", "csr",
+      "legal-documents", "privacy-policy", "terms-and-condition",
+    ]);
+
     dynamicEntries = [
       ...treks,
       ...blogs,
       ...regions,
-      ...companyPages,
+      ...companyPages.filter((e) => !STATIC_COMPANY.has(e.url.split("/").pop() || "")),
       ...pages,
       ...contactPages,
     ];

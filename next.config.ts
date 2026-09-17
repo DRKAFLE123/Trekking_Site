@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 import { withPayload } from "@payloadcms/next/withPayload";
+// Dead URLs Google still holds for this domain (the WordPress site that lived
+// here before, plus seven /company/* pages that duplicated root pages). Each is
+// mapped to its closest live equivalent; order matters — specific rules sit
+// above the /st_tour/:rest* style fallbacks. Source: Search Console, Sep 2026.
+import legacyRedirects from "./legacy-redirects.json";
 
 const nextConfig: NextConfig = {
   images: {
@@ -47,6 +52,7 @@ const nextConfig: NextConfig = {
         destination: "https://natureheaventreks.com/:path*",
         permanent: true,
       },
+      ...legacyRedirects.map((r) => ({ ...r, permanent: true })),
       { source: "/wp-admin", destination: "/admin/login", permanent: true },
       { source: "/wp-admin/:path*", destination: "/admin/login", permanent: true },
       { source: "/wp-login.php", destination: "/admin/login", permanent: true },
