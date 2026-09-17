@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { TREK_LINK_POPULATE } from "@/lib/payload-select";
 import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 
 export const revalidate = 60;
@@ -18,9 +19,10 @@ export default async function GalleryPage() {
     const payload = await getPayload({ config });
     const galleryRes = await payload.find({
       collection: "gallery",
-      depth: 2,
+      depth: 1,
       limit: 50,
       overrideAccess: true,
+      populate: TREK_LINK_POPULATE,
     });
     galleryItems = galleryRes.docs as any[];
   } catch (err: any) {

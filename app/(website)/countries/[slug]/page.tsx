@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { TREK_CARD_SELECT } from "@/lib/payload-select";
 import { Trek, Region } from "@/types";
 import { FaClock, FaMapMarkerAlt, FaWhatsapp, FaPaperPlane, FaRegCompass, FaChevronRight, FaAward, FaCalendarAlt } from "react-icons/fa";
 import TrekCard from "@/components/TrekCard";
@@ -111,6 +112,7 @@ export default async function CountryPage({ params }: { params: Params }) {
         collection: "treks",
         depth: 1,
         limit: 100,
+        select: TREK_CARD_SELECT,
       }),
       payload.find({
         collection: "siteSettings",

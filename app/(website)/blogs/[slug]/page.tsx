@@ -6,6 +6,7 @@ import Link from "next/link";
 import { BlogPost } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { BLOG_CARD_SELECT } from "@/lib/payload-select";
 import { renderLexical, extractHeadings } from "@/lib/lexical-renderer";
 import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 import BlogDetailClient from "@/components/BlogDetailClient";
@@ -85,6 +86,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         collection: "blogPosts",
         where: { slug: { equals: slug } },
         depth: 2,
+        // relatedTreks cards need six fields, not each trek's whole itinerary.
+        populate: {
+          treks: { title: true, slug: true, price: true, discountedPrice: true, heroImage: true, duration: true },
+        },
       }),
       payload.find({
         collection: "siteSettings",
@@ -94,6 +99,8 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         collection: "blogPosts",
         depth: 1,
         limit: 100,
+        // "Similar articles" grid — cards only, not 22 full article bodies.
+        select: BLOG_CARD_SELECT,
       }),
       payload.find({
         collection: "blogSettings",

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import TripsPageContent from "@/components/TripsPageContent";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { TREK_CARD_SELECT } from "@/lib/payload-select";
 import { Trek, Region } from "@/types";
 
 export const revalidate = 60; // Revalidate every minute
@@ -23,6 +24,8 @@ export default async function TripsPage() {
       payload.find({
         collection: "treks",
         depth: 1,
+        limit: 100,
+        select: TREK_CARD_SELECT,
       }),
       payload.find({
         collection: "regions",

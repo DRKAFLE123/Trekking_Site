@@ -21,8 +21,10 @@ export default async function PlanATripPage() {
     const payload = await getPayload({ config });
     const treksRes = await payload.find({
       collection: "treks",
-      depth: 1,
+      depth: 0,
       limit: 100,
+      // The form only needs a name and slug for its trek dropdown.
+      select: { title: true, slug: true },
     });
     treks = treksRes.docs as unknown as Trek[];
   } catch (err: any) {

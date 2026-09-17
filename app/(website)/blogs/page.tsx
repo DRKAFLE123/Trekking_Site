@@ -4,6 +4,7 @@ import BlogsPageContent from "@/components/BlogsPageContent";
 import { BlogPost } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { BLOG_CARD_SELECT } from "@/lib/payload-select";
 
 // Reading searchParams below opts this route into dynamic rendering. That is
 // deliberate: BlogsPageContent calls useSearchParams(), and on a statically
@@ -26,10 +27,9 @@ export default async function BlogsPage({
 
   let blogs: BlogPost[] = [];
   let siteSettings: any = null;
-  let blogSettings: any = null;
   try {
     const payload = await getPayload({ config });
-    const [blogsRes, siteSettingsRes, blogSettingsRes] = await Promise.all([
+    const [blogsRes, siteSettingsRes] = await Promise.all([
       payload.find({
         collection: "blogPosts",
         depth: 1,
@@ -38,19 +38,16 @@ export default async function BlogsPage({
         limit: 500,
         sort: "-publishedAt",
         where: { _status: { equals: "published" } },
+        // Cards only; the full article body is fetched on the detail page.
+        select: BLOG_CARD_SELECT,
       }),
       payload.find({
         collection: "siteSettings",
         depth: 1,
       }),
-      payload.find({
-        collection: "blogSettings",
-        depth: 1,
-      }),
     ]);
     blogs = blogsRes.docs as unknown as BlogPost[];
     siteSettings = siteSettingsRes.docs[0] || null;
-    blogSettings = blogSettingsRes.docs[0] || null;
   } catch (err: any) {
     console.warn("[Blogs Page] Failed to fetch data (relation may not exist yet during build):", err.message);
   }
@@ -65,7 +62,13 @@ export default async function BlogsPage({
           Loading Himalayan Chronicles...
         </div>
       }>
-        <BlogsPageContent blogs={displayBlogs} siteSettings={siteSettings} blogSettings={blogSettings} />
+        {/* BlogsPageContent is a client component: whatever is passed here is
+            serialised into the HTML. It reads only blogsPageSettings, and the
+            full siteSettings carries five populated top5Treks documents. */}
+        <BlogsPageContent
+          blogs={displayBlogs}
+          siteSettings={siteSettings ? { blogsPageSettings: siteSettings.blogsPageSettings } : null}
+        />
       </Suspense>
     </div>
   );

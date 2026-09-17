@@ -16,6 +16,7 @@ import { Trek, BlogPost, Faq, Testimonial, Region } from "@/types";
 import { getPayload } from "payload";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
 import config from "@/payload/payload.config";
+import { TREK_CARD_SELECT, BLOG_CARD_SELECT, TREK_LINK_POPULATE } from "@/lib/payload-select";
 import TrekCard from "@/components/TrekCard";
 import StatsCounter from "@/components/StatsCounter";
 import HeroSearch from "@/components/HeroSearch";
@@ -64,6 +65,7 @@ export default async function HomePage() {
         },
         depth: 1,
         limit: 6, // Limit best sellers to exactly 6 as requested
+        select: TREK_CARD_SELECT,
       });
       bestSellers = bestSellersRes.docs as unknown as Trek[];
     } catch (e: any) {
@@ -87,6 +89,10 @@ export default async function HomePage() {
       const blogsRes = await payload.find({
         collection: 'blogPosts',
         depth: 1,
+        limit: 12,
+        sort: '-publishedAt',
+        where: { _status: { equals: 'published' } },
+        select: BLOG_CARD_SELECT,
       });
       blogs = blogsRes.docs as unknown as BlogPost[];
     } catch (e: any) {
@@ -114,6 +120,8 @@ export default async function HomePage() {
         collection: 'treks',
         depth: 0,
         limit: 300,
+        // Only the nested FAQs are read here — not 29 full itineraries.
+        select: { faqs: true },
       });
 
       const trekFeatured: Faq[] = [];
@@ -141,8 +149,9 @@ export default async function HomePage() {
     try {
       const galleryRes = await payload.find({
         collection: 'gallery',
-        depth: 2,
+        depth: 1,
         limit: 30,
+        populate: TREK_LINK_POPULATE,
       });
       galleryItems = galleryRes.docs as any[];
     } catch (e: any) {
@@ -187,6 +196,7 @@ export default async function HomePage() {
         depth: 1,
         limit: 50,
         overrideAccess: true,
+        populate: TREK_LINK_POPULATE,
       });
       testimonials = testimonialsRes.docs as unknown as Testimonial[];
     } catch (e: any) {

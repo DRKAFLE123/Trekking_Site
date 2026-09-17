@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Trek, Testimonial, Faq } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { TREK_CARD_SELECT, TREK_LINK_POPULATE } from "@/lib/payload-select";
 import TrekDetailClient from "@/components/TrekDetailClient";
 import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 
@@ -106,10 +107,18 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         payload.find({
           collection: "treks",
           depth: 1,
+          limit: 100,
+          // Similar-trek cards only; without this every trek's full itinerary
+          // was loaded just to pick three by region.
+          select: TREK_CARD_SELECT,
         }),
         payload.find({
           collection: "testimonials",
           depth: 1,
+          limit: 100,
+          // Each testimonial's `trek` relation was populating the whole trek
+          // document, and all testimonials are passed to the client slider.
+          populate: TREK_LINK_POPULATE,
         }),
         payload.find({
           collection: "faqs",

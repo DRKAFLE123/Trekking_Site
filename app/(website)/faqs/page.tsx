@@ -103,10 +103,12 @@ export default async function FAQsPage() {
     const payload = await getPayload({ config });
     
     // 1. Fetch standalone FAQs
+    // depth 0: only the related trek ids are read below, and depth 1 was
+    // populating every linked trek's full document into each FAQ.
     const faqsRes = await payload.find({
       collection: "faqs",
       limit: 500,
-      depth: 1,
+      depth: 0,
       sort: "order",
     });
 
@@ -115,6 +117,7 @@ export default async function FAQsPage() {
       collection: "treks",
       limit: 300,
       depth: 0,
+      select: { title: true, slug: true, faqs: true },
     });
 
     treks = treksRes.docs.map((t: any) => ({
@@ -160,6 +163,22 @@ export default async function FAQsPage() {
   } catch (err: any) {
     console.warn("[FAQs Page] Failed to query faqs from CMS:", err.message);
   }
+
+  // Dedupe. The same question/answer is nested on many treks (2,296 nested rows
+  // but only ~1,550 distinct), and every copy was being serialised to the
+  // client. Merge identical pairs and union their trekIds so the trek filter
+  // still works for each of them.
+  const byText = new Map<string, any>();
+  for (const f of faqs) {
+    const key = `${(f.q || "").trim().toLowerCase()}|${(f.a || "").trim().toLowerCase()}`;
+    const seen = byText.get(key);
+    if (!seen) { byText.set(key, f); continue; }
+    seen.trekIds = Array.from(new Set([...(seen.trekIds || []), ...(f.trekIds || [])]));
+    seen.isFeatured = seen.isFeatured || f.isFeatured;
+    seen.showOnAllTreks = seen.showOnAllTreks || f.showOnAllTreks;
+  }
+  faqs.length = 0;
+  faqs.push(...byText.values());
 
   // Fallback to defaults if database has no FAQs at all
   if (faqs.length === 0) {
