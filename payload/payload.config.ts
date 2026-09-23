@@ -107,6 +107,11 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: dbUrl,
+      // Postgres allows 60 connections. `next build` runs one Payload instance
+      // per worker (up to one per CPU), so the pg default of 10 per pool exhausts
+      // the server and prerenders time out. 4 per process is plenty: queries
+      // are short and the runtime is a single process.
+      max: Number(process.env.DB_POOL_MAX) || 4,
     },
     // Disable Drizzle dev-push so it doesn't prompt the dev server on schema
     // diffs (those prompts hang the server because it has no TTY). Schema

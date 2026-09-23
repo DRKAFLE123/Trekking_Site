@@ -36,6 +36,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Prerender pulls every trek/blog from a remote Postgres; give slow builds
+  // headroom instead of failing the deploy at the 60s default.
+  staticPageGenerationTimeout: 180,
   experimental: {
     serverMinification: false,
   },
