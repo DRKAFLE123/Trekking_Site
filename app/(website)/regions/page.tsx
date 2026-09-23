@@ -201,7 +201,7 @@ export default async function RegionsListingPage() {
             </p>
             <Link
               href="/trips"
-              className="bg-secondary text-primary font-bold px-5 py-2 rounded-xl text-xs hover:scale-105 active:scale-95 transition"
+              className="bg-secondary text-white font-bold px-5 py-2 rounded-xl text-xs hover:scale-105 active:scale-95 transition"
             >
               Browse all treks instead
             </Link>
@@ -254,7 +254,7 @@ export default async function RegionsListingPage() {
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300 group-hover:from-black/95" />
 
-                      <div className="absolute top-4 right-4 bg-secondary text-primary font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-md">
+                      <div className="absolute top-4 right-4 bg-secondary text-white font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-md">
                         {region.trekCount} {region.trekCount === 1 ? "trek" : "treks"}
                       </div>
 

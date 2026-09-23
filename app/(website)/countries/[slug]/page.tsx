@@ -173,7 +173,7 @@ export default async function CountryPage({ params }: { params: Params }) {
         </div>
 
         <div className="relative z-20 text-center text-bgOffWhite px-6 max-w-4xl flex flex-col gap-4">
-          <span className="inline-flex items-center gap-1.5 self-center bg-secondary text-primary font-sans font-bold text-[11px] tracking-[0.2em] uppercase px-4 py-1.5 rounded-full border border-secondary/20">
+          <span className="inline-flex items-center gap-1.5 self-center bg-secondary text-white font-sans font-bold text-[11px] tracking-[0.2em] uppercase px-4 py-1.5 rounded-full border border-secondary/20">
             🏔️ Explore the Himalayas
           </span>
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-black text-white leading-none">
@@ -209,7 +209,7 @@ export default async function CountryPage({ params }: { params: Params }) {
             <div className="flex items-center gap-4 flex-wrap mt-4">
               <Link
                 href="/plan-a-trip"
-                className="bg-secondary text-primary font-bold px-6 py-3 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary transition duration-300 text-sm flex items-center gap-2"
+                className="bg-secondary text-white font-bold px-6 py-3 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary transition duration-300 text-sm flex items-center gap-2"
               >
                 <FaPaperPlane className="h-3.5 w-3.5" />
                 <span>Customize Your {country.name} Trip</span>

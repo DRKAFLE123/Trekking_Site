@@ -61,7 +61,7 @@ export default function CookieConsent() {
           <button
             type="button"
             onClick={() => persist("accepted")}
-            className="bg-secondary text-primary font-bold px-6 py-2 rounded-xl text-sm hover:bg-secondary-light active:scale-95 transition-all duration-300"
+            className="bg-secondary text-white font-bold px-6 py-2 rounded-xl text-sm hover:bg-secondary-light active:scale-95 transition-all duration-300"
           >
             Accept All
           </button>

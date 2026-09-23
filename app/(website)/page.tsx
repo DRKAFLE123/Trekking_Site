@@ -469,7 +469,7 @@ export default async function HomePage() {
               href={whatsAppHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-secondary text-primary font-bold px-6 py-3 text-xs md:text-sm uppercase tracking-wider hover:brightness-110 active:scale-95 transition shrink-0"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-secondary text-white font-bold px-6 py-3 text-xs md:text-sm uppercase tracking-wider hover:brightness-110 active:scale-95 transition shrink-0"
             >
               <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
               Talk to Expert
@@ -492,7 +492,7 @@ export default async function HomePage() {
       </HeroSlider>
 
       {/* 3. Best Seller Treks */}
-      <section className="py-16 md:py-24 px-4 md:px-6 bg-[#fcfbfa]">
+      <section className="pt-16 md:pt-24 pb-10 md:pb-14 px-4 md:px-6 bg-[#fcfbfa]">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -517,7 +517,7 @@ export default async function HomePage() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 md:mt-10">
             <Link
               href="/trips"
               className="inline-flex items-center gap-2 text-primary font-bold border-b-2 border-secondary hover:text-secondary transition duration-300 pb-1"

@@ -66,7 +66,7 @@ export default function Newsletter() {
           <button
             type="submit"
             disabled={status === "loading"}
-            className="bg-secondary text-primary font-bold px-6 py-3.5 rounded-xl hover:bg-secondary-light transition-all duration-300 flex items-center justify-center gap-2 text-sm disabled:opacity-50 active:scale-95 shrink-0"
+            className="bg-secondary text-white font-bold px-6 py-3.5 rounded-xl hover:bg-secondary-light transition-all duration-300 flex items-center justify-center gap-2 text-sm disabled:opacity-50 active:scale-95 shrink-0"
           >
             <span>{status === "loading" ? "Subscribing..." : "Subscribe Now"}</span>
             <FaPaperPlane className="h-3 w-3" />

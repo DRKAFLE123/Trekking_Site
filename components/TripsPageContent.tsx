@@ -300,7 +300,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
               </p>
               <button
                 onClick={resetFilters}
-                className="bg-secondary text-primary font-bold px-6 py-2.5 rounded-xl text-sm hover:scale-105 active:scale-95 transition-all"
+                className="bg-secondary text-white font-bold px-6 py-2.5 rounded-xl text-sm hover:scale-105 active:scale-95 transition-all"
               >
                 Reset Filters
               </button>
@@ -436,7 +436,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
               </button>
               <button
                 onClick={() => setShowMobileFilters(false)}
-                className="w-1/2 bg-primary text-bgOffWhite font-bold py-2.5 rounded-xl text-sm hover:bg-secondary hover:text-primary transition"
+                className="w-1/2 bg-primary text-bgOffWhite font-bold py-2.5 rounded-xl text-sm hover:bg-secondary hover:text-white transition"
               >
                 Apply Filters
               </button>

@@ -174,7 +174,7 @@ export default async function RegionDetailPage({ params }: RegionDetailPageProps
               </p>
               <Link
                 href="/contact-us"
-                className="bg-secondary text-primary font-bold px-5 py-2 rounded-xl text-xs hover:scale-105 active:scale-95 transition"
+                className="bg-secondary text-white font-bold px-5 py-2 rounded-xl text-xs hover:scale-105 active:scale-95 transition"
               >
                 Inquire Custom Trek
               </Link>

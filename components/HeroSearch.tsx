@@ -32,7 +32,7 @@ export default function HeroSearch({ suggestions = [] }: { suggestions?: string[
       </datalist>
       <button
         type="submit"
-        className="rounded-full bg-primary text-white font-bold px-5 md:px-7 py-2.5 md:py-3 text-xs md:text-sm uppercase tracking-wider hover:bg-secondary hover:text-primary transition shrink-0"
+        className="rounded-full bg-primary text-white font-bold px-5 md:px-7 py-2.5 md:py-3 text-xs md:text-sm uppercase tracking-wider hover:bg-secondary hover:text-white transition shrink-0"
       >
         Search
       </button>

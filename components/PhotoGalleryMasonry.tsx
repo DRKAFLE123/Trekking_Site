@@ -490,7 +490,7 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
         {/* View All Photos CTA Button (linked to full gallery page) */}
         {showViewAll && (
           <div className="text-center mt-12 relative z-10">
-            <Link href="/gallery" className="bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl inline-block hover:bg-secondary-light hover:scale-105 active:scale-95 transition-all duration-300 shadow-md">
+            <Link href="/gallery" className="bg-secondary text-white font-bold px-8 py-3.5 rounded-xl inline-block hover:bg-secondary-light hover:scale-105 active:scale-95 transition-all duration-300 shadow-md">
               View All Gallery
             </Link>
           </div>

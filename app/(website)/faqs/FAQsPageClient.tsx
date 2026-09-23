@@ -144,7 +144,7 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
                 type="button"
                 onClick={() => setSelectedFilter("all")}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition ${
-                  selectedFilter === "all" ? "bg-secondary text-primary shadow" : "text-white/80 hover:text-white"
+                  selectedFilter === "all" ? "bg-secondary text-white shadow" : "text-white/80 hover:text-white"
                 }`}
               >
                 All FAQs
@@ -153,7 +153,7 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
                 type="button"
                 onClick={() => setSelectedFilter("general")}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition ${
-                  selectedFilter === "general" ? "bg-secondary text-primary shadow" : "text-white/80 hover:text-white"
+                  selectedFilter === "general" ? "bg-secondary text-white shadow" : "text-white/80 hover:text-white"
                 }`}
               >
                 General Info

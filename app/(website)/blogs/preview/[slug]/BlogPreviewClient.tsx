@@ -64,7 +64,7 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
         {/* Header content */}
         <div className="max-w-4xl mb-8">
           {blog.category && (
-            <span className="bg-secondary text-primary font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-[5px] w-fit">
+            <span className="bg-secondary text-white font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-[5px] w-fit">
               {blog.category}
             </span>
           )}

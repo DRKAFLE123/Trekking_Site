@@ -172,7 +172,7 @@ export default async function AboutUsPage() {
             </div>
             <Link
               href="/contact-us"
-              className="bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl text-sm border border-secondary hover:bg-transparent hover:text-secondary hover:scale-105 active:scale-95 transition-all duration-300 shrink-0"
+              className="bg-secondary text-white font-bold px-8 py-3.5 rounded-xl text-sm border border-secondary hover:bg-transparent hover:text-secondary hover:scale-105 active:scale-95 transition-all duration-300 shrink-0"
             >
               Contact Our Office
             </Link>

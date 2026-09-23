@@ -158,7 +158,7 @@ export default function TrekTabs({ trek }: TrekTabsProps) {
                       className="w-full px-5 py-4 flex items-center justify-between text-left focus:outline-none hover:bg-bgOffWhite/20 transition group"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="bg-secondary text-primary font-black font-sans text-xs px-2.5 py-1 rounded-lg">
+                        <span className="bg-secondary text-white font-black font-sans text-xs px-2.5 py-1 rounded-lg">
                           DAY {day.day}
                         </span>
                         <span className="font-serif font-bold text-primary text-sm md:text-base group-hover:text-secondary transition duration-300 pr-4">

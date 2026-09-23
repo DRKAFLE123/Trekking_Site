@@ -337,7 +337,7 @@ export default function UpcomingDepartures() {
                             <>
                               <Link
                                 href={`/booking/${trek.slug}?departure=${dep.id}&startDate=${dep.startDate}&endDate=${dep.endDate}`}
-                                className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-secondary hover:text-primary transition-all duration-300 shadow-sm border border-primary hover:border-secondary"
+                                className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-secondary hover:text-white transition-all duration-300 shadow-sm border border-primary hover:border-secondary"
                               >
                                 Book Now
                               </Link>
@@ -493,7 +493,7 @@ export default function UpcomingDepartures() {
                             <>
                               <Link
                                 href={`/booking/${trek.slug}?departure=${dep.id}&startDate=${dep.startDate}&endDate=${dep.endDate}`}
-                                className="bg-primary text-white text-[10px] font-bold px-3.5 py-2 rounded-lg hover:bg-secondary hover:text-primary transition-all shadow-sm"
+                                className="bg-primary text-white text-[10px] font-bold px-3.5 py-2 rounded-lg hover:bg-secondary hover:text-white transition-all shadow-sm"
                               >
                                 Book Now
                               </Link>

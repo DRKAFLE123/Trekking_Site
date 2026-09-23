@@ -28,10 +28,10 @@ export default function RegionGrid({ regions }: RegionGridProps) {
   });
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-white">
+    <section className="pt-12 md:pt-16 pb-16 md:pb-24 px-4 md:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
           <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
             Destinations
           </span>

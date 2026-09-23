@@ -249,7 +249,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             <FaBullhorn className="h-3.5 w-3.5 shrink-0" style={{ color: AMBER }} aria-hidden="true" />
             <span className="text-center font-medium">{data.promo.text}</span>
             {data.promo.linkHref && data.promo.linkLabel && (
-              <Link href={data.promo.linkHref} className="shrink-0 rounded-[5px] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[#1a3c2e] hover:brightness-110" style={{ backgroundColor: AMBER }}>{data.promo.linkLabel}</Link>
+              <Link href={data.promo.linkHref} className="shrink-0 rounded-[5px] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white hover:brightness-110" style={{ backgroundColor: AMBER }}>{data.promo.linkLabel}</Link>
             )}
           </div>
         </div>

@@ -84,7 +84,7 @@ function NewsletterForm({ onSuccess }: NewsletterFormProps) {
         <button
           type="submit"
           disabled={submitting}
-          className="bg-secondary hover:bg-secondary-dark text-primary font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow disabled:opacity-50 shrink-0 cursor-pointer"
+          className="bg-secondary hover:bg-secondary-dark text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow disabled:opacity-50 shrink-0 cursor-pointer"
         >
           {submitting ? "Sending..." : "Get Free Guide"}
         </button>
@@ -334,7 +334,7 @@ export default function BlogDetailClient({
             
             {/* Post Header */}
             <div>
-              <span className="bg-secondary text-primary font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-[5px] w-fit">
+              <span className="bg-secondary text-white font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-[5px] w-fit">
                 {blog.category}
               </span>
               <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black text-primary leading-tight mt-4 mb-6">
@@ -569,7 +569,7 @@ export default function BlogDetailClient({
               href={`https://wa.me/${expertWhatsApp.replace(/[^0-9]/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1.5 inline-flex items-center gap-2 bg-white hover:bg-secondary text-primary hover:text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-[5px] shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer select-none"
+              className="mt-1.5 inline-flex items-center gap-2 bg-white hover:bg-secondary text-white hover:text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-[5px] shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer select-none"
             >
               <span>Schedule a call 📞</span>
             </a>
@@ -602,7 +602,7 @@ export default function BlogDetailClient({
                           Nature Heaven Chronicles
                         </div>
                       )}
-                      <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-[5px] shadow-md">
+                      <span className="absolute top-3 left-3 bg-secondary text-white font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-[5px] shadow-md">
                         {simBlog.category}
                       </span>
                     </div>
@@ -674,7 +674,7 @@ export default function BlogDetailClient({
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition duration-1500 ease-out pointer-events-none" />
 
                 {/* Corner Ribbon */}
-                <div className="absolute top-0 right-0 bg-secondary text-primary font-sans font-extrabold text-[8px] uppercase tracking-wider py-1 px-4 rotate-45 translate-x-3 translate-y-1 shadow-sm select-none z-20">
+                <div className="absolute top-0 right-0 bg-secondary text-white font-sans font-extrabold text-[8px] uppercase tracking-wider py-1 px-4 rotate-45 translate-x-3 translate-y-1 shadow-sm select-none z-20">
                   Free PDF
                 </div>
 
@@ -741,7 +741,7 @@ export default function BlogDetailClient({
                         download="Nepal_Travel_Guide.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-dark text-primary font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow cursor-pointer text-center hover:scale-105"
+                        className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-dark text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow cursor-pointer text-center hover:scale-105"
                       >
                         <FaDownload className="h-3 w-3" />
                         <span>Download PDF Guide</span>

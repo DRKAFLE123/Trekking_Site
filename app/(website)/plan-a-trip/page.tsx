@@ -48,7 +48,7 @@ export default async function PlanATripPage() {
         </div>
 
         <div className="relative z-20 text-center text-bgOffWhite px-6 max-w-4xl flex flex-col gap-2.5">
-          <span className="inline-flex items-center gap-1.5 self-center bg-secondary text-primary font-sans font-bold text-[10px] tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-secondary/25 shadow-md">
+          <span className="inline-flex items-center gap-1.5 self-center bg-secondary text-white font-sans font-bold text-[10px] tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-secondary/25 shadow-md">
             🗺️ Tailor-Made Himalayan Journeys
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black text-white leading-none">

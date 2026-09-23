@@ -171,7 +171,7 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
                 onClick={() => setCurrentStep(step as Step)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm relative z-10 transition-all duration-500 border-2 ${
                   currentStep === step
-                    ? "bg-secondary border-secondary text-primary scale-110 shadow-lg"
+                    ? "bg-secondary border-secondary text-white scale-110 shadow-lg"
                     : currentStep > step
                     ? "bg-primary border-primary text-white"
                     : "bg-white border-gray-300 text-gray-400"
@@ -545,7 +545,7 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
                   <button
                     type="submit"
                     disabled={status === "loading" || !recaptchaToken}
-                    className="bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary transition flex items-center gap-2 text-xs uppercase tracking-wider shadow-lg disabled:opacity-50 w-full justify-center sm:w-auto"
+                    className="bg-secondary text-white font-bold px-8 py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary transition flex items-center gap-2 text-xs uppercase tracking-wider shadow-lg disabled:opacity-50 w-full justify-center sm:w-auto"
                   >
                     <FaPaperPlane className="h-3.5 w-3.5 animate-pulse" />
                     <span>{status === "loading" ? "Designing Plan..." : "Submit Travel Plan"}</span>

@@ -148,7 +148,7 @@ export default function TrekCard({ trek }: TrekCardProps) {
 
           <Link
             href={`/trips/${slug}`}
-            className="bg-primary hover:bg-secondary hover:text-primary text-bgOffWhite text-xs font-bold px-4 py-2.5 rounded-xl border border-primary hover:border-secondary transition-all duration-300"
+            className="bg-primary hover:bg-secondary hover:text-white text-bgOffWhite text-xs font-bold px-4 py-2.5 rounded-xl border border-primary hover:border-secondary transition-all duration-300"
           >
             View Trek
           </Link>

@@ -146,7 +146,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={status === "loading" || !recaptchaToken}
-            className="w-full bg-secondary text-primary font-bold py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-[1.02] active:scale-95 transition-all duration-300 text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full bg-secondary text-white font-bold py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-[1.02] active:scale-95 transition-all duration-300 text-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <span>{status === "loading" ? "Sending..." : "Send Message"}</span>
           </button>

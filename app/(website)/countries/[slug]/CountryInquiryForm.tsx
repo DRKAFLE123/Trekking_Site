@@ -216,7 +216,7 @@ export default function CountryInquiryForm({ countryName, treks }: CountryInquir
           <button
             type="submit"
             disabled={status === "loading" || !recaptchaToken}
-            className="w-full bg-secondary text-primary font-bold py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-[1.01] transition-all duration-300 text-xs flex items-center justify-center gap-2 disabled:opacity-50 mt-1"
+            className="w-full bg-secondary text-white font-bold py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-[1.01] transition-all duration-300 text-xs flex items-center justify-center gap-2 disabled:opacity-50 mt-1"
           >
             <FaPaperPlane className="h-3 w-3" />
             <span>{status === "loading" ? "Submitting Inquiry..." : `Request Tailor-Made ${countryName} Plan`}</span>

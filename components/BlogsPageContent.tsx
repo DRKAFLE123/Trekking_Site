@@ -231,7 +231,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                   );
                 })()}
                 {/* Category Badge overlay */}
-                <span className="absolute top-4 left-4 bg-secondary text-primary font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-[5px] shadow-md">
+                <span className="absolute top-4 left-4 bg-secondary text-white font-bold text-[10px] tracking-wider uppercase px-3 py-1 rounded-[5px] shadow-md">
                   {featuredPost.category}
                 </span>
               </div>
@@ -410,7 +410,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                         );
                       })()}
                       {/* Category Badge */}
-                      <span className="absolute top-3 left-3 bg-secondary text-primary font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-[5px] shadow-md">
+                      <span className="absolute top-3 left-3 bg-secondary text-white font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-[5px] shadow-md">
                         {blog.category}
                       </span>
                     </div>

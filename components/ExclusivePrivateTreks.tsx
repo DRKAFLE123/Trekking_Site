@@ -1,17 +1,9 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  FaRunning,
-  FaUserShield,
-  FaCalendarCheck,
-  FaHotel,
-  FaUserCheck,
-  FaMountain,
-  FaCompass,
-  FaStar,
-} from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 
 export type PrivateTreksUSP = {
   icon?: string;
@@ -27,49 +19,44 @@ interface ExclusivePrivateTreksProps {
   usps?: PrivateTreksUSP[];
 }
 
-const ICONS: Record<string, React.ReactNode> = {
-  running: <FaRunning className="h-6 w-6 text-secondary" />,
-  shield: <FaUserShield className="h-6 w-6 text-secondary" />,
-  "calendar-check": <FaCalendarCheck className="h-6 w-6 text-secondary" />,
-  hotel: <FaHotel className="h-6 w-6 text-secondary" />,
-  "user-check": <FaUserCheck className="h-6 w-6 text-secondary" />,
-  mountain: <FaMountain className="h-6 w-6 text-secondary" />,
-  compass: <FaCompass className="h-6 w-6 text-secondary" />,
-  star: <FaStar className="h-6 w-6 text-secondary" />,
-};
+// One illustration per USP, matched by position (1st USP -> pace, 2nd -> guide ...).
+const IMAGES = [
+  "/private-treks/pace.webp",
+  "/private-treks/guide.webp",
+  "/private-treks/any-date.webp",
+  "/private-treks/hotels.webp",
+  "/private-treks/solo.webp",
+];
 
 const DEFAULT_USPS: PrivateTreksUSP[] = [
   {
-    icon: "running",
     title: "Your Pace",
     description:
       "No rushing to catch up, no waiting for slower hikers. Set a comfortable speed that fits your fitness level.",
   },
   {
-    icon: "shield",
     title: "Sherpa Guide",
     description:
       "A dedicated guide focused entirely on your health & safety, providing deep cultural and geographical insights.",
   },
   {
-    icon: "calendar-check",
     title: "Any Date",
     description:
       "Choose any calendar date that works for your international flights and vacation schedules.",
   },
   {
-    icon: "hotel",
     title: "Custom Hotels",
     description:
       "Upgrade or downgrade lodging options to suit your preferences, from basic teahouses to boutique mountain resorts.",
   },
   {
-    icon: "user-check",
     title: "Solo Friendly",
     description:
       "We support single solo travelers with dedicated private guides, ensuring maximum safety and companionship.",
   },
 ];
+
+const ROTATE_MS = 5000;
 
 export default function ExclusivePrivateTreks({
   kicker,
@@ -77,126 +64,112 @@ export default function ExclusivePrivateTreks({
   description,
   usps,
 }: ExclusivePrivateTreksProps = {}) {
-  const displayUsps: PrivateTreksUSP[] =
-    usps && usps.length > 0 ? usps : DEFAULT_USPS;
+  const items = (usps && usps.length > 0 ? usps : DEFAULT_USPS).slice(0, IMAGES.length);
   const displayKicker = kicker || "100% Customized Trips";
   const displayTitle = title || "Exclusive Private Treks";
   const displayDescription =
     description ||
     "Unlike cookie-cutter group tours, we specialize in private treks. You set the date, you set the pace, and our guides look after only you.";
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
 
-  const handleScroll = () => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const scrollLeft = el.scrollLeft;
-    const children = Array.from(el.children);
-    let closestIndex = 0;
-    let minDiff = Infinity;
-    children.forEach((child, idx) => {
-      const diff = Math.abs((child as HTMLElement).offsetLeft - el.offsetLeft - scrollLeft);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = idx;
-      }
-    });
-    setActiveIndex(closestIndex);
-  };
+  useEffect(() => {
+    if (paused || items.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => setActive((a) => (a + 1) % items.length), ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [paused, items.length]);
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-primary text-bgOffWhite relative overflow-hidden">
-      {/* Background Accent Rings */}
+    <section
+      className="py-16 md:py-24 px-4 md:px-6 bg-primary text-white relative overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
-            {displayKicker}
-          </span>
-          <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4 text-bgOffWhite">
-            {displayTitle}
-          </h2>
-          <div className="h-0.5 w-16 bg-secondary mx-auto mb-6"></div>
-          <p className="text-sm md:text-base text-bgOffWhite/80 leading-relaxed font-sans">
-            {displayDescription}
-          </p>
+        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
+          <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">{displayKicker}</span>
+          <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4">{displayTitle}</h2>
+          <div className="h-0.5 w-16 bg-secondary mx-auto mb-6" />
+          <p className="text-sm md:text-base text-white/80 leading-relaxed">{displayDescription}</p>
         </div>
 
-        {/* Grid (slider on mobile, columns on desktop) */}
-        <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-          className={`flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 lg:grid lg:gap-6 -mx-4 px-4 lg:mx-0 lg:px-0 ${
-            displayUsps.length === 5
-              ? "lg:grid-cols-5"
-              : displayUsps.length === 4
-              ? "lg:grid-cols-4"
-              : displayUsps.length === 3
-              ? "lg:grid-cols-3"
-              : "lg:grid-cols-5"
-          }`}
-        >
-          {displayUsps.map((usp, idx) => {
-            const iconNode = (usp.icon && ICONS[usp.icon]) || ICONS.running;
-            const text = usp.description || usp.desc || "";
-            return (
-              <div
-                key={idx}
-                className="bg-[#10251c] border border-secondary/15 p-6 rounded-2xl text-center hover:border-secondary hover:shadow-xl transition-all duration-300 flex flex-col justify-between w-[260px] lg:w-auto shrink-0 snap-align-start"
-              >
-                <div>
-                  <div className="h-12 w-12 bg-secondary/10 border border-secondary/20 flex items-center justify-center rounded-xl mx-auto mb-5">
-                    {iconNode}
-                  </div>
-                  <h4 className="font-serif font-bold text-secondary text-lg mb-3 tracking-wide">
-                    {usp.title}
-                  </h4>
-                  <p className="text-xs text-bgOffWhite/75 leading-relaxed font-sans font-light">
-                    {text}
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-white/5 text-[10px] uppercase tracking-wider text-secondary/70 font-semibold">
-                  USP Feature 0{idx + 1}
-                </div>
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Illustration for the active USP */}
+          <div className="lg:col-span-5">
+            <div className="relative aspect-square max-w-md mx-auto rounded-2xl bg-white shadow-2xl ring-1 ring-white/10 overflow-hidden">
+              {items.map((it, i) => (
+                <Image
+                  key={i}
+                  src={IMAGES[i]}
+                  alt={it.title}
+                  fill
+                  sizes="(max-width: 1024px) 90vw, 40vw"
+                  className={`object-contain p-3 transition-opacity duration-700 ${i === active ? "opacity-100" : "opacity-0"}`}
+                />
+              ))}
+              <div className="absolute bottom-4 left-4 rounded-full bg-primary text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 shadow">
+                {String(active + 1).padStart(2, "0")} · {items[active]?.title}
               </div>
-            );
-          })}
+            </div>
+          </div>
+
+          {/* USP list: hover/tap a row to switch the illustration */}
+          <ol className="lg:col-span-7 flex flex-col gap-3">
+            {items.map((it, i) => {
+              const text = it.description || it.desc || "";
+              const isActive = i === active;
+              return (
+                <li key={i}>
+                  <button
+                    type="button"
+                    onClick={() => setActive(i)}
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    aria-pressed={isActive}
+                    className={`w-full text-left flex items-start gap-4 md:gap-5 rounded-xl border px-4 py-4 md:px-5 transition-all duration-300 ${
+                      isActive
+                        ? "bg-[#10251c] border-secondary shadow-lg"
+                        : "bg-white/[0.03] border-white/10 hover:border-secondary/50"
+                    }`}
+                  >
+                    <span
+                      className={`font-serif text-2xl md:text-3xl font-black leading-none tabular-nums shrink-0 w-10 pt-0.5 ${
+                        isActive ? "text-secondary" : "text-white/30"
+                      }`}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block font-serif font-bold text-base md:text-lg">{it.title}</span>
+                      <span className={`block text-xs md:text-sm leading-relaxed text-white/70 mt-1 ${isActive ? "" : "hidden md:block"}`}>
+                        {text}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
         </div>
 
-        {/* Step-wise pagination dots (visible only on mobile/tablet) */}
-        <div className="flex justify-center gap-2 mt-4 lg:hidden">
-          {displayUsps.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => {
-                const el = scrollContainerRef.current;
-                if (el && el.children[idx]) {
-                  el.children[idx].scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest",
-                    inline: "start",
-                  });
-                }
-              }}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                activeIndex === idx ? "w-8 bg-secondary" : "w-2 bg-secondary/30"
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
-
-        <div className="text-center mt-14">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 mt-10 md:mt-12">
           <Link
             href="/private-treks"
-            className="bg-secondary text-primary font-bold px-8 py-4 rounded-xl inline-block hover:bg-secondary-light hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg"
+            className="bg-secondary text-white font-bold px-8 py-3.5 rounded-xl inline-flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition shadow-lg"
           >
             Learn More About Private Treks
+            <FaArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
+          <Link
+            href="/plan-a-trip"
+            className="border border-white/30 text-white font-bold px-8 py-3.5 rounded-xl inline-flex items-center justify-center hover:bg-white hover:text-primary transition"
+          >
+            Plan a Private Trip
           </Link>
         </div>
       </div>
