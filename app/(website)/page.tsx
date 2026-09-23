@@ -25,14 +25,12 @@ import TrekCard from "@/components/TrekCard";
 import StatsCounter from "@/components/StatsCounter";
 import HeroSearch from "@/components/HeroSearch";
 import HeroSlider, { HeroSlide } from "@/components/HeroSlider";
-import VideoGallery from "@/components/VideoGallery";
 import RegionGrid from "@/components/RegionGrid";
 import ReviewPlatforms from "@/components/ReviewPlatforms";
 import ExclusivePrivateTreks from "@/components/ExclusivePrivateTreks";
 import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 import UpcomingDepartures from "@/components/UpcomingDepartures";
 import FAQAccordion from "@/components/FAQAccordion";
-import Affiliations from "@/components/Affiliations";
 import TestimonialMarquee from "@/components/TestimonialMarquee";
 import { FadeInUp } from "@/components/FramerWrap";
 
@@ -601,10 +599,6 @@ export default async function HomePage() {
         description={homepageSettings?.privateTreksDescription}
         usps={homepageSettings?.privateTreksUSPs}
       />
-
-      {/* 8. Video Gallery */}
-      <VideoGallery />
-
       {/* 9. Photo Gallery (Happy Moments Masonry) */}
       <PhotoGalleryMasonry items={galleryItems} limit={6} showViewAll={true} />
 
@@ -832,10 +826,6 @@ export default async function HomePage() {
 
           <FAQAccordion faqs={faqs} columns={2} />
         </div>
-      </section>
-
-      {/* 13. Affiliations */}
-      <Affiliations />
-    </div>
+      </section>    </div>
   );
 }
