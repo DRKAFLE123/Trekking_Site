@@ -47,25 +47,16 @@
 
 /* ===== Hero Background Animations ===== */
 
-/* Slow-moving gradient that mimics cinematic mountain light */
-.hero-gradient-anim {
-  background: linear-gradient(
-    135deg,
-    #10251c 0%,
-    #1a3c2e 20%,
-    #255341 40%,
-    #1a3c2e 60%,
-    #10251c 80%,
-    #0d1f17 100%
-  );
-  background-size: 400% 400%;
-  animation: heroGradientShift 12s ease-in-out infinite;
+/* Slow push-in on the active hero slide */
+.hero-kenburns {
+  animation: heroKenBurns 8s ease-out forwards;
 }
-
-@keyframes heroGradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes heroKenBurns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-kenburns { animation: none; }
 }
 
 /* Floating snow/dust particles */

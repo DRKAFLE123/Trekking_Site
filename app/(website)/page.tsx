@@ -10,6 +10,10 @@ import {
   FaMountain,
   FaCompass,
   FaCheck,
+  FaCalendarCheck,
+  FaCertificate,
+  FaTripadvisor,
+  FaWhatsapp,
 } from "react-icons/fa";
 // Removed Sanity fetch – using internal API
 import { Trek, BlogPost, Faq, Testimonial, Region } from "@/types";
@@ -20,7 +24,7 @@ import { TREK_CARD_SELECT, BLOG_CARD_SELECT, TREK_LINK_POPULATE } from "@/lib/pa
 import TrekCard from "@/components/TrekCard";
 import StatsCounter from "@/components/StatsCounter";
 import HeroSearch from "@/components/HeroSearch";
-import HeroVideo from "@/components/HeroVideo";
+import HeroSlider, { HeroSlide } from "@/components/HeroSlider";
 import VideoGallery from "@/components/VideoGallery";
 import RegionGrid from "@/components/RegionGrid";
 import ReviewPlatforms from "@/components/ReviewPlatforms";
@@ -34,6 +38,9 @@ import { FadeInUp } from "@/components/FramerWrap";
 
 export const revalidate = 60; // Revalidate every minute
 
+/** "Everest Base Camp Trek - 14 Days" -> "Everest Base Camp Trek" */
+const shortTitle = (t: string) => (t || "").replace(/\s*-\s*\d+\s*Days?\s*$/i, "").trim();
+
 // Self-canonical for the homepage only (page-level, so child routes don't
 // inherit it). Ends the www/non-www ambiguity that made Google index the www
 // copy: with the 301 in next.config this tells Google the apex URL is the one.
@@ -46,6 +53,7 @@ export const metadata = {
 
 export default async function HomePage() {
   let bestSellers: Trek[] = [];
+  let trekTitles: string[] = [];
   let regions: Region[] = [];
   let blogs: BlogPost[] = [];
   let faqs: Faq[] = [];
@@ -67,12 +75,27 @@ export default async function HomePage() {
           },
         },
         depth: 1,
-        limit: 6, // Limit best sellers to exactly 6 as requested
+        limit: 8, // 8 hero slides; the card grid below shows the first 6
+        sort: 'createdAt', // oldest first: Everest Base Camp leads the hero
         select: TREK_CARD_SELECT,
       });
       bestSellers = bestSellersRes.docs as unknown as Trek[];
     } catch (e: any) {
       console.warn("[Home Page] Failed to query treks/bestSellers collection:", e.message);
+    }
+
+    // 1b. Lightweight trek index: hero search suggestions + real trek count
+    try {
+      const idx = await payload.find({
+        collection: 'treks',
+        limit: 200,
+        pagination: false,
+        sort: 'title',
+        select: { title: true },
+      });
+      trekTitles = Array.from(new Set(idx.docs.map((t: any) => shortTitle(t.title)).filter(Boolean)));
+    } catch (e: any) {
+      console.warn("[Home Page] Failed to query trek index:", e.message);
     }
 
     // 2. Fetch Regions
@@ -210,18 +233,61 @@ export default async function HomePage() {
     console.warn("[Home Page] Failed to initialize Payload CMS:", err.message);
   }
 
-  // Configure hero fields dynamically from CMS with absolute default fallbacks
-  const heroHeadline = siteSettings?.heroHeadline || "Explore the Nepali Himalayas";
-  const heroSubheadline = siteSettings?.heroSubheadline || "Private. Personalized. Unforgettable.";
-  const heroVideoUrl = siteSettings?.heroVideoUrl || "https://www.youtube.com/watch?v=UiPPGu2gZbY";
-  
-  let heroImage = "";
-  if (siteSettings?.heroImage) {
-    const mediaUrl = getMediaUrl(siteSettings.heroImage);
-    if (mediaUrl) {
-      heroImage = mediaUrl;
-    }
-  }
+  // ---- Hero -----------------------------------------------------------------
+  const heroHeadline = siteSettings?.heroHeadline || "Private Treks & Expeditions in Nepal";
+  const heroSubheadline =
+    siteSettings?.heroSubheadline ||
+    "Everest, Annapurna, Manaslu and beyond, on tailor-made journeys led by licensed local guides.";
+
+  // One slide per best-selling trek that has a hero image.
+  const heroSlides: HeroSlide[] = bestSellers
+    .filter((t) => getMediaUrl(t.heroImage))
+    .map((t) => {
+      const price = t.discountedPrice || t.price;
+      return {
+        title: shortTitle(t.title),
+        href: `/trips/${t.slug}`,
+        image: getMediaUrl(t.heroImage),
+        meta: [t.duration ? `${t.duration} days` : "", price ? `from $${Number(price).toLocaleString()}` : ""]
+          .filter(Boolean)
+          .join(" · "),
+      };
+    });
+
+  const trust = siteSettings?.trust || {};
+  const foundedYear = Number(trust.foundedYear) || 2019;
+  const registrationNo: string = trust.registrationNo || "215948/75/076";
+  const tripAdvisorUrl: string =
+    trust.tripAdvisorUrl ||
+    "https://www.tripadvisor.com/Attraction_Review-g293890-d19882003-Reviews-Nature_Heaven_Treks_and_Expedition-Kathmandu_Kathmandu_Valley_Bagmati_Zone_Centr.html";
+  const tripAdvisorReviews = Number(trust.tripAdvisorReviews) || 0;
+  const tripAdvisorRating: string = trust.tripAdvisorRating || "";
+
+  const trustChips: { icon: React.ReactNode; label: string; href?: string }[] = [
+    { icon: <FaCalendarCheck className="h-3 w-3 text-secondary" aria-hidden="true" />, label: `Since ${foundedYear}` },
+    ...(registrationNo
+      ? [{ icon: <FaCertificate className="h-3 w-3 text-secondary" aria-hidden="true" />, label: `Govt. Reg. No. ${registrationNo}` }]
+      : []),
+    ...(tripAdvisorReviews > 0
+      ? [{
+          icon: <FaTripadvisor className="h-3.5 w-3.5 text-[#34e0a1]" aria-hidden="true" />,
+          label: `${tripAdvisorRating ? tripAdvisorRating + " · " : ""}${tripAdvisorReviews} TripAdvisor reviews`,
+          href: tripAdvisorUrl,
+        }]
+      : []),
+  ];
+
+  const waDigits = String(
+    siteSettings?.headerSettings?.expertWhatsApp || siteSettings?.contactInfo?.whatsapp || "+977 9851218358"
+  ).replace(/\D/g, "");
+  const whatsAppHref = `https://wa.me/${waDigits}?text=${encodeURIComponent("Hi Nature Heaven Treks, I'd like to plan a trek in Nepal.")}`;
+
+  const statsItems = [
+    { value: siteSettings?.stats?.clients || "1,000+", label: "Happy Trekkers" },
+    { value: `${new Date().getFullYear() - foundedYear}+`, label: "Years in Business" },
+    { value: String(trekTitles.length || 50), label: "Treks & Expeditions" },
+    tripAdvisorRating ? { value: `${tripAdvisorRating}/5`, label: "TripAdvisor Rating" } : { value: "No", label: "Hidden Fees" },
+  ];
 
   // Set beautiful fallback images for database blogs that lack them
   const processedBlogs = blogs.map((blog) => {
@@ -368,92 +434,62 @@ export default async function HomePage() {
         }}
       />
       {/* 1. Hero Section */}
-      <section className="relative w-full h-screen min-h-[650px] flex flex-col justify-between items-center bg-primary overflow-hidden">
-        {/* Background video / overlay */}
-        <div className="absolute inset-0 z-0">
-          {/* Hero image as LCP fallback behind the video */}
-          {heroImage && (
-            <Image
-              src={heroImage}
-              alt="Everest Base Camp Hero"
-              fill
-              priority
-              className="object-cover object-center scale-105"
-              sizes="100vw"
-              style={{ zIndex: 0 }}
-              unoptimized
-            />
-          )}
-          {/* YouTube background video + animated gradient fallback */}
-          <HeroVideo videoUrl={heroVideoUrl} />
-          {/* Dark overlay for text contrast */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/60 pointer-events-none" style={{ zIndex: 10 }} />
-        </div>
+      <HeroSlider slides={heroSlides} footer={<StatsCounter transparent items={statsItems} />}>
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 flex flex-col items-start gap-5 md:gap-6 text-white lg:pr-24 xl:pr-32">
+          <ul className="flex flex-wrap gap-2" aria-label="Company credentials">
+            {trustChips.map((c) => {
+              const cls =
+                "inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 px-3 py-1 text-[11px] sm:text-xs font-semibold tracking-wide";
+              return (
+                <li key={c.label}>
+                  {c.href ? (
+                    <a href={c.href} target="_blank" rel="noopener noreferrer" className={`${cls} hover:bg-white/20 transition`}>
+                      {c.icon}
+                      {c.label}
+                    </a>
+                  ) : (
+                    <span className={cls}>
+                      {c.icon}
+                      {c.label}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
 
-        {/* Hero Content */}
-        <div className="max-w-7xl mx-auto px-6 relative z-20 text-center flex flex-col gap-6 text-bgOffWhite items-center grow justify-center">
-          <FadeInUp delay={0.1} className="hidden md:block">
-            <span className="inline-flex items-center gap-1.5 bg-secondary text-primary font-sans font-bold text-xs tracking-[0.2em] uppercase px-4 py-1.5 rounded-full border border-secondary/25 shadow-lg">
-              🏔️ Nepal&apos;s #1 Private Trekking Company
-            </span>
-          </FadeInUp>
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight max-w-4xl">
+            {heroHeadline}
+          </h1>
+          <p className="font-sans text-base md:text-xl text-white/85 max-w-2xl">{heroSubheadline}</p>
 
-          <FadeInUp delay={0.2}>
-            <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl font-black max-w-5xl leading-[1.1] tracking-tight">
-              {heroHeadline.includes("Nepali Himalayas") ? (
-                <>
-                  {heroHeadline.split("Nepali Himalayas")[0]}
-                  <span className="text-secondary text-glow">Nepali Himalayas</span>
-                  {heroHeadline.split("Nepali Himalayas")[1]}
-                </>
-              ) : (
-                heroHeadline
-              )}
-            </h1>
-          </FadeInUp>
-
-          <FadeInUp delay={0.3} className="hidden md:block">
-            <p className="font-sans text-lg sm:text-xl md:text-2xl text-bgOffWhite/90 max-w-2xl font-light tracking-wide">
-              {heroSubheadline}
-            </p>
-          </FadeInUp>
-
-          {/* Dynamic Search Bar */}
-          <FadeInUp delay={0.4} className="w-full">
-            <HeroSearch />
-          </FadeInUp>
-
-          {/* Quick CTAs */}
-          <FadeInUp delay={0.5} className="hidden md:flex flex-col sm:flex-row items-center gap-4 mt-2">
-            <Link
-              href="/trips"
-              className="w-full sm:w-auto bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl border border-secondary hover:bg-transparent hover:text-secondary hover:scale-105 active:scale-95 transition-all duration-300"
+          <div className="w-full max-w-3xl flex flex-col sm:flex-row gap-3">
+            <HeroSearch suggestions={trekTitles} />
+            <a
+              href={whatsAppHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-secondary text-primary font-bold px-6 py-3 text-xs md:text-sm uppercase tracking-wider hover:brightness-110 active:scale-95 transition shrink-0"
             >
-              Explore All Treks
-            </Link>
-            <Link
-              href="/contact-us"
-              className="w-full sm:w-auto bg-transparent text-bgOffWhite border border-bgOffWhite/50 hover:bg-bgOffWhite hover:text-primary font-bold px-8 py-3.5 rounded-xl hover:scale-105 active:scale-95 transition-all duration-300"
-            >
-              Talk to an Expert
-            </Link>
-          </FadeInUp>
-        </div>
-
-        {/* Bottom Elements */}
-        <div className="hidden md:flex w-full relative z-20 flex flex-col items-center mt-6 shrink-0">
-          {/* Scroll Indicator */}
-          <div className="flex flex-col items-center gap-1 text-bgOffWhite/60 animate-bounce mb-4">
-            <span className="text-[10px] tracking-[0.2em] uppercase font-bold">Scroll</span>
-            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-              <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-            </svg>
+              <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
+              Talk to Expert
+            </a>
           </div>
 
-          {/* Stats Bar (Transparent Overlay) */}
-          <StatsCounter transparent={true} />
+          {heroSlides.length > 0 && (
+            <ul className="hidden md:flex flex-wrap items-center gap-2 text-xs">
+              <li className="text-white/60 uppercase tracking-wider font-bold mr-1">Popular:</li>
+              {heroSlides.slice(0, 4).map((sl) => (
+                <li key={sl.href}>
+                  <Link href={sl.href} className="rounded-full border border-white/25 px-3 py-1 hover:bg-white hover:text-primary transition">
+                    {sl.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      </section>
+      </HeroSlider>
 
       {/* 3. Best Seller Treks */}
       <section className="py-16 md:py-24 px-4 md:px-6 bg-[#fcfbfa]">
@@ -474,7 +510,7 @@ export default async function HomePage() {
 
           {/* Cards Grid (Slider on mobile, grid on desktop) */}
           <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
-            {bestSellers.map((trek: Trek, index: number) => (
+            {bestSellers.slice(0, 6).map((trek: Trek, index: number) => (
               <div key={trek._id || index} className="w-[290px] md:w-full shrink-0 snap-align-start flex flex-col">
                 <TrekCard trek={trek} />
               </div>

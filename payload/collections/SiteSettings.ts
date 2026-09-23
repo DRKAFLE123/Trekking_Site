@@ -85,6 +85,19 @@ export const SiteSettings: CollectionConfig = {
       ],
     },
     {
+      name: 'trust',
+      type: 'group',
+      label: 'Trust Signals (Homepage Hero)',
+      admin: { description: 'Shown as chips above the hero headline and used for the years counter. Leave a field empty to hide its chip.' },
+      fields: [
+        { name: 'foundedYear', type: 'number', defaultValue: 2019, label: 'Founded (year)', admin: { description: 'Incorporated 26 May 2019 per the Company Registrar certificate.' } },
+        { name: 'registrationNo', type: 'text', defaultValue: '215948/75/076', label: 'Company Registration No.' },
+        { name: 'tripAdvisorUrl', type: 'text', label: 'TripAdvisor page URL' },
+        { name: 'tripAdvisorReviews', type: 'number', label: 'TripAdvisor review count' },
+        { name: 'tripAdvisorRating', type: 'text', label: 'TripAdvisor rating (e.g. 5.0)' },
+      ],
+    },
+    {
       name: 'contactInfo',
       type: 'group',
       fields: [

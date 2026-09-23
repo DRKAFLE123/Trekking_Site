@@ -1,155 +1,100 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-interface CounterItemProps {
-  end: number;
-  suffix: string;
-  duration?: number;
+export type StatItem = { value: string; label: string };
+
+/** "5,000+" -> { end: 5000, suffix: "+", decimals: 0 }; "4.9/5" -> { end: 4.9, suffix: "/5", decimals: 1 } */
+function parseStat(value: string) {
+  const m = value.match(/^([\d,]+(?:\.\d+)?)(.*)$/);
+  if (!m) return null;
+  return { end: Number(m[1].replace(/,/g, "")), suffix: m[2], decimals: (m[1].split(".")[1] || "").length };
 }
 
-function CounterItem({ end, suffix, duration = 2000 }: CounterItemProps) {
-  const [count, setCount] = useState(0);
-  const elementRef = useRef<HTMLSpanElement>(null);
-  const [hasStarted, setHasStarted] = useState(false);
+function Counter({ value, started }: { value: string; started: boolean }) {
+  const parsed = parseStat(value);
+  const end = parsed?.end ?? 0;
+  const [n, setN] = useState(0);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasStarted) {
-          setHasStarted(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [hasStarted]);
-
-  useEffect(() => {
-    if (!hasStarted) return;
-
-    let startTimestamp: number | null = null;
-    const step = (timestamp: number) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      setCount(Math.floor(progress * end));
-      if (progress < 1) {
-        window.requestAnimationFrame(step);
-      }
+    if (!started || !parsed) return;
+    let start: number | null = null;
+    let raf = 0;
+    const step = (t: number) => {
+      if (start === null) start = t;
+      const p = Math.min((t - start) / 1800, 1);
+      setN(end * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) raf = requestAnimationFrame(step);
     };
-    window.requestAnimationFrame(step);
-  }, [hasStarted, end, duration]);
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, end]);
 
-  const formatNumber = (num: number) => {
-    return num.toLocaleString();
-  };
+  if (!parsed) {
+    // Non-numeric value (e.g. "No"): pop in once visible.
+    return started ? (
+      <motion.span
+        initial={{ scale: 0.3, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 10 }}
+        className="font-serif inline-block"
+      >
+        {value}
+      </motion.span>
+    ) : (
+      <span className="opacity-0 font-serif">{value}</span>
+    );
+  }
 
   return (
-    <span ref={elementRef} className="font-serif">
-      {formatNumber(count)}
-      {suffix}
+    <span className="font-serif tabular-nums">
+      {n.toLocaleString(undefined, { minimumFractionDigits: parsed.decimals, maximumFractionDigits: parsed.decimals })}
+      {parsed.suffix}
     </span>
   );
 }
 
-export default function StatsCounter({ transparent = false }: { transparent?: boolean }) {
-  const [showNo, setShowNo] = useState(false);
-  const triggerRef = useRef<HTMLDivElement>(null);
+export default function StatsCounter({ items, transparent = false }: { items: StatItem[]; transparent?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          // Delay showing "No" to sync with count-up animation
-          setTimeout(() => {
-            setShowNo(true);
-          }, 400);
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          obs.disconnect();
         }
       },
       { threshold: 0.1 }
     );
-
-    if (triggerRef.current) {
-      observer.observe(triggerRef.current);
-    }
-
-    return () => observer.disconnect();
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
   return (
-    <section 
-      ref={triggerRef} 
+    <div
+      ref={ref}
       className={`${
-        transparent 
-          ? "bg-black/30 backdrop-blur-md border-t border-white/10 py-5" 
+        transparent
+          ? "bg-black/30 backdrop-blur-md border-t border-white/10 py-5"
           : "bg-[#1a3c2e] border-y border-[#c8922a]/20 py-8"
       } text-white relative overflow-hidden w-full`}
     >
-      {/* Background overlay accent */}
-      {!transparent && (
-        <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 pointer-events-none" />
-      )}
-      
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/10">
-        
-        {/* Item 1 */}
-        <div className="flex flex-col gap-1">
-          <span className="text-3xl md:text-5xl font-black text-[#c8922a] tracking-tight">
-            <CounterItem end={10000} suffix="+" />
-          </span>
-          <span className="text-xs md:text-sm text-white/80 font-bold tracking-wider uppercase">
-            Clients
-          </span>
-        </div>
-
-        {/* Item 2 */}
-        <div className="flex flex-col gap-1">
-          <span className="text-3xl md:text-5xl font-black text-[#c8922a] tracking-tight">
-            <CounterItem end={15} suffix="+" />
-          </span>
-          <span className="text-xs md:text-sm text-white/80 font-bold tracking-wider uppercase">
-            Years
-          </span>
-        </div>
-
-        {/* Item 3 */}
-        <div className="flex flex-col gap-1">
-          <span className="text-3xl md:text-5xl font-black text-[#c8922a] tracking-tight">
-            <CounterItem end={100} suffix="%" />
-          </span>
-          <span className="text-xs md:text-sm text-white/80 font-bold tracking-wider uppercase">
-            Private
-          </span>
-        </div>
-
-        {/* Item 4 */}
-        <div className="flex flex-col gap-1">
-          <span className="text-3xl md:text-5xl font-black text-[#c8922a] tracking-tight min-h-[36px] md:min-h-[48px] flex items-center justify-center">
-            {showNo ? (
-              <motion.span
-                initial={{ scale: 0.3, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 100, damping: 10 }}
-                className="font-serif inline-block"
-              >
-                No
-              </motion.span>
-            ) : (
-              <span className="opacity-0 font-serif">No</span>
-            )}
-          </span>
-          <span className="text-xs md:text-sm text-white/80 font-bold tracking-wider uppercase">
-            Hidden Fees
-          </span>
-        </div>
-
+        {items.map((it) => (
+          <div key={it.label} className="flex flex-col gap-1">
+            <span className="text-3xl md:text-5xl font-black text-[#c8922a] tracking-tight min-h-[36px] md:min-h-[48px] flex items-center justify-center">
+              <Counter value={it.value} started={started} />
+            </span>
+            <span className="text-xs md:text-sm text-white/80 font-bold tracking-wider uppercase">{it.label}</span>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }
