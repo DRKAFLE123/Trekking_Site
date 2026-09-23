@@ -38,6 +38,41 @@ export const NavbarSettings: CollectionConfig = {
       label: 'Header Site Logo',
     },
     {
+      name: 'representatives',
+      type: 'array',
+      label: 'Country Representatives (header phone dropdown)',
+      admin: {
+        description:
+          'One row per country office/representative. The header shows the visitor\'s closest one (by timezone) and lets them switch. All contacts open WhatsApp.',
+      },
+      fields: [
+        { name: 'country', type: 'text', required: true, label: 'Country name (e.g. United Kingdom)' },
+        {
+          name: 'countryCode',
+          type: 'text',
+          required: true,
+          label: 'Country code (2 letters, e.g. np, gb, us)',
+          validate: (v: any) => (/^[a-z]{2}$/.test(v || '') ? true : 'Use the 2-letter lowercase ISO code, e.g. np, gb, us'),
+          admin: { description: 'Drives the flag. Lowercase ISO 3166-1 alpha-2.' },
+        },
+        { name: 'name', type: 'text', required: true, label: 'Representative / office name' },
+        { name: 'whatsApp', type: 'text', required: true, label: 'WhatsApp number with country code (e.g. +44 7349 649167)' },
+        { name: 'hours', type: 'text', label: 'Available hours (e.g. 9am–6pm GMT)' },
+        { name: 'isDefault', type: 'checkbox', defaultValue: false, label: 'Default when the visitor\'s country is not listed' },
+      ],
+    },
+    {
+      name: 'promoBar',
+      type: 'group',
+      label: 'Announcement bar (above header)',
+      fields: [
+        { name: 'enabled', type: 'checkbox', defaultValue: false, label: 'Show announcement bar' },
+        { name: 'text', type: 'text', label: 'Message' },
+        { name: 'linkLabel', type: 'text', label: 'Button label (optional)' },
+        { name: 'linkHref', type: 'text', label: 'Button link (optional, e.g. /upcoming-departures)' },
+      ],
+    },
+    {
       name: 'navigationMenu',
       type: 'array',
       label: 'Navbar Navigation Menu',

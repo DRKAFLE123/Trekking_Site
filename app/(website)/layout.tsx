@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, DM_Sans } from "next/font/google";
 import "../globals.css";
-import Navbar from "@/components/Navbar";
+import Header from "@/components/header/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import BackToTop from "@/components/BackToTop";
@@ -126,7 +126,7 @@ export async function generateMetadata(): Promise<Metadata> {
       // cross-checks og:site_name against that schema; when they disagree it
       // distrusts both and shows the bare domain instead.
       siteName: brandName,
-      url: siteUrl,
+      url: `${siteUrl}/`,
       title: defaultTitle,
       description: defaultDescription,
       // og:updated_time hints to Facebook / LinkedIn / etc. that the page's
@@ -217,7 +217,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans bg-bgOffWhite text-charcoal min-h-screen flex flex-col" suppressHydrationWarning>
         <TrackingScripts />
-        <Navbar />
+        <Header />
         <main className="grow">{children}</main>
         <Footer />
         <WhatsAppButton />

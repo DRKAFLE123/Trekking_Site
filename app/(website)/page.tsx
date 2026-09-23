@@ -37,8 +37,11 @@ export const revalidate = 60; // Revalidate every minute
 // Self-canonical for the homepage only (page-level, so child routes don't
 // inherit it). Ends the www/non-www ambiguity that made Google index the www
 // copy: with the 301 in next.config this tells Google the apex URL is the one.
+// Absolute with trailing slash: that is the form Google records as the homepage
+// canonical, and the WebSite schema `url` must match it exactly for the site
+// name feature. Next would otherwise emit it without the slash.
 export const metadata = {
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://natureheaventreks.com/" },
 };
 
 export default async function HomePage() {
@@ -314,7 +317,7 @@ export default async function HomePage() {
       {
         "@type": "WebSite",
         "@id": `${siteUrl}/#website`,
-        url: siteUrl,
+        url: `${siteUrl}/`,
         name: "Nature Heaven Treks & Expedition",
         alternateName: ["Nature Heaven Treks and Expedition", "Nature Heaven Treks", "Nature Heaven Trekking"],
         publisher: { "@id": `${siteUrl}/#organization` },
@@ -341,7 +344,7 @@ export default async function HomePage() {
         name: "Nature Heaven Treks & Expedition",
         legalName: "Nature Heaven Treks and Expedition Pvt. Ltd.",
         alternateName: "Nature Heaven Treks and Expedition",
-        url: siteUrl,
+        url: `${siteUrl}/`,
         logo: `${siteUrl}/opengraph-image`,
         image: `${siteUrl}/opengraph-image`,
         email: "info@natureheaventreks.com",
