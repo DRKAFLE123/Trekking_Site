@@ -59,3 +59,7 @@ deploy.zip
 # local media uploads
 /public/uploads/
 
+
+# Logo source exports — keep locally, never ship. Only public/logo/SVG and emblem.svg are used by the site.
+public/logo/JPG/
+public/logo/PNG/
