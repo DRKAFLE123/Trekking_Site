@@ -345,7 +345,7 @@ export default function Footer() {
     <div className="w-full relative z-10 font-sans">
       {/* 1. Main Mountain Section */}
       <section
-        className="relative bg-no-repeat bg-cover pt-[180px] md:pt-[380px] lg:pt-[600px] pb-8 md:pb-12 lg:pb-16 text-white overflow-hidden"
+        className="relative bg-no-repeat bg-cover pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-12 lg:pb-16 text-white overflow-hidden"
         style={{ 
           backgroundImage: dbFooterSettings?.backgroundImage?.url ? `url("${dbFooterSettings.backgroundImage.url}")` : "url('/footernewimage1.png')",
           backgroundPosition: "65% top"
@@ -380,11 +380,11 @@ export default function Footer() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-serif text-lg font-black text-secondary-light tracking-wide group-hover:text-white transition duration-300 leading-none">
+                  <span className="font-serif text-lg font-black text-white tracking-wide group-hover:text-secondary-light transition duration-300 leading-none">
                     {((dbFooterSettings?.siteName || siteName || "Nature Heaven Trekking & Expedition").replace(/\s*(Trekking|Trek).*$/i, "") || "NATURE HEAVEN").toUpperCase()}
                   </span>
                   <span className="text-[9px] tracking-[0.25em] text-secondary-light/90 group-hover:text-white uppercase font-sans font-bold mt-1">
-                    Trekking &amp; Expedition
+                    Treks &amp; Expedition
                   </span>
                 </div>
               </Link>

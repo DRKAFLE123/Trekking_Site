@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FaBars, FaTimes, FaWhatsapp, FaChevronDown, FaSearch, FaPaperPlane } from "react-icons/fa";
+import { FaBars, FaTimes, FaWhatsapp, FaChevronDown, FaSearch, FaPaperPlane, FaBullhorn } from "react-icons/fa";
 import type { NavData, MenuItem, Rep } from "./types";
 
 // Interactive half of the header. All menu panels are always in the DOM and
@@ -47,7 +47,6 @@ export default function HeaderClient({ data }: { data: NavData }) {
   const [drawerSection, setDrawerSection] = useState<string | null>(null);
   const [repOpen, setRepOpen] = useState(false);
   const [rep, setRep] = useState<Rep>(data.reps.find((r) => r.isDefault) || data.reps[0]);
-  const [promoHidden, setPromoHidden] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [q, setQ] = useState("");
 
@@ -84,7 +83,6 @@ export default function HeaderClient({ data }: { data: NavData }) {
       const guess = TZ_TO_COUNTRY.find(([re]) => re.test(tz))?.[1];
       const byTz = guess && data.reps.find((r) => r.code === guess);
       if (byTz) setRep(byTz);
-      if (localStorage.getItem("nh-promo-hidden") === "1") setPromoHidden(true);
     } catch {}
   }, [data.reps]);
 
@@ -95,7 +93,6 @@ export default function HeaderClient({ data }: { data: NavData }) {
   const leave = () => { if (closeTimer.current) clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => setOpen(null), 220); };
   const toggle = (key: string) => { if (closeTimer.current) clearTimeout(closeTimer.current); setOpen((o) => (o === key ? null : key)); setRepOpen(false); };
   const chooseRep = (r: Rep) => { setRep(r); setRepOpen(false); try { localStorage.setItem("nh-rep", r.code); } catch {} };
-  const hidePromo = () => { setPromoHidden(true); try { localStorage.setItem("nh-promo-hidden", "1"); } catch {} };
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!q.trim()) return;
@@ -244,14 +241,16 @@ export default function HeaderClient({ data }: { data: NavData }) {
   // ---- render ----------------------------------------------------------------
   return (
     <div ref={rootRef} className="relative z-50">
-      {data.promo && !promoHidden && (
+      {/* Announcement strip — CMS text, always shown while enabled (no dismiss),
+          as the client asked for it to be a permanent fixture like before. */}
+      {data.promo && (
         <div className="bg-[#1a3c2e] text-white text-[13px]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 min-h-[40px] flex items-center justify-center gap-3 relative">
-            <span className="text-center">{data.promo.text}</span>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 min-h-[38px] flex items-center justify-center gap-3">
+            <FaBullhorn className="h-3.5 w-3.5 shrink-0" style={{ color: AMBER }} aria-hidden="true" />
+            <span className="text-center font-medium">{data.promo.text}</span>
             {data.promo.linkHref && data.promo.linkLabel && (
-              <Link href={data.promo.linkHref} className="font-semibold underline underline-offset-2 hover:text-[#f5d37a] shrink-0">{data.promo.linkLabel}</Link>
+              <Link href={data.promo.linkHref} className="shrink-0 rounded-[5px] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[#1a3c2e] hover:brightness-110" style={{ backgroundColor: AMBER }}>{data.promo.linkLabel}</Link>
             )}
-            <button onClick={hidePromo} aria-label="Dismiss announcement" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-[5px] hover:bg-white/10"><FaTimes className="h-3.5 w-3.5" /></button>
           </div>
         </div>
       )}

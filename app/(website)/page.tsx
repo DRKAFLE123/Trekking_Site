@@ -794,7 +794,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <FAQAccordion faqs={faqs} />
+          <FAQAccordion faqs={faqs} columns={2} />
         </div>
       </section>
 

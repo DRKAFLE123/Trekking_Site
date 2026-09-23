@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface FAQAccordionProps {
   faqs: Faq[];
+  /** 2 = side-by-side columns on desktop (homepage); 1 = single stack (default). */
+  columns?: 1 | 2;
 }
 
 // Simple helper to serialize Lexical content to plain text for JSON-LD schema
@@ -46,7 +48,7 @@ function serializeToPlainText(body: any): string {
   return "";
 }
 
-export default function FAQAccordion({ faqs }: FAQAccordionProps) {
+export default function FAQAccordion({ faqs, columns = 1 }: FAQAccordionProps) {
   const faqList = faqs || [];
   const validFaqs = faqList.filter(
     (faq) =>
@@ -77,8 +79,17 @@ export default function FAQAccordion({ faqs }: FAQAccordionProps) {
     })),
   };
 
+  // Two columns are two independent stacks (not CSS columns), so an answer
+  // expanding on the left never reflows the items on the right. Items are
+  // dealt in reading order: 1st/3rd/5th left, 2nd/4th/6th right.
+  const stacks: { faq: Faq; idx: number }[][] =
+    columns === 2
+      ? [validFaqs.filter((_, i) => i % 2 === 0).map((faq, i) => ({ faq, idx: i * 2 })),
+         validFaqs.filter((_, i) => i % 2 === 1).map((faq, i) => ({ faq, idx: i * 2 + 1 }))]
+      : [validFaqs.map((faq, idx) => ({ faq, idx }))];
+
   return (
-    <div className="flex flex-col gap-4 max-w-3xl mx-auto">
+    <div className={columns === 2 ? "grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-6xl mx-auto items-start" : "flex flex-col gap-4 max-w-3xl mx-auto"}>
       {/* Inject JSON-LD FAQ Schema */}
       <script
         type="application/ld+json"
@@ -87,7 +98,9 @@ export default function FAQAccordion({ faqs }: FAQAccordionProps) {
         }}
       />
 
-      {validFaqs.map((faq, idx) => {
+      {stacks.map((stack, s) => (
+      <div key={s} className="flex flex-col gap-4">
+      {stack.map(({ faq, idx }) => {
         const isOpen = openIndex === idx;
 
         return (
@@ -131,6 +144,8 @@ export default function FAQAccordion({ faqs }: FAQAccordionProps) {
           </div>
         );
       })}
+      </div>
+      ))}
     </div>
   );
 }
