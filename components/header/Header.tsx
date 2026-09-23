@@ -102,13 +102,23 @@ const trekLite = (t: any): TrekLite => ({
 const getNavData = unstable_cache(loadNavData, ["header-nav-data"], { revalidate: 300, tags: ["header"] });
 
 export default async function Header() {
-  const data = await getNavData();
+  // Failures are caught OUTSIDE the cache on purpose: if loadNavData threw
+  // inside it, unstable_cache would not store anything, but if it *returned*
+  // the fallback the static menu would be cached for five minutes. The first
+  // deploy did exactly that — the DB stalled during the build and every page
+  // shipped with the 34-link fallback nav instead of 104 links.
+  let data: NavData;
+  try {
+    data = await getNavData();
+  } catch (err: any) {
+    console.warn("[Header] falling back to static navigation:", err?.message);
+    data = FALLBACK;
+  }
   return <HeaderClient data={data} />;
 }
 
 async function loadNavData(): Promise<NavData> {
-  let data: NavData = FALLBACK;
-  try {
+  {
     const payload = await getPayload({ config });
     const [navRes, regionsRes, treksRes, pagesRes, companyRes] = await Promise.all([
       payload.find({
@@ -211,14 +221,11 @@ async function loadNavData(): Promise<NavData> {
       ? { text: nav.promoBar.text, linkLabel: nav.promoBar.linkLabel || undefined, linkHref: nav.promoBar.linkHref || undefined }
       : null;
 
-    data = {
+    return {
       logoUrl: typeof nav.logo === "object" && nav.logo?.url ? nav.logo.url : null,
       menu, countries, regions, travelInfo, company, topTreks,
       reps: reps.length ? reps : FALLBACK.reps,
       promo,
     };
-  } catch (err: any) {
-    console.warn("[Header] falling back to static navigation:", err?.message);
   }
-  return data;
 }
