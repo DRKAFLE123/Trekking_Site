@@ -100,6 +100,8 @@ export default async function HomePage() {
     try {
       const regionsRes = await payload.find({
         collection: 'regions',
+        where: { showOnHomepage: { equals: true } },
+        sort: 'homepageOrder',
         depth: 1,
         limit: 8,
       });

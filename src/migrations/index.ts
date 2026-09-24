@@ -23,6 +23,7 @@ import * as migration_20260708_140000_itinerary_description_richtext from './202
 import * as migration_20260722_120000_add_tracking_settings from './20260722_120000_add_tracking_settings';
 import * as migration_20260923_100000_navbar_representatives_promo from './20260923_100000_navbar_representatives_promo';
 import * as migration_20260923_140000_site_settings_trust from './20260923_140000_site_settings_trust';
+import * as migration_20260924_090000_regions_homepage from './20260924_090000_regions_homepage';
 
 export const migrations = [
   {
@@ -149,5 +150,10 @@ export const migrations = [
     up: migration_20260923_140000_site_settings_trust.up,
     down: migration_20260923_140000_site_settings_trust.down,
     name: '20260923_140000_site_settings_trust',
+  },
+  {
+    up: migration_20260924_090000_regions_homepage.up,
+    down: migration_20260924_090000_regions_homepage.down,
+    name: '20260924_090000_regions_homepage',
   },
 ];

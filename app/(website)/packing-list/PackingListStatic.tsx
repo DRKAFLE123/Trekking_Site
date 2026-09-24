@@ -139,7 +139,7 @@ export default function PackingListStatic() {
         className="relative w-full bg-[#1a2e1f] py-24 md:py-32 overflow-hidden"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1600')",
+            "url('https://res.cloudinary.com/dslrn3soo/image/upload/f_auto,q_auto,w_1600/summit-trail-trekking/Chola_Pass_with_Nature_Heaven_Treks_q0yvkf.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

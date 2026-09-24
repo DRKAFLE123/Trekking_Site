@@ -28,75 +28,6 @@ interface BlogDetailClientProps {
   blogSettings: any;
 }
 
-interface NewsletterFormProps {
-  onSuccess: (pdfUrl: string | null) => void;
-}
-
-function NewsletterForm({ onSuccess }: NewsletterFormProps) {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"success" | "error" | "">("");
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setSubmitting(true);
-    setStatus("");
-    setMessage("");
-
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: "", email }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setStatus("success");
-        setMessage("Thank you! Your free travel guide is on its way.");
-        setEmail("");
-        onSuccess(data.pdfUrl || null);
-      } else {
-        throw new Error(data.error || "Failed to subscribe. Please try again.");
-      }
-    } catch (err: any) {
-      setStatus("error");
-      setMessage(err.message || "Something went wrong.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="w-full max-w-md">
-      <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-stretch gap-2 w-full">
-        <input
-          type="email"
-          placeholder="Enter your email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={submitting}
-          className="bg-black/35 border border-white/20 rounded-[5px] px-4 py-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-secondary transition grow min-w-0"
-        />
-        <button
-          type="submit"
-          disabled={submitting}
-          className="bg-secondary hover:bg-secondary-dark text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow disabled:opacity-50 shrink-0 cursor-pointer"
-        >
-          {submitting ? "Sending..." : "Get Free Guide"}
-        </button>
-      </form>
-      {message && (
-        <p className={`text-xs mt-2.5 font-semibold ${status === "success" ? "text-green-400" : "text-red-400"}`}>
-          {message}
-        </p>
-      )}
-    </div>
-  );
-}
 
 export default function BlogDetailClient({
   blog,
@@ -230,10 +161,10 @@ export default function BlogDetailClient({
               {/* Table of Contents Section */}
               {headings.length > 0 && (
                 <div className="flex flex-col gap-3">
-                  <h3 className="font-serif font-black text-primary text-[17px] border-b border-primary/5 pb-2.5 flex items-center gap-2">
+                  <p className="font-serif font-black text-primary text-[17px] border-b border-primary/5 pb-2.5 flex items-center gap-2">
                     <span>📖</span>
                     <span>On this page</span>
-                  </h3>
+                  </p>
                   
                   {/* Space-optimized vertical timeline navigation */}
                   <nav className="relative pl-4 border-l-[1.5px] border-slate-100 flex flex-col gap-2.5">
@@ -643,118 +574,6 @@ export default function BlogDetailClient({
           </div>
         )}
 
-        {/* 4. Plan Your Trip Like a Pro Newsletter Lead capture Block */}
-        {(() => {
-          const guide = blogSettings?.guideSettings || {
-            title: "TRAVEL GUIDE",
-            subtitle: "NEPAL 2026",
-            badgeText: "SUMMIT GUIDE",
-            footerText: "Nature Heaven Trekking",
-            description: "Get our free travel guide packed with insider tips, hidden geographical gems, and essential equipment checklists. Save time, travel smarter, and make the most of your adventure."
-          };
-          return (
-            <div 
-              className="relative rounded-[5px] overflow-hidden p-6 md:p-10 text-white border border-secondary/15 shadow-xl flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-7xl mx-auto"
-              style={{
-                backgroundImage: "linear-gradient(to right, rgba(20,45,35,0.96), rgba(10,22,17,0.92)), url('/cinematic_footer_bg.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center"
-              }}
-            >
-              {/* Premium Book Cover Mockup */}
-              <div className="relative w-40 h-56 bg-gradient-to-b from-[#132c20] to-[#0a1711] border border-white/15 rounded-l-[5px] rounded-r-sm p-4 flex flex-col justify-between shadow-2xl shrink-0 select-none overflow-hidden group transition-all duration-500 ease-out hover:scale-[1.04] hover:-rotate-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-                {/* Book spine highlight */}
-                <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/35 to-transparent border-r border-white/5 z-20" />
-                <div className="absolute left-[3px] top-0 bottom-0 w-[1px] bg-white/10 z-20" />
-
-                {/* Page edges effect */}
-                <div className="absolute right-0 top-1 bottom-1 w-1 bg-gradient-to-b from-white/15 via-white/25 to-white/15 rounded-r z-10" />
-
-                {/* Shine Sweep Hover Effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition duration-1500 ease-out pointer-events-none" />
-
-                {/* Corner Ribbon */}
-                <div className="absolute top-0 right-0 bg-secondary text-white font-sans font-extrabold text-[8px] uppercase tracking-wider py-1 px-4 rotate-45 translate-x-3 translate-y-1 shadow-sm select-none z-20">
-                  Free PDF
-                </div>
-
-                {/* Badge text */}
-                <div className="text-[9px] text-secondary font-sans font-extrabold tracking-[0.25em] text-center w-full uppercase mt-1.5 z-10">
-                  {guide.badgeText}
-                </div>
-
-                {/* Twin Peaks Mountain Silhouette Emblem */}
-                <div className="w-10 h-10 rounded-full border border-secondary/25 bg-white/5 flex items-center justify-center mx-auto my-1.5 text-secondary shadow-inner z-10">
-                  <svg className="w-5 h-5 text-secondary" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L1 21h22L12 2zm0 4l6.5 11.25H5.5L12 6zm-2 7l-2 3.5h4l-2-3.5z" />
-                  </svg>
-                </div>
-
-                {/* Main Titles */}
-                <div className="flex flex-col gap-0.5 text-center mt-auto mb-2 z-10">
-                  <div className="font-serif text-[15px] font-black leading-tight text-white tracking-wide uppercase">
-                    {guide.title}
-                  </div>
-                  <div className="h-[1.5px] w-6 bg-secondary mx-auto my-1.5" />
-                  <div className="text-[9px] text-secondary font-bold tracking-widest uppercase">
-                    {guide.subtitle}
-                  </div>
-                </div>
-
-                {/* Footer Brand */}
-                <div className="text-[8px] text-white/50 text-center font-sans tracking-wide leading-none border-t border-white/5 pt-2 z-10">
-                  {guide.footerText}
-                </div>
-              </div>
-
-              {/* Details & Newsletter Input */}
-              <div className="flex-1 flex flex-col gap-4 text-center md:text-left w-full">
-                <div className="flex flex-col gap-1">
-                  <span className="text-secondary font-bold text-[10px] tracking-wider uppercase">Free Download</span>
-                  <h3 className="font-serif font-black text-xl sm:text-3xl text-white leading-tight">
-                    Plan Your Trip Like a Pro
-                  </h3>
-                  <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-light">
-                    {guide.description}
-                  </p>
-                </div>
-
-                {!subscribed ? (
-                  <NewsletterForm 
-                    onSuccess={(url) => {
-                      setSubscribed(true);
-                      setDownloadUrl(url);
-                      if (url) {
-                        // Open in new tab automatically
-                        window.open(url, '_blank');
-                      }
-                    }} 
-                  />
-                ) : (
-                  <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md animate-fadeIn mt-2 justify-center md:justify-start">
-                    <span className="text-sm font-semibold text-green-400 flex items-center gap-1.5 select-none">
-                      <span className="text-base">✓</span> Subscribed Successfully!
-                    </span>
-                    {downloadUrl ? (
-                      <a
-                        href={downloadUrl}
-                        download="Nepal_Travel_Guide.pdf"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-dark text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-[5px] transition duration-300 shadow cursor-pointer text-center hover:scale-105"
-                      >
-                        <FaDownload className="h-3 w-3" />
-                        <span>Download PDF Guide</span>
-                      </a>
-                    ) : (
-                      <span className="text-xs text-white/60">(Check your email for the guide details)</span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })()}
 
       </div>
     </div>

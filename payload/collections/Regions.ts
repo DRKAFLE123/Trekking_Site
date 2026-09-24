@@ -45,6 +45,19 @@ export const regions: CollectionConfig = {
       },
     },
     {
+      name: 'showOnHomepage',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Show on homepage',
+      admin: { position: 'sidebar', description: 'Untick to hide this region from the homepage "Explore Trekking Regions" grid.' },
+    },
+    {
+      name: 'homepageOrder',
+      type: 'number',
+      label: 'Homepage order',
+      admin: { position: 'sidebar', description: '1 shows first. Regions without a number come last.' },
+    },
+    {
       name: 'description',
       type: 'textarea',
     },

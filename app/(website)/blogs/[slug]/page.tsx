@@ -99,6 +99,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       }),
       payload.find({
         collection: "blogPosts",
+        where: { _status: { equals: "published" } },
         depth: 1,
         limit: 100,
         // "Similar articles" grid — cards only, not 22 full article bodies.
