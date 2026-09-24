@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { FaArrowLeft, FaCalendarAlt, FaUser, FaRegClock, FaFacebookF, FaLink, FaHeadset, FaDownload } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendarAlt, FaUser, FaRegClock, FaFacebookF, FaLink, FaHeadset, FaDownload, FaWhatsapp } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BlogPost } from '@/types';
 import Image from 'next/image';
@@ -496,14 +496,23 @@ export default function BlogDetailClient({
               </p>
             </div>
             
-            <a
-              href={`https://wa.me/${expertWhatsApp.replace(/[^0-9]/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1.5 inline-flex items-center gap-2 bg-white hover:bg-secondary text-white hover:text-white font-sans font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-[5px] shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer select-none"
-            >
-              <span>Schedule a call 📞</span>
-            </a>
+            <div className="mt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href={`https://wa.me/${expertWhatsApp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent("Hi Nature Heaven Treks, I'd like to plan a trek in Nepal.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 bg-secondary text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-wider px-6 py-3 rounded-[5px] shadow-md hover:brightness-110 active:scale-95 transition-all duration-300 min-h-[44px]"
+              >
+                <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
+                <span>WhatsApp {expertWhatsApp}</span>
+              </a>
+              <Link
+                href="/plan-a-trip"
+                className="inline-flex items-center gap-2 border border-white/40 text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-wider px-6 py-3 rounded-[5px] hover:bg-white hover:text-primary transition-all duration-300 min-h-[44px]"
+              >
+                Plan Your Trip
+              </Link>
+            </div>
           </div>
         </div>
 

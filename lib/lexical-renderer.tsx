@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { getMediaUrl } from './cloudinary-loader';
+import { FaWhatsapp } from 'react-icons/fa';
 
 export interface HeadingItem {
   id: string;
@@ -382,53 +383,41 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
 
       if (blockType === 'ctaBlock') {
         const { headline, buttonText, whatsappNumber } = node.fields;
+        const wa = String(whatsappNumber || '+977 9851218358');
         return (
           <div
             key={idx}
-            style={{
-              margin: '24px 0',
-              padding: '28px 24px',
-              backgroundColor: '#D9EAF5',
-              borderRadius: '12px',
-              border: '1px solid #B8D4E8',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              gap: '12px',
-            }}
+            className="not-prose my-8 rounded-[5px] overflow-hidden border border-secondary/25 bg-primary text-white"
           >
-            <p style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#1A3F5E', lineHeight: '1.4' }}>
-              {headline}
-            </p>
-            <Link
-              href="/plan-a-trip"
-              className="blog-cta-btn"
-              style={{
-                display: 'inline-block',
-                backgroundColor: '#1B7047',
-                color: '#ffffff',
-                fontSize: '14px',
-                fontWeight: 700,
-                padding: '10px 28px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
-                transition: 'background-color 0.2s',
-              }}
-            >
-              {buttonText}
-            </Link>
-            {whatsappNumber && (
-              <a
-                href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ fontSize: '13px', fontWeight: 600, color: '#1B5FA8', textDecoration: 'none' }}
-              >
-                Or Call on Whatsapp {whatsappNumber}
-              </a>
-            )}
+            <div className="h-1 w-full bg-secondary" />
+            <div className="px-6 py-7 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
+              <div className="flex-1 min-w-0">
+                <p className="m-0 text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: '#c8922a' }}>Plan your trek</p>
+                <p className="m-0 mt-1.5 font-serif font-black text-xl md:text-2xl leading-tight" style={{ color: '#ffffff' }}>
+                  {headline || 'Want to plan your holiday in Nepal?'}
+                </p>
+                <p className="m-0 mt-2 text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.78)' }}>
+                  Tell us your dates and fitness level. A local expert replies within a day with a private itinerary and price.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0">
+                <Link
+                  href="/plan-a-trip"
+                  className="inline-flex items-center justify-center gap-2 rounded-[5px] bg-secondary font-bold text-sm px-6 py-3 min-h-[44px] no-underline hover:brightness-110 active:scale-95 transition" style={{ color: '#ffffff' }}
+                >
+                  {buttonText || 'Make an Inquiry'}
+                </Link>
+                <a
+                  href={`https://wa.me/${wa.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-[5px] border border-white/30 font-semibold text-sm px-6 py-3 min-h-[44px] no-underline hover:bg-white hover:!text-primary transition" style={{ color: '#ffffff' }}
+                >
+                  <FaWhatsapp className="h-4 w-4 text-[#25D366]" aria-hidden="true" />
+                  <span>WhatsApp {wa}</span>
+                </a>
+              </div>
+            </div>
           </div>
         );
       }
