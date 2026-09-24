@@ -40,6 +40,18 @@ const nextConfig: NextConfig = {
   // headroom instead of failing the deploy at the 60s default.
   staticPageGenerationTimeout: 180,
   serverExternalPackages: ["@react-pdf/renderer"],
+  // pdfkit loads its built-in fonts with a dynamic require, so the file tracer
+  // misses them and the brochure route 500s on the host. Pull them in by hand.
+  outputFileTracingIncludes: {
+    "/api/brochure/[slug]": [
+      "./node_modules/pdfkit/js/standard-fonts/**",
+      "./node_modules/pdfkit/js/data/**",
+      "./node_modules/@react-pdf/**",
+      "./public/fonts/**",
+      "./public/brand/**",
+      "./public/Map Image/**",
+    ],
+  },
   experimental: {
     serverMinification: false,
   },
