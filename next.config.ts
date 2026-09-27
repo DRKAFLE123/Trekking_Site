@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
   },
   // Prerender pulls every trek/blog from a remote Postgres; give slow builds
   // headroom instead of failing the deploy at the 60s default.
+  poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   serverExternalPackages: ["@react-pdf/renderer"],
   // pdfkit loads its built-in fonts with a dynamic require, so the file tracer

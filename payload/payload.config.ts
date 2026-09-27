@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import { resendAdapter } from '../lib/payload-email';
 
 import { SiteSettings } from './collections/SiteSettings';
 import { NavbarSettings } from './collections/NavbarSettings';
@@ -118,6 +119,8 @@ export default buildConfig({
     // changes go through migrations in src/migrations/.
     push: false,
   }),
+  // Admin auth mail (forgot password) goes out through Resend.
+  email: resendAdapter,
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'change_this_secret_1234567890',
   // Cap multipart uploads at 25 MB to protect disk + Cloudinary quota.
