@@ -3,8 +3,7 @@ import { ImageResponse } from "next/og";
 // Brand OG image at /opengraph-image — auto-discovered by Next.js metadata
 // conventions and used wherever a route doesn't override metadata.openGraph.images.
 
-export const runtime = "edge";
-export const alt = "Nature Heaven Trek & Expedition — Private Himalayan Trekking";
+export const alt = "Nature Heaven Treks & Expedition — Private Himalayan Trekking";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

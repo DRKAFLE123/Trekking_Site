@@ -24,6 +24,7 @@ import * as migration_20260722_120000_add_tracking_settings from './20260722_120
 import * as migration_20260923_100000_navbar_representatives_promo from './20260923_100000_navbar_representatives_promo';
 import * as migration_20260923_140000_site_settings_trust from './20260923_140000_site_settings_trust';
 import * as migration_20260924_090000_regions_homepage from './20260924_090000_regions_homepage';
+import * as migration_20260927_140000_payload_390_reset_requested_at from './20260927_140000_payload_390_reset_requested_at';
 
 export const migrations = [
   {
@@ -155,5 +156,10 @@ export const migrations = [
     up: migration_20260924_090000_regions_homepage.up,
     down: migration_20260924_090000_regions_homepage.down,
     name: '20260924_090000_regions_homepage',
+  },
+  {
+    up: migration_20260927_140000_payload_390_reset_requested_at.up,
+    down: migration_20260927_140000_payload_390_reset_requested_at.down,
+    name: '20260927_140000_payload_390_reset_requested_at',
   },
 ];

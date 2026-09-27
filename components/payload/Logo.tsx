@@ -47,7 +47,7 @@ export const Logo: React.FC = () => {
           margin: '4px 0 0 0',
           fontFamily: 'Inter, system-ui, sans-serif'
         }}>
-          Trek & Expedition
+          Treks &amp; Expedition
         </p>
       </div>
     </div>

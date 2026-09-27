@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Edge middleware: defense-in-depth security gate that runs before any
+ * Request proxy (Next 16 name for middleware): defense-in-depth security gate that runs before any
  * route handler.
  *
  *   1. Returns 404 for paths that used to host dangerous bootstrap routes
@@ -61,7 +61,7 @@ function checkRateLimit(ip: string, rule: RateRule): boolean {
   return true;
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 1. Forbidden paths — return 404 so the URL looks unmounted.
