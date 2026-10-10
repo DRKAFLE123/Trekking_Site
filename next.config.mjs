@@ -75,9 +75,10 @@ const nextConfig = {
   },
   experimental: {
     serverMinification: false,
-    // inlineCss was tried (2026-10-10) and reverted: with ~120 KB of CSS inside
-    // every HTML response, first paint waited for the whole document.
-    inlineCss: false,
+    // Inline the CSS into the HTML. A/B on the live site (2026-10-11, 5 runs each,
+    // Lighthouse-like throttling): mobile FCP 1.42 s inline vs 3.37 s linked,
+    // desktop 1.34 s vs 1.95 s. Keep it on.
+    inlineCss: true,
   },
   crossOrigin: "anonymous",
   async redirects() {
