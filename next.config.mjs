@@ -119,7 +119,7 @@ const nextConfig = {
       {
         // Website pages only; the Payload admin and API keep their own needs.
         source: "/((?!admin|api).*)",
-        headers: [{ key: "Content-Security-Policy-Report-Only", value: CSP }],
+        headers: [{ key: "Content-Security-Policy", value: CSP }],
       },
     ];
   },
