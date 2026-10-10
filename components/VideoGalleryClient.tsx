@@ -178,7 +178,7 @@ export default function VideoGalleryClient({
       <div className="max-w-7xl mx-auto">
         {/* 1. Header Block */}
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-[#8f6618] uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
+          <span className="text-[#876015] uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
             — {kicker} —
           </span>
           <h2
@@ -194,7 +194,7 @@ export default function VideoGalleryClient({
             }`}
           >
             Watch{" "}
-            <span className="text-[#8f6618] font-bold">real journeys</span>{" "}
+            <span className="text-[#876015] font-bold">real journeys</span>{" "}
             through Nepal&apos;s most iconic mountain trails.
           </p>
         </div>
@@ -218,10 +218,10 @@ export default function VideoGalleryClient({
               <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                 <button
                   onClick={() => setIsLightboxOpen(true)}
-                  className="w-16 h-16 md:w-20 md:h-20 bg-[#8f6618] hover:bg-[#b07820] text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-2xl relative cursor-pointer pointer-events-auto"
+                  className="w-16 h-16 md:w-20 md:h-20 bg-[#876015] hover:bg-[#b07820] text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-2xl relative cursor-pointer pointer-events-auto"
                 >
                   {/* Outer Pulsating Rings */}
-                  <span className="absolute inset-0 rounded-full bg-[#8f6618] opacity-35 animate-ping" />
+                  <span className="absolute inset-0 rounded-full bg-[#876015] opacity-35 animate-ping" />
                   <span className="absolute -inset-2 rounded-full border border-white/20 scale-100 hover:scale-110 transition duration-300" />
                   <FaPlay className="text-xl md:text-2xl ml-1.5" />
                 </button>
@@ -231,7 +231,7 @@ export default function VideoGalleryClient({
               <div className="absolute top-6 right-6 z-20 hidden md:block">
                 <button
                   onClick={() => setIsDimmed(!isDimmed)}
-                  className="bg-black/40 hover:bg-[#8f6618] text-white/95 hover:text-white text-xs font-semibold px-4 py-2 rounded-full transition shadow-md flex items-center gap-2 border border-white/10"
+                  className="bg-black/40 hover:bg-[#876015] text-white/95 hover:text-white text-xs font-semibold px-4 py-2 rounded-full transition shadow-md flex items-center gap-2 border border-white/10"
                 >
                   <span
                     className={`w-2 h-2 rounded-full ${
@@ -244,7 +244,7 @@ export default function VideoGalleryClient({
 
               {/* Story Details Block */}
               <div className="relative z-10 max-w-xl text-left space-y-4">
-                <span className="text-[#8f6618] text-[10px] md:text-xs font-black tracking-widest uppercase block mb-1">
+                <span className="text-[#876015] text-[10px] md:text-xs font-black tracking-widest uppercase block mb-1">
                   — FEATURED STORY
                 </span>
                 <h3 className="font-serif font-black text-2xl md:text-4xl text-white leading-tight">
@@ -258,19 +258,19 @@ export default function VideoGalleryClient({
                   <div className="flex flex-wrap items-center gap-4 text-xs text-white/80 font-medium pt-1">
                     {activeVideo.duration && (
                       <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/10">
-                        <FaRegClock className="text-xs text-[#8f6618]" />{" "}
+                        <FaRegClock className="text-xs text-[#876015]" />{" "}
                         {activeVideo.duration}
                       </span>
                     )}
                     {activeVideo.maxAltitude && (
                       <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/10">
-                        <FaMountain className="text-xs text-[#8f6618]" />{" "}
+                        <FaMountain className="text-xs text-[#876015]" />{" "}
                         {activeVideo.maxAltitude}
                       </span>
                     )}
                     {activeVideo.bestSeason && (
                       <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/10">
-                        <FaCalendarAlt className="text-xs text-[#8f6618]" />{" "}
+                        <FaCalendarAlt className="text-xs text-[#876015]" />{" "}
                         {activeVideo.bestSeason}
                       </span>
                     )}
@@ -288,7 +288,7 @@ export default function VideoGalleryClient({
                 <div className="pt-2">
                   <button
                     onClick={() => setIsLightboxOpen(true)}
-                    className="bg-[#8f6618] hover:bg-[#b07820] text-white font-bold py-3 px-6 rounded-xl text-xs md:text-sm transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 cursor-pointer"
+                    className="bg-[#876015] hover:bg-[#b07820] text-white font-bold py-3 px-6 rounded-xl text-xs md:text-sm transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 cursor-pointer"
                   >
                     <span className="flex items-center justify-center w-5 h-5 bg-white/20 rounded-full">
                       <FaPlay className="text-[8px] ml-0.5" />
@@ -305,7 +305,7 @@ export default function VideoGalleryClient({
         <div className="flex flex-col md:flex-row md:items-center justify-between border-t border-secondary/10 pt-10 pb-8 gap-6">
           {/* Section Heading */}
           <div className="flex items-center gap-3">
-            <div className="h-0.5 w-8 bg-[#8f6618]" />
+            <div className="h-0.5 w-8 bg-[#876015]" />
             <h3
               className={`font-serif text-xl md:text-2xl font-bold tracking-tight transition-colors duration-500 ${
                 isDimmed ? "text-white" : "text-[#1a2e1f]"
@@ -366,7 +366,7 @@ export default function VideoGalleryClient({
         </div>
 
         {/* Drag / Swipe Indicator */}
-        <p className="text-left text-[10px] text-[#8f6618] font-bold tracking-widest uppercase mb-4 opacity-70">
+        <p className="text-left text-[10px] text-[#876015] font-bold tracking-widest uppercase mb-4 opacity-70">
           ← Drag / Swipe To Explore →
         </p>
 
@@ -390,7 +390,7 @@ export default function VideoGalleryClient({
                   onClick={() => !isDragging && setActiveIdx(idx)}
                   className={`flex-none w-[270px] md:w-[320px] snap-align-start rounded-2xl overflow-hidden shadow-md border transition-all duration-300 ${
                     isSelected
-                      ? "border-[#8f6618] ring-2 ring-[#8f6618]/30 scale-[0.98]"
+                      ? "border-[#876015] ring-2 ring-[#876015]/30 scale-[0.98]"
                       : isDimmed
                       ? "border-white/10 bg-white/5 hover:bg-white/10 hover:-translate-y-1"
                       : "border-secondary/10 bg-white hover:shadow-lg hover:-translate-y-1"
@@ -418,7 +418,7 @@ export default function VideoGalleryClient({
 
                     {/* Bottom Metadata */}
                     <div className="absolute bottom-4 left-4 right-4 text-left z-10">
-                      <span className="text-[#8f6618] text-[9px] font-black uppercase tracking-wider block mb-1">
+                      <span className="text-[#876015] text-[9px] font-black uppercase tracking-wider block mb-1">
                         {vid.trekName}
                       </span>
                       <h4 className="text-white text-xs md:text-sm font-bold leading-snug line-clamp-2">
@@ -448,7 +448,7 @@ export default function VideoGalleryClient({
                 onClick={() => setActiveIdx(idx)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   activeIdx === idx
-                    ? "w-6 bg-[#8f6618]"
+                    ? "w-6 bg-[#876015]"
                     : isDimmed
                     ? "w-2 bg-white/20 hover:bg-white/40"
                     : "w-2 bg-[#1a2e1f]/20 hover:bg-[#1a2e1f]/45"
@@ -487,7 +487,7 @@ export default function VideoGalleryClient({
             {/* Header info */}
             <div className="w-full flex items-center justify-between text-white mb-4">
               <div className="text-left">
-                <span className="text-[#8f6618] text-xs font-bold uppercase tracking-wider">
+                <span className="text-[#876015] text-xs font-bold uppercase tracking-wider">
                   {activeVideo.trekName}
                 </span>
                 <h4 className="font-serif text-lg md:text-xl font-bold line-clamp-1">

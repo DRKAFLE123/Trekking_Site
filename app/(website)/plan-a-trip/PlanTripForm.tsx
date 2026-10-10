@@ -175,7 +175,7 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
                     ? "bg-secondary border-secondary text-white scale-110 shadow-lg"
                     : currentStep > step
                     ? "bg-primary border-primary text-white"
-                    : "bg-white border-gray-300 text-gray-400"
+                    : "bg-white border-gray-300 text-gray-500"
                 }`}
               >
                 {step}
@@ -183,7 +183,7 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
             ))}
           </div>
 
-          <div className="flex justify-between text-xs font-bold text-charcoal/60 -mt-5 px-1 uppercase tracking-wider">
+          <div className="flex justify-between text-xs font-bold text-charcoal/70 -mt-5 px-1 uppercase tracking-wider">
             <span>1. Destination</span>
             <span>2. Preferences</span>
             <span>3. Contact details</span>
@@ -350,7 +350,7 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
                         >
                           <div>
                             <div className="text-xs font-bold">{acc.name}</div>
-                            <div className="text-[10px] text-charcoal/60 mt-0.5">{acc.desc}</div>
+                            <div className="text-[10px] text-charcoal/70 mt-0.5">{acc.desc}</div>
                           </div>
                         </button>
                       ))}

@@ -127,7 +127,7 @@ export default function NotFound() {
                   <span className="font-serif font-black text-primary text-sm md:text-base group-hover:text-secondary transition">
                     {r.label}
                   </span>
-                  <span className="text-[11px] md:text-xs text-charcoal/60 font-light mt-0.5">
+                  <span className="text-[11px] md:text-xs text-charcoal/70 font-light mt-0.5">
                     {r.hint}
                   </span>
                 </div>

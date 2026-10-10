@@ -74,7 +74,7 @@ export default function TrekMap({ waypoints, center }: TrekMapProps) {
         />
 
         {/* Draw path line */}
-        <Polyline positions={polylinePositions} color="#8f6618" weight={4} opacity={0.8} dashArray="5, 10" />
+        <Polyline positions={polylinePositions} color="#876015" weight={4} opacity={0.8} dashArray="5, 10" />
 
         {/* Waypoint Markers */}
         {waypoints.map((pt, idx) => (

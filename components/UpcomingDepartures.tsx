@@ -278,7 +278,7 @@ export default function UpcomingDepartures() {
                             >
                               {trek.difficulty}
                             </span>
-                            <span className="text-[10px] text-charcoal/50 font-semibold flex items-center gap-1">
+                            <span className="text-[10px] text-charcoal/70 font-semibold flex items-center gap-1">
                               <FaRegClock className="text-[8px]" />
                               {trek.duration} Days
                             </span>
@@ -308,7 +308,7 @@ export default function UpcomingDepartures() {
                         <div className="flex flex-col items-center">
                           {hasDiscount ? (
                             <>
-                              <span className="text-[10px] text-charcoal/40 line-through font-medium">
+                              <span className="text-[10px] text-charcoal/70 line-through font-medium">
                                 ${originalPrice}
                               </span>
                               <span className="text-base font-black text-emerald-700">
@@ -320,7 +320,7 @@ export default function UpcomingDepartures() {
                               ${originalPrice}
                             </span>
                           )}
-                          <span className="text-[9px] text-charcoal/40 uppercase font-bold">
+                          <span className="text-[9px] text-charcoal/70 uppercase font-bold">
                             per person
                           </span>
                         </div>
@@ -359,7 +359,7 @@ export default function UpcomingDepartures() {
 
                 {/* Table Footer with count + pagination */}
                 <div className="bg-[#f4f6f3] px-6 py-3 flex items-center justify-between border-t border-secondary/10">
-                  <span className="text-[11px] text-charcoal/50 font-semibold">
+                  <span className="text-[11px] text-charcoal/70 font-semibold">
                     Showing {(currentPage - 1) * itemsPerPage + 1}–
                     {Math.min(currentPage * itemsPerPage, list.length)} of{" "}
                     {list.length} departures
@@ -383,7 +383,7 @@ export default function UpcomingDepartures() {
                             className={`w-7 h-7 rounded-md text-[10px] font-bold transition ${
                               currentPage === page
                                 ? "bg-primary text-white"
-                                : "text-charcoal/60 hover:bg-secondary/10"
+                                : "text-charcoal/70 hover:bg-secondary/10"
                             }`}
                           >
                             {page}
@@ -443,7 +443,7 @@ export default function UpcomingDepartures() {
                             >
                               {trek.difficulty}
                             </span>
-                            <span className="text-[10px] text-charcoal/50 font-semibold">
+                            <span className="text-[10px] text-charcoal/70 font-semibold">
                               {trek.duration} Days
                             </span>
                           </div>
@@ -470,14 +470,14 @@ export default function UpcomingDepartures() {
                       <div className="flex items-center justify-between pt-1">
                         <div className="flex items-baseline gap-1.5">
                           {hasDiscount && (
-                            <span className="text-xs text-charcoal/40 line-through">
+                            <span className="text-xs text-charcoal/70 line-through">
                               ${originalPrice}
                             </span>
                           )}
                           <span className="text-lg font-black text-emerald-700">
                             ${discountedPrice}
                           </span>
-                          <span className="text-[9px] text-charcoal/40 uppercase">
+                          <span className="text-[9px] text-charcoal/70 uppercase">
                             USD
                           </span>
                         </div>
@@ -525,7 +525,7 @@ export default function UpcomingDepartures() {
                     >
                       <FaChevronLeft className="text-xs text-primary" />
                     </button>
-                    <span className="text-xs font-bold text-charcoal/60">
+                    <span className="text-xs font-bold text-charcoal/70">
                       Page {currentPage} of {totalPages}
                     </span>
                     <button

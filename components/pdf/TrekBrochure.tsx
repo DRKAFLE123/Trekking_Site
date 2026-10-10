@@ -4,7 +4,7 @@ import { lexicalToParagraphs } from "@/lib/lexical-text";
 
 /* Brand tokens */
 const GREEN = "#1a3c2e";
-const AMBER = "#8f6618";
+const AMBER = "#876015";
 const INK = "#1f2937";
 const MUTED = "#6b7280";
 const RULE = "#e5e7eb";

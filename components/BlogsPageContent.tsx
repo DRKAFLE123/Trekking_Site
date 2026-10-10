@@ -196,7 +196,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
               onClick={() => {
                 router.push("/blogs");
               }}
-              className="text-xs font-bold text-[#8f6618] hover:underline cursor-pointer border border-[#8f6618]/30 hover:border-[#8f6618] px-3.5 py-1.5 rounded-[5px] bg-white hover:bg-secondary/5 transition duration-300"
+              className="text-xs font-bold text-[#876015] hover:underline cursor-pointer border border-[#876015]/30 hover:border-[#876015] px-3.5 py-1.5 rounded-[5px] bg-white hover:bg-secondary/5 transition duration-300"
             >
               Show All Authors
             </button>
@@ -355,7 +355,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                 <button
                   key={tag}
                   onClick={() => handleSearchChange(tag)}
-                  className="px-2 py-0.5 bg-[#1a3c2e]/5 hover:bg-[#1a3c2e]/10 border border-[#1a3c2e]/10 hover:border-[#8f6618]/30 rounded-[5px] text-[9px] text-[#1a3c2e] font-semibold transition cursor-pointer"
+                  className="px-2 py-0.5 bg-[#1a3c2e]/5 hover:bg-[#1a3c2e]/10 border border-[#1a3c2e]/10 hover:border-[#876015]/30 rounded-[5px] text-[9px] text-[#1a3c2e] font-semibold transition cursor-pointer"
                 >
                   {tag}
                 </button>

@@ -95,7 +95,7 @@ export default function ScrollSpyTOC() {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col">
       <h3 className="font-serif text-lg font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
-        <FaListUl className="text-[#8f6618] text-sm" /> Table of Contents
+        <FaListUl className="text-[#876015] text-sm" /> Table of Contents
       </h3>
       <nav className="relative">
         {/* Left vertical progress line */}
@@ -113,8 +113,8 @@ export default function ScrollSpyTOC() {
               <div
                 className={`absolute left-0 top-[7px] w-3 h-3 rounded-full border-2 transition-all duration-300 ${
                   activeId === heading.id
-                    ? "bg-[#8f6618] border-[#8f6618] scale-110 shadow-sm"
-                    : "bg-white border-gray-300 group-hover:border-[#8f6618]"
+                    ? "bg-[#876015] border-[#876015] scale-110 shadow-sm"
+                    : "bg-white border-gray-300 group-hover:border-[#876015]"
                 }`}
               ></div>
               <a
@@ -122,8 +122,8 @@ export default function ScrollSpyTOC() {
                 onClick={(e) => handleScrollClick(e, heading.id)}
                 className={`block font-sans text-xs font-semibold leading-relaxed transition-all duration-300 ${
                   activeId === heading.id
-                    ? "text-[#8f6618] translate-x-1"
-                    : "text-gray-500 hover:text-[#8f6618]"
+                    ? "text-[#876015] translate-x-1"
+                    : "text-gray-500 hover:text-[#876015]"
                 }`}
               >
                 {heading.text}

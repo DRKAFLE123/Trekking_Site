@@ -146,7 +146,7 @@ export default async function PrivacyPolicyPage() {
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pt-24 md:pt-32">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs font-bold uppercase tracking-widest mb-4 border border-white/20">
-            <FaShieldAlt className="text-[#8f6618]" />
+            <FaShieldAlt className="text-[#876015]" />
             Data Protection &amp; Privacy
           </div>
           <h1 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4 drop-shadow-lg">
@@ -166,9 +166,9 @@ export default async function PrivacyPolicyPage() {
           <Link prefetch={false} href="/" className="hover:text-[#2E7D32] transition">
             Home
           </Link>
-          <FaChevronRight className="mx-2 text-xs text-gray-400" />
-          <span className="text-gray-400">Company</span>
-          <FaChevronRight className="mx-2 text-xs text-gray-400" />
+          <FaChevronRight className="mx-2 text-xs text-gray-500" />
+          <span className="text-gray-500">Company</span>
+          <FaChevronRight className="mx-2 text-xs text-gray-500" />
           <span className="font-semibold text-[#1a2e1f]">{page.title}</span>
         </div>
 
@@ -193,8 +193,8 @@ export default async function PrivacyPolicyPage() {
                     prose-h2:text-2xl prose-h2:border-b prose-h2:border-gray-100 prose-h2:pb-3 prose-h2:mb-6
                     prose-h3:text-xl prose-h3:text-[#2E7D32]
                     prose-p:text-[#4A4A4A] prose-p:leading-relaxed
-                    prose-a:text-[#8f6618] prose-a:font-semibold hover:prose-a:text-[#b07820]
-                    prose-li:text-[#4A4A4A] prose-li:marker:text-[#8f6618]
+                    prose-a:text-[#876015] prose-a:font-semibold hover:prose-a:text-[#b07820]
+                    prose-li:text-[#4A4A4A] prose-li:marker:text-[#876015]
                     prose-strong:text-[#1a2e1f]
                     prose-img:rounded-xl prose-img:shadow-md"
                 >
@@ -210,7 +210,7 @@ export default async function PrivacyPolicyPage() {
             {page.documents && page.documents.length > 0 && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <h3 className="font-serif text-xl md:text-2xl font-bold text-[#1a2e1f] mb-6 flex items-center gap-2">
-                  <FaInfoCircle className="text-[#8f6618]" /> Downloadable Documents
+                  <FaInfoCircle className="text-[#876015]" /> Downloadable Documents
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {page.documents.map((doc: any) => (
@@ -220,7 +220,7 @@ export default async function PrivacyPolicyPage() {
                       download
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between p-4 bg-[#fbfbfc] border border-gray-100 rounded-xl hover:border-[#8f6618] hover:bg-[#f0f6fa] hover:shadow-sm transition duration-300"
+                      className="group flex items-center justify-between p-4 bg-[#fbfbfc] border border-gray-100 rounded-xl hover:border-[#876015] hover:bg-[#f0f6fa] hover:shadow-sm transition duration-300"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-100 transition">
@@ -233,15 +233,15 @@ export default async function PrivacyPolicyPage() {
                           </svg>
                         </div>
                         <div className="min-w-0 flex flex-col">
-                          <span className="font-sans text-sm font-bold text-[#1a2e1f] truncate group-hover:text-[#8f6618] transition">
+                          <span className="font-sans text-sm font-bold text-[#1a2e1f] truncate group-hover:text-[#876015] transition">
                             {doc.filename}
                           </span>
-                          <span className="text-[11px] text-gray-400 font-sans mt-0.5 capitalize">
+                          <span className="text-[11px] text-gray-500 font-sans mt-0.5 capitalize">
                             {doc.mimeType?.split("/")[1] || "PDF Document"}
                           </span>
                         </div>
                       </div>
-                      <div className="text-gray-400 group-hover:text-[#8f6618] shrink-0 transition pl-4">
+                      <div className="text-gray-500 group-hover:text-[#876015] shrink-0 transition pl-4">
                         <svg
                           className="w-5 h-5"
                           fill="none"
@@ -265,7 +265,7 @@ export default async function PrivacyPolicyPage() {
             {/* Contact Info Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
               <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 flex items-center gap-2">
-                <FaCompass className="text-[#8f6618]" /> Questions About This Policy?
+                <FaCompass className="text-[#876015]" /> Questions About This Policy?
               </h3>
               <p className="text-sm text-[#4A4A4A] mb-4 font-sans leading-relaxed">
                 If you have any questions, concerns, or requests regarding this Privacy Policy or how we
@@ -274,7 +274,7 @@ export default async function PrivacyPolicyPage() {
               <div className="flex flex-col gap-2 text-sm font-sans text-[#4A4A4A]">
                 <a
                   href="mailto:info@naturehaventrekking.com"
-                  className="flex items-center gap-2 text-[#8f6618] font-semibold hover:text-[#b07820] transition"
+                  className="flex items-center gap-2 text-[#876015] font-semibold hover:text-[#b07820] transition"
                 >
                   <FaEnvelope className="shrink-0" /> info@naturehaventrekking.com
                 </a>
@@ -292,7 +292,7 @@ export default async function PrivacyPolicyPage() {
               {allPages.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                   <h3 className="font-serif text-xl font-bold text-[#1a2e1f] mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
-                    <FaMapMarkerAlt className="text-[#8f6618]" /> Company Info
+                    <FaMapMarkerAlt className="text-[#876015]" /> Company Info
                   </h3>
                   <ul className="space-y-2 max-h-[360px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
                     {allPages.map((p: any) => {
@@ -313,7 +313,7 @@ export default async function PrivacyPolicyPage() {
                             className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
                               p.slug === page.slug
                                 ? "bg-[#1a2e1f] text-white"
-                                : "text-[#4A4A4A] hover:bg-gray-50 hover:text-[#8f6618]"
+                                : "text-[#4A4A4A] hover:bg-gray-50 hover:text-[#876015]"
                             }`}
                           >
                             {p.title}
@@ -328,7 +328,7 @@ export default async function PrivacyPolicyPage() {
               {/* Need Help CTA */}
               <div className="bg-gradient-to-br from-[#1a2e1f] to-[#2E7D32] rounded-2xl p-6 text-white text-center shadow-lg">
                 <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                  <FaHeadset className="text-3xl text-[#8f6618]" />
+                  <FaHeadset className="text-3xl text-[#876015]" />
                 </div>
                 <h3 className="font-serif text-xl font-bold mb-2">Need Expert Advice?</h3>
                 <p className="text-sm text-white/80 mb-6 font-sans">
@@ -336,7 +336,7 @@ export default async function PrivacyPolicyPage() {
                 </p>
                 <Link
                   href="/contact-us"
-                  className="inline-flex items-center justify-center gap-2 bg-[#8f6618] hover:bg-[#b07820] text-white w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition shadow-md hover:shadow-lg"
+                  className="inline-flex items-center justify-center gap-2 bg-[#876015] hover:bg-[#b07820] text-white w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition shadow-md hover:shadow-lg"
                 >
                   <FaEnvelope /> Contact Us
                 </Link>

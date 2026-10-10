@@ -144,7 +144,7 @@ export function BlogPreviewClient({ initialBlog, serverURL }: BlogPreviewClientP
           
           {/* Main Body */}
           <article className="blog-prose lg:col-span-2 bg-white border border-secondary/10 shadow-lg rounded-[5px] p-6 md:p-10">
-            {blog.body ? renderLexical(blog.body) : <p className="text-charcoal/50 italic">Start writing your content inside the editor to see it here...</p>}
+            {blog.body ? renderLexical(blog.body) : <p className="text-charcoal/70 italic">Start writing your content inside the editor to see it here...</p>}
           </article>
 
           {/* Sidebar */}

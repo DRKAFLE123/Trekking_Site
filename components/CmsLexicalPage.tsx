@@ -65,7 +65,7 @@ export default function CmsLexicalPage({ page }: CmsLexicalPageProps) {
 
       {/* Breadcrumbs */}
       <nav className="max-w-4xl mx-auto px-4 md:px-6 mt-6 mb-2">
-        <ol className="flex items-center gap-2 text-xs text-charcoal/60">
+        <ol className="flex items-center gap-2 text-xs text-charcoal/70">
           <li>
             <Link prefetch={false} href="/" className="hover:text-secondary transition">Home</Link>
           </li>

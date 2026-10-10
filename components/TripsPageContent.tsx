@@ -153,7 +153,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-charcoal/60 font-semibold tracking-wider uppercase whitespace-nowrap">Sort by</span>
+            <span className="text-xs text-charcoal/70 font-semibold tracking-wider uppercase whitespace-nowrap">Sort by</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -183,7 +183,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
           {/* Text Search */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Search</label>
+            <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Search</label>
             <div className="relative">
               <input
                 type="text"
@@ -198,7 +198,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
           {/* Region Filter */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Regions</label>
+            <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Regions</label>
             <div className="flex flex-col gap-2">
               {regions.map((reg) => (
                 <label key={reg.id} className="flex items-center gap-2.5 text-sm text-charcoal/80 cursor-pointer select-none">
@@ -216,7 +216,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
           {/* Difficulty Filter */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Difficulty</label>
+            <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Difficulty</label>
             <div className="flex flex-col gap-2">
               {["easy", "moderate", "hard", "extreme"].map((diff) => (
                 <label key={diff} className="flex items-center gap-2.5 text-sm text-charcoal/80 cursor-pointer select-none capitalize">
@@ -234,7 +234,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
           {/* Duration Filter */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Duration</label>
+            <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Duration</label>
             <div className="flex flex-col gap-2">
               {[
                 { label: "All Durations", value: "all" },
@@ -259,7 +259,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
           {/* Budget Filter */}
           <div className="flex flex-col gap-2.5 border-t border-primary/5 pt-4">
-            <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Budget</label>
+            <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Budget</label>
             <div className="flex flex-col gap-2">
               {[
                 { label: "All Budgets", value: "all" },
@@ -327,7 +327,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
               {/* Text Search */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Search</label>
+                <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Search</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -342,7 +342,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
               {/* Region Filter */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Regions</label>
+                <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Regions</label>
                 <div className="flex flex-col gap-2">
                   {regions.map((reg) => (
                     <label key={reg.id} className="flex items-center gap-2.5 text-sm text-charcoal/80">
@@ -360,7 +360,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
               {/* Difficulty Filter */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Difficulty</label>
+                <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Difficulty</label>
                 <div className="flex flex-col gap-2">
                   {["easy", "moderate", "hard", "extreme"].map((diff) => (
                     <label key={diff} className="flex items-center gap-2.5 text-sm text-charcoal/80 capitalize">
@@ -378,7 +378,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
               {/* Duration Filter */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Duration</label>
+                <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Duration</label>
                 <div className="flex flex-col gap-2">
                   {[
                     { label: "All Durations", value: "all" },
@@ -403,7 +403,7 @@ export default function TripsPageContent({ initialTreks, regions }: TripsPageCon
 
               {/* Budget Filter */}
               <div className="flex flex-col gap-2 border-t border-primary/5 pt-4">
-                <label className="text-xs font-bold text-charcoal/60 uppercase tracking-wider">Budget</label>
+                <label className="text-xs font-bold text-charcoal/70 uppercase tracking-wider">Budget</label>
                 <div className="flex flex-col gap-2">
                   {[
                     { label: "All Budgets", value: "all" },

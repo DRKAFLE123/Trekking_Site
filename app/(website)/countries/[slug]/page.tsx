@@ -241,7 +241,7 @@ export default async function CountryPage({ params }: { params: Params }) {
                 </li>
               ))}
             </ul>
-            <div className="mt-8 pt-6 border-t border-secondary/10 flex items-center gap-4 text-xs text-charcoal/60">
+            <div className="mt-8 pt-6 border-t border-secondary/10 flex items-center gap-4 text-xs text-charcoal/70">
               <span className="flex items-center gap-1"><FaAward className="text-secondary" /> Native Guides</span>
               <span className="flex items-center gap-1"><FaCalendarAlt className="text-secondary" /> Private Tours</span>
             </div>

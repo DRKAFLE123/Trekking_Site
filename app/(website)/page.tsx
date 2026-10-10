@@ -717,7 +717,7 @@ export default async function HomePage() {
 
                       {/* Info on Right */}
                       <div className="flex flex-col gap-1.5 overflow-hidden">
-                        <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] text-charcoal/50 font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] text-charcoal/70 font-bold uppercase tracking-wider">
                           <span>📍</span>
                           <span>{blog.category}</span>
                           <span>•</span>

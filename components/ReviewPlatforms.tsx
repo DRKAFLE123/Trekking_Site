@@ -101,7 +101,7 @@ export default function ReviewPlatforms({ platforms }: ReviewPlatformsProps) {
                       <span className="text-3xl font-sans font-black text-[#1a2e1f] tracking-tight">
                         {platform.rating}
                       </span>
-                      <span className="text-xs text-charcoal/50">/{platform.maxRating}</span>
+                      <span className="text-xs text-charcoal/70">/{platform.maxRating}</span>
                     </div>
 
                     <div className={`flex ${getPlatformColor(platform.name)} gap-0.5 mb-2`}>
@@ -111,7 +111,7 @@ export default function ReviewPlatforms({ platforms }: ReviewPlatformsProps) {
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-100 pt-3 mt-2 flex items-center justify-between text-[11px] text-charcoal/60 uppercase tracking-wider font-semibold font-sans">
+                  <div className="border-t border-gray-100 pt-3 mt-2 flex items-center justify-between text-[11px] text-charcoal/70 uppercase tracking-wider font-semibold font-sans">
                     <span>{platform.reviewsCount}</span>
                     {hasUrl ? (
                       <span className="inline-flex items-center gap-1 text-secondary opacity-0 group-hover:opacity-100 transition normal-case font-bold tracking-normal">

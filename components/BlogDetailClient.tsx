@@ -190,7 +190,7 @@ export default function BlogDetailClient({
                           onClick={(e) => scrollToHeading(e, heading.id)}
                           className={`group relative flex flex-col font-sans leading-snug transition-all duration-300 -ml-[21.5px] pl-6 py-0.5 select-none ${textClass} ${
                             isActive
-                              ? 'text-[#8f6618] font-bold tracking-tight'
+                              ? 'text-[#876015] font-bold tracking-tight'
                               : 'hover:text-primary'
                           }`}
                         >
@@ -198,7 +198,7 @@ export default function BlogDetailClient({
                           <span
                             className={`absolute left-0 top-1.5 h-2 w-2 rounded-full border-[1.5px] transition-all duration-350 ${
                               isActive
-                                ? 'bg-[#8f6618] border-[#8f6618] scale-110 shadow-[0_0_8px_rgba(200,146,42,0.75)]'
+                                ? 'bg-[#876015] border-[#876015] scale-110 shadow-[0_0_8px_rgba(200,146,42,0.75)]'
                                 : 'bg-white border-slate-300 group-hover:border-primary'
                             }`}
                           />
@@ -363,7 +363,7 @@ export default function BlogDetailClient({
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                       <Link 
                         href={`/blogs?author=${encodeURIComponent(blog.author.name || "Summit Guide")}`}
-                        className="font-serif font-black text-primary text-base md:text-lg hover:text-[#8f6618] transition duration-200"
+                        className="font-serif font-black text-primary text-base md:text-lg hover:text-[#876015] transition duration-200"
                       >
                         {blog.author.name}
                       </Link>
@@ -378,7 +378,7 @@ export default function BlogDetailClient({
                     )}
                     <Link
                       href={`/blogs?author=${encodeURIComponent(blog.author.name || "Summit Guide")}`}
-                      className="text-[11px] font-extrabold text-[#8f6618] hover:text-[#8f6618]/80 mt-1 flex items-center gap-1 transition w-fit mx-auto sm:mx-0"
+                      className="text-[11px] font-extrabold text-[#876015] hover:text-[#876015]/80 mt-1 flex items-center gap-1 transition w-fit mx-auto sm:mx-0"
                     >
                       <span>View all articles by {blog.author.name} →</span>
                     </Link>
@@ -413,7 +413,7 @@ export default function BlogDetailClient({
                             <h6 className="font-serif font-bold text-primary group-hover:text-secondary transition text-xs leading-snug line-clamp-2">
                               {othBlog.title}
                             </h6>
-                            <span className="text-[9px] text-charcoal/50">
+                            <span className="text-[9px] text-charcoal/70">
                               {new Date(othBlog.publishedAt).toLocaleDateString("en-US", {
                                 month: "short",
                                 day: "numeric",

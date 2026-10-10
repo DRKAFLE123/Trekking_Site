@@ -52,7 +52,7 @@ export default async function GalleryPage() {
       <PhotoGalleryMasonry items={galleryItems} />
 
       {/* Admin note for clients */}
-      <div className="text-center py-8 px-6 text-sm text-charcoal/50 font-sans border-t border-secondary/10">
+      <div className="text-center py-8 px-6 text-sm text-charcoal/70 font-sans border-t border-secondary/10">
         📸 Gallery managed via{" "}
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/admin/collections/gallery" className="underline text-secondary hover:text-primary transition">

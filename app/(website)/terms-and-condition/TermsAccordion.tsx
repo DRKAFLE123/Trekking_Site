@@ -45,7 +45,7 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-[#fbfbfc] border border-gray-100 p-4 rounded-xl shadow-sm">
         {/* Search */}
         <div className="relative w-full sm:max-w-md">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
             <FaSearch className="h-4 w-4" />
           </span>
           <input
@@ -63,7 +63,7 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
             onClick={expandAll}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 hover:border-[#2E7D32] hover:text-[#2E7D32] text-charcoal/80 rounded-lg text-xs font-bold font-sans transition shadow-sm active:scale-95"
           >
-            <FaExpandArrowsAlt className="text-[#8f6618]" />
+            <FaExpandArrowsAlt className="text-[#876015]" />
             Expand All
           </button>
           <button
@@ -79,7 +79,7 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
       {/* Accordion List */}
       {filteredSections.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
-          <p className="text-gray-400 text-sm">No sections found matching &quot;{searchQuery}&quot;</p>
+          <p className="text-gray-500 text-sm">No sections found matching &quot;{searchQuery}&quot;</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -93,7 +93,7 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
                 className={`bg-white border rounded-xl overflow-hidden transition-all duration-300 ${
                   isOpen
                     ? "border-[#2E7D32] shadow-md ring-1 ring-[#2E7D32]/10"
-                    : "border-gray-100 hover:border-[#8f6618] hover:shadow-sm"
+                    : "border-gray-100 hover:border-[#876015] hover:shadow-sm"
                 }`}
               >
                 <button
@@ -102,7 +102,7 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
                 >
                   <span>{section.title}</span>
                   <span
-                    className={`text-gray-400 transition-transform duration-300 shrink-0 ml-4 ${
+                    className={`text-gray-500 transition-transform duration-300 shrink-0 ml-4 ${
                       isOpen ? "transform rotate-180 text-[#2E7D32]" : ""
                     }`}
                   >
@@ -121,8 +121,8 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
                         prose-headings:font-serif prose-headings:text-[#1a2e1f]
                         prose-p:text-[#4A4A4A] prose-p:leading-relaxed prose-p:mb-4
                         prose-strong:text-[#1a2e1f]
-                        prose-a:text-[#8f6618] prose-a:font-semibold hover:prose-a:text-[#b07820]
-                        prose-li:text-[#4A4A4A] prose-li:marker:text-[#8f6618]
+                        prose-a:text-[#876015] prose-a:font-semibold hover:prose-a:text-[#b07820]
+                        prose-li:text-[#4A4A4A] prose-li:marker:text-[#876015]
                         prose-img:rounded-xl"
                     >
                       {section.contentElement}

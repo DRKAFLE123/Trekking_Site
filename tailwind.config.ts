@@ -20,7 +20,7 @@ const config: Config = {
         secondary: {
           // Deep gold: 5.1:1 on white, so white-on-gold buttons and gold text on light
           // backgrounds pass WCAG AA. Was #c8922a (2.8:1). Use `secondary-light` on dark backgrounds.
-          DEFAULT: "#8f6618",
+          DEFAULT: "#876015",
           light: "#dfa73b",
           dark: "#74520f",
         },

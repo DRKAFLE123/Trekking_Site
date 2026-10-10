@@ -158,7 +158,7 @@ export default function Footer() {
               {hasLinks ? (
                 column.links.map((l: any, linkIdx: number) => (
                   <li key={linkIdx}>
-                    <Link prefetch={false} href={l.href} className="hover:text-secondary transition duration-300">
+                    <Link prefetch={false} href={l.href} className="hover:text-secondary-light transition duration-300">
                       {l.label}
                     </Link>
                   </li>
@@ -172,7 +172,7 @@ export default function Footer() {
                       if (!trekObj) return null;
                       return (
                         <li key={tIdx}>
-                          <Link prefetch={false} href={`/trips/${trekObj.slug}`} className="hover:text-secondary transition duration-300">
+                          <Link prefetch={false} href={`/trips/${trekObj.slug}`} className="hover:text-secondary-light transition duration-300">
                             {trekObj.title}
                           </Link>
                         </li>
@@ -180,55 +180,55 @@ export default function Footer() {
                     }).filter(Boolean)
                   ) : (
                     <>
-                      <li><Link prefetch={false} href="/trips/everest-base-camp-trek" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
-                      <li><Link prefetch={false} href="/trips/annapurna-circuit-trek" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
-                      <li><Link prefetch={false} href="/trips/everest-base-camp-trek-with-chola-pass-gokyo-trek" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
-                      <li><Link prefetch={false} href="/trips/annapurna-base-camp-trek" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
-                      <li><Link prefetch={false} href="/trips/manaslu-circuit-trek" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
+                      <li><Link prefetch={false} href="/trips/everest-base-camp-trek" className="hover:text-secondary-light transition duration-300">Everest Base Camp Trek</Link></li>
+                      <li><Link prefetch={false} href="/trips/annapurna-circuit-trek" className="hover:text-secondary-light transition duration-300">Annapurna Circuit Trek</Link></li>
+                      <li><Link prefetch={false} href="/trips/everest-base-camp-trek-with-chola-pass-gokyo-trek" className="hover:text-secondary-light transition duration-300">EBC via Gokyo Lakes</Link></li>
+                      <li><Link prefetch={false} href="/trips/annapurna-base-camp-trek" className="hover:text-secondary-light transition duration-300">Annapurna Base Camp Trek</Link></li>
+                      <li><Link prefetch={false} href="/trips/manaslu-circuit-trek" className="hover:text-secondary-light transition duration-300">Manaslu Circuit Trek</Link></li>
                     </>
                   )
                 ) : titleLower.includes("region") ? (
                   regions && regions.length > 0 ? (
                     regions.slice(0, 5).map((r: any, rIdx: number) => (
                       <li key={rIdx}>
-                        <Link prefetch={false} href={`/regions/${r.slug}`} className="hover:text-secondary transition duration-300">
+                        <Link prefetch={false} href={`/regions/${r.slug}`} className="hover:text-secondary-light transition duration-300">
                           {r.name} Region
                         </Link>
                       </li>
                     ))
                   ) : (
                     <>
-                      <li><Link prefetch={false} href="/regions/everest" className="hover:text-secondary transition duration-300">Everest Region</Link></li>
-                      <li><Link prefetch={false} href="/regions/annapurna" className="hover:text-secondary transition duration-300">Annapurna Region</Link></li>
-                      <li><Link prefetch={false} href="/regions/manaslu" className="hover:text-secondary transition duration-300">Manaslu Region</Link></li>
-                      <li><Link prefetch={false} href="/regions/langtang" className="hover:text-secondary transition duration-300">Langtang Region</Link></li>
-                      <li><Link prefetch={false} href="/regions/mustang" className="hover:text-secondary transition duration-300">Mustang Region</Link></li>
+                      <li><Link prefetch={false} href="/regions/everest" className="hover:text-secondary-light transition duration-300">Everest Region</Link></li>
+                      <li><Link prefetch={false} href="/regions/annapurna" className="hover:text-secondary-light transition duration-300">Annapurna Region</Link></li>
+                      <li><Link prefetch={false} href="/regions/manaslu" className="hover:text-secondary-light transition duration-300">Manaslu Region</Link></li>
+                      <li><Link prefetch={false} href="/regions/langtang" className="hover:text-secondary-light transition duration-300">Langtang Region</Link></li>
+                      <li><Link prefetch={false} href="/regions/mustang" className="hover:text-secondary-light transition duration-300">Mustang Region</Link></li>
                     </>
                   )
                 ) : titleLower.includes("info") ? (
                   <>
-                    <li><Link prefetch={false} href="/why-us" className="hover:text-secondary transition duration-300">Why Choose Us</Link></li>
-                    <li><Link prefetch={false} href="/visa-info" className="hover:text-secondary transition duration-300">Nepal Visa Info</Link></li>
-                    <li><Link prefetch={false} href="/travel-insurance" className="hover:text-secondary transition duration-300">Travel Insurance</Link></li>
-                    <li><Link prefetch={false} href="/packing-list" className="hover:text-secondary transition duration-300">Packing List</Link></li>
-                    <li><Link prefetch={false} href="/faqs" className="hover:text-secondary transition duration-300">FAQs</Link></li>
+                    <li><Link prefetch={false} href="/why-us" className="hover:text-secondary-light transition duration-300">Why Choose Us</Link></li>
+                    <li><Link prefetch={false} href="/visa-info" className="hover:text-secondary-light transition duration-300">Nepal Visa Info</Link></li>
+                    <li><Link prefetch={false} href="/travel-insurance" className="hover:text-secondary-light transition duration-300">Travel Insurance</Link></li>
+                    <li><Link prefetch={false} href="/packing-list" className="hover:text-secondary-light transition duration-300">Packing List</Link></li>
+                    <li><Link prefetch={false} href="/faqs" className="hover:text-secondary-light transition duration-300">FAQs</Link></li>
                   </>
                 ) : titleLower.includes("company") ? (
                   <>
-                    <li><Link prefetch={false} href="/about-us" className="hover:text-secondary transition duration-300">About us</Link></li>
-                    <li><Link prefetch={false} href="/our-team" className="hover:text-secondary transition duration-300">Our Team</Link></li>
-                    <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">Contact us</Link></li>
-                    <li><Link prefetch={false} href="/csr" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
-                    <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary transition duration-300">Registrations & Affiliations</Link></li>
+                    <li><Link prefetch={false} href="/about-us" className="hover:text-secondary-light transition duration-300">About us</Link></li>
+                    <li><Link prefetch={false} href="/our-team" className="hover:text-secondary-light transition duration-300">Our Team</Link></li>
+                    <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary-light transition duration-300">Contact us</Link></li>
+                    <li><Link prefetch={false} href="/csr" className="hover:text-secondary-light transition duration-300">Responsible Tourism</Link></li>
+                    <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary-light transition duration-300">Registrations & Affiliations</Link></li>
                   </>
                 ) : (
                   <>
-                    <li><Link prefetch={false} href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
-                    <li><Link prefetch={false} href="/terms-and-condition" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
-                    <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary transition duration-300">Legal Documents</Link></li>
-                    <li><Link prefetch={false} href="/b2b-partners" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
-                    <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
-                    <li><Link prefetch={false} href="/gallery" className="hover:text-secondary transition duration-300">Gallery</Link></li>
+                    <li><Link prefetch={false} href="/privacy-policy" className="hover:text-secondary-light transition duration-300">Privacy Policy</Link></li>
+                    <li><Link prefetch={false} href="/terms-and-condition" className="hover:text-secondary-light transition duration-300">Terms & Conditions</Link></li>
+                    <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary-light transition duration-300">Legal Documents</Link></li>
+                    <li><Link prefetch={false} href="/b2b-partners" className="hover:text-secondary-light transition duration-300">B2B Partner</Link></li>
+                    <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary-light transition duration-300">Make a Payment</Link></li>
+                    <li><Link prefetch={false} href="/gallery" className="hover:text-secondary-light transition duration-300">Gallery</Link></li>
                   </>
                 )
               )}
@@ -252,7 +252,7 @@ export default function Footer() {
                 if (!trekObj) return null;
                 return (
                   <li key={idx}>
-                    <Link prefetch={false} href={`/trips/${trekObj.slug}`} className="hover:text-secondary transition duration-300">
+                    <Link prefetch={false} href={`/trips/${trekObj.slug}`} className="hover:text-secondary-light transition duration-300">
                       {trekObj.title}
                     </Link>
                   </li>
@@ -260,11 +260,11 @@ export default function Footer() {
               })
             ) : (
               <>
-                <li><Link prefetch={false} href="/trips/everest-base-camp-trek" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
-                <li><Link prefetch={false} href="/trips/annapurna-circuit-trek" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
-                <li><Link prefetch={false} href="/trips/everest-base-camp-trek-with-chola-pass-gokyo-trek" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
-                <li><Link prefetch={false} href="/trips/annapurna-base-camp-trek" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
-                <li><Link prefetch={false} href="/trips/manaslu-circuit-trek" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
+                <li><Link prefetch={false} href="/trips/everest-base-camp-trek" className="hover:text-secondary-light transition duration-300">Everest Base Camp Trek</Link></li>
+                <li><Link prefetch={false} href="/trips/annapurna-circuit-trek" className="hover:text-secondary-light transition duration-300">Annapurna Circuit Trek</Link></li>
+                <li><Link prefetch={false} href="/trips/everest-base-camp-trek-with-chola-pass-gokyo-trek" className="hover:text-secondary-light transition duration-300">EBC via Gokyo Lakes</Link></li>
+                <li><Link prefetch={false} href="/trips/annapurna-base-camp-trek" className="hover:text-secondary-light transition duration-300">Annapurna Base Camp Trek</Link></li>
+                <li><Link prefetch={false} href="/trips/manaslu-circuit-trek" className="hover:text-secondary-light transition duration-300">Manaslu Circuit Trek</Link></li>
               </>
             )}
           </ul>
@@ -278,18 +278,18 @@ export default function Footer() {
             {regions && regions.length > 0 ? (
               regions.slice(0, 5).map((r: any, idx: number) => (
                 <li key={idx}>
-                  <Link prefetch={false} href={`/regions/${r.slug}`} className="hover:text-secondary transition duration-300">
+                  <Link prefetch={false} href={`/regions/${r.slug}`} className="hover:text-secondary-light transition duration-300">
                     {r.name} Region
                   </Link>
                 </li>
               ))
             ) : (
               <>
-                <li><Link prefetch={false} href="/regions/everest" className="hover:text-secondary transition duration-300">Everest Region</Link></li>
-                <li><Link prefetch={false} href="/regions/annapurna" className="hover:text-secondary transition duration-300">Annapurna Region</Link></li>
-                <li><Link prefetch={false} href="/regions/manaslu" className="hover:text-secondary transition duration-300">Manaslu Region</Link></li>
-                <li><Link prefetch={false} href="/regions/langtang" className="hover:text-secondary transition duration-300">Langtang Region</Link></li>
-                <li><Link prefetch={false} href="/regions/mustang" className="hover:text-secondary transition duration-300">Mustang Region</Link></li>
+                <li><Link prefetch={false} href="/regions/everest" className="hover:text-secondary-light transition duration-300">Everest Region</Link></li>
+                <li><Link prefetch={false} href="/regions/annapurna" className="hover:text-secondary-light transition duration-300">Annapurna Region</Link></li>
+                <li><Link prefetch={false} href="/regions/manaslu" className="hover:text-secondary-light transition duration-300">Manaslu Region</Link></li>
+                <li><Link prefetch={false} href="/regions/langtang" className="hover:text-secondary-light transition duration-300">Langtang Region</Link></li>
+                <li><Link prefetch={false} href="/regions/mustang" className="hover:text-secondary-light transition duration-300">Mustang Region</Link></li>
               </>
             )}
           </ul>
@@ -300,11 +300,11 @@ export default function Footer() {
             Travel Info
           </h4>
           <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-            <li><Link prefetch={false} href="/why-us" className="hover:text-secondary transition duration-300">Why Choose Us</Link></li>
-            <li><Link prefetch={false} href="/visa-info" className="hover:text-secondary transition duration-300">Nepal Visa Info</Link></li>
-            <li><Link prefetch={false} href="/travel-insurance" className="hover:text-secondary transition duration-300">Travel Insurance</Link></li>
-            <li><Link prefetch={false} href="/packing-list" className="hover:text-secondary transition duration-300">Packing List</Link></li>
-            <li><Link prefetch={false} href="/faqs" className="hover:text-secondary transition duration-300">FAQs</Link></li>
+            <li><Link prefetch={false} href="/why-us" className="hover:text-secondary-light transition duration-300">Why Choose Us</Link></li>
+            <li><Link prefetch={false} href="/visa-info" className="hover:text-secondary-light transition duration-300">Nepal Visa Info</Link></li>
+            <li><Link prefetch={false} href="/travel-insurance" className="hover:text-secondary-light transition duration-300">Travel Insurance</Link></li>
+            <li><Link prefetch={false} href="/packing-list" className="hover:text-secondary-light transition duration-300">Packing List</Link></li>
+            <li><Link prefetch={false} href="/faqs" className="hover:text-secondary-light transition duration-300">FAQs</Link></li>
           </ul>
         </div>
 
@@ -313,11 +313,11 @@ export default function Footer() {
             Company
           </h4>
           <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-            <li><Link prefetch={false} href="/about-us" className="hover:text-secondary transition duration-300">About us</Link></li>
-            <li><Link prefetch={false} href="/our-team" className="hover:text-secondary transition duration-300">Our Team</Link></li>
-            <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">Contact us</Link></li>
-            <li><Link prefetch={false} href="/csr" className="hover:text-secondary transition duration-300">Responsible Tourism</Link></li>
-            <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary transition duration-300">Registrations & Affiliations</Link></li>
+            <li><Link prefetch={false} href="/about-us" className="hover:text-secondary-light transition duration-300">About us</Link></li>
+            <li><Link prefetch={false} href="/our-team" className="hover:text-secondary-light transition duration-300">Our Team</Link></li>
+            <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary-light transition duration-300">Contact us</Link></li>
+            <li><Link prefetch={false} href="/csr" className="hover:text-secondary-light transition duration-300">Responsible Tourism</Link></li>
+            <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary-light transition duration-300">Registrations & Affiliations</Link></li>
           </ul>
         </div>
 
@@ -326,12 +326,12 @@ export default function Footer() {
             Useful Links
           </h4>
           <ul className="flex flex-col gap-2.5 text-xs text-white/80">
-            <li><Link prefetch={false} href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
-            <li><Link prefetch={false} href="/terms-and-condition" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
-            <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary transition duration-300">Legal Documents</Link></li>
-            <li><Link prefetch={false} href="/b2b-partners" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
-            <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
-            <li><Link prefetch={false} href="/gallery" className="hover:text-secondary transition duration-300">Gallery</Link></li>
+            <li><Link prefetch={false} href="/privacy-policy" className="hover:text-secondary-light transition duration-300">Privacy Policy</Link></li>
+            <li><Link prefetch={false} href="/terms-and-condition" className="hover:text-secondary-light transition duration-300">Terms & Conditions</Link></li>
+            <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary-light transition duration-300">Legal Documents</Link></li>
+            <li><Link prefetch={false} href="/b2b-partners" className="hover:text-secondary-light transition duration-300">B2B Partner</Link></li>
+            <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary-light transition duration-300">Make a Payment</Link></li>
+            <li><Link prefetch={false} href="/gallery" className="hover:text-secondary-light transition duration-300">Gallery</Link></li>
           </ul>
         </div>
       </>
@@ -413,13 +413,13 @@ export default function Footer() {
                   />
                   <button
                     type="submit"
-                    className="text-white hover:text-secondary hover:scale-105 active:scale-95 transition ml-2 disabled:opacity-50"
+                    className="text-white hover:text-secondary-light hover:scale-105 active:scale-95 transition ml-2 disabled:opacity-50"
                     aria-label="Subscribe"
                     disabled={submitting}
                   >
                     <span className="border border-white/30 hover:border-secondary rounded-full p-1.5 flex items-center justify-center">
                       <svg
-                        className="h-3 w-3 fill-current text-white hover:text-secondary"
+                        className="h-3 w-3 fill-current text-white hover:text-secondary-light"
                         viewBox="0 0 24 24"
                       >
                         <path
@@ -478,7 +478,7 @@ export default function Footer() {
                       <a
                         key={idx}
                         href={`mailto:${e.email}`}
-                        className="hover:underline hover:text-secondary transition break-all"
+                        className="hover:underline hover:text-secondary-light transition break-all"
                       >
                         {e.email}
                       </a>
@@ -487,13 +487,13 @@ export default function Footer() {
                     <>
                       <a
                         href="mailto:natureheaventrek@gmail.com"
-                        className="hover:underline hover:text-secondary transition break-all"
+                        className="hover:underline hover:text-secondary-light transition break-all"
                       >
                         natureheaventrek@gmail.com
                       </a>
                       <a
                         href={`mailto:${contactInfo?.email || "info@natureheaventreks.com"}`}
-                        className="hover:underline hover:text-secondary transition break-all"
+                        className="hover:underline hover:text-secondary-light transition break-all"
                       >
                         {contactInfo?.email || "info@natureheaventreks.com"}
                       </a>
@@ -580,7 +580,7 @@ export default function Footer() {
           
           {/* We Accept Column */}
           <div className="flex flex-col gap-2 items-center md:items-start">
-            <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
+            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">
               We Accept
             </span>
             <div 
@@ -629,7 +629,7 @@ export default function Footer() {
 
           {/* We are associated with Column */}
           <div className="flex flex-col gap-2 items-center md:items-center">
-            <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
+            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">
               We are associated with
             </span>
             <div 
@@ -679,7 +679,7 @@ export default function Footer() {
 
           {/* Connect with us Column */}
           <div className="flex flex-col gap-2 items-center md:items-end">
-            <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
+            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">
               Connect with us
             </span>
             <div className="flex gap-2">
@@ -731,7 +731,7 @@ export default function Footer() {
           <div>
             <p>
               © {new Date().getFullYear()}{" "}
-              <span className="text-secondary font-medium">{dbFooterSettings?.siteName || siteName || "Nature Heaven Trekking"}</span>.
+              <span className="text-secondary-light font-medium">{dbFooterSettings?.siteName || siteName || "Nature Heaven Trekking"}</span>.
               All Rights Reserved.
             </p>
             <p className="text-[10px] text-white/30 mt-1">
@@ -743,7 +743,7 @@ export default function Footer() {
                 href="https://aryanpariyar.com.np/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/70 underline underline-offset-2 hover:text-secondary transition-colors"
+                className="text-white/70 underline underline-offset-2 hover:text-secondary-light transition-colors"
               >
                 Aryan
               </a>

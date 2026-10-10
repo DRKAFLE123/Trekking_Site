@@ -250,7 +250,7 @@ export default async function B2BPartnersPage() {
             confidential net rates.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <a href="#partner-form" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#8f6618] hover:bg-[#74520f] px-7 py-4 text-[19px] font-black text-white shadow-lg transition">
+            <a href="#partner-form" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#876015] hover:bg-[#74520f] px-7 py-4 text-[19px] font-black text-white shadow-lg transition">
               <IconHandshake className="h-6 w-6" /> Become a partner
             </a>
             <a href="https://wa.me/9779851218358?text=Hello%2C%20I%27d%20like%20to%20discuss%20a%20B2B%20partnership." target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/70 hover:bg-white hover:text-[#1a2e1f] px-7 py-4 text-lg font-bold text-white transition">
@@ -374,7 +374,7 @@ export default async function B2BPartnersPage() {
             <li key={title} className="relative flex md:flex-col items-start md:items-center gap-5 md:gap-0 md:text-center">
               <span className="relative z-10 inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white border-2 border-[#2E7D32] text-[#2E7D32] shadow-sm">
                 <I className="h-8 w-8" />
-                <span className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-[#8f6618] text-white text-sm font-black flex items-center justify-center" aria-hidden="true">{i + 1}</span>
+                <span className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-[#876015] text-white text-sm font-black flex items-center justify-center" aria-hidden="true">{i + 1}</span>
               </span>
               <div className="md:mt-5">
                 <h3 className="text-lg font-black text-[#1a2e1f]"><span className="sr-only">Step {i + 1}: </span>{title}</h3>

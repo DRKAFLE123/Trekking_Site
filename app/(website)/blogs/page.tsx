@@ -58,7 +58,7 @@ export default async function BlogsPage({
   return (
     <div className="pt-24 md:pt-32 bg-[#fcfbfa] min-h-screen">
       <Suspense fallback={
-        <div className="flex items-center justify-center py-32 text-charcoal/50 text-xs font-semibold uppercase tracking-wider">
+        <div className="flex items-center justify-center py-32 text-charcoal/70 text-xs font-semibold uppercase tracking-wider">
           Loading Himalayan Chronicles...
         </div>
       }>

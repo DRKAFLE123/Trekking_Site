@@ -222,7 +222,7 @@ export default async function RegionsListingPage() {
                       Regions in {label}
                     </h2>
                   </div>
-                  <span className="text-xs text-charcoal/60 font-light">
+                  <span className="text-xs text-charcoal/70 font-light">
                     {list.length} {list.length === 1 ? "region" : "regions"}
                   </span>
                 </div>

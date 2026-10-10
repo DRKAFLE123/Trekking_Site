@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-[#f8f5f0] text-[#2d2d2d] antialiased selection:bg-[#8f6618]/30 selection:text-[#1a3c2e];
+    @apply bg-[#f8f5f0] text-[#2d2d2d] antialiased selection:bg-[#876015]/30 selection:text-[#1a3c2e];
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -21,7 +21,7 @@
 
 /* react-lite-youtube-embed overrides */
 .lty-playbtn {
-  background-color: #8f6618 !important;
+  background-color: #876015 !important;
 }
 
 /* Custom premium styling classes */
@@ -42,7 +42,7 @@
   border-radius: 5px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8f6618;
+  background: #876015;
 }
 
 /* ===== Hero Background Animations ===== */
@@ -205,11 +205,11 @@
 
 /* Inline links. The renderer styles them bold + amber with no
    underline, so a link-dense paragraph reads as confetti. Underline
-   carries the signal instead, and #8f6618 hits 5.1:1 on white
-   (WCAG AA) where the brand #8f6618 only manages ~2.9:1. */
+   carries the signal instead, and #876015 hits 5.1:1 on white
+   (WCAG AA) where the brand #876015 only manages ~2.9:1. */
 .blog-prose p > a,
 .blog-prose li > a {
-  color: #8f6618;
+  color: #876015;
   font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 3px;

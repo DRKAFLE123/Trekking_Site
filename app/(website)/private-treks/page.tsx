@@ -53,32 +53,32 @@ export default async function PrivateTreksPage() {
     {
       title: "100% Control of Your Pace",
       desc: "No pressure to keep up with strangers or wait for slower hikers. Set a comfortable speed that matches your fitness level. If you feel tired or want to spend more time taking photos, your guide adjusts the daily schedule instantly.",
-      icon: <FaRunning className="h-6 w-6 text-[#8f6618]" />,
+      icon: <FaRunning className="h-6 w-6 text-[#876015]" />,
     },
     {
       title: "Native Sherpa Guide & Porter Crew",
       desc: "Get undivided, one-on-one attention from your native Sherpa guide. In private treks, communication is clear and highly personal. Learn about local traditions, Buddhist culture, and Himalayan peaks directly from local experts.",
-      icon: <FaUserShield className="h-6 w-6 text-[#8f6618]" />,
+      icon: <FaUserShield className="h-6 w-6 text-[#876015]" />,
     },
     {
       title: "Choose Any Start Date",
       desc: "Unlike fixed departures that limit your planning, you can choose any calendar date that perfectly coordinates with your international flights, holiday schedules, and seasonal preferences.",
-      icon: <FaCalendarAlt className="h-6 w-6 text-[#8f6618]" />,
+      icon: <FaCalendarAlt className="h-6 w-6 text-[#876015]" />,
     },
     {
       title: "Customizable Lodging & Route upgrades",
       desc: "Upgrade or downgrade your accommodation package. Want to stay in luxury boutique mountain resorts in Namche Bazaar, or stick to classic rustic teahouses? On a private trek, customizing your trail comfort is fully in your hands.",
-      icon: <FaHotel className="h-6 w-6 text-[#8f6618]" />,
+      icon: <FaHotel className="h-6 w-6 text-[#876015]" />,
     },
     {
       title: "Solo Traveler Welcomed & Supported",
       desc: "We proudly organize private treks for single solo travelers, providing them with a dedicated private guide for safety, guidance, and companionship. Feel safe and supported throughout your Himalayan journey.",
-      icon: <FaUserCheck className="h-6 w-6 text-[#8f6618]" />,
+      icon: <FaUserCheck className="h-6 w-6 text-[#876015]" />,
     },
     {
       title: "Altitude Safety First",
       desc: "Altitude sickness affects everyone differently. On a private trek, decisions to stop, rest, acclimatize, or descend are made exclusively based on your group's health and well-being rather than a mixed group's schedule.",
-      icon: <FaShieldAlt className="h-6 w-6 text-[#8f6618]" />,
+      icon: <FaShieldAlt className="h-6 w-6 text-[#876015]" />,
     },
   ];
 
@@ -120,7 +120,7 @@ export default async function PrivateTreksPage() {
           }}
         />
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <span className="inline-flex items-center gap-2 bg-[#8f6618]/20 text-[#8f6618] border border-[#8f6618]/30 text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full mb-5">
+          <span className="inline-flex items-center gap-2 bg-[#876015]/20 text-[#876015] border border-[#876015]/30 text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full mb-5">
             🏔️ 100% Personalized Journeys
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight mb-5">
@@ -132,7 +132,7 @@ export default async function PrivateTreksPage() {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link
               href="/plan-a-trip"
-              className="w-full sm:w-auto bg-[#8f6618] hover:bg-[#b07820] text-white font-bold py-3.5 px-8 rounded-xl text-sm transition shadow-lg hover:scale-[1.02] active:scale-95"
+              className="w-full sm:w-auto bg-[#876015] hover:bg-[#b07820] text-white font-bold py-3.5 px-8 rounded-xl text-sm transition shadow-lg hover:scale-[1.02] active:scale-95"
             >
               Plan Custom Itinerary
             </Link>
@@ -166,7 +166,7 @@ export default async function PrivateTreksPage() {
             <h2 className="font-serif text-2xl md:text-4xl font-bold text-[#1a2e1f] mb-5 leading-tight">
               Trek on Your Own Terms. No Strangers. No Compromises.
             </h2>
-            <div className="h-0.5 w-16 bg-[#8f6618] mb-6"></div>
+            <div className="h-0.5 w-16 bg-[#876015] mb-6"></div>
             <p className="text-sm md:text-base text-charcoal/80 leading-relaxed mb-4">
               Most treks in Nepal last longer than a week. This means the companions you walk and share teahouses with will heavily impact your overall mountain experience. 
             </p>
@@ -178,7 +178,7 @@ export default async function PrivateTreksPage() {
             </p>
           </div>
 
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border-4 border-[#8f6618]/10">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border-4 border-[#876015]/10">
             <img
               src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800"
               alt="Trekkers viewing mountains"
@@ -186,7 +186,7 @@ export default async function PrivateTreksPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e1f]/90 via-transparent to-transparent flex items-end p-6">
               <div className="text-white">
-                <p className="text-xs text-[#8f6618] font-bold tracking-wider uppercase mb-1">Safety & Comfort First</p>
+                <p className="text-xs text-[#876015] font-bold tracking-wider uppercase mb-1">Safety & Comfort First</p>
                 <h4 className="font-serif font-bold text-lg">Your Safety is Our Single Priority</h4>
               </div>
             </div>
@@ -198,19 +198,19 @@ export default async function PrivateTreksPage() {
       <section className="bg-white border-y border-secondary/10 py-16 md:py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-[#8f6618] uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
+            <span className="text-[#876015] uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
               The Private Advantage
             </span>
             <h2 className="font-serif text-2xl md:text-4xl font-bold text-primary">
               Why Choose a Private Trek in Nepal?
             </h2>
-            <div className="h-0.5 w-16 bg-[#8f6618] mx-auto mt-4"></div>
+            <div className="h-0.5 w-16 bg-[#876015] mx-auto mt-4"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((b, idx) => (
               <div key={idx} className="bg-[#fdfbf7] border border-secondary/10 p-6 rounded-2xl hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300">
-                <div className="h-12 w-12 bg-[#8f6618]/10 border border-[#8f6618]/20 flex items-center justify-center rounded-xl mb-5">
+                <div className="h-12 w-12 bg-[#876015]/10 border border-[#876015]/20 flex items-center justify-center rounded-xl mb-5">
                   {b.icon}
                 </div>
                 <h3 className="font-serif font-bold text-primary text-lg mb-3">{b.title}</h3>
@@ -224,19 +224,19 @@ export default async function PrivateTreksPage() {
       {/* How it Works / Steps */}
       <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-[#8f6618] uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
+          <span className="text-[#876015] uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
             Simplifying Your Booking
           </span>
           <h2 className="font-serif text-2xl md:text-4xl font-bold text-primary">
             How to Plan Your Private Trek
           </h2>
-          <div className="h-0.5 w-16 bg-[#8f6618] mx-auto mt-4"></div>
+          <div className="h-0.5 w-16 bg-[#876015] mx-auto mt-4"></div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((s, idx) => (
             <div key={idx} className="relative p-6 bg-white border border-secondary/10 rounded-2xl flex flex-col justify-between h-full shadow-sm">
-              <span className="absolute -top-6 left-6 text-5xl font-black text-[#8f6618]/10 select-none font-serif">{s.step}</span>
+              <span className="absolute -top-6 left-6 text-5xl font-black text-[#876015]/10 select-none font-serif">{s.step}</span>
               <div className="mt-4">
                 <h4 className="font-serif font-bold text-primary text-base md:text-lg mb-2">{s.title}</h4>
                 <p className="text-xs md:text-sm text-charcoal/70 leading-relaxed">{s.desc}</p>
@@ -258,7 +258,7 @@ export default async function PrivateTreksPage() {
               <p className="text-white/70 text-sm md:text-base leading-relaxed">
                 Connect with our local expert Kafle today to customize your itinerary, check permit costs, and arrange flexible payment gateways.
               </p>
-              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start text-xs font-semibold text-[#8f6618]">
+              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start text-xs font-semibold text-[#876015]">
                 <span className="flex items-center gap-1.5"><FaCheckCircle className="text-white text-xs" /> Free Customization</span>
                 <span className="flex items-center gap-1.5"><FaCheckCircle className="text-white text-xs" /> 10% Deposit to Book</span>
                 <span className="flex items-center gap-1.5"><FaCheckCircle className="text-white text-xs" /> Local Sherpa Rates</span>
@@ -268,7 +268,7 @@ export default async function PrivateTreksPage() {
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto shrink-0">
               <Link
                 href="/plan-a-trip"
-                className="w-full sm:w-auto text-center bg-[#8f6618] hover:bg-[#b07820] text-white font-bold py-3.5 px-8 rounded-xl text-sm transition shadow-lg hover:scale-105 active:scale-95"
+                className="w-full sm:w-auto text-center bg-[#876015] hover:bg-[#b07820] text-white font-bold py-3.5 px-8 rounded-xl text-sm transition shadow-lg hover:scale-105 active:scale-95"
               >
                 Inquire Now
               </Link>

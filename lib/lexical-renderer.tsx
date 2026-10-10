@@ -179,7 +179,7 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
             >
               Your browser does not support the video tag.
             </video>
-            {alt && <div className="p-3 text-xs text-charcoal/60 bg-white italic border-t border-secondary/5 text-center">{alt}</div>}
+            {alt && <div className="p-3 text-xs text-charcoal/70 bg-white italic border-t border-secondary/5 text-center">{alt}</div>}
           </div>
         );
       }
@@ -195,7 +195,7 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
             decoding="async"
             className="rounded-xl object-cover shadow-md w-full h-auto max-h-[500px]"
           />
-          {alt && <span className="text-xs text-charcoal/60 italic text-center">{alt}</span>}
+          {alt && <span className="text-xs text-charcoal/70 italic text-center">{alt}</span>}
         </div>
       );
     }
@@ -398,7 +398,7 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
             <div className="h-1 w-full bg-secondary" />
             <div className="px-6 py-7 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
               <div className="flex-1 min-w-0">
-                <p className="m-0 text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: '#8f6618' }}>Plan your trek</p>
+                <p className="m-0 text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: '#876015' }}>Plan your trek</p>
                 <p className="m-0 mt-1.5 font-serif font-black text-xl md:text-2xl leading-tight" style={{ color: '#ffffff' }}>
                   {headline || 'Want to plan your holiday in Nepal?'}
                 </p>

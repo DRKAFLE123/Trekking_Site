@@ -116,7 +116,7 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
                     <h3 className="font-serif font-bold text-primary text-sm sm:text-base">
                       {testimonial.clientName}
                     </h3>
-                    <span className="text-[10px] sm:text-xs text-charcoal/50 uppercase tracking-wider font-sans font-medium">
+                    <span className="text-[10px] sm:text-xs text-charcoal/70 uppercase tracking-wider font-sans font-medium">
                       {testimonial.country}
                     </span>
                   </div>

@@ -601,7 +601,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(200,146,42,0.08),transparent_60%)] pointer-events-none" />
             <FaRegImage className="text-white/20 text-4xl mb-3" />
             <h2 className="text-white/60 font-serif text-lg font-bold tracking-wide">Nature Heaven Trekking & Expedition</h2>
-            <p className="text-[#8f6618] text-xs font-semibold mt-1 tracking-wider uppercase">Nepal</p>
+            <p className="text-[#876015] text-xs font-semibold mt-1 tracking-wider uppercase">Nepal</p>
           </div>
         ) : heroImages.length > 1 ? (
           <div className="hidden md:grid md:grid-cols-[60fr_40fr] gap-1 h-[72vh] max-h-[620px]">
@@ -778,7 +778,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                     <div key={idx} className="flex items-center gap-4">
                       <span className={`shrink-0 w-12 h-12 rounded-full ${spec.iconBg} text-white flex items-center justify-center shadow-sm`}><Icon className="text-lg" /></span>
                       <div className="flex flex-col min-w-0">
-                        <span className="text-[11px] uppercase tracking-wider text-[#8A8A8A] font-bold">{spec.label}</span>
+                        <span className="text-[11px] uppercase tracking-wider text-[#6B6B6B] font-bold">{spec.label}</span>
                         <span className="text-sm font-black text-[#1A1A2E] mt-0.5 leading-snug">{spec.value}</span>
                       </div>
                     </div>
@@ -1548,7 +1548,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                             <h3 className="font-serif text-xl md:text-2xl font-black text-[#1a3c2e] flex items-center gap-2.5">
                               <span className="text-lg">{cat.icon}</span>{cat.label}
                             </h3>
-                            <button onClick={() => expandCat(catKey)} className="text-xs font-bold text-[#8f6618] hover:underline shrink-0">Expand All</button>
+                            <button onClick={() => expandCat(catKey)} className="text-xs font-bold text-[#876015] hover:underline shrink-0">Expand All</button>
                           </div>
                           <div className="border border-[#E5E5E5] rounded-2xl overflow-hidden divide-y divide-[#E5E5E5] bg-white shadow-sm">
                             {grouped[catKey].map((faq: any) => {
