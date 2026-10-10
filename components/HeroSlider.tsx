@@ -49,10 +49,20 @@ export default function HeroSlider({
   // Mount a slide's photo only once it is current or next, so the first visit
   // downloads 2 hero images instead of all of them (hidden slides are still
   // "in the viewport", so loading="lazy" alone would not stop them).
-  const [mounted, setMounted] = useState<Set<number>>(() => new Set([0, 1 % Math.max(n, 1)]));
+  // Only the first photo is in the initial HTML; the next one is added after the
+  // page has loaded so it never competes with the first for bandwidth (LCP).
+  const [mounted, setMounted] = useState<Set<number>>(() => new Set([0]));
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
-    setMounted((m) => (m.has(active) && m.has((active + 1) % n) ? m : new Set([...m, active, (active + 1) % n])));
-  }, [active, n]);
+    if (document.readyState === "complete") { setLoaded(true); return; }
+    const on = () => setLoaded(true);
+    window.addEventListener("load", on, { once: true });
+    return () => window.removeEventListener("load", on);
+  }, []);
+  useEffect(() => {
+    const want = loaded ? [active, (active + 1) % n] : [active];
+    setMounted((m) => (want.every((i) => m.has(i)) ? m : new Set([...m, ...want])));
+  }, [active, n, loaded]);
 
   return (
     <section

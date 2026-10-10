@@ -166,7 +166,9 @@ export default async function HomePage() {
         }
       });
 
-      faqs = [...standaloneFeatured, ...trekFeatured];
+      // Homepage shows a short, general-first set; the full list lives on /faqs and
+      // each trek page. 78 featured FAQs were ~560 KB of rich-text payload here.
+      faqs = [...standaloneFeatured, ...trekFeatured].slice(0, 12);
     } catch (e: any) {
       console.warn("[Home Page] Failed to query featured faqs:", e.message);
     }
@@ -825,6 +827,11 @@ export default async function HomePage() {
           </div>
 
           <FAQAccordion faqs={faqs} columns={2} />
+          <div className="text-center mt-10">
+            <Link prefetch={false} href="/faqs" className="inline-flex items-center gap-2 font-bold text-primary hover:text-secondary underline underline-offset-4">
+              See all FAQs <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </div>
       </section>    </div>
   );
