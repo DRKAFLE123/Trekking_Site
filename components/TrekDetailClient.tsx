@@ -57,7 +57,7 @@ import {
 import { FiPlusCircle, FiXCircle } from "react-icons/fi";
 import { Trek, Testimonial, Faq, TripInfoSection, PackingCategory } from "@/types";
 import { renderLexical } from "@/lib/lexical-renderer";
-import { getMediaUrl } from "@/lib/cloudinary-loader";
+import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 import EnquiryModal from "./EnquiryModal";
 
 const parseYoutubeIdStatic = (url: string) => {
@@ -610,7 +610,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
               setLightboxOpen(true);
             }}>
-              <Image src={heroImages[0]} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center transition duration-700 group-hover:scale-105" unoptimized />
+              <Image src={heroImages[0]} alt={`${trek.title} - Main Photo`} fill priority sizes="(max-width: 768px) 100vw, 66vw" className="object-cover object-center transition duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent pointer-events-none" />
             </div>
             <div className="grid grid-cols-2 grid-rows-2 gap-1">
@@ -620,7 +620,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                   setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
                   setLightboxOpen(true);
                 }}>
-                  <Image src={img} alt={`${trek.title} photo ${idx+2}`} fill className="object-cover object-center transition duration-700 group-hover:scale-110" unoptimized />
+                  <Image src={img} alt={`${trek.title} photo ${idx+2}`} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover object-center transition duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition duration-300" />
                 </div>
               ))}
@@ -633,7 +633,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
           </div>
         ) : (
           <div className="hidden md:block relative h-[72vh] max-h-[620px] w-full overflow-hidden cursor-pointer" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>
-            <Image src={cover} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center transition duration-700 hover:scale-102" unoptimized />
+            <Image src={cover} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center transition duration-700 hover:scale-102" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
           </div>
         )}
@@ -647,7 +647,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                 setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
                 setLightboxOpen(true);
               }}>
-                <Image src={img} alt={`${trek.title} photo ${idx+1}`} fill priority={idx===0} className="object-cover object-center" unoptimized />
+                <Image src={img} alt={`${trek.title} photo ${idx+1}`} fill priority={idx===0} className="object-cover object-center" />
               </div>
             ))}
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-20" />
@@ -664,7 +664,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
           </div>
         ) : (
           <div className="relative md:hidden h-[55vw] min-h-[260px] max-h-[400px] overflow-hidden select-none" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>
-            <Image src={cover} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center" unoptimized />
+            <Image src={cover} alt={`${trek.title} - Main Photo`} fill priority className="object-cover object-center" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-20" />
           </div>
         )}
@@ -853,7 +853,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                       setLightboxIndex(targetIdx >= 0 ? targetIdx : 0);
                       setLightboxOpen(true);
                     }}>
-                      <Image src={img} alt={`${trek.title} gallery ${idx+1}`} fill sizes="(max-width:768px) 50vw, 33vw" className="object-cover hover:scale-105 transition duration-300 cursor-pointer" unoptimized />
+                      <Image src={img} alt={`${trek.title} gallery ${idx+1}`} fill sizes="(max-width:768px) 50vw, 33vw" className="object-cover hover:scale-105 transition duration-300 cursor-pointer" />
                     </div>
                   ))}
                 </div>
@@ -1068,7 +1068,6 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                                           fill
                                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                           className="object-cover transition-all duration-500 group-hover:scale-105"
-                                          unoptimized
                                         />
                                       )}
 
@@ -1157,7 +1156,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                 </div>
                 {mapImageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={mapImageUrl} alt={`${trek.title} Route Map`} className="w-full h-auto rounded-xl border border-[#E5E5E5] bg-slate-50" />
+                  <img src={cloudinaryLoader({ src: mapImageUrl, width: 1200 })} alt={`${trek.title} Route Map`} loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-[#E5E5E5] bg-slate-50" />
                 ) : trek.gpsCoordinates && trek.gpsCoordinates.length > 0 ? (
                   <TrekMap waypoints={trek.gpsCoordinates} center={trek.region?.mapCenter} />
                 ) : null}
@@ -1230,8 +1229,10 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                             {section.image && (
                               <div className="mt-4 rounded-xl overflow-hidden border border-slate-200/60 shadow-sm max-w-full bg-slate-50">
                                 <img
-                                  src={getMediaUrl(section.image)}
+                                  src={cloudinaryLoader({ src: getMediaUrl(section.image), width: 1200 })}
                                   alt={section.title}
+                                  loading="lazy"
+                                  decoding="async"
                                   className="w-full h-auto object-contain max-h-[600px] mx-auto block"
                                 />
                               </div>
@@ -1474,7 +1475,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                   {similarTreks.slice(0,2).map(simTrek => (
                     <Link key={simTrek.id} href={`/trips/${simTrek.slug}`} className="bg-white border border-[#E5E5E5] rounded-xl overflow-hidden hover:shadow-md transition duration-300 flex items-center gap-3 p-2.5 group">
                       <div className="relative h-16 w-20 rounded-lg overflow-hidden shrink-0 bg-slate-100">
-                        <Image src={getMediaUrl(simTrek.heroImage) || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800"} alt={simTrek.title} fill className="object-cover group-hover:scale-105 transition duration-300" unoptimized />
+                        <Image src={getMediaUrl(simTrek.heroImage) || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800"} alt={simTrek.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition duration-300" />
                       </div>
                       <div className="flex flex-col min-w-0">
                         <h5 className="font-sans font-bold text-xs text-[#1A1A2E] truncate group-hover:text-[#2E7D32] transition">{simTrek.title}</h5>
@@ -1612,7 +1613,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
         <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-[999] flex items-center justify-center p-4 transition-all duration-300 animate-fadeIn" onClick={() => setItineraryLightboxImage(null)}>
           <div className="relative max-w-5xl max-h-[90vh] flex flex-col items-center justify-center" onClick={e => e.stopPropagation()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={itineraryLightboxImage} alt="Itinerary Preview" className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl border border-white/10" />
+            <img src={cloudinaryLoader({ src: itineraryLightboxImage, width: 1600 })} alt="Itinerary Preview" className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl border border-white/10" />
             <button className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center font-bold text-lg cursor-pointer transition select-none z-10 hover:scale-105 active:scale-95" onClick={() => setItineraryLightboxImage(null)}>✕</button>
           </div>
         </div>

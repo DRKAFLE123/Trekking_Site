@@ -183,11 +183,11 @@ export default function Footer() {
                     }).filter(Boolean)
                   ) : (
                     <>
-                      <li><Link href="/trips/everest-base-camp-trek-14" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
-                      <li><Link href="/trips/annapurna-circuit-14" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
-                      <li><Link href="/trips/everest-base-camp-gokyo-lakes-15" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
-                      <li><Link href="/trips/annapurna-base-camp-10" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
-                      <li><Link href="/trips/manaslu-circuit-trek-16" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
+                      <li><Link href="/trips/everest-base-camp-trek" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
+                      <li><Link href="/trips/annapurna-circuit-trek" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
+                      <li><Link href="/trips/everest-base-camp-trek-with-chola-pass-gokyo-trek" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
+                      <li><Link href="/trips/annapurna-base-camp-trek" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
+                      <li><Link href="/trips/manaslu-circuit-trek" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
                     </>
                   )
                 ) : titleLower.includes("region") ? (
@@ -263,11 +263,11 @@ export default function Footer() {
               })
             ) : (
               <>
-                <li><Link href="/trips/everest-base-camp-trek-14" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
-                <li><Link href="/trips/annapurna-circuit-14" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
-                <li><Link href="/trips/everest-base-camp-gokyo-lakes-15" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
-                <li><Link href="/trips/annapurna-base-camp-10" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
-                <li><Link href="/trips/manaslu-circuit-trek-16" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
+                <li><Link href="/trips/everest-base-camp-trek" className="hover:text-secondary transition duration-300">Everest Base Camp Trek</Link></li>
+                <li><Link href="/trips/annapurna-circuit-trek" className="hover:text-secondary transition duration-300">Annapurna Circuit Trek</Link></li>
+                <li><Link href="/trips/everest-base-camp-trek-with-chola-pass-gokyo-trek" className="hover:text-secondary transition duration-300">EBC via Gokyo Lakes</Link></li>
+                <li><Link href="/trips/annapurna-base-camp-trek" className="hover:text-secondary transition duration-300">Annapurna Base Camp Trek</Link></li>
+                <li><Link href="/trips/manaslu-circuit-trek" className="hover:text-secondary transition duration-300">Manaslu Circuit Trek</Link></li>
               </>
             )}
           </ul>
@@ -374,9 +374,8 @@ export default function Footer() {
                   <Image
                     src={dbFooterSettings?.logo?.url || "/finalofficiallogo.jpeg"}
                     alt="Nature Heaven Logo"
-                    fill
+                    fill sizes="160px"
                     className="object-contain"
-                    unoptimized
                   />
                 </div>
                 <div className="flex flex-col">
@@ -574,7 +573,6 @@ export default function Footer() {
         width={160}
         height={160}
         loading="lazy"
-        unoptimized
         className="absolute bottom-0 right-[10%] h-24 md:h-32 lg:h-40 w-auto object-contain object-bottom pointer-events-none select-none z-30"
       />
       </section>
@@ -655,9 +653,8 @@ export default function Footer() {
                       <Image
                         src={logoUrl}
                         alt={`${aff.name} Logo`}
-                        fill
+                        fill sizes="96px"
                         className="object-contain"
-                        unoptimized
                       />
                     </a>
                   );
@@ -674,9 +671,8 @@ export default function Footer() {
                     <Image
                       src={aff.logo}
                       alt={`${aff.name} Logo`}
-                      fill
+                      fill sizes="96px"
                       className="object-contain"
-                      unoptimized
                     />
                   </a>
                 ))

@@ -33,7 +33,6 @@ export default function CmsLexicalPage({ page }: CmsLexicalPageProps) {
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 80vw"
-                unoptimized
                 priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/25 to-transparent" />

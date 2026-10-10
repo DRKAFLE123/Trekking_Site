@@ -352,7 +352,7 @@ export default function BlogDetailClient({
                         <Image
                           src={photoUrl}
                           alt={blog.author.name}
-                          fill
+                          fill sizes="64px"
                           className="object-cover"
                         />
                       ) : (

@@ -146,7 +146,6 @@ export default async function RegionsListingPage() {
             priority
             sizes="100vw"
             className="object-cover object-center z-0"
-            unoptimized
           />
         )}
         {/* Dark gradient overlay over the image so text stays legible */}

@@ -149,7 +149,6 @@ export default async function CountriesListingPage() {
             priority
             sizes="100vw"
             className="object-cover object-center z-0"
-            unoptimized
           />
         )}
         <div className="absolute inset-0 z-[5] bg-gradient-to-b from-primary/80 via-primary/55 to-primary/85" />
@@ -221,7 +220,6 @@ export default async function CountriesListingPage() {
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover group-hover:scale-110 transition duration-700"
-                    unoptimized
                   />
                 ) : (
                   <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-light to-primary flex items-center justify-center">

@@ -543,7 +543,6 @@ export default async function HomePage() {
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
-              unoptimized
             />
             {/* Embedded Badge */}
             <div className="absolute bottom-2 left-2 right-2 md:bottom-6 md:left-6 md:right-6 bg-primary/90 backdrop-blur-md p-2 md:p-6 rounded-xl border border-secondary/20 flex gap-1.5 md:gap-4 text-bgOffWhite items-center md:items-start">
@@ -779,7 +778,6 @@ export default async function HomePage() {
                         fill
                         className="object-cover group-hover:scale-105 transition duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        unoptimized
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80" />
                     </div>

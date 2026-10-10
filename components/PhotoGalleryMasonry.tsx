@@ -99,7 +99,7 @@ const FALLBACK_GALLERY: GalleryItem[] = [
 ];
 
 // A wrapper around Next.js Image that falls back to a high-quality Unsplash image if the local file is missing on disk (returns 500/404)
-const SafeImage = ({ src, alt, className, fill, width, height, unoptimized }: any) => {
+const SafeImage = ({ src, alt, className, fill, width, height, unoptimized, sizes = "(max-width: 768px) 100vw, 50vw" }: any) => {
   const [imgSrc, setImgSrc] = useState(src);
   
   useEffect(() => {
@@ -115,6 +115,7 @@ const SafeImage = ({ src, alt, className, fill, width, height, unoptimized }: an
       width={width}
       height={height}
       unoptimized={unoptimized}
+      sizes={fill ? sizes : undefined}
       onError={() => {
         // Fallback to high-quality unsplash trekking photo if file is missing/broken on disk
         setImgSrc("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=600");
@@ -216,7 +217,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                   alt={item.title}
                   fill
                   className="object-cover rounded-xl"
-                  unoptimized
                 />
                 {/* Bottom text gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex flex-col justify-end p-4 text-white">
@@ -294,7 +294,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                 alt={displayItems[0].title}
                 fill
                 className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                unoptimized
               />
               <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6 text-white z-10">
                 <span className="text-[10px] uppercase tracking-wider text-secondary font-bold font-sans transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
@@ -321,7 +320,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                 alt={displayItems[1].title}
                 fill
                 className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                unoptimized
               />
               <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-5 text-white z-10">
                 <span className="text-[9px] uppercase tracking-wider text-secondary font-bold font-sans transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
@@ -343,7 +341,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                 alt={displayItems[2].title}
                 fill
                 className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                unoptimized
               />
               <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-5 text-white z-10">
                 <span className="text-[9px] uppercase tracking-wider text-secondary font-bold font-sans transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
@@ -365,7 +362,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                 alt={displayItems[3].title}
                 fill
                 className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                unoptimized
               />
               <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-5 text-white z-10">
                 <span className="text-[9px] uppercase tracking-wider text-secondary font-bold font-sans transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
@@ -387,7 +383,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                 alt={displayItems[4].title}
                 fill
                 className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                unoptimized
               />
               <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-5 text-white z-10">
                 <span className="text-[9px] uppercase tracking-wider text-secondary font-bold font-sans transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
@@ -409,7 +404,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                 alt={displayItems[5].title}
                 fill
                 className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                unoptimized
               />
               <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-5 text-white z-10">
                 <span className="text-[9px] uppercase tracking-wider text-secondary font-bold font-sans transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
@@ -443,7 +437,6 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                     alt={item.title}
                     fill
                     className="object-cover transform group-hover:scale-110 transition-transform duration-500 rounded-xl"
-                    unoptimized
                   />
                   
                   {/* Hover overlay details */}

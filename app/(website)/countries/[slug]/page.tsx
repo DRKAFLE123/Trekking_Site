@@ -167,7 +167,6 @@ export default async function CountryPage({ params }: { params: Params }) {
             priority
             className="object-cover object-center scale-105"
             sizes="100vw"
-            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-[#1a2e1f]/90 z-10 pointer-events-none" />
         </div>

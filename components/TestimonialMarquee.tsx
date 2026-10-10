@@ -128,9 +128,8 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
                       <Image
                         src={getMediaUrl(testimonial.photo) || "/gallery/happy_face1.png"}
                         alt={testimonial.clientName}
-                        fill
+                        fill sizes="96px"
                         className="object-cover"
-                        unoptimized
                       />
                     </div>
                   ) : (

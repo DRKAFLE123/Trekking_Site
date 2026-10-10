@@ -273,7 +273,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                           <Image
                             src={photoUrl}
                             alt={featuredPost.author.name}
-                            fill
+                            fill sizes="64px"
                             className="object-cover"
                           />
                         ) : (
@@ -452,7 +452,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                             <Image
                               src={photoUrl}
                               alt={blog.author.name}
-                              fill
+                              fill sizes="64px"
                               className="object-cover"
                             />
                           ) : (
