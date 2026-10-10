@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Image from "next/image";
 import { FaQuoteLeft } from "react-icons/fa";
@@ -72,28 +70,7 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
       <div className="relative w-full overflow-hidden py-4 flex mask-fade select-none">
         
         {/* CSS for Infinite Scrolling Marquee */}
-        <style jsx global>{`
-          @keyframes marquee {
-            0% {
-              transform: translateX(0);
-            }
-            100% {
-              transform: translateX(-50%);
-            }
-          }
-          .animate-marquee-track {
-            display: flex;
-            width: max-content;
-            animation: marquee 50s linear infinite;
-          }
-          .animate-marquee-track:hover {
-            animation-play-state: paused;
-          }
-          .mask-fade {
-            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-          }
-        `}</style>
+        {/* marquee keyframes live in app/globals.css (server component: no styled-jsx) */}
 
         <div className="animate-marquee-track">
           {marqueeItems.map((testimonial, idx) => (

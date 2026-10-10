@@ -5,7 +5,9 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    // Admin components (src/, components/payload) are styled by the admin's own CSS,
+    // not Tailwind; scanning them only added dead classes to every website page.
+    "!./components/payload/**",
   ],
   theme: {
     extend: {

@@ -244,3 +244,29 @@
   .blog-prose h2 { font-size: 1.5rem; margin-top: 2.5rem; }
   .blog-prose h3 { font-size: 1.25rem; margin-top: 1.75rem; }
 }
+
+/* Testimonial marquee (components/TestimonialMarquee.tsx) */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 50s linear infinite;
+}
+.animate-marquee-track:hover {
+  animation-play-state: paused;
+}
+.mask-fade {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+        
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-track { animation: none; }
+}
