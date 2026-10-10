@@ -52,7 +52,7 @@ const CtaBlock: Block = {
     {
       name: 'whatsappNumber',
       type: 'text',
-      defaultValue: '+977-9823636377',
+      defaultValue: '+977-9851218358',
       required: true,
     },
   ],

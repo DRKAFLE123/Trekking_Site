@@ -152,7 +152,7 @@ async function main() {
             id: 'test-cta-1',
             headline: 'Ready to Trek to Everest Base Camp?',
             buttonText: 'Make an Inquiry Now',
-            whatsappNumber: '+977-9823636377',
+            whatsappNumber: '+977-9851218358',
           },
         },
       ],
