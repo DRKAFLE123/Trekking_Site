@@ -30,6 +30,7 @@ export default function WhatsAppButton() {
   }, []);
 
   return (
+    <aside aria-label="WhatsApp chat">
     <a
       href={`https://wa.me/${whatsappNumber}`}
       target="_blank"
@@ -39,5 +40,6 @@ export default function WhatsAppButton() {
     >
       <FaWhatsapp className="h-8 w-8" />
     </a>
+    </aside>
   );
 }

@@ -250,7 +250,7 @@ export default async function B2BPartnersPage() {
             confidential net rates.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <a href="#partner-form" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#a87418] hover:bg-[#8f6213] px-7 py-4 text-lg font-black text-white shadow-lg transition">
+            <a href="#partner-form" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#a87418] hover:bg-[#8f6213] px-7 py-4 text-[19px] font-black text-white shadow-lg transition">
               <IconHandshake className="h-6 w-6" /> Become a partner
             </a>
             <a href="https://wa.me/9779851218358?text=Hello%2C%20I%27d%20like%20to%20discuss%20a%20B2B%20partnership." target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/70 hover:bg-white hover:text-[#1a2e1f] px-7 py-4 text-lg font-bold text-white transition">
@@ -532,7 +532,7 @@ export default async function B2BPartnersPage() {
             </p>
             <B2BPartnerForm />
           </div>
-          <aside className="lg:sticky lg:top-28 flex flex-col gap-5">
+          <div className="lg:sticky lg:top-28 flex flex-col gap-5">
             <div className="relative aspect-[4/5] rounded-3xl overflow-hidden">
               <Image src={IMG.trekker} alt="Trekker on the Khopra Danda trail with Himalayan peaks behind" fill sizes="(max-width: 1024px) 100vw, 360px" className="object-cover" />
             </div>
@@ -542,7 +542,7 @@ export default async function B2BPartnersPage() {
               <a href="https://wa.me/9779851218358" target="_blank" rel="noopener noreferrer" className="mt-4 block font-black text-[#F5A623] text-lg">+977-9851218358</a>
               <a href="mailto:info@natureheaventreks.com" className="mt-1 block font-semibold underline underline-offset-4">info@natureheaventreks.com</a>
             </div>
-          </aside>
+          </div>
         </div>
       </section>
 
