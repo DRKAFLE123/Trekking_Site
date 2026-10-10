@@ -63,7 +63,7 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
             onClick={expandAll}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 hover:border-[#2E7D32] hover:text-[#2E7D32] text-charcoal/80 rounded-lg text-xs font-bold font-sans transition shadow-sm active:scale-95"
           >
-            <FaExpandArrowsAlt className="text-[#c8922a]" />
+            <FaExpandArrowsAlt className="text-[#8f6618]" />
             Expand All
           </button>
           <button
@@ -93,7 +93,7 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
                 className={`bg-white border rounded-xl overflow-hidden transition-all duration-300 ${
                   isOpen
                     ? "border-[#2E7D32] shadow-md ring-1 ring-[#2E7D32]/10"
-                    : "border-gray-100 hover:border-[#c8922a] hover:shadow-sm"
+                    : "border-gray-100 hover:border-[#8f6618] hover:shadow-sm"
                 }`}
               >
                 <button
@@ -121,8 +121,8 @@ export default function TermsAccordion({ sections }: TermsAccordionProps) {
                         prose-headings:font-serif prose-headings:text-[#1a2e1f]
                         prose-p:text-[#4A4A4A] prose-p:leading-relaxed prose-p:mb-4
                         prose-strong:text-[#1a2e1f]
-                        prose-a:text-[#c8922a] prose-a:font-semibold hover:prose-a:text-[#b07820]
-                        prose-li:text-[#4A4A4A] prose-li:marker:text-[#c8922a]
+                        prose-a:text-[#8f6618] prose-a:font-semibold hover:prose-a:text-[#b07820]
+                        prose-li:text-[#4A4A4A] prose-li:marker:text-[#8f6618]
                         prose-img:rounded-xl"
                     >
                       {section.contentElement}

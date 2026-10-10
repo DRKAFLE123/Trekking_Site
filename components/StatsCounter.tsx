@@ -74,13 +74,13 @@ export default function StatsCounter({ items, transparent = false }: { items: St
       className={`${
         transparent
           ? "bg-black/30 backdrop-blur-md border-t border-white/10 py-5"
-          : "bg-[#1a3c2e] border-y border-[#c8922a]/20 py-8"
+          : "bg-[#1a3c2e] border-y border-[#8f6618]/20 py-8"
       } text-white relative overflow-hidden w-full`}
     >
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/10">
         {items.map((it) => (
           <div key={it.label} className="flex flex-col gap-1">
-            <span className="text-3xl md:text-5xl font-black text-[#c8922a] tracking-tight min-h-[36px] md:min-h-[48px] flex items-center justify-center">
+            <span className="text-3xl md:text-5xl font-black text-[#8f6618] tracking-tight min-h-[36px] md:min-h-[48px] flex items-center justify-center">
               <Counter value={it.value} started={started} />
             </span>
             <span className="text-xs md:text-sm text-white/80 font-bold tracking-wider uppercase">{it.label}</span>

@@ -398,7 +398,7 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
             <div className="h-1 w-full bg-secondary" />
             <div className="px-6 py-7 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
               <div className="flex-1 min-w-0">
-                <p className="m-0 text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: '#c8922a' }}>Plan your trek</p>
+                <p className="m-0 text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: '#8f6618' }}>Plan your trek</p>
                 <p className="m-0 mt-1.5 font-serif font-black text-xl md:text-2xl leading-tight" style={{ color: '#ffffff' }}>
                   {headline || 'Want to plan your holiday in Nepal?'}
                 </p>

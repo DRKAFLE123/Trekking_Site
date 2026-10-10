@@ -9,7 +9,7 @@ export const contentType = "image/png";
 
 const PRIMARY = "#1a3c2e";
 const PRIMARY_LIGHT = "#2a5a44";
-const SECONDARY = "#c8922a";
+const SECONDARY = "#8f6618";
 const BG_OFFWHITE = "#f8f5f0";
 
 export default async function OpengraphImage() {

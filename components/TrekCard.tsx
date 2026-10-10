@@ -88,7 +88,7 @@ export default function TrekCard({ trek }: TrekCardProps) {
 
         {/* Best Seller Badge */}
         {isBestSeller && (
-          <span className="absolute top-3 right-3 bg-amber-500 text-white font-sans font-bold text-[10px] tracking-wider uppercase px-2.5 py-1.5 rounded-sm shadow-md">
+          <span className="absolute top-3 right-3 bg-secondary text-white font-sans font-bold text-[10px] tracking-wider uppercase px-2.5 py-1.5 rounded-sm shadow-md">
             BEST SELLER
           </span>
         )}

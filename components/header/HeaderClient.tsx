@@ -12,7 +12,7 @@ import type { NavData, MenuItem, Rep } from "./types";
 // everywhere, Escape and outside-click close.
 
 const BRAND = "#1a3c2e";
-const AMBER = "#c8922a";
+const AMBER = "#8f6618";
 
 const TZ_TO_COUNTRY: [RegExp, string][] = [
   [/^Asia\/Kathmandu/, "np"], [/^Europe\/(London|Dublin|Belfast)/, "gb"],
@@ -259,7 +259,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 ${barH} transition-[height] duration-200`}>
 
           {/* Brand */}
-          <Link prefetch={false} href="/" className="flex items-center gap-2.5 shrink-0 min-w-0 rounded-[5px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c8922a]" aria-label="Nature Heaven Treks & Expedition — home">
+          <Link prefetch={false} href="/" className="flex items-center gap-2.5 shrink-0 min-w-0 rounded-[5px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f6618]" aria-label="Nature Heaven Treks & Expedition — home">
             <img src="/logo/emblem.svg" alt="" width={74} height={44} className="shrink-0 transition-all duration-200 h-[38px] sm:h-[44px] w-auto" style={compact ? { height: 34 } : undefined} />
             {/* Wordmark hides on the narrowest phones so the icons on the right keep room */}
             <span className="hidden min-[400px]:flex flex-col leading-none">
@@ -274,7 +274,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
               {data.menu.map((m, i) => {
                 const key = keyFor(m, i);
                 const active = isActive(m);
-                const itemCls = `flex items-center gap-1.5 h-full px-3 text-[14px] font-semibold whitespace-nowrap border-b-2 transition-colors ${active || open === key ? "text-[#1a3c2e] border-[#c8922a]" : "text-[#3b463f] border-transparent hover:text-[#1a3c2e]"}`;
+                const itemCls = `flex items-center gap-1.5 h-full px-3 text-[14px] font-semibold whitespace-nowrap border-b-2 transition-colors ${active || open === key ? "text-[#1a3c2e] border-[#8f6618]" : "text-[#3b463f] border-transparent hover:text-[#1a3c2e]"}`;
                 if (m.kind === "link") {
                   return <li key={key} className="flex"><Link prefetch={false} href={m.href || "/"} className={itemCls}>{m.title}</Link></li>;
                 }
@@ -356,7 +356,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
           <label htmlFor="hdr-search" className="block text-center text-white/70 text-[13px] font-semibold uppercase tracking-[0.18em] mb-4">Find your trek</label>
           <div className="relative">
             <input id="hdr-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Everest, Annapurna, Manaslu…"
-              className="w-full h-14 bg-white rounded-[5px] pl-5 pr-14 text-[17px] text-[#1a3c2e] placeholder:text-[#9aa5a0] focus:outline-none focus:ring-2 focus:ring-[#c8922a]" />
+              className="w-full h-14 bg-white rounded-[5px] pl-5 pr-14 text-[17px] text-[#1a3c2e] placeholder:text-[#9aa5a0] focus:outline-none focus:ring-2 focus:ring-[#8f6618]" />
             <button type="submit" aria-label="Search" className="absolute right-2 top-2 h-10 w-10 rounded-[5px] flex items-center justify-center text-white" style={{ backgroundColor: BRAND }}><FaSearch className="h-4 w-4" /></button>
           </div>
         </form>

@@ -68,7 +68,7 @@ export default function VideoGalleryPageClient({ initialVideos }: VideoGalleryPa
           }}
         />
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <span className="inline-flex items-center gap-2 bg-[#c8922a]/20 text-[#c8922a] border border-[#c8922a]/30 text-xs font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full mb-5">
+          <span className="inline-flex items-center gap-2 bg-[#8f6618]/20 text-[#8f6618] border border-[#8f6618]/30 text-xs font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full mb-5">
             <FaVideo className="text-[10px]" /> Video Hub
           </span>
           <h1 className="font-serif text-4xl md:text-6xl font-black text-white leading-tight mb-5">
@@ -112,7 +112,7 @@ export default function VideoGalleryPageClient({ initialVideos }: VideoGalleryPa
               {/* Video Info Detail */}
               <div className="p-5 flex flex-col justify-between grow">
                 <div>
-                  <span className="text-[10px] text-[#c8922a] font-bold tracking-wider uppercase mb-1.5 block">
+                  <span className="text-[10px] text-[#8f6618] font-bold tracking-wider uppercase mb-1.5 block">
                     {vid.trekName}
                   </span>
                   <h3 className="font-serif font-bold text-[#1a2e1f] text-sm md:text-base leading-snug line-clamp-2">
@@ -149,7 +149,7 @@ export default function VideoGalleryPageClient({ initialVideos }: VideoGalleryPa
             <button
               onClick={loadMore}
               disabled={isLoading}
-              className="bg-[#1a2e1f] text-white hover:bg-[#c8922a] font-bold px-8 py-4 rounded-xl text-sm transition shadow-lg hover:scale-105 active:scale-95 duration-200 cursor-pointer inline-flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="bg-[#1a2e1f] text-white hover:bg-[#8f6618] font-bold px-8 py-4 rounded-xl text-sm transition shadow-lg hover:scale-105 active:scale-95 duration-200 cursor-pointer inline-flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
@@ -166,7 +166,7 @@ export default function VideoGalleryPageClient({ initialVideos }: VideoGalleryPa
         {/* No Videos Found Fallback */}
         {initialVideos.length === 0 && (
           <div className="text-center py-20 text-charcoal/50 bg-white border border-secondary/10 rounded-2xl">
-            <FaVideo className="text-5xl mx-auto mb-4 opacity-20 text-[#c8922a]" />
+            <FaVideo className="text-5xl mx-auto mb-4 opacity-20 text-[#8f6618]" />
             <p className="font-semibold">No trekking videos found.</p>
             <p className="text-xs text-charcoal/40 mt-1">Configure your YouTube highlight videos in the CMS panel settings.</p>
           </div>
@@ -188,7 +188,7 @@ export default function VideoGalleryPageClient({ initialVideos }: VideoGalleryPa
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto shrink-0 z-10">
             <Link
               href="/contact-us"
-              className="w-full sm:w-auto text-center bg-[#c8922a] hover:bg-[#b07820] text-white font-bold py-3.5 px-8 rounded-xl text-sm transition shadow-lg hover:scale-105 active:scale-95"
+              className="w-full sm:w-auto text-center bg-[#8f6618] hover:bg-[#b07820] text-white font-bold py-3.5 px-8 rounded-xl text-sm transition shadow-lg hover:scale-105 active:scale-95"
             >
               Inquire Custom Trek
             </Link>

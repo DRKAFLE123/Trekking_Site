@@ -247,7 +247,7 @@ export default function B2BPartnerForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-[#a87418] hover:bg-[#8f6213] px-8 py-4 text-[19px] font-black uppercase tracking-wide text-white shadow-lg transition disabled:opacity-60 cursor-pointer"
+          className="inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-[#8f6618] hover:bg-[#74520f] px-8 py-4 text-[19px] font-black uppercase tracking-wide text-white shadow-lg transition disabled:opacity-60 cursor-pointer"
         >
           {status === "sending" ? (
             <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Sending…</>

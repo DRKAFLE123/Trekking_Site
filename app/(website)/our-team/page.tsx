@@ -199,7 +199,7 @@ export default async function TeamPage() {
             <h2 className="text-2xl md:text-[28px] font-bold text-[#1a2e1f] text-center mb-2 font-serif leading-snug">
               {deptName}
             </h2>
-            <div className="h-0.5 w-12 bg-[#c8922a] mx-auto mb-8 md:mb-10 rounded-full" />
+            <div className="h-0.5 w-12 bg-[#8f6618] mx-auto mb-8 md:mb-10 rounded-full" />
 
             {/* 3-Column Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -268,7 +268,7 @@ export default async function TeamPage() {
                           </p>
                         )}
                         {/* Social Links */}
-                        <div className="flex gap-3 text-[#c8922a]">
+                        <div className="flex gap-3 text-[#8f6618]">
                           {member.socialLinks?.facebook && (
                             <a
                               href={member.socialLinks.facebook}
@@ -329,7 +329,7 @@ export default async function TeamPage() {
         <div className="max-w-[1110px] mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
             <div className="flex flex-col items-center gap-2">
-              <FaUsers className="text-[#c8922a] text-3xl" />
+              <FaUsers className="text-[#8f6618] text-3xl" />
               <span className="text-3xl md:text-4xl font-bold text-white font-serif">
                 {team.length}+
               </span>
@@ -338,7 +338,7 @@ export default async function TeamPage() {
               </span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <FaMountain className="text-[#c8922a] text-3xl" />
+              <FaMountain className="text-[#8f6618] text-3xl" />
               <span className="text-3xl md:text-4xl font-bold text-white font-serif">
                 500+
               </span>
@@ -347,7 +347,7 @@ export default async function TeamPage() {
               </span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <FaAward className="text-[#c8922a] text-3xl" />
+              <FaAward className="text-[#8f6618] text-3xl" />
               <span className="text-3xl md:text-4xl font-bold text-white font-serif">
                 100%
               </span>
@@ -356,7 +356,7 @@ export default async function TeamPage() {
               </span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <FaCompass className="text-[#c8922a] text-3xl" />
+              <FaCompass className="text-[#8f6618] text-3xl" />
               <span className="text-3xl md:text-4xl font-bold text-white font-serif">
                 15+
               </span>
@@ -373,7 +373,7 @@ export default async function TeamPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 flex flex-col items-center gap-5">
             <div className="w-16 h-16 bg-[#1a2e1f]/5 rounded-full flex items-center justify-center">
-              <FaAward className="text-3xl text-[#c8922a]" />
+              <FaAward className="text-3xl text-[#8f6618]" />
             </div>
             <h3 className="font-serif font-bold text-[#1a2e1f] text-xl md:text-2xl">
               Safety-First Mountain Certifications
