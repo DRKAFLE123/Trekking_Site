@@ -1,12 +1,14 @@
-import type { NextConfig } from "next";
+// Plain JS on purpose: the host's glibc is too old for Next's native SWC, and
+// Next 16 can't transpile a TypeScript config on the WebAssembly fallback.
 import { withPayload } from "@payloadcms/next/withPayload";
 // Dead URLs Google still holds for this domain (the WordPress site that lived
 // here before, plus seven /company/* pages that duplicated root pages). Each is
 // mapped to its closest live equivalent; order matters — specific rules sit
 // above the /st_tour/:rest* style fallbacks. Source: Search Console, Sep 2026.
-import legacyRedirects from "./legacy-redirects.json";
+import legacyRedirects from "./legacy-redirects.json" with { type: "json" };
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     loaderFile: "./lib/cloudinary-loader.ts",
     remotePatterns: [
