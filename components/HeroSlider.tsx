@@ -83,7 +83,7 @@ export default function HeroSlider({
                 alt=""
                 fill
                 sizes="100vw"
-                quality={70}
+                quality={55}
                 preload={i === 0}
                 fetchPriority={i === 0 ? "high" : "low"}
                 loading={i === 0 ? "eager" : "lazy"}

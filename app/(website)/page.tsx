@@ -32,7 +32,6 @@ import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 import UpcomingDepartures from "@/components/UpcomingDepartures";
 import FAQAccordion from "@/components/FAQAccordion";
 import TestimonialMarquee from "@/components/TestimonialMarquee";
-import { FadeInUp } from "@/components/FramerWrap";
 
 export const revalidate = 3600; // CMS edits purge this page immediately (payload/hooks/revalidate.ts); this is only the fallback
 
@@ -540,7 +539,7 @@ export default async function HomePage() {
       <section className="py-16 md:py-24 px-4 md:px-6 bg-white border-y border-secondary/15">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Image Card */}
-          <FadeInUp className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl border-4 border-secondary/10">
+          <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl border-4 border-secondary/10">
             <Image
               src={whyImageUrl}
               alt={whyBadgeTitle}
@@ -556,7 +555,7 @@ export default async function HomePage() {
                 <p className="hidden md:block text-xs text-bgOffWhite/80 mt-1">{whyBadgeDescription}</p>
               </div>
             </div>
-          </FadeInUp>
+          </div>
 
           {/* Right: Feature List */}
           <div className="flex flex-col gap-8">

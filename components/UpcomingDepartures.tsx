@@ -12,7 +12,9 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import EnquiryModal from "./EnquiryModal";
+import dynamic from "next/dynamic";
+// Loaded on first click: keeps the modal (and framer-motion) out of the homepage bundle.
+const EnquiryModal = dynamic(() => import("./EnquiryModal"), { ssr: false });
 
 interface Departure {
   id: string | number;

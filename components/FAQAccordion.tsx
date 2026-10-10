@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { Faq } from "@/types";
 import { renderLexical } from "@/lib/lexical-renderer";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface FAQAccordionProps {
   faqs: Faq[];
@@ -109,6 +108,9 @@ export default function FAQAccordion({ faqs, columns = 1 }: FAQAccordionProps) {
           >
             {/* Header / Button */}
             <button
+              id={`faq-btn-${idx}`}
+              aria-expanded={isOpen}
+              aria-controls={`faq-panel-${idx}`}
               onClick={() => toggleAccordion(idx)}
               className="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none transition group"
             >
@@ -124,22 +126,21 @@ export default function FAQAccordion({ faqs, columns = 1 }: FAQAccordionProps) {
               </span>
             </button>
 
-            {/* Answer Content with Framer Motion height animation */}
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="overflow-hidden border-t border-secondary/10"
-                >
-                  <div className="px-6 py-4 bg-bgOffWhite/30">
-                    {renderLexical(faq.answer)}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Answer: always in the HTML (crawlable), collapsed with a CSS grid-rows transition */}
+            <div
+              id={`faq-panel-${idx}`}
+              role="region"
+              aria-labelledby={`faq-btn-${idx}`}
+              aria-hidden={!isOpen}
+              inert={!isOpen || undefined}
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out motion-reduce:transition-none ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+            >
+              <div className="overflow-hidden">
+                <div className="px-6 py-4 bg-bgOffWhite/30 border-t border-secondary/10">
+                  {renderLexical(faq.answer)}
+                </div>
+              </div>
+            </div>
           </div>
         );
       })}

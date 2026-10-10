@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 
 export type StatItem = { value: string; label: string };
 
@@ -34,17 +33,10 @@ function Counter({ value, started }: { value: string; started: boolean }) {
 
   if (!parsed) {
     // Non-numeric value (e.g. "No"): pop in once visible.
-    return started ? (
-      <motion.span
-        initial={{ scale: 0.3, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 100, damping: 10 }}
-        className="font-serif inline-block"
-      >
+    return (
+      <span className={`font-serif inline-block transition duration-500 ease-out motion-reduce:transition-none ${started ? "opacity-100 scale-100" : "opacity-0 scale-50"}`}>
         {value}
-      </motion.span>
-    ) : (
-      <span className="opacity-0 font-serif">{value}</span>
+      </span>
     );
   }
 
