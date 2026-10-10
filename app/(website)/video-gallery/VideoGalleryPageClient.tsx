@@ -61,7 +61,7 @@ export default function VideoGalleryPageClient({ initialVideos }: VideoGalleryPa
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=1600')",
+              "url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&q=60&w=1400')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             opacity: 0.25,

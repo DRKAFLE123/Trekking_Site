@@ -108,7 +108,7 @@ export default async function TravelInsurancePage() {
         className="relative w-full bg-[#1a2e1f] py-24 md:py-32 overflow-hidden"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1600508774634-4e11d34730e2?q=80&w=1600')",
+            "url('https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=60&w=1400')",
           backgroundSize: "cover",
           backgroundPosition: "center 40%",
         }}

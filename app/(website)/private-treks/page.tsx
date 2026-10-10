@@ -113,7 +113,7 @@ export default async function PrivateTreksPage() {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600')",
+              "url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&q=60&w=1400')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             opacity: 0.25,

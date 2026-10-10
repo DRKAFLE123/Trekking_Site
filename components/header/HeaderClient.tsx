@@ -128,7 +128,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             <ul className="mb-4">
               {data.countries.map((c) => (
                 <li key={c.slug}>
-                  <Link href={`/countries/${c.slug}`} className={`${linkCls} justify-between font-semibold text-[#1a3c2e]`} onClick={() => setOpen(null)}>
+                  <Link prefetch={false} href={`/countries/${c.slug}`} className={`${linkCls} justify-between font-semibold text-[#1a3c2e]`} onClick={() => setOpen(null)}>
                     <span className="flex items-center gap-2"><Flag code={c.slug === "nepal" ? "np" : c.slug === "tibet" ? "cn" : "bt"} />{c.name}</span>
                     {c.count > 3 && <span className="text-[12px] text-[#7c8a82] font-medium">{c.count} trips</span>}
                   </Link>
@@ -139,7 +139,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             <ul className="max-h-[360px] overflow-y-auto">
               {data.regions.map((r) => (
                 <li key={r.slug}>
-                  <Link
+                  <Link prefetch={false}
                     href={`/regions/${r.slug}`}
                     onMouseEnter={() => setRegion(r.slug)}
                     onFocus={() => setRegion(r.slug)}
@@ -158,17 +158,17 @@ export default function HeaderClient({ data }: { data: NavData }) {
               <div key={r.slug} className={r.slug === activeRegion?.slug ? "block" : "hidden"}>
                 <div className="flex items-baseline justify-between border-b border-black/[0.06] pb-2 mb-3 px-3">
                   <span className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: AMBER }}>{r.name}</span>
-                  <Link href={`/regions/${r.slug}`} className="text-[13px] font-semibold hover:underline" style={{ color: BRAND }} onClick={() => setOpen(null)}>View all {r.name} →</Link>
+                  <Link prefetch={false} href={`/regions/${r.slug}`} className="text-[13px] font-semibold hover:underline" style={{ color: BRAND }} onClick={() => setOpen(null)}>View all {r.name} →</Link>
                 </div>
                 <ul className="grid grid-cols-2 gap-x-4 max-h-[400px] overflow-y-auto">
                   {r.treks.map((t) => (
-                    <li key={t.slug}><Link href={`/trips/${t.slug}`} className={linkCls} onClick={() => setOpen(null)}>{t.title}</Link></li>
+                    <li key={t.slug}><Link prefetch={false} href={`/trips/${t.slug}`} className={linkCls} onClick={() => setOpen(null)}>{t.title}</Link></li>
                   ))}
                 </ul>
               </div>
             ))}
             <div className="mt-4 pt-3 border-t border-black/[0.06] px-3">
-              <Link href="/trips" className="text-[13px] font-semibold hover:underline" style={{ color: BRAND }} onClick={() => setOpen(null)}>Browse all trips →</Link>
+              <Link prefetch={false} href="/trips" className="text-[13px] font-semibold hover:underline" style={{ color: BRAND }} onClick={() => setOpen(null)}>Browse all trips →</Link>
             </div>
           </div>
         </div>
@@ -184,7 +184,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             <div key={col.title}>
               <div className="text-[11px] font-bold uppercase tracking-[0.14em] border-b border-black/[0.06] pb-2 mb-2 px-3" style={{ color: AMBER }}>{col.title}</div>
               <ul>{col.items.map((i) => (
-                <li key={i.slug}><Link href={`/travel-info/${i.slug}`} className={linkCls} onClick={() => setOpen(null)}>{i.title}</Link></li>
+                <li key={i.slug}><Link prefetch={false} href={`/travel-info/${i.slug}`} className={linkCls} onClick={() => setOpen(null)}>{i.title}</Link></li>
               ))}</ul>
             </div>
           ))}
@@ -197,7 +197,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
     return (
       <div className={`${panelBase} ${show(k)} left-0 w-[260px] p-2`} role="region">
         <ul>{items.map((i) => (
-          <li key={i.href}><Link href={i.href} className={`${linkCls} ${pathname === i.href ? "bg-[#f2f6f3] text-[#1a3c2e] font-semibold" : ""}`} onClick={() => setOpen(null)}>{i.label}</Link></li>
+          <li key={i.href}><Link prefetch={false} href={i.href} className={`${linkCls} ${pathname === i.href ? "bg-[#f2f6f3] text-[#1a3c2e] font-semibold" : ""}`} onClick={() => setOpen(null)}>{i.label}</Link></li>
         ))}</ul>
       </div>
     );
@@ -210,7 +210,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
         <ul className="max-h-[420px] overflow-y-auto">
           {data.topTreks.map((t) => (
             <li key={t.slug}>
-              <Link href={`/trips/${t.slug}`} className={`${linkCls} flex-col items-start py-2`} onClick={() => setOpen(null)}>
+              <Link prefetch={false} href={`/trips/${t.slug}`} className={`${linkCls} flex-col items-start py-2`} onClick={() => setOpen(null)}>
                 <span className="font-semibold text-[#1a3c2e] leading-snug">{t.title}</span>
                 <span className="text-[12px] text-[#7c8a82]">
                   {t.duration ? `${t.duration} days` : ""}{t.difficulty ? ` · ${t.difficulty}` : ""}{t.price ? ` · from US$${(t.discountedPrice || t.price).toLocaleString()}` : ""}
@@ -249,7 +249,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             <FaBullhorn className="h-3.5 w-3.5 shrink-0" style={{ color: AMBER }} aria-hidden="true" />
             <span className="text-center font-medium">{data.promo.text}</span>
             {data.promo.linkHref && data.promo.linkLabel && (
-              <Link href={data.promo.linkHref} className="shrink-0 rounded-[5px] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white hover:brightness-110" style={{ backgroundColor: AMBER }}>{data.promo.linkLabel}</Link>
+              <Link prefetch={false} href={data.promo.linkHref} className="shrink-0 rounded-[5px] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white hover:brightness-110" style={{ backgroundColor: AMBER }}>{data.promo.linkLabel}</Link>
             )}
           </div>
         </div>
@@ -259,7 +259,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 ${barH} transition-[height] duration-200`}>
 
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 min-w-0 rounded-[5px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c8922a]" aria-label="Nature Heaven Treks & Expedition — home">
+          <Link prefetch={false} href="/" className="flex items-center gap-2.5 shrink-0 min-w-0 rounded-[5px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c8922a]" aria-label="Nature Heaven Treks & Expedition — home">
             <img src="/logo/emblem.svg" alt="" width={74} height={44} className="shrink-0 transition-all duration-200 h-[38px] sm:h-[44px] w-auto" style={compact ? { height: 34 } : undefined} />
             {/* Wordmark hides on the narrowest phones so the icons on the right keep room */}
             <span className="hidden min-[400px]:flex flex-col leading-none">
@@ -276,7 +276,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
                 const active = isActive(m);
                 const itemCls = `flex items-center gap-1.5 h-full px-3 text-[14px] font-semibold whitespace-nowrap border-b-2 transition-colors ${active || open === key ? "text-[#1a3c2e] border-[#c8922a]" : "text-[#3b463f] border-transparent hover:text-[#1a3c2e]"}`;
                 if (m.kind === "link") {
-                  return <li key={key} className="flex"><Link href={m.href || "/"} className={itemCls}>{m.title}</Link></li>;
+                  return <li key={key} className="flex"><Link prefetch={false} href={m.href || "/"} className={itemCls}>{m.title}</Link></li>;
                 }
                 const wide = m.kind === "treks";
                 return (
@@ -335,7 +335,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
               </div>
             </div>
 
-            <Link href="/plan-a-trip" className="hidden sm:flex items-center gap-2 h-11 px-4 rounded-[5px] text-[13px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#153226]" style={{ backgroundColor: BRAND }}>
+            <Link prefetch={false} href="/plan-a-trip" className="hidden sm:flex items-center gap-2 h-11 px-4 rounded-[5px] text-[13px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#153226]" style={{ backgroundColor: BRAND }}>
               <FaPaperPlane className="h-3.5 w-3.5" /> Plan Your Trip
             </Link>
 
@@ -374,7 +374,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             <ul>
               {data.menu.map((m, i) => {
                 const key = keyFor(m, i);
-                if (m.kind === "link") return <li key={key}><Link href={m.href || "/"} className="flex items-center min-h-[48px] px-3 text-[15px] font-semibold text-[#1a3c2e] rounded-[5px] hover:bg-[#f2f6f3]">{m.title}</Link></li>;
+                if (m.kind === "link") return <li key={key}><Link prefetch={false} href={m.href || "/"} className="flex items-center min-h-[48px] px-3 text-[15px] font-semibold text-[#1a3c2e] rounded-[5px] hover:bg-[#f2f6f3]">{m.title}</Link></li>;
                 const isOpen = drawerSection === key;
                 let rows: { label: string; href: string }[] = [];
                 if (m.kind === "treks") rows = [...data.countries.map((c) => ({ label: c.name, href: `/countries/${c.slug}` })), ...data.regions.map((r) => ({ label: r.name, href: `/regions/${r.slug}` })), { label: "All trips", href: "/trips" }];
@@ -389,7 +389,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
                       {m.title}<FaChevronDown className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`} style={{ color: AMBER }} />
                     </button>
                     <ul className={`${isOpen ? "block" : "hidden"} pl-3 pb-2`}>
-                      {rows.map((r) => <li key={r.href}><Link href={r.href} className="flex items-center min-h-[44px] px-3 text-[14px] text-[#3b463f] rounded-[5px] hover:bg-[#f2f6f3]">{r.label}</Link></li>)}
+                      {rows.map((r) => <li key={r.href}><Link prefetch={false} href={r.href} className="flex items-center min-h-[44px] px-3 text-[14px] text-[#3b463f] rounded-[5px] hover:bg-[#f2f6f3]">{r.label}</Link></li>)}
                     </ul>
                   </li>
                 );
@@ -415,7 +415,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             </div>
           </div>
           <div className="p-4 border-t border-black/[0.06]">
-            <Link href="/plan-a-trip" className="flex items-center justify-center gap-2 h-12 rounded-[5px] text-white text-[14px] font-bold uppercase tracking-wide" style={{ backgroundColor: BRAND }}><FaPaperPlane className="h-4 w-4" /> Plan Your Trip</Link>
+            <Link prefetch={false} href="/plan-a-trip" className="flex items-center justify-center gap-2 h-12 rounded-[5px] text-white text-[14px] font-bold uppercase tracking-wide" style={{ backgroundColor: BRAND }}><FaPaperPlane className="h-4 w-4" /> Plan Your Trip</Link>
           </div>
         </div>
       </div>

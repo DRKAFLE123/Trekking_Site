@@ -8,6 +8,7 @@ import { FaArrowLeft, FaHiking } from "react-icons/fa";
 import { Region, Trek } from "@/types";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
+import { TREK_CARD_SELECT } from "@/lib/payload-select";
 import TrekCard from "@/components/TrekCard";
 import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
 
@@ -90,6 +91,7 @@ export default async function RegionDetailPage({ params }: RegionDetailPageProps
         where: { region: { equals: (region as any).id } },
         depth: 1,
         limit: 100,
+        select: TREK_CARD_SELECT,
       });
       treks = trekRes.docs as unknown as Trek[];
     }

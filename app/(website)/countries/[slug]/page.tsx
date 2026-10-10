@@ -55,7 +55,7 @@ const COUNTRIES: Record<string, CountryData> = {
     name: "Nepal",
     headline: "The Ultimate Trekking Playground",
     description: "Home to 8 of the world's 14 highest peaks, including Mt. Everest. Nepal offers legendary high-altitude trekking, rich biodiversity, and deep cultural experiences.",
-    heroImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600",
+    heroImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&q=60&w=1400",
     highlights: [
       "Trek to legendary Everest Base Camp (5,364m)",
       "Annapurna Circuit & Sanctuary high-altitude vistas",
@@ -68,7 +68,7 @@ const COUNTRIES: Record<string, CountryData> = {
     name: "Tibet",
     headline: "The Roof of the World",
     description: "Explore the ancient monasteries of Lhasa, follow sacred pilgrimage paths (Koras), and stand in awe of Mt. Everest's dramatic North Face.",
-    heroImage: "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1600",
+    heroImage: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&q=60&w=1400",
     highlights: [
       "Potala Palace & Jokhang Temple spiritual tours in Lhasa",
       "Pilgrimage hikes around the legendary Mt. Kailash (Kora)",
@@ -81,7 +81,7 @@ const COUNTRIES: Record<string, CountryData> = {
     name: "Bhutan",
     headline: "The Land of the Thunder Dragon",
     description: "Experience the last remaining Himalayan Buddhist Kingdom. Explore ancient cliffside monasteries, lush valleys, and traditional fortress dzongs.",
-    heroImage: "https://images.unsplash.com/photo-1578593139888-39622e2077ef?q=80&w=1600",
+    heroImage: "https://images.unsplash.com/photo-1578593139888-39622e2077ef?auto=format&fit=crop&q=60&w=1400",
     highlights: [
       "Hike to the legendary Tigers Nest (Paro Taktsang) Monastery",
       "Explore Punakha Dzong, the most beautiful fortress in Bhutan",

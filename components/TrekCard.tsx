@@ -110,7 +110,7 @@ export default function TrekCard({ trek }: TrekCardProps) {
 
           {/* Title */}
           <h3 className="font-serif text-lg font-bold text-primary group-hover:text-secondary transition duration-300 leading-snug line-clamp-2">
-            <Link href={`/trips/${slug}`}>{title}</Link>
+            <Link prefetch={false} href={`/trips/${slug}`}>{title}</Link>
           </h3>
 
           {/* Quick Specifications */}
@@ -145,7 +145,7 @@ export default function TrekCard({ trek }: TrekCardProps) {
             </div>
           </div>
 
-          <Link
+          <Link prefetch={false}
             href={`/trips/${slug}`}
             className="bg-primary hover:bg-secondary hover:text-white text-bgOffWhite text-xs font-bold px-4 py-2.5 rounded-xl border border-primary hover:border-secondary transition-all duration-300"
           >

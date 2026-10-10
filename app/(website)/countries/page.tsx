@@ -57,7 +57,7 @@ const DEFAULT_COUNTRIES: CountryCard[] = [
     description:
       "Ancient monasteries of Lhasa, sacred pilgrimage Kora paths, and the dramatic North Face of Everest. A high-altitude plateau steeped in Buddhist tradition.",
     imageUrl:
-      "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1600",
+      "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&q=60&w=1400",
   },
   {
     name: "Bhutan",
@@ -66,7 +66,7 @@ const DEFAULT_COUNTRIES: CountryCard[] = [
     description:
       "Pristine valleys, fortress monasteries (dzongs), and the sacred Tiger's Nest above Paro. The world's only carbon-negative country, fiercely protective of its culture.",
     imageUrl:
-      "https://images.unsplash.com/photo-1578593139888-39622e2077ef?q=80&w=1600",
+      "https://images.unsplash.com/photo-1578593139888-39622e2077ef?auto=format&fit=crop&q=60&w=1400",
   },
 ];
 

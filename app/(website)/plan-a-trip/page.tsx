@@ -37,7 +37,7 @@ export default async function PlanATripPage() {
       <section className="relative w-full h-[30vh] min-h-[220px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600"
+            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=60&w=1400"
             alt="Alpine Peaks Cover"
             fill
             priority

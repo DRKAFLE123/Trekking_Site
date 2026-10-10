@@ -72,7 +72,7 @@ export default async function VisaInfoPage() {
         className="relative w-full bg-[#1a2e1f] py-24 md:py-32 overflow-hidden"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600')",
+            "url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&q=60&w=1400')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
