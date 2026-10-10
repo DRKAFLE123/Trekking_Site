@@ -4,6 +4,9 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import BookingStepper from "@/components/BookingStepper";
 
+// One booking form per trek: useful to visitors, not a search result. Keep it out of the index.
+export const metadata = { title: "Book Your Trek", robots: { index: false, follow: true } };
+
 interface BookingPageProps {
   params: Promise<{ trekSlug: string }>;
 }
@@ -36,8 +39,8 @@ export default async function BookingPage({ params }: BookingPageProps) {
       ];
 
   return (
-    <div className="bg-[#F8F7F4] min-h-screen py-16 font-sans text-[#3D3D3D]">
-      <div className="max-w-4xl mx-auto px-6">
+    <div className="bg-[#F8F7F4] min-h-screen py-10 md:py-16 font-sans text-[#3D3D3D]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <BookingStepper
           trek={{
             id: trek.id,

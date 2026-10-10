@@ -86,7 +86,8 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   // ----------------------------------------------------
   // STATES
   // ----------------------------------------------------
-  const [currentStep, setCurrentStep] = useState(1);
+  // Calendar starts collapsed when the trek page already handed us a date.
+  const [showCalendar, setShowCalendar] = useState(!initialStartDate);
   const [guestsCount, setGuestsCount] = useState(initialGuests);
   const [startDate, setStartDate] = useState(initialStartDate);
   const [endDate, setEndDate] = useState(initialEndDate);
@@ -149,6 +150,8 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [bookingResponse, setBookingResponse] = useState<any>(null);
   const [stepError, setStepError] = useState<string | null>(null);
+  // Which section the error belongs to, so it shows next to what needs fixing.
+  const [errorSection, setErrorSection] = useState<"trip" | "contact" | "payment" | null>(null);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   // Ref so we can RESET the widget after a failed submit. reCAPTCHA tokens
   // are single-use and expire after ~2 minutes; without a reset, any retry
@@ -272,34 +275,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   // ----------------------------------------------------
   // CALENDAR LOGIC HELPERS
   // ----------------------------------------------------
-  const findDepartureForDate = (date: Date) => {
-    if (!departures || departures.length === 0) return null;
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${y}-${m}-${d}`;
-    
-    return departures.find((dep: any) => {
-      const depDate = new Date(dep.startDate);
-      const depY = depDate.getFullYear();
-      const depM = String(depDate.getMonth() + 1).padStart(2, '0');
-      const depD = String(depDate.getDate()).padStart(2, '0');
-      const depStr = `${depY}-${depM}-${depD}`;
-      return dateStr === depStr;
-    });
-  };
-
-  const selectDepartureFromCalendar = (dep: any) => {
-    setSelectedDeparture(dep);
-    setStartDate(dep.startDate);
-    setEndDate(dep.endDate);
-  };
-
-  const selectCustomDate = (dateStr: string) => {
-    setSelectedDeparture(null);
-    setStartDate(dateStr);
-  };
-
   // ----------------------------------------------------
   // FIXED-DURATION SCHEDULE CALENDAR (matches trek detail planner)
   // ----------------------------------------------------
@@ -410,86 +385,28 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
   const paymentDueNow = paymentType === "pay_later" ? 0 : (paymentType === "advance_10" ? advanceAmount : totalPrice);
 
-  // Form validations for each stepper with descriptive error messaging
-  const validateStep = (shouldSetError = true): boolean => {
-    if (shouldSetError) setStepError(null);
-    if (currentStep === 1) {
-      if (!startDate || !endDate) {
-        if (shouldSetError) setStepError("Please select your trip start date from the calendar below.");
-        return false;
-      }
-      if (guestsCount < 1) {
-        if (shouldSetError) setStepError("Please select at least 1 guest traveler.");
-        return false;
-      }
-      return true;
+  // Validate the whole form; returns the first problem and the section it lives in.
+  const findProblem = (): { section: "trip" | "contact" | "payment"; message: string } | null => {
+    if (!startDate || !endDate) return { section: "trip", message: "Please pick your trip start date." };
+    if (guestsCount < 1) return { section: "trip", message: "Please choose at least 1 traveler." };
+    if (!contactInfo.fullName.trim()) return { section: "contact", message: "Please enter your full name." };
+    if (!/^\S+@\S+\.\S+$/.test(contactInfo.email.trim())) return { section: "contact", message: "Please enter a valid email address." };
+    if (!contactInfo.phone.trim()) return { section: "contact", message: "Please enter your phone / WhatsApp number." };
+    if (!contactInfo.country.trim()) return { section: "contact", message: "Please select your country." };
+    if (!contactInfo.flightArrivalDate) return { section: "contact", message: "Please select your arrival date in Nepal." };
+    if (passport.uploading) return { section: "contact", message: "Please wait, your passport is still uploading." };
+    if (!passport.url) return { section: "contact", message: "Please upload a copy of the lead traveler's passport (PDF, JPG or PNG, max 5 MB)." };
+    if (paymentType !== "pay_later" && (paymentMethod === "esewa" || paymentMethod === "khalti")) {
+      if (walletPhone.length < 10) return { section: "payment", message: "Please enter a valid 10-digit mobile number." };
+      if (walletOtp.length < 4) return { section: "payment", message: "Please enter the OTP code sent to your phone." };
     }
-    if (currentStep === 2) {
-      if (!contactInfo.fullName.trim()) {
-        if (shouldSetError) setStepError("Lead Customer Contact: Full Name is required.");
-        return false;
-      }
-      if (!contactInfo.email.trim()) {
-        if (shouldSetError) setStepError("Lead Customer Contact: Email Address is required.");
-        return false;
-      }
-      if (!contactInfo.phone.trim()) {
-        if (shouldSetError) setStepError("Lead Customer Contact: Contact Number is required.");
-        return false;
-      }
-      if (!contactInfo.country.trim()) {
-        if (shouldSetError) setStepError("Lead Customer Contact: Please select your Country.");
-        return false;
-      }
-      if (!contactInfo.flightArrivalDate) {
-        if (shouldSetError) setStepError("Please select your arrival date in Nepal.");
-        return false;
-      }
-      if (passport.uploading) {
-        if (shouldSetError) setStepError("Please wait — your passport is still uploading.");
-        return false;
-      }
-      if (!passport.url) {
-        if (shouldSetError) setStepError("Please upload a copy of the lead traveler's passport (PDF, JPG or PNG, max 5 MB).");
-        return false;
-      }
-      // Per-traveler profiles for additional guests are collected in person
-      // before departure — only the lead passport is needed to confirm.
-      return true;
-    }
-    if (currentStep === 3) {
-      if (paymentType === "pay_later") return true;
-
-      if (paymentMethod === "esewa" || paymentMethod === "khalti") {
-        if (walletPhone.length < 10) {
-          if (shouldSetError) setStepError("Payment Details: Please enter a valid 10-digit mobile number.");
-          return false;
-        }
-        if (walletOtp.length < 4) {
-          if (shouldSetError) setStepError("Payment Details: Please enter the OTP security code sent to your phone.");
-          return false;
-        }
-      }
-      return true; // PayPal and Bank Transfer
-    }
-    return false;
+    return null;
   };
 
-  const isStepValid = () => {
-    return validateStep(false);
-  };
-
-  const handleNextStep = () => {
-    if (validateStep(true)) {
-      setCurrentStep(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  const handlePrevStep = () => {
-    setStepError(null);
-    setCurrentStep(prev => Math.max(1, prev - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const showError = (section: "trip" | "contact" | "payment", message: string) => {
+    setStepError(message);
+    setErrorSection(section);
+    document.getElementById(`booking-${section}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const handleAddonChange = (addonId: string) => {
@@ -556,12 +473,16 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
   // ----------------------------------------------------
   const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateStep(true)) {
+    setStepError(null);
+    setErrorSection(null);
+    const problem = findProblem();
+    if (problem) {
+      showError(problem.section, problem.message);
       return;
     }
 
     if (!recaptchaToken) {
-      setStepError("Please complete the reCAPTCHA validation.");
+      showError("payment", "Please tick the \"I'm not a robot\" box.");
       return;
     }
 
@@ -626,7 +547,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       passportUrl: passport.url || undefined,
       paymentProofUrl: paymentProof.url || undefined,
       arrivalDate: contactInfo.flightArrivalDate || undefined,
-      adminRemarks: `Checkout via website booking stepper. Lead-only booking — collect passport + traveler profiles for all ${guestsCount} traveler(s) before departure.`,
+      adminRemarks: `Checkout via website one-page booking. Lead-only booking — collect passport + traveler profiles for all ${guestsCount} traveler(s) before departure.`,
       recaptchaToken
     };
 
@@ -660,111 +581,10 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
       // and require a fresh tick before the next attempt — otherwise every
       // retry fails with "timeout-or-duplicate".
       resetRecaptcha();
-      setStepError(err.message || "An unexpected error occurred during reservation. Please try again.");
+      showError("payment", err.message || "Something went wrong while sending your booking. Please try again.");
     } finally {
       setSubmitting(false);
     }
-  };
-
-  // ----------------------------------------------------
-  // CALENDAR RENDER GRID
-  // ----------------------------------------------------
-  const renderCalendarGrid = (mDate: Date) => {
-    const year = mDate.getFullYear();
-    const month = mDate.getMonth();
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const totalDays = new Date(year, month + 1, 0).getDate();
-    
-    const blanks = Array(firstDayIndex).fill(null);
-    const days = Array.from({ length: totalDays }, (_, i) => i + 1);
-    
-    return (
-      <div className="flex flex-col gap-2">
-        <div className="text-center font-serif font-black text-xs text-[#1A1A2E] py-2 bg-slate-50 border border-slate-200/60 rounded-xl uppercase tracking-wider">
-          {MONTHS[month]} {year}
-        </div>
-        
-        <div className="grid grid-cols-7 gap-1 text-center font-extrabold text-[9px] uppercase text-[#6B6B6B] border-b border-[#E5E5E5] pb-1.5 mt-1">
-          <span>Sun</span>
-          <span>Mon</span>
-          <span>Tue</span>
-          <span>Wed</span>
-          <span>Thu</span>
-          <span>Fri</span>
-          <span>Sat</span>
-        </div>
-        
-        <div className="grid grid-cols-7 gap-1 mt-1.5">
-          {blanks.map((_, idx) => (
-            <div key={`blank-${idx}`} className="aspect-square"></div>
-          ))}
-          {days.map((day) => {
-            const date = new Date(year, month, day);
-            const dep = findDepartureForDate(date);
-            const isToday = new Date().toDateString() === date.toDateString();
-            
-            const isSoldOut = dep?.status === "sold_out";
-            const isLimited = dep?.status === "limited";
-            const isSelected = selectedDeparture && 
-              new Date(selectedDeparture.startDate).toDateString() === date.toDateString();
-              
-            let cellStyle = "bg-white text-slate-300 cursor-default border border-slate-50";
-            let clickHandler = undefined;
-            let displayElement = <span className="font-bold text-[11px]">{day}</span>;
-            
-            if (dep) {
-              if (isSoldOut) {
-                cellStyle = "bg-red-50 text-red-300 line-through cursor-not-allowed border border-red-100 flex flex-col items-center justify-center relative";
-                displayElement = (
-                  <div className="flex flex-col items-center justify-center">
-                    <span className="font-black text-[11px] text-red-400">{day}</span>
-                    <span className="text-[6px] text-red-500 font-extrabold leading-none mt-0.5">FULL</span>
-                  </div>
-                );
-              } else if (isLimited) {
-                cellStyle = `bg-amber-50 text-amber-950 border border-amber-200 hover:border-amber-400 cursor-pointer flex flex-col items-center justify-center relative transition shadow-sm ${
-                  isSelected ? "ring-2 ring-[#2E7D32] bg-amber-100 scale-[1.03]" : ""
-                }`;
-                clickHandler = () => selectDepartureFromCalendar(dep);
-                displayElement = (
-                  <div className="flex flex-col items-center justify-center">
-                    <span className="font-black text-[11px]">{day}</span>
-                    <span className="text-[6px] text-amber-700 font-extrabold leading-none mt-0.5">{dep.availableSeats} LFT</span>
-                  </div>
-                );
-              } else {
-                cellStyle = `bg-emerald-50 text-emerald-950 border border-emerald-200 hover:border-emerald-500 cursor-pointer flex flex-col items-center justify-center relative transition shadow-sm ${
-                  isSelected ? "ring-2 ring-[#2E7D32] bg-emerald-100 scale-[1.03]" : ""
-                }`;
-                clickHandler = () => selectDepartureFromCalendar(dep);
-                displayElement = (
-                  <div className="flex flex-col items-center justify-center">
-                    <span className="font-black text-[11px]">{day}</span>
-                    <span className="text-[6px] text-emerald-700 font-extrabold leading-none mt-0.5">GO</span>
-                  </div>
-                );
-              }
-            } else {
-              cellStyle = `bg-white text-slate-400 border border-slate-100/50 flex items-center justify-center aspect-square ${
-                isToday ? "border-slate-300 bg-slate-50/50" : ""
-              }`;
-            }
-            
-            return (
-              <button
-                key={`day-${day}`}
-                type="button"
-                disabled={!dep || isSoldOut}
-                onClick={clickHandler}
-                className={`aspect-square w-full rounded-xl flex items-center justify-center select-none transition ${cellStyle}`}
-              >
-                {displayElement}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
   };
 
   // SUCCESS SCREEN
@@ -925,115 +745,57 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
     );
   }
 
-  return (
-    <div className="flex flex-col gap-8">
-      {/* Visual Step Tracker Indicator Bar */}
-      <div className="bg-white border border-[#E5E5E5] rounded-2xl p-5 md:p-6 shadow-sm flex items-center justify-between">
-        {[
-          { step: 1, label: "Select Dates & Size" },
-          { step: 2, label: "Contact Details" },
-          { step: 3, label: "Secure Payment" }
-        ].map((s) => {
-          const isActive = currentStep === s.step;
-          const isCompleted = currentStep > s.step;
-
-          return (
-            <div key={s.step} className="flex items-center gap-2 group grow last:grow-0">
-              <div className="flex items-center gap-2 relative">
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition duration-300 border ${
-                    isCompleted
-                      ? "bg-green-500 border-green-500 text-white"
-                      : isActive
-                      ? "bg-[#1a2e1f] border-[#1a2e1f] text-white shadow-md font-extrabold"
-                      : "bg-slate-50 border-[#E5E5E5] text-[#6B6B6B]"
-                  }`}
-                >
-                  {isCompleted ? <FaCheck className="text-[10px]" /> : s.step}
-                </div>
-                <span className={`hidden sm:inline text-[11px] font-black tracking-wide uppercase transition ${
-                  isActive ? "text-[#1a2e1f]" : "text-[#6B6B6B]"
-                }`}>
-                  {s.label}
-                </span>
-              </div>
-              {s.step < 3 && (
-                <div className={`h-0.5 grow mx-2 bg-slate-100 rounded transition duration-500 ${
-                  isCompleted ? "bg-green-300" : ""
-                }`}></div>
-              )}
-            </div>
-          );
-        })}
+  const LABEL = "text-xs font-bold text-[#3D3D3D]";
+  const INPUT = "w-full border border-[#D4D4D4] rounded-xl px-4 py-3 text-base sm:text-sm font-medium bg-white text-[#1A1A2E] focus:outline-none focus:border-[#2E7D32] focus:ring-2 focus:ring-[#2E7D32]/15";
+  const CARD = "bg-white rounded-3xl border border-[#E5E5E5] p-5 md:p-8 shadow-sm flex flex-col gap-5 scroll-mt-28";
+  const sectionError = (section: "trip" | "contact" | "payment") =>
+    stepError && errorSection === section ? (
+      <div role="alert" className="bg-red-50 border border-red-200 text-red-800 text-sm font-semibold px-4 py-3 rounded-xl flex items-start gap-2">
+        <FaExclamationCircle className="shrink-0 mt-0.5 text-red-500" />
+        <span>{stepError}</span>
       </div>
+    ) : null;
+  const sectionTitle = (n: number, title: string, hint?: string) => (
+    <div className="flex items-start gap-3">
+      <span className="w-8 h-8 shrink-0 rounded-full bg-[#1a2e1f] text-white flex items-center justify-center font-black text-sm">{n}</span>
+      <div>
+        <h2 className="font-serif text-xl md:text-2xl font-black text-[#1a2e1f] leading-tight">{title}</h2>
+        {hint && <p className="text-sm text-[#6B6B6B] mt-1">{hint}</p>}
+      </div>
+    </div>
+  );
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
-        
-        {/* LEFT COLUMN: ACTIVE STEP FORMS */}
-        <div className="bg-white rounded-3xl border border-[#E5E5E5] p-6 md:p-8 shadow-sm flex flex-col gap-6">
-          
-          {/* STEP 1: SELECT DATES & SIZE */}
-          {currentStep === 1 && (
-            <div className="flex flex-col gap-6 animate-fade-in">
+  return (
+    <form onSubmit={handleFinalSubmit} noValidate className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-8 items-start">
+      <div className="flex flex-col gap-6 min-w-0">
+        <header>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#2E7D32]">Book your trip</p>
+          <h1 className="font-serif text-2xl md:text-3xl font-black text-[#1a2e1f] mt-1">{trek.title}</h1>
+          <p className="text-sm text-[#6B6B6B] mt-1">{trek.duration} days &middot; takes about 2 minutes &middot; nothing is charged online</p>
+        </header>
+
+        {/* 1. TRIP */}
+        <section id="booking-trip" className={CARD}>
+          {sectionTitle(1, "Your trip", "The end date follows from the fixed trip length.")}
+          {sectionError("trip")}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3">
+              <span className="block text-xs font-bold text-[#6B6B6B]">Start</span>
+              <span className={`block text-sm font-black ${startDate ? "text-[#1a2e1f]" : "text-slate-400"}`}>{startDate ? formatDateFriendly(startDate) : "Pick a date below"}</span>
+            </div>
+            <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3">
+              <span className="block text-xs font-bold text-[#6B6B6B]">End</span>
+              <span className={`block text-sm font-black ${endDate ? "text-[#1a2e1f]" : "text-slate-400"}`}>{endDate ? formatDateFriendly(endDate) : "Calculated automatically"}</span>
+            </div>
+          </div>
+
+          {startDate && !showCalendar ? (
+            <button type="button" onClick={() => setShowCalendar(true)} className="self-start inline-flex items-center gap-2 text-sm font-bold text-[#2E7D32] hover:underline">
+              <FaCalendarAlt /> Change date
+            </button>
+          ) : (
               <div>
-                <h3 className="font-serif text-2xl font-black text-[#1a2e1f]">Your Booking Details</h3>
-                <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">Confirm your trip and pick a start date below. The end date is calculated automatically from the fixed trip duration.</p>
-              </div>
-
-              {/* Selected Trip + Dates Summary */}
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold uppercase text-[#6B6B6B] tracking-wide">Select Your Trip</label>
-                  <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3 text-sm font-bold text-[#1a2e1f]">
-                    {trek.title} &ndash; {trek.duration} Days
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-extrabold uppercase text-[#6B6B6B] tracking-wide">Trip Start Date</label>
-                    <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3 text-sm font-bold text-[#1a2e1f] flex items-center justify-between gap-2">
-                      <span className={startDate ? "" : "text-slate-400 font-semibold"}>{startDate ? formatDateFriendly(startDate) : "Select a date below"}</span>
-                      <FaCalendarAlt className="text-[#2E7D32] shrink-0" />
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-extrabold uppercase text-[#6B6B6B] tracking-wide">Trip End Date</label>
-                    <div className="bg-slate-50 border border-[#E5E5E5] rounded-xl px-4 py-3 text-sm font-bold text-[#1a2e1f] flex items-center justify-between gap-2">
-                      <span className={endDate ? "" : "text-slate-400 font-semibold"}>{endDate ? formatDateFriendly(endDate) : "Auto-calculated"}</span>
-                      <FaCalendarAlt className="text-[#2E7D32] shrink-0" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Group Size Stepper */}
-              <div className="bg-[#F8F7F4] border border-[#E5E5E5] p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex flex-col text-center sm:text-left">
-                  <span className="text-[10px] font-extrabold uppercase text-[#6B6B6B] tracking-wider">Number of Persons</span>
-                  <span className="text-xs text-[#1a2e1f] font-bold mt-0.5">Select how many hikers are in your group</span>
-                </div>
-                
-                <div className="flex items-center gap-4 bg-white border border-[#E5E5E5] rounded-xl px-4 py-2">
-                  <button
-                    type="button"
-                    onClick={() => setGuestsCount(prev => Math.max(1, prev - 1))}
-                    className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition text-slate-700 active:scale-95"
-                  >
-                    <FaMinus className="text-xs" />
-                  </button>
-                  <span className="font-mono font-black text-lg text-[#1A1A2E] w-8 text-center">{guestsCount}</span>
-                  <button
-                    type="button"
-                    onClick={() => setGuestsCount(prev => Math.min(25, prev + 1))}
-                    className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition text-slate-700 active:scale-95"
-                  >
-                    <FaPlus className="text-xs" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Fixed-Duration Schedule Calendar */}
-              <div className="border-t border-[#E5E5E5] pt-5">
                 <div className="flex flex-wrap items-center justify-end gap-2 mb-4">
                   <button
                     type="button"
@@ -1084,6 +846,24 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                 </div>
               </div>
 
+          )}
+
+          <div className="bg-[#F8F7F4] border border-[#E5E5E5] p-4 rounded-2xl flex items-center justify-between gap-4">
+            <div>
+              <span id="guests-label" className="block text-sm font-black text-[#1a2e1f]">Travelers</span>
+              <span className="block text-xs text-[#6B6B6B]">${paxPrice} per person at this group size</span>
+            </div>
+            <div className="flex items-center gap-3 bg-white border border-[#E5E5E5] rounded-xl px-2 py-1.5" role="group" aria-labelledby="guests-label">
+              <button type="button" aria-label="One less traveler" onClick={() => setGuestsCount(prev => Math.max(1, prev - 1))} className="w-11 h-11 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition text-slate-700 active:scale-95">
+                <FaMinus className="text-xs" />
+              </button>
+              <span className="font-mono font-black text-lg text-[#1A1A2E] w-7 text-center" aria-live="polite">{guestsCount}</span>
+              <button type="button" aria-label="One more traveler" onClick={() => setGuestsCount(prev => Math.min(25, prev + 1))} className="w-11 h-11 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition text-slate-700 active:scale-95">
+                <FaPlus className="text-xs" />
+              </button>
+            </div>
+          </div>
+
               {/* Premium Addons List */}
               <div className="flex flex-col gap-4 border-t border-[#E5E5E5] pt-5">
                 <h4 className="font-serif text-base font-black text-[#1a2e1f]">Premium Optional Upgrades</h4>
@@ -1117,67 +897,67 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                   })}
                 </div>
               </div>
-            </div>
-          )}
+        </section>
 
-          {/* STEP 2: LEAD CONTACT (minimal — passport/traveler details taken in person) */}
-          {currentStep === 2 && (
-            <div className="flex flex-col gap-6 animate-fade-in">
-              <div>
-                <h3 className="font-serif text-2xl font-black text-[#1a2e1f]">2. Your Contact Details</h3>
-                <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">Just the essentials to confirm your booking. Our team will collect passport &amp; traveler details with you before departure.</p>
-              </div>
-
+        {/* 2. CONTACT */}
+        <section id="booking-contact" className={CARD}>
+          {sectionTitle(2, "Your details", "Just the lead traveler. We collect everyone else's details with you before departure.")}
+          {sectionError("contact")}
               {/* Lead Customer Contact — 4 essential fields only */}
               <div className="flex flex-col gap-4 bg-slate-50 border border-[#E5E5E5] p-5 rounded-2xl">
-                <h4 className="font-serif text-sm font-black text-[#1a2e1f] border-b border-[#E5E5E5] pb-1.5 uppercase tracking-wide">
-                  Lead Traveler Contact
-                </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Full Name *</label>
+                    <label htmlFor="bk-full-name" className={LABEL}>Full Name *</label>
                     <input
+                      id="bk-full-name"
                       type="text"
                       required
                       placeholder="John Doe"
+                      autoComplete="name"
                       value={contactInfo.fullName}
                       onChange={(e) => setContactInfo({ ...contactInfo, fullName: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className={INPUT}
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Email Address *</label>
+                    <label htmlFor="bk-email-address" className={LABEL}>Email Address *</label>
                     <input
+                      id="bk-email-address"
                       type="email"
                       required
                       placeholder="example@example.com"
+                      autoComplete="email"
                       value={contactInfo.email}
                       onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className={INPUT}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Contact Number (WhatsApp) *</label>
+                    <label htmlFor="bk-contact-number-whatsapp" className={LABEL}>Contact Number (WhatsApp) *</label>
                     <input
+                      id="bk-contact-number-whatsapp"
                       type="tel"
                       required
                       placeholder="+1 234 567 8900"
+                      autoComplete="tel"
                       value={contactInfo.phone}
                       onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className={INPUT}
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Country of Residence *</label>
+                    <label htmlFor="bk-country-of-residence" className={LABEL}>Country of Residence *</label>
                     <select
+                      id="bk-country-of-residence"
                       required
+                      autoComplete="country-name"
                       value={contactInfo.country}
                       onChange={(e) => setContactInfo({ ...contactInfo, country: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-3 py-2.5 text-xs font-semibold bg-white focus:outline-none focus:border-[#2E7D32] cursor-pointer"
+                      className={`${INPUT} cursor-pointer`}
                     >
                       <option value="">Select Country</option>
                       {COUNTRIES_LIST.map((c) => (
@@ -1189,20 +969,21 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">Arrival Date in Nepal *</label>
+                    <label htmlFor="bk-arrival-date-in-nepal" className={LABEL}>Arrival Date in Nepal *</label>
                     <input
+                      id="bk-arrival-date-in-nepal"
                       type="date"
                       required
                       value={contactInfo.flightArrivalDate}
                       onChange={(e) => setContactInfo({ ...contactInfo, flightArrivalDate: e.target.value })}
-                      className="border border-[#E5E5E5] rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className={INPUT}
                     />
                   </div>
                 </div>
 
                 {/* Passport upload — the genuine-intent / anti-spam gate */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">
+                  <label className={LABEL}>
                     Lead Traveler Passport Copy *
                   </label>
                   <label
@@ -1213,7 +994,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                     <input
                       type="file"
                       accept="application/pdf,image/png,image/jpeg"
-                      className="hidden"
+                      className="sr-only"
                       onChange={(e) => handlePassportSelect(e.target.files?.[0] || null)}
                     />
                     {passport.uploading ? (
@@ -1247,17 +1028,11 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                   and add-ons are collected by your specialist before departure — over a 256-bit encrypted connection.
                 </p>
               </div>
-            </div>
-          )}
+        </section>
 
-          {/* STEP 3: SECURE PAYMENT GATEWAY */}
-          {currentStep === 3 && (
-            <form onSubmit={handleFinalSubmit} className="flex flex-col gap-6 animate-fade-in">
-              <div>
-                <h3 className="font-serif text-2xl font-black text-[#1a2e1f]">3. Secure Checkout & Deposit Payment</h3>
-                <p className="text-xs text-[#6B6B6B] mt-1 font-semibold">Select your deposit preferences and pay securely via encrypted SSL financial gateways.</p>
-              </div>
-
+        {/* 3. PAYMENT */}
+        <section id="booking-payment" className={CARD}>
+          {sectionTitle(3, "Payment", "Choose how much to pay now. Nothing is charged online: you transfer after we confirm your booking.")}
               {/* Split Deposit Preferences */}
               <div className="flex flex-col gap-3.5 bg-slate-50 border border-[#E5E5E5] p-5 rounded-2xl">
                 <h4 className="font-serif text-sm font-black text-[#1a2e1f] border-b border-[#E5E5E5] pb-1.5 uppercase tracking-wide">
@@ -1385,7 +1160,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                         Nepal Local Digital Wallet: {paymentMethod.toUpperCase()}
                       </h5>
                       <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B] capitalize">
+                        <label className={LABEL}>
                           {paymentMethod} Registered Mobile *
                         </label>
                         <input
@@ -1394,19 +1169,20 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                           placeholder="e.g. 9851234567"
                           value={walletPhone}
                           onChange={(e) => setWalletPhone(e.target.value.replace(/\D/g, ''))}
-                          className="border border-[#E5E5E5] bg-white rounded-xl px-4 py-2.5 text-xs focus:outline-none font-mono"
+                          className={`${INPUT} font-mono`}
                         />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-extrabold uppercase text-[#6B6B6B]">Wallet OTP Code / PIN *</label>
+                        <label htmlFor="bk-wallet-otp-code-pin" className={LABEL}>Wallet OTP Code / PIN *</label>
                         <input
+                      id="bk-wallet-otp-code-pin"
                           type="password"
                           required
                           placeholder="••••"
                           maxLength={6}
                           value={walletOtp}
                           onChange={(e) => setWalletOtp(e.target.value)}
-                          className="border border-[#E5E5E5] bg-white rounded-xl px-4 py-2.5 text-xs focus:outline-none font-mono"
+                          className={`${INPUT} font-mono`}
                         />
                       </div>
                     </div>
@@ -1438,7 +1214,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
 
                       {/* Proof of payment upload (optional but speeds up verification) */}
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] font-extrabold uppercase text-[#6B6B6B]">
+                        <label className={LABEL}>
                           Upload Payment Proof <span className="text-[#6B6B6B]/60">(optional — screenshot or receipt)</span>
                         </label>
                         <label
@@ -1449,7 +1225,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                           <input
                             type="file"
                             accept="application/pdf,image/png,image/jpeg"
-                            className="hidden"
+                            className="sr-only"
                             onChange={(e) => handleProofSelect(e.target.files?.[0] || null)}
                           />
                           {paymentProof.uploading ? (
@@ -1482,65 +1258,24 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
                 />
               </div>
 
-              {/* Submit triggers */}
-              <div className="border-t border-[#E5E5E5] pt-5 flex items-center justify-between mt-2 print:hidden">
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  className="bg-white border border-[#E5E5E5] hover:bg-slate-50 text-[#3D3D3D] font-bold px-6 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition"
-                >
-                  <FaArrowLeft className="text-[10px]" /> Back
-                </button>
+          {sectionError("payment")}
 
-                {/* Final Submit Button */}
-                <div className="pt-4 border-t border-[#E5E5E5]">
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full bg-[#E84C1E] hover:bg-[#d14118] text-white font-black py-4 rounded-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition disabled:opacity-70"
-                  >
-                    {submitting ? (
-                      <span className="flex items-center gap-2"><span className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full"></span> Processing...</span>
-                    ) : (
-                      <>
-                        <FaLock className="text-white/80" /> {paymentType === "pay_later" ? "Submit Booking Request" : "Confirm & Pay Now"}
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </form>
-          )}
-
-          {stepError && (
-            <div className="bg-red-50 border border-red-200 text-red-800 text-xs font-semibold px-4 py-3.5 rounded-xl flex items-start gap-2 animate-fade-in mt-4">
-              <FaExclamationCircle className="shrink-0 mt-0.5 text-red-500 text-sm" />
-              <span>{stepError}</span>
-            </div>
-          )}
-
-          {/* Controls for Step 1 & 2 */}
-          {currentStep < 3 && (
-            <div className="border-t border-[#E5E5E5] pt-5 flex items-center justify-between mt-4">
-              <button
-                type="button"
-                onClick={handlePrevStep}
-                disabled={currentStep === 1}
-                className="bg-white border border-[#E5E5E5] hover:bg-slate-50 text-[#3D3D3D] font-bold px-6 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition disabled:opacity-50"
-              >
-                <FaArrowLeft className="text-[10px]" /> Back
-              </button>
-
-              <button
-                type="button"
-                onClick={handleNextStep}
-                className="bg-[#1a2e1f] hover:bg-[#1a2e1f]/90 text-white font-bold px-6 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md active:scale-[0.98] transition"
-              >
-                Next <FaArrowRight className="text-[10px]" />
-              </button>
-            </div>
-          )}
-        </div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full bg-[#E84C1E] hover:bg-[#d14118] text-white font-black py-4 rounded-xl text-base uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition disabled:opacity-70"
+          >
+            {submitting ? (
+              <span className="flex items-center gap-2"><span className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full"></span> Sending your booking…</span>
+            ) : (
+              <><FaLock className="text-white/80" /> {paymentType === "pay_later" ? "Send Booking Request" : "Confirm Booking"}</>
+            )}
+          </button>
+          <p className="text-center text-sm text-[#6B6B6B] lg:hidden">
+            Total <strong className="text-[#1a2e1f]">${totalPrice} USD</strong> &middot; due now <strong className="text-[#2E7D32]">${paymentDueNow} USD</strong>
+          </p>
+        </section>
+      </div>
 
         {/* RIGHT COLUMN: BOOKING INVOICE SUMMARY PANEL */}
         <div className="lg:sticky lg:top-[120px] bg-[#1a2e1f] text-white rounded-3xl p-6 shadow-md border border-white/10 flex flex-col gap-5">
@@ -1626,7 +1361,7 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
             <div className="flex justify-between font-black py-2.5 border-t border-b border-white/10 my-1 text-white/95 items-baseline">
               <div className="flex flex-col">
                 <span className="uppercase text-[9px] text-white/60 font-extrabold">Paid / Due Now:</span>
-                <span className="text-[10px] text-green-400 font-bold">{paymentType === "pay_later" ? "0% Credit Booking" : (paymentType === "advance_10" ? "10% Advance Deposit" : "100% Full Payment")}</span>
+                <span className="text-[10px] text-green-400 font-bold">{paymentType === "pay_later" ? "0% Credit Booking" : (paymentType === "advance_10" ? `${advancePercentage}% Advance Deposit` : "100% Full Payment")}</span>
               </div>
               <span className="text-base text-green-400 font-mono font-black">${paymentDueNow} USD</span>
             </div>
@@ -1637,8 +1372,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
             <span>256-bit Secure SSL Encrypted Gateway Session</span>
           </div>
         </div>
-
-      </div>
-    </div>
+    </form>
   );
 }
