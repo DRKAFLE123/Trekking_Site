@@ -50,7 +50,6 @@ export default function Footer() {
         const data = await res.json();
         setSiteSettings(data);
       } catch (err: any) {
-        console.warn("Failed to fetch site settings in Footer:", err?.message || err);
       }
     }
     async function fetchRegions() {
@@ -68,7 +67,6 @@ export default function Footer() {
           setRegions(data);
         }
       } catch (err: any) {
-        console.warn("Failed to fetch regions in Footer:", err?.message || err);
       }
     }
     async function fetchFooterSettings() {
@@ -86,7 +84,6 @@ export default function Footer() {
           setDbFooterSettings(data.docs[0]);
         }
       } catch (err: any) {
-        console.warn("Failed to fetch footer settings in Footer:", err?.message || err);
       }
     }
     fetchData();

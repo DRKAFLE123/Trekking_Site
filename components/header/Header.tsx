@@ -78,7 +78,6 @@ const FALLBACK_MENU: MenuItem[] = [
 ];
 
 const FALLBACK: NavData = {
-  logoUrl: null,
   menu: FALLBACK_MENU,
   countries: [{ name: "Nepal", slug: "nepal", count: 0 }],
   regions: [],
@@ -222,7 +221,6 @@ async function loadNavData(): Promise<NavData> {
       : null;
 
     return {
-      logoUrl: typeof nav.logo === "object" && nav.logo?.url ? nav.logo.url : null,
       menu, countries, regions, travelInfo, company, topTreks,
       reps: reps.length ? reps : FALLBACK.reps,
       promo,

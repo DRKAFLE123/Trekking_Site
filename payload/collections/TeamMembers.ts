@@ -51,7 +51,6 @@ const syncExpertToSettings = async ({ doc, previousDoc, req }: any) => {
           },
           overrideAccess: true,
         });
-        console.log(`[CMS Hook] Successfully synced expert team member "${doc.name}" to Global Site Settings.`);
       }
     } catch (err: any) {
       console.error("[CMS Hook] Error in syncExpertToSettings afterChange hook:", err.message);
@@ -86,7 +85,6 @@ const syncExpertToSettings = async ({ doc, previousDoc, req }: any) => {
             },
             overrideAccess: true,
           });
-          console.log(`[CMS Hook] Unlinked expert team member "${doc.name}" from Global Site Settings.`);
         }
       }
     } catch (err: any) {

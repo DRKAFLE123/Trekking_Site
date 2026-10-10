@@ -85,7 +85,6 @@ export async function POST(request: Request) {
         },
       });
 
-      console.log(`[INQUIRY SAVED TO DATABASE] ID: ${inquiry.id}`);
 
       // Send Emails — admin notification to company inbox + client Gmail,
       // owner BCC'd. Customer always gets their acknowledgement.
@@ -300,13 +299,6 @@ export async function POST(request: Request) {
       }
     }
 
-    console.log(`[BOOKING SYSTEM SUCCESS]
-      Booking ID: ${bookingId}
-      Trek: ${trek.title}
-      Customer: ${customerDetails.firstName} ${customerDetails.lastName}
-      Payment Method: ${paymentMethod}
-      Total Paid: $${paymentRecord ? paymentRecord.amount : 0} USD
-    `);
 
     // Send Emails — admin notification goes to the company inbox + client
     // Gmail, with the owner BCC'd. Customer always gets their confirmation.

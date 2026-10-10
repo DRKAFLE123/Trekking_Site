@@ -207,7 +207,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
           setSiteSettings(data);
         }
       } catch (err) {
-        console.error("Error fetching site settings in BookingStepper:", err);
       }
     }
     fetchSettings();
@@ -252,7 +251,6 @@ export default function BookingStepper({ trek }: BookingStepperProps) {
           }
         }
       } catch (err) {
-        console.error("Error fetching departures:", err);
       } finally {
         setLoadingDepartures(false);
       }

@@ -32,12 +32,6 @@ export const NavbarSettings: CollectionConfig = {
       label: 'Site Brand Name',
     },
     {
-      name: 'logo',
-      type: 'upload',
-      relationTo: 'media',
-      label: 'Header Site Logo',
-    },
-    {
       name: 'representatives',
       type: 'array',
       label: 'Country Representatives (header phone dropdown)',

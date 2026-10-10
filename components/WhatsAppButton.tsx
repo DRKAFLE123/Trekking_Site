@@ -24,7 +24,6 @@ export default function WhatsAppButton() {
           if (cleanNum) setWhatsappNumber(cleanNum);
         }
       } catch (err) {
-        console.error("Failed to fetch WhatsApp number for float button:", err);
       }
     }
     fetchSettings();

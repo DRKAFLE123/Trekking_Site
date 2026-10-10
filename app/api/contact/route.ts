@@ -40,7 +40,6 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log(`[CONTACT INQUIRY SAVED TO DB] ID: ${inquiry.id}`);
 
     // Send Emails — admin notification to company inbox + client Gmail,
     // owner BCC'd. Customer always gets their auto-reply.

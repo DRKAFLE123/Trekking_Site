@@ -7,6 +7,24 @@ import { withPayload } from "@payloadcms/next/withPayload";
 // above the /st_tour/:rest* style fallbacks. Source: Search Console, Sep 2026.
 import legacyRedirects from "./legacy-redirects.json" with { type: "json" };
 
+// Content Security Policy for the public site. 'unsafe-inline' scripts are required by
+// Next's inline bootstrap without per-request nonces (nonces would force dynamic rendering).
+// Adding a new third-party tag (e.g. via CMS tracking scripts) means adding its origin here.
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.clarity.ms https://*.clarity.ms",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "media-src 'self' blob: https://res.cloudinary.com",
+  "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.google.com https://*.clarity.ms https://c.bing.com https://res.cloudinary.com",
+  "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.google.com https://maps.google.com https://td.doubleclick.net https://www.googletagmanager.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+].join("; ");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -97,6 +115,11 @@ const nextConfig = {
           },
           { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
+      },
+      {
+        // Website pages only; the Payload admin and API keep their own needs.
+        source: "/((?!admin|api).*)",
+        headers: [{ key: "Content-Security-Policy-Report-Only", value: CSP }],
       },
     ];
   },

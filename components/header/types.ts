@@ -26,7 +26,6 @@ export type MenuItem = {
 };
 
 export type NavData = {
-  logoUrl: string | null;
   menu: MenuItem[];
   countries: { name: string; slug: string; count: number }[];
   regions: RegionGroup[];

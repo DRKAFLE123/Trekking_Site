@@ -6,7 +6,6 @@ import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
 
 export type PrivateTreksUSP = {
-  icon?: string;
   title: string;
   description?: string;
   desc?: string;

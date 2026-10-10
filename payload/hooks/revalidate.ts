@@ -5,7 +5,6 @@ export async function safeRevalidatePath(path: string, type?: 'layout' | 'page')
     // Dynamic import to prevent crashes when running standalone scripts (e.g. database seeding/check scripts)
     const { revalidatePath } = await import('next/cache');
     revalidatePath(path, type);
-    console.log(`[Revalidation] Purged cache for: ${path} (${type || 'page'})`);
   } catch (error: any) {
     console.warn(`[Revalidation] Could not revalidate path ${path}:`, error.message);
   }

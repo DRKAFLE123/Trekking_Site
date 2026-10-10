@@ -42,7 +42,6 @@ function serializeToPlainText(body: any): string {
         .join(" ");
     }
   } catch (e) {
-    console.error("Error serializing FAQ text for schema", e);
   }
 
   return "";

@@ -200,23 +200,6 @@ export const HomepageSettings: CollectionConfig = {
                 initCollapsed: true,
               },
               fields: [
-                {
-                  name: 'icon',
-                  type: 'select',
-                  required: true,
-                  defaultValue: 'running',
-                  label: 'Icon',
-                  options: [
-                    { label: '🏃 Running (Your Pace)', value: 'running' },
-                    { label: '🛡️ Shield (Sherpa Guide)', value: 'shield' },
-                    { label: '📅 Calendar Check (Any Date)', value: 'calendar-check' },
-                    { label: '🏨 Hotel (Custom Lodging)', value: 'hotel' },
-                    { label: '✅ User Check (Solo)', value: 'user-check' },
-                    { label: '⛰️ Mountain', value: 'mountain' },
-                    { label: '🧭 Compass', value: 'compass' },
-                    { label: '⭐ Star', value: 'star' },
-                  ],
-                },
                 { name: 'title', type: 'text', required: true },
                 { name: 'description', type: 'textarea', required: true },
               ],

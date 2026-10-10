@@ -49,48 +49,14 @@ export const BlogSettings: CollectionConfig = {
     {
       name: 'guideSettings',
       type: 'group',
-      label: 'Free Travel Guide Settings (Lead Magnet)',
+      label: 'Newsletter Welcome Guide',
+      admin: { description: 'This PDF is emailed to every new newsletter subscriber.' },
       fields: [
-        {
-          name: 'title',
-          type: 'text',
-          label: 'Guide Cover Title',
-          defaultValue: 'TRAVEL GUIDE',
-          required: true,
-        },
-        {
-          name: 'subtitle',
-          type: 'text',
-          label: 'Guide Cover Subtitle',
-          defaultValue: 'NEPAL 2026',
-          required: true,
-        },
-        {
-          name: 'badgeText',
-          type: 'text',
-          label: 'Guide Cover Badge / Header',
-          defaultValue: 'SUMMIT GUIDE',
-          required: true,
-        },
-        {
-          name: 'footerText',
-          type: 'text',
-          label: 'Guide Cover Footer Brand',
-          defaultValue: 'Nature Heaven Trekking',
-          required: true,
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-          label: 'Lead Magnet Description',
-          defaultValue: 'Get our free travel guide packed with insider tips, hidden geographical gems, and essential equipment checklists. Save time, travel smarter, and make the most of your adventure.',
-          required: true,
-        },
         {
           name: 'pdfFile',
           type: 'upload',
           relationTo: 'media',
-          label: 'Upload Guide PDF File',
+          label: 'Guide PDF',
           required: true,
           admin: {
             description: 'Select or upload the PDF document from Media.',

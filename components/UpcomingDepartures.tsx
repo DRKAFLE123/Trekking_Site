@@ -63,7 +63,6 @@ export default function UpcomingDepartures() {
           }
         }
       } catch (err) {
-        console.error("Failed to load upcoming departures:", err);
       } finally {
         setLoading(false);
       }

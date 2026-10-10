@@ -43,7 +43,6 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log(`[NEWSLETTER SUBSCRIBE] Email: ${email}`);
 
     // Fetch blogSettings to retrieve PDF file link if configured
     let pdfUrl: string | null = null;
