@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaQuestionCircle, FaChevronDown, FaArrowRight, FaSearch } from "react-icons/fa";
 
@@ -53,12 +53,32 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<string>("all"); // "all" | "general" | trekId
+  // Trek FAQs load when a trek is picked; cached per trek.
+  const [trekFaqs, setTrekFaqs] = useState<Record<string, FAQItem[]>>({});
+  const [loadingTrek, setLoadingTrek] = useState(false);
+  const isTrekFilter = selectedFilter !== "all" && selectedFilter !== "general";
+
+  useEffect(() => {
+    if (!isTrekFilter || trekFaqs[selectedFilter]) return;
+    let cancelled = false;
+    setLoadingTrek(true);
+    fetch(`/api/public/trek-faqs?trek=${encodeURIComponent(selectedFilter)}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .catch(() => [])
+      .then((list: FAQItem[]) => {
+        if (!cancelled) setTrekFaqs((m) => ({ ...m, [selectedFilter]: Array.isArray(list) ? list : [] }));
+      })
+      .finally(() => !cancelled && setLoadingTrek(false));
+    return () => { cancelled = true; };
+  }, [isTrekFilter, selectedFilter, trekFaqs]);
+
+  const pool = isTrekFilter ? [...faqs, ...(trekFaqs[selectedFilter] || [])] : faqs;
 
   const toggle = (key: string) =>
     setOpen((p) => ({ ...p, [key]: !p[key] }));
 
   // 1. Filter FAQs based on search and selected trek/category filter
-  const filteredFaqs = faqs.filter((faq) => {
+  const filteredFaqs = pool.filter((faq) => {
     // Search text matching
     const matchesSearch =
       !search ||
@@ -207,7 +227,11 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col gap-10">
-        {activeCategories.length === 0 && (
+        {loadingTrek && (
+          <p className="text-center py-10 text-sm text-[#6B6B6B]" role="status">Loading this trek&apos;s FAQs…</p>
+        )}
+
+        {activeCategories.length === 0 && !loadingTrek && (
           <div className="text-center py-16 text-[#6B6B6B]">
             <FaQuestionCircle className="text-5xl mx-auto mb-4 opacity-20" />
             <p className="font-semibold">No FAQs match your search or filter criteria.</p>

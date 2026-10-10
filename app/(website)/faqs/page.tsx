@@ -117,7 +117,7 @@ export default async function FAQsPage() {
       collection: "treks",
       limit: 300,
       depth: 0,
-      select: { title: true, slug: true, faqs: true },
+      select: { title: true, slug: true },
     });
 
     treks = treksRes.docs.map((t: any) => ({
@@ -142,24 +142,7 @@ export default async function FAQsPage() {
       });
     }
 
-    // 4. Process Trek-nested FAQs
-    if (treksRes.docs && treksRes.docs.length > 0) {
-      treksRes.docs.forEach((trek: any) => {
-        if (trek.faqs && trek.faqs.length > 0) {
-          trek.faqs.forEach((faq: any, idx: number) => {
-            faqs.push({
-              id: `faq-nested-${trek.id}-${idx}`,
-              q: faq.question,
-              a: extractLexicalText(faq.answer),
-              category: faq.category || "general",
-              isFeatured: !!faq.isFeatured,
-              showOnAllTreks: false,
-              trekIds: [trek.id],
-            });
-          });
-        }
-      });
-    }
+    // Trek-specific FAQs are fetched on demand by the trek filter (/api/public/trek-faqs).
   } catch (err: any) {
     console.warn("[FAQs Page] Failed to query faqs from CMS:", err.message);
   }
