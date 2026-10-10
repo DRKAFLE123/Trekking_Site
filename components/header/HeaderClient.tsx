@@ -28,7 +28,7 @@ function Flag({ code, className = "" }: { code: string; className?: string }) {
     <img
       src={`https://flagcdn.com/w40/${code}.png`}
       srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
-      width={20} height={15} alt="" aria-hidden="true"
+      width={20} height={15} alt="" aria-hidden="true" loading="lazy"
       className={`inline-block rounded-[2px] shrink-0 ${className}`}
     />
   );

@@ -74,7 +74,9 @@ export default function HeroSlider({
                 fill
                 sizes="100vw"
                 quality={70}
-                priority={i === 0}
+                preload={i === 0}
+                fetchPriority={i === 0 ? "high" : "low"}
+                loading={i === 0 ? "eager" : "lazy"}
                 className={`object-cover ${i === active ? "hero-kenburns" : ""}`}
               />
             )}

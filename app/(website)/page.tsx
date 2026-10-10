@@ -34,7 +34,7 @@ import FAQAccordion from "@/components/FAQAccordion";
 import TestimonialMarquee from "@/components/TestimonialMarquee";
 import { FadeInUp } from "@/components/FramerWrap";
 
-export const revalidate = 60; // Revalidate every minute
+export const revalidate = 3600; // CMS edits purge this page immediately (payload/hooks/revalidate.ts); this is only the fallback
 
 /** "Everest Base Camp Trek - 14 Days" -> "Everest Base Camp Trek" */
 const shortTitle = (t: string) => (t || "").replace(/\s*-\s*\d+\s*Days?\s*$/i, "").trim();

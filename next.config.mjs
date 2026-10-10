@@ -75,6 +75,9 @@ const nextConfig = {
   },
   experimental: {
     serverMinification: false,
+    // Inline the (small) CSS into the HTML: removes ~1 s of render-blocking
+    // stylesheet requests on mobile (PageSpeed "Render-blocking requests").
+    inlineCss: true,
   },
   crossOrigin: "anonymous",
   async redirects() {
