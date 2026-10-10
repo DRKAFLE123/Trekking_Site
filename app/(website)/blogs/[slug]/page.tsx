@@ -154,8 +154,8 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                     src={trekHeroUrl}
                     alt={relTrek.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                    unoptimized
                   />
                 </div>
               )}
