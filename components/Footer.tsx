@@ -226,7 +226,7 @@ export default function Footer() {
                     <li><Link prefetch={false} href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
                     <li><Link prefetch={false} href="/terms-and-condition" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
                     <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary transition duration-300">Legal Documents</Link></li>
-                    <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
+                    <li><Link prefetch={false} href="/b2b-partners" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
                     <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
                     <li><Link prefetch={false} href="/gallery" className="hover:text-secondary transition duration-300">Gallery</Link></li>
                   </>
@@ -329,7 +329,7 @@ export default function Footer() {
             <li><Link prefetch={false} href="/privacy-policy" className="hover:text-secondary transition duration-300">Privacy Policy</Link></li>
             <li><Link prefetch={false} href="/terms-and-condition" className="hover:text-secondary transition duration-300">Terms & Conditions</Link></li>
             <li><Link prefetch={false} href="/legal-documents" className="hover:text-secondary transition duration-300">Legal Documents</Link></li>
-            <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
+            <li><Link prefetch={false} href="/b2b-partners" className="hover:text-secondary transition duration-300">B2B Partner</Link></li>
             <li><Link prefetch={false} href="/contact-us" className="hover:text-secondary transition duration-300">Make a Payment</Link></li>
             <li><Link prefetch={false} href="/gallery" className="hover:text-secondary transition duration-300">Gallery</Link></li>
           </ul>

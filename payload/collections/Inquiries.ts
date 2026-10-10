@@ -28,6 +28,7 @@ export const inquiries: CollectionConfig = {
         { label: '🎒 Booking Enquiry', value: 'booking_enquiry' },
         { label: '📰 Newsletter Subscriber', value: 'newsletter' },
         { label: '🌍 Country Inquiry', value: 'country_inquiry' },
+        { label: '🤝 B2B Partner', value: 'b2b_partner' },
       ],
       required: true,
       defaultValue: 'contact',

@@ -26,6 +26,7 @@ import * as migration_20260923_140000_site_settings_trust from './20260923_14000
 import * as migration_20260924_090000_regions_homepage from './20260924_090000_regions_homepage';
 import * as migration_20260927_140000_payload_390_reset_requested_at from './20260927_140000_payload_390_reset_requested_at';
 import * as migration_20261010_180000_drop_unused_cms_fields from './20261010_180000_drop_unused_cms_fields';
+import * as migration_20261011_090000_inquiry_type_b2b_partner from './20261011_090000_inquiry_type_b2b_partner';
 
 export const migrations = [
   {
@@ -167,5 +168,10 @@ export const migrations = [
     up: migration_20261010_180000_drop_unused_cms_fields.up,
     down: migration_20261010_180000_drop_unused_cms_fields.down,
     name: '20261010_180000_drop_unused_cms_fields',
+  },
+  {
+    up: migration_20261011_090000_inquiry_type_b2b_partner.up,
+    down: migration_20261011_090000_inquiry_type_b2b_partner.down,
+    name: '20261011_090000_inquiry_type_b2b_partner',
   },
 ];

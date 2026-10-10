@@ -42,6 +42,7 @@ const STATIC_ROUTES: Array<{
   { path: "/our-team", changeFrequency: "monthly", priority: 0.6 },
   { path: "/contact-us", changeFrequency: "monthly", priority: 0.7 },
   { path: "/private-treks", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/b2b-partners", changeFrequency: "monthly", priority: 0.7 },
   { path: "/gallery", changeFrequency: "monthly", priority: 0.6 },
   { path: "/video-gallery", changeFrequency: "monthly", priority: 0.55 },
   { path: "/visa-info", changeFrequency: "monthly", priority: 0.6 },
