@@ -75,9 +75,9 @@ const nextConfig = {
   },
   experimental: {
     serverMinification: false,
-    // Inline the (small) CSS into the HTML: removes ~1 s of render-blocking
-    // stylesheet requests on mobile (PageSpeed "Render-blocking requests").
-    inlineCss: true,
+    // inlineCss was tried (2026-10-10) and reverted: with ~120 KB of CSS inside
+    // every HTML response, first paint waited for the whole document.
+    inlineCss: false,
   },
   crossOrigin: "anonymous",
   async redirects() {

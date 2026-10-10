@@ -734,10 +734,10 @@ export default function Footer() {
               <span className="text-secondary-light font-medium">{dbFooterSettings?.siteName || siteName || "Nature Heaven Trekking"}</span>.
               All Rights Reserved.
             </p>
-            <p className="text-[10px] text-white/30 mt-1">
+            <p className="text-[10px] text-white/60 mt-1">
               {dbFooterSettings?.governmentRegNo || siteSettings?.footerSettings?.governmentRegNo || "Government Registration No. 4893. Bonded & insured through Everest Insurance. Authorized by Ministry of Tourism, Government of Nepal."}
             </p>
-            <p className="text-[10px] text-white/30 mt-1">
+            <p className="text-[10px] text-white/60 mt-1">
               Build with ❤️ by{" "}
               <a
                 href="https://aryanpariyar.com.np/"
@@ -749,7 +749,7 @@ export default function Footer() {
               </a>
             </p>
           </div>
-          <div className="md:max-w-md text-[10px] leading-relaxed text-white/40">
+          <div className="md:max-w-md text-[10px] leading-relaxed text-white/60">
             {dbFooterSettings?.copyrightNotice || siteSettings?.footerSettings?.copyrightNotice || `The copyright to all content on this website, including photographs, belongs to ${siteName || "Nature Heaven Trekking"} and cannot be reproduced without our permission.`}
           </div>
         </div>

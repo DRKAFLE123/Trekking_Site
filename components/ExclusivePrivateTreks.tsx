@@ -91,7 +91,7 @@ export default function ExclusivePrivateTreks({
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">{displayKicker}</span>
+          <span className="text-secondary-light uppercase font-bold text-xs tracking-[0.2em] mb-3 block">{displayKicker}</span>
           <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4">{displayTitle}</h2>
           <div className="h-0.5 w-16 bg-secondary mx-auto mb-6" />
           <p className="text-sm md:text-base text-white/80 leading-relaxed">{displayDescription}</p>
@@ -138,7 +138,7 @@ export default function ExclusivePrivateTreks({
                   >
                     <span
                       className={`font-serif text-2xl md:text-3xl font-black leading-none tabular-nums shrink-0 w-10 pt-0.5 ${
-                        isActive ? "text-secondary" : "text-white/30"
+                        isActive ? "text-secondary-light" : "text-white/60"
                       }`}
                     >
                       {String(i + 1).padStart(2, "0")}
