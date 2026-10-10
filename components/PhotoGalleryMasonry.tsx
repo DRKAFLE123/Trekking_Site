@@ -199,7 +199,7 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="flex sm:hidden overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 -mx-4 px-4"
+          tabIndex={0} role="region" aria-label="Photo gallery" className="flex sm:hidden overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 -mx-4 px-4"
         >
           {displayItems.map((item, idx) => (
             <div
@@ -223,9 +223,9 @@ export default function PhotoGalleryMasonry({ items, limit, showViewAll, variant
                   <span className="text-[9px] uppercase tracking-wider text-secondary font-bold font-sans">
                     {item.trek?.title?.split(" Trek")[0] || "Himalayan Expedition"}
                   </span>
-                  <h4 className="font-serif font-bold text-xs mt-0.5 leading-snug">
+                  <h3 className="font-serif font-bold text-xs mt-0.5 leading-snug">
                     {item.title}
-                  </h4>
+                  </h3>
                 </div>
               </div>
               <div className="mt-3 px-1 flex flex-col gap-0.5">

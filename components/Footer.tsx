@@ -339,7 +339,7 @@ export default function Footer() {
   };
 
   return (
-    <div className="w-full relative z-10 font-sans">
+    <footer className="w-full relative z-10 font-sans">
       {/* 1. Main Mountain Section */}
       <section
         className="relative bg-no-repeat bg-cover pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-12 lg:pb-16 text-white overflow-hidden"
@@ -726,7 +726,7 @@ export default function Footer() {
       </section>
 
       {/* 3. Deep Teal Copyright Bottom Bar */}
-      <footer className="bg-[#10251c] py-5 text-[11px] text-white/50 relative z-10 border-t border-white/5">
+      <div className="bg-[#10251c] py-5 text-[11px] text-white/50 relative z-10 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div>
             <p>
@@ -743,7 +743,7 @@ export default function Footer() {
                 href="https://aryanpariyar.com.np/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/50 hover:text-secondary transition-colors"
+                className="text-white/70 underline underline-offset-2 hover:text-secondary transition-colors"
               >
                 Aryan
               </a>
@@ -753,8 +753,7 @@ export default function Footer() {
             {dbFooterSettings?.copyrightNotice || siteSettings?.footerSettings?.copyrightNotice || `The copyright to all content on this website, including photographs, belongs to ${siteName || "Nature Heaven Trekking"} and cannot be reproduced without our permission.`}
           </div>
         </div>
-      </footer>
-    </div>
+      </div>
+    </footer>
   );
 }
-

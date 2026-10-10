@@ -244,7 +244,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
       {/* Announcement strip — CMS text, always shown while enabled (no dismiss),
           as the client asked for it to be a permanent fixture like before. */}
       {data.promo && (
-        <div className="bg-[#1a3c2e] text-white text-[13px]">
+        <aside aria-label="Announcement" className="bg-[#1a3c2e] text-white text-[13px]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 min-h-[38px] flex items-center justify-center gap-3">
             <FaBullhorn className="h-3.5 w-3.5 shrink-0" style={{ color: AMBER }} aria-hidden="true" />
             <span className="text-center font-medium">{data.promo.text}</span>
@@ -252,7 +252,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
               <Link prefetch={false} href={data.promo.linkHref} className="shrink-0 rounded-[5px] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white hover:brightness-110" style={{ backgroundColor: AMBER }}>{data.promo.linkLabel}</Link>
             )}
           </div>
-        </div>
+        </aside>
       )}
 
       <header className={`sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-black/[0.06] transition-[height] duration-200`}>

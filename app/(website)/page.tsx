@@ -509,7 +509,7 @@ export default async function HomePage() {
           </div>
 
           {/* Cards Grid (Slider on mobile, grid on desktop) */}
-          <div className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
+          <div tabIndex={0} role="region" aria-label="Best selling treks" className="flex overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0">
             {bestSellers.slice(0, 6).map((trek: Trek, index: number) => (
               <div key={trek._id || index} className="w-[290px] md:w-full shrink-0 snap-align-start flex flex-col">
                 <TrekCard trek={trek} />
@@ -548,7 +548,7 @@ export default async function HomePage() {
             <div className="absolute bottom-2 left-2 right-2 md:bottom-6 md:left-6 md:right-6 bg-primary/90 backdrop-blur-md p-2 md:p-6 rounded-xl border border-secondary/20 flex gap-1.5 md:gap-4 text-bgOffWhite items-center md:items-start">
               <span className="text-lg md:text-4xl text-secondary shrink-0">{whyBadgeIcon}</span>
               <div>
-                <h4 className="font-serif font-bold text-[10px] md:text-lg leading-tight">{whyBadgeTitle}</h4>
+                <h3 className="font-serif font-bold text-[10px] md:text-lg leading-tight">{whyBadgeTitle}</h3>
                 <p className="hidden md:block text-xs text-bgOffWhite/80 mt-1">{whyBadgeDescription}</p>
               </div>
             </div>
@@ -577,7 +577,7 @@ export default async function HomePage() {
                     {WHY_ICON_MAP[feat.icon] || WHY_ICON_MAP.award}
                   </span>
                   <div>
-                    <h4 className="font-bold text-primary text-sm md:text-base">{feat.title}</h4>
+                    <h3 className="font-bold text-primary text-sm md:text-base">{feat.title}</h3>
                     <p className="text-xs text-charcoal/70 mt-1">{feat.description}</p>
                   </div>
                 </div>
@@ -727,9 +727,9 @@ export default async function HomePage() {
                           </span>
                         </div>
                         
-                        <h4 className="font-serif font-black text-primary group-hover:text-secondary transition text-sm sm:text-base leading-snug line-clamp-2">
+                        <h3 className="font-serif font-black text-primary group-hover:text-secondary transition text-sm sm:text-base leading-snug line-clamp-2">
                           {blog.title}
-                        </h4>
+                        </h3>
                       </div>
                     </Link>
                   );
