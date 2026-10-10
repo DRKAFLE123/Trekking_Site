@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { getMediaUrl } from './cloudinary-loader';
+import cloudinaryLoader, { getMediaUrl } from './cloudinary-loader';
 import { FaWhatsapp } from 'react-icons/fa';
 
 export interface HeadingItem {
@@ -187,9 +187,13 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
       return (
         <div key={idx} className="my-6 flex flex-col items-center gap-2">
           <img
-            src={url}
+            src={cloudinaryLoader({ src: url, width: 1200 })}
             alt={alt}
-            className="rounded-xl object-cover shadow-md w-full max-h-[500px]"
+            width={media.width || undefined}
+            height={media.height || undefined}
+            loading="lazy"
+            decoding="async"
+            className="rounded-xl object-cover shadow-md w-full h-auto max-h-[500px]"
           />
           {alt && <span className="text-xs text-charcoal/60 italic text-center">{alt}</span>}
         </div>
@@ -338,8 +342,10 @@ function renderLexicalNodes(nodes: any[]): React.ReactNode {
               {/* Left: compact photo */}
               <div style={{ width: '120px', minWidth: '120px', overflow: 'hidden', flexShrink: 0, backgroundColor: '#0f1f2e' }}>
                 <img
-                  src={imageSrc}
+                  src={cloudinaryLoader({ src: imageSrc, width: 256 })}
                   alt={trekTitle}
+                  loading="lazy"
+                  decoding="async"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', minHeight: '90px', display: 'block' }}
                 />
               </div>

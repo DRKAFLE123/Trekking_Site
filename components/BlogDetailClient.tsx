@@ -6,7 +6,7 @@ import { FaArrowLeft, FaCalendarAlt, FaUser, FaRegClock, FaFacebookF, FaLink, Fa
 import { FaXTwitter } from 'react-icons/fa6';
 import { BlogPost } from '@/types';
 import Image from 'next/image';
-import { getMediaUrl } from '@/lib/cloudinary-loader';
+import cloudinaryLoader, { getMediaUrl } from '@/lib/cloudinary-loader';
 
 interface HeadingItem {
   id: string;
@@ -402,8 +402,10 @@ export default function BlogDetailClient({
                           {othBlog.coverImage && (
                             <div className="relative h-12 w-20 rounded-[5px] overflow-hidden shrink-0 bg-primary/10">
                               <img
-                                src={getMediaUrl(othBlog.coverImage)}
+                                src={cloudinaryLoader({ src: getMediaUrl(othBlog.coverImage), width: 160 })}
                                 alt={othBlog.title}
+                                loading="lazy"
+                                decoding="async"
                                 className="object-cover w-full h-full group-hover:scale-[1.03] transition duration-500"
                               />
                             </div>
@@ -533,8 +535,10 @@ export default function BlogDetailClient({
                     <div className="relative aspect-[16/9] w-full overflow-hidden bg-primary/10">
                       {simBlog.coverImage ? (
                         <img
-                          src={getMediaUrl(simBlog.coverImage)}
+                          src={cloudinaryLoader({ src: getMediaUrl(simBlog.coverImage), width: 640 })}
                           alt={simBlog.title}
+                          loading="lazy"
+                          decoding="async"
                           className="object-cover w-full h-full group-hover:scale-[1.03] transition duration-500"
                         />
                       ) : (
