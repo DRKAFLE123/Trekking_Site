@@ -70,7 +70,7 @@ export default async function WhyUsPage() {
       const payload = await getPayload({ config });
       const response = await payload.find({
         collection: "faqs",
-        depth: 1,
+        depth: 0, // linked treks are not rendered; depth 1 embedded full trek documents
       });
       faqs = response.docs as unknown as Faq[];
     } catch (err: any) {

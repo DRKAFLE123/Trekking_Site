@@ -136,8 +136,10 @@ export default async function HomePage() {
           },
         },
         sort: 'order',
-        depth: 1,
-        limit: 100,
+        // depth 0: the accordion never reads the linked treks, and depth 1 embedded a
+        // full trek document (~158 KB: itinerary, FAQs, GPS) in the homepage HTML.
+        depth: 0,
+        limit: 12,
       });
       const standaloneFeatured = faqsRes.docs as unknown as Faq[];
 
