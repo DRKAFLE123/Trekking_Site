@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { FaStar, FaQuoteLeft } from "react-icons/fa";
+import { FaQuoteLeft } from "react-icons/fa";
 import { Testimonial } from "@/types";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
 
@@ -49,8 +49,8 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
 
   const items = testimonials && testimonials.length > 0 ? testimonials : defaultTestimonials as unknown as Testimonial[];
   
-  // Duplicate the array to ensure smooth seamless marquee transition
-  const marqueeItems = [...items, ...items, ...items];
+  // Two copies + translateX(-50%) loop seamlessly (cards carry their own right margin).
+  const marqueeItems = [...items, ...items];
 
   return (
     <section className="py-24 px-6 bg-[#fcfbfa] overflow-hidden relative">
@@ -78,12 +78,11 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
               transform: translateX(0);
             }
             100% {
-              transform: translateX(-33.3333%);
+              transform: translateX(-50%);
             }
           }
           .animate-marquee-track {
             display: flex;
-            gap: 1.5rem;
             width: max-content;
             animation: marquee 50s linear infinite;
           }
@@ -100,17 +99,16 @@ export default function TestimonialMarquee({ testimonials }: TestimonialMarqueeP
           {marqueeItems.map((testimonial, idx) => (
             <div
               key={idx}
-              className="bg-white p-8 rounded-2xl shadow-sm border border-secondary/5 w-[380px] sm:w-[420px] flex flex-col justify-between hover:shadow-md hover:border-secondary/20 transition-all duration-300 pointer-events-auto"
+              aria-hidden={idx >= items.length || undefined}
+              className="mr-6 bg-white p-8 rounded-2xl shadow-sm border border-secondary/5 w-[380px] sm:w-[420px] flex flex-col justify-between hover:shadow-md hover:border-secondary/20 transition-all duration-300 pointer-events-auto"
             >
               <div className="flex flex-col gap-4">
                 {/* Quote Icon and Rating */}
                 <div className="flex items-center justify-between">
                   <FaQuoteLeft className="text-secondary/15 h-8 w-8" />
-                  <div className="flex text-secondary gap-0.5">
-                    {[...Array(testimonial.rating || 5)].map((_, i) => (
-                      <FaStar key={i} className="h-3.5 w-3.5 fill-current" />
-                    ))}
-                  </div>
+                  <span className="text-secondary text-[15px] leading-none tracking-[0.1em]" role="img" aria-label={`${testimonial.rating || 5} out of 5 stars`}>
+                    {"★".repeat(testimonial.rating || 5)}
+                  </span>
                 </div>
 
                 {/* Review Text */}
