@@ -46,6 +46,14 @@ export default function HeroSlider({
 
   const current = slides[active];
 
+  // Mount a slide's photo only once it is current or next, so the first visit
+  // downloads 2 hero images instead of all of them (hidden slides are still
+  // "in the viewport", so loading="lazy" alone would not stop them).
+  const [mounted, setMounted] = useState<Set<number>>(() => new Set([0, 1 % Math.max(n, 1)]));
+  useEffect(() => {
+    setMounted((m) => (m.has(active) && m.has((active + 1) % n) ? m : new Set([...m, active, (active + 1) % n])));
+  }, [active, n]);
+
   return (
     <section
       className="relative w-full h-[88svh] min-h-[620px] md:h-[90vh] md:min-h-[680px] max-h-[1000px] bg-primary overflow-hidden flex flex-col"
@@ -59,15 +67,17 @@ export default function HeroSlider({
             key={s.href}
             className={`absolute inset-0 transition-opacity duration-1000 ease-out ${i === active ? "opacity-100" : "opacity-0"}`}
           >
-            <Image
-              src={s.image}
-              alt=""
-              fill
-              sizes="100vw"
-              quality={70}
-              priority={i === 0}
-              className={`object-cover ${i === active ? "hero-kenburns" : ""}`}
-            />
+            {mounted.has(i) && (
+              <Image
+                src={s.image}
+                alt=""
+                fill
+                sizes="100vw"
+                quality={70}
+                priority={i === 0}
+                className={`object-cover ${i === active ? "hero-kenburns" : ""}`}
+              />
+            )}
           </div>
         ))}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/25" />
@@ -97,7 +107,7 @@ export default function HeroSlider({
             )}
           </div>
 
-          <Link
+          <Link prefetch={false}
             href={current.href}
             className="group flex items-center gap-3 rounded-[5px] bg-white/10 backdrop-blur border border-white/15 px-4 py-2.5 hover:bg-white/20 transition max-w-[62%] sm:max-w-md"
           >

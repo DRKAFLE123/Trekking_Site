@@ -677,7 +677,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
         <div className="max-w-[1240px] mx-auto px-4 md:px-6 flex flex-col gap-4">
           {/* Breadcrumb */}
           <div className="text-xs text-[#6B6B6B] flex items-center gap-1.5 font-semibold flex-wrap">
-            <Link href="/" className="hover:text-[#2E7D32] transition">Home</Link>
+            <Link prefetch={false} href="/" className="hover:text-[#2E7D32] transition">Home</Link>
             <span className="text-[#D0D0D0]">/</span>
             <Link href="/trips" className="hover:text-[#2E7D32] transition">Trips</Link>
             <span className="text-[#D0D0D0]">/</span>

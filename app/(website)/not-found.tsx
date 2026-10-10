@@ -89,6 +89,7 @@ export default function NotFound() {
         {/* Primary CTAs */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto mt-2">
           <Link
+            prefetch={false}
             href="/"
             className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-bgOffWhite hover:text-secondary font-bold px-6 py-3.5 rounded-xl text-xs sm:text-sm tracking-wider uppercase transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95"
           >

@@ -193,7 +193,7 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
       {/* Breadcrumb */}
       <div className="max-w-4xl mx-auto px-6 pt-6">
         <div className="text-xs text-[#6B6B6B] flex items-center gap-1.5 font-semibold flex-wrap">
-          <Link href="/" className="hover:text-[#2E7D32] transition">Home</Link>
+          <Link prefetch={false} href="/" className="hover:text-[#2E7D32] transition">Home</Link>
           <span className="text-[#D0D0D0]">/</span>
           <Link href="/why-us" className="hover:text-[#2E7D32] transition">Travel Info</Link>
           <span className="text-[#D0D0D0]">/</span>

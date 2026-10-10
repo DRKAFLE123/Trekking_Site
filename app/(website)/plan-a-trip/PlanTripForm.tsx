@@ -137,6 +137,7 @@ ${formData.message || "No special requests listed. Design a premium, standard cu
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
             <Link
+              prefetch={false}
               href="/"
               className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-3.5 rounded-xl hover:bg-transparent hover:text-primary border border-primary transition-all duration-300 text-sm flex items-center justify-center"
             >

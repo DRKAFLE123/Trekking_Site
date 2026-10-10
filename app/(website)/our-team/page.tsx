@@ -154,6 +154,7 @@ export default async function TeamPage() {
       <div className="max-w-[1110px] mx-auto px-4 sm:px-6 pt-6">
         <nav className="flex items-center gap-2 text-sm font-sans overflow-x-auto whitespace-nowrap text-[#6B6B6B]">
           <Link
+            prefetch={false}
             href="/"
             className="hover:text-[#2E7D32] transition"
           >

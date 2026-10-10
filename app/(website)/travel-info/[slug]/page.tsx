@@ -104,7 +104,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         {/* Breadcrumb */}
         <div className="flex items-center text-sm text-[#6B6B6B] mb-8 font-sans overflow-x-auto whitespace-nowrap pb-2">
-          <Link href="/" className="hover:text-[#2E7D32] transition">Home</Link>
+          <Link prefetch={false} href="/" className="hover:text-[#2E7D32] transition">Home</Link>
           <FaChevronRight className="mx-2 text-xs text-gray-400" />
           <span className="text-gray-400">Travel Info</span>
           <FaChevronRight className="mx-2 text-xs text-gray-400" />
