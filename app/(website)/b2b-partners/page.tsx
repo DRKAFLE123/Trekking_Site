@@ -15,15 +15,25 @@ export const revalidate = 3600;
 
 const SITE = "https://natureheaventreks.com";
 const PATH = "/b2b-partners";
-const TITLE = "B2B Trekking Partner in Nepal | Ground Handler for Tour Operators";
+const OG_IMAGE = "https://res.cloudinary.com/dslrn3soo/image/upload/c_fill,w_1200,h_630,g_auto,f_jpg,q_75/summit-trail-trekking/Annapurna_Expedition_-40_Days-2_nul10a.jpg";
+const MODIFIED = "2026-10-11";
+const TITLE = "B2B Trekking Partner in Nepal | Licensed Ground Handler";
 const DESCRIPTION =
-  "Partner with a government-licensed Nepal ground handler. Net rates, white-label private treks, peak climbing and expeditions, permits and 24/7 field support for tour operators, agencies and DMCs.";
+  "B2B trekking partner in Nepal for tour operators, agencies and DMCs: licensed ground handling, net rates, white-label private treks, permits and 24/7 support.";
 
 export const metadata: Metadata = {
   title: { absolute: `${TITLE}` },
   description: DESCRIPTION,
   alternates: { canonical: PATH },
-  openGraph: { title: TITLE, description: DESCRIPTION, url: PATH, type: "website" },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: PATH,
+    type: "website",
+    siteName: "Nature Heaven Treks & Expedition",
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Trekker on a Himalayan ridge with Nature Heaven Treks & Expedition" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [OG_IMAGE] },
 };
 
 const IMG = {
@@ -72,6 +82,22 @@ const PRODUCTS = [
 
 const FAQS = [
   {
+    q: "What is a B2B trekking partner in Nepal?",
+    a: "A B2B trekking partner is a licensed Nepal-based operator that runs treks, climbs and tours on behalf of foreign travel businesses. You sell the trip to your client; the partner handles permits, guides, porters, transport and accommodation on the ground at agreed net rates.",
+  },
+  {
+    q: "What is a ground handler, and do I need one for Nepal?",
+    a: "A ground handler is the local company that delivers your trip in the destination. For Nepal you need one: trekking in most protected areas requires a licensed guide, and restricted areas such as Manaslu and Upper Mustang can only be trekked through a registered Nepali agency.",
+  },
+  {
+    q: "How do I become a Nature Heaven B2B partner?",
+    a: "Send the partner inquiry form on this page with your company details and the trips you want to sell. We reply within 24 hours with net rates, partnership terms and sample itineraries, and you can start booking clients as soon as terms are agreed.",
+  },
+  {
+    q: "Should I book Nepal treks through a wholesaler or directly with a local operator?",
+    a: "Booking directly with a licensed local operator removes a reseller margin, gives you one accountable contact on the ground, and lets you shape itineraries for your clients. Wholesalers can suit very small volumes, but they usually subcontract to a local company anyway.",
+  },
+  {
     q: "What does a B2B partnership with Nature Heaven include?",
     a: "You get confidential net rates for our treks, tours, peak climbs and expeditions, white-label operation under your brand, help with permits and logistics, original trip photos and itineraries for your marketing, and a Kathmandu operations team supporting your clients throughout the trip.",
   },
@@ -105,18 +131,32 @@ const FAQS = [
   },
 ];
 
+const TABLE_TREKS = ["everest-base-camp-trek", "annapurna-base-camp-trek", "annapurna-circuit-trek", "manaslu-circuit-trek", "upper-mustang-trek", "island-peak-climbing-ebc-trek"];
+const DIFFICULTY: Record<string, string> = { easy: "Easy", moderate: "Moderate", hard: "Challenging", extreme: "Strenuous" };
+
 async function getStats() {
   try {
     const payload = await getPayload({ config });
-    const s: any = (await payload.find({ collection: "siteSettings", limit: 1, depth: 0, select: { stats: true, trust: true } as any })).docs[0] || {};
-    return { stats: s.stats || {}, trust: s.trust || {} };
+    const [settings, treks] = await Promise.all([
+      payload.find({ collection: "siteSettings", limit: 1, depth: 0, select: { stats: true, trust: true, socialLinks: true } as any }),
+      payload.find({
+        collection: "treks",
+        where: { slug: { in: TABLE_TREKS } },
+        limit: TABLE_TREKS.length,
+        depth: 0,
+        select: { title: true, slug: true, duration: true, maxAltitude: true, difficulty: true, bestSeason: true } as any,
+      }),
+    ]);
+    const s: any = settings.docs[0] || {};
+    const order = (t: any) => TABLE_TREKS.indexOf(t.slug);
+    return { stats: s.stats || {}, trust: s.trust || {}, social: s.socialLinks || {}, treks: (treks.docs as any[]).sort((a, b) => order(a) - order(b)) };
   } catch {
-    return { stats: {}, trust: {} };
+    return { stats: {}, trust: {}, social: {}, treks: [] as any[] };
   }
 }
 
 export default async function B2BPartnersPage() {
-  const { stats, trust } = await getStats();
+  const { stats, trust, social, treks } = await getStats();
   const founded = trust.foundedYear || 2019;
   const regNo = trust.registrationNo || "215948/75/076";
   const STATS = [
@@ -126,17 +166,40 @@ export default async function B2BPartnersPage() {
     { value: stats.rating || "4.9/5", label: "Average traveler rating" },
   ];
 
+  const ORG_ID = `${SITE}/#organization`;
+  const sameAs = [social.facebook, social.instagram, social.youtube, social.tiktok, trust.tripAdvisorUrl].filter(Boolean);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
+      {
+        "@type": ["TravelAgency", "Organization"],
+        "@id": ORG_ID,
+        name: "Nature Heaven Treks & Expedition",
+        url: SITE,
+        logo: `${SITE}/brand/logo-pdf.png`,
+        foundingDate: String(founded),
+        telephone: "+977-9851218358",
+        email: "info@natureheaventreks.com",
+        address: { "@type": "PostalAddress", streetAddress: "Pakjonal Marga-16, Thamel", addressLocality: "Kathmandu", addressCountry: "NP" },
+        memberOf: [
+          { "@type": "Organization", name: "Trekking Agencies' Association of Nepal (TAAN)", url: "https://www.taan.org.np" },
+          { "@type": "Organization", name: "Nepal Tourism Board", url: "https://ntb.gov.np" },
+        ],
+        sameAs,
+      },
       {
         "@type": "WebPage",
         "@id": `${SITE}${PATH}#webpage`,
         url: `${SITE}${PATH}`,
         name: TITLE,
         description: DESCRIPTION,
+        inLanguage: "en",
+        dateModified: MODIFIED,
         isPartOf: { "@id": `${SITE}/#website` },
-        about: { "@id": `${SITE}/#organization` },
+        about: { "@id": ORG_ID },
+        publisher: { "@id": ORG_ID },
+        primaryImageOfPage: OG_IMAGE,
+        audience: { "@type": "BusinessAudience", audienceType: "Tour operators, travel agencies, DMCs, online travel platforms, adventure clubs and group organisers" },
         breadcrumb: { "@id": `${SITE}${PATH}#breadcrumb` },
       },
       {
@@ -149,9 +212,9 @@ export default async function B2BPartnersPage() {
       },
       {
         "@type": "Service",
-        name: "B2B ground handling for treks and expeditions in Nepal",
+        name: "B2B trekking partnership and ground handling in Nepal",
         serviceType: "Tour operator ground handling",
-        provider: { "@type": "TravelAgency", name: "Nature Heaven Treks & Expedition", url: SITE, telephone: "+977-9851218358", email: "info@natureheaventreks.com" },
+        provider: { "@id": ORG_ID },
         areaServed: [{ "@type": "Country", name: "Nepal" }, { "@type": "Country", name: "Bhutan" }, { "@type": "AdministrativeArea", name: "Tibet" }],
         audience: { "@type": "BusinessAudience", audienceType: "Tour operators, travel agencies, DMCs and online travel platforms" },
       },
@@ -179,11 +242,12 @@ export default async function B2BPartnersPage() {
           </nav>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F5A623]">B2B partnership program</p>
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-black leading-[1.05] mt-3 max-w-3xl">
-            Your licensed ground handler for treks &amp; expeditions in Nepal
+            B2B trekking partner in Nepal: your licensed ground handler for treks &amp; expeditions
           </h1>
           <p className="mt-6 text-lg md:text-xl text-white/85 max-w-2xl leading-relaxed">
-            Tour operators, travel agencies and DMCs partner with Nature Heaven Treks &amp; Expedition for private treks,
-            peak climbing and Himalayan expeditions, operated by our own Kathmandu team at confidential net rates.
+            As a B2B trekking partner in Nepal, Nature Heaven Treks &amp; Expedition runs private treks, peak climbing and
+            Himalayan expeditions for tour operators, travel agencies and DMCs, operated by our own Kathmandu team at
+            confidential net rates.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <a href="#partner-form" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#a87418] hover:bg-[#8f6213] px-7 py-4 text-lg font-black text-white shadow-lg transition">
@@ -216,14 +280,47 @@ export default async function B2BPartnersPage() {
         </dl>
       </section>
 
+      {/* AT A GLANCE: summary for readers and answer engines */}
+      <section aria-labelledby="glance-h" className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 md:pt-20">
+        <div className="rounded-3xl border border-[#2E7D32]/25 bg-[#2E7D32]/[0.04] p-6 md:p-10 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8">
+          <div>
+            <h2 id="glance-h" className="font-serif text-2xl md:text-3xl font-black text-[#1a2e1f]">The partnership at a glance</h2>
+            <p className="mt-4 text-lg leading-relaxed">
+              <strong>A B2B trekking partner in Nepal is a licensed local operator that delivers trips for foreign travel
+              businesses.</strong> You sell the trek to your client; we arrange permits, guides, porters, flights and lodges and
+              run the trip on the ground at agreed net rates, under your brand if you prefer.
+            </p>
+            <p className="mt-3 leading-relaxed">
+              <strong>Who it is for:</strong> tour operators, travel agencies, DMCs, online travel platforms, adventure clubs and
+              corporate or school group organisers. <strong>Use it when</strong> you want to add Nepal, Tibet or Bhutan trips
+              without setting up your own team in Kathmandu.
+            </p>
+          </div>
+          <ul className="flex flex-col gap-3">
+            {[
+              `Government-licensed operator (Reg. No. ${regNo}), operating since ${founded}`,
+              "Confidential net rates, commission or white-label models",
+              "Private departures on your clients' dates, any group size",
+              "Permits, logistics and 24/7 field support handled by us",
+              "Reply with rates and sample itineraries within 24 hours",
+            ].map((t) => (
+              <li key={t} className="flex items-start gap-3 font-semibold text-[#1a2e1f]">
+                <IconCheck className="h-6 w-6 shrink-0 text-[#2E7D32]" /> {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* WHO WE WORK WITH */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20 md:py-24">
         <div className="max-w-2xl">
           <p className={KICKER}>Who we work with</p>
-          <h2 className={`${H2} mt-3`}>A Nepal operating partner for every kind of travel business</h2>
+          <h2 className={`${H2} mt-3`}>Who is the B2B partnership for?</h2>
           <p className="mt-4 text-lg leading-relaxed">
-            Whether you sell one Everest Base Camp trek a year or run regular Himalayan departures, you work directly with
-            the local company that guides your clients, not a reseller.
+            Any travel business that sells trips to Nepal and wants a licensed local operator to deliver them. Whether you sell
+            one Everest Base Camp trek a year or run regular Himalayan departures, you work directly with the company that
+            guides your clients, not a reseller.
           </p>
         </div>
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -244,7 +341,10 @@ export default async function B2BPartnersPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F5A623]">Partner benefits</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-black leading-tight mt-3">What you get as a Nature Heaven partner</h2>
+            <h2 className="font-serif text-3xl md:text-4xl font-black leading-tight mt-3">What do B2B partners get?</h2>
+            <p className="mt-4 text-lg text-white/85 leading-relaxed">
+              Net rates you can mark up, a fully operated trip, and the paperwork and support handled for you.
+            </p>
           </div>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10" style={{ ["--icon-tint" as any]: "rgba(245,166,35,.22)" }}>
             {BENEFITS.map(({ icon: I, title, text }) => (
@@ -262,7 +362,8 @@ export default async function B2BPartnersPage() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20 md:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className={KICKER}>How it works</p>
-          <h2 className={`${H2} mt-3`}>From first inquiry to first departure in four steps</h2>
+          <h2 className={`${H2} mt-3`}>How does the partnership work?</h2>
+          <p className="mt-4 text-lg leading-relaxed">From first inquiry to first departure in four steps, usually within a few days.</p>
         </div>
         <ol className="relative mt-14 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-6">
           {/* connector line (desktop) */}
@@ -289,10 +390,10 @@ export default async function B2BPartnersPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl">
             <p className={KICKER}>What you can sell</p>
-            <h2 className={`${H2} mt-3`}>Treks, peaks, expeditions and tours across the Himalaya</h2>
+            <h2 className={`${H2} mt-3`}>Which trips can partners sell?</h2>
             <p className="mt-4 text-lg leading-relaxed">
-              Every program below can be booked at partner rates, as a private trip on your clients&apos; dates, with
-              itineraries and photos you can use in your own sales material.
+              Treks, peak climbs, expeditions and tours across Nepal, Tibet and Bhutan. Every program can be booked at partner
+              rates as a private trip on your clients&apos; dates, with itineraries and photos you can use in your own sales material.
             </p>
           </div>
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -314,6 +415,45 @@ export default async function B2BPartnersPage() {
         </div>
       </section>
 
+      {/* POPULAR PARTNER TREKS: live data from the CMS */}
+      {treks.length > 0 && (
+        <section aria-labelledby="table-h" className="max-w-6xl mx-auto px-4 sm:px-6 pt-20 md:pt-24">
+          <h2 id="table-h" className={H2}>Popular treks with partners: key facts</h2>
+          <p className="mt-3 text-lg leading-relaxed max-w-3xl">
+            Durations and altitudes from our standard itineraries. Every trip can be shortened, extended or combined for your clients.
+          </p>
+          <div className="mt-8 overflow-x-auto rounded-2xl border border-[#E5E5E5] bg-white">
+            <table className="w-full min-w-[640px] text-left">
+              <caption className="sr-only">Popular partner treks with duration, maximum altitude, difficulty and best season</caption>
+              <thead className="bg-[#1a2e1f] text-white text-sm">
+                <tr>
+                  <th scope="col" className="px-5 py-3.5 font-bold">Trip</th>
+                  <th scope="col" className="px-5 py-3.5 font-bold">Duration</th>
+                  <th scope="col" className="px-5 py-3.5 font-bold">Max altitude</th>
+                  <th scope="col" className="px-5 py-3.5 font-bold">Difficulty</th>
+                  <th scope="col" className="px-5 py-3.5 font-bold">Best season</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#EFEFEF]">
+                {treks.map((t: any) => (
+                  <tr key={t.slug}>
+                    <th scope="row" className="px-5 py-4 font-bold text-[#1a2e1f]">
+                      <Link prefetch={false} href={`/trips/${t.slug}`} className="hover:text-[#2E7D32] underline-offset-4 hover:underline">
+                        {String(t.title).replace(/\s*[-–]\s*\d+\s*Days?$/i, "")}
+                      </Link>
+                    </th>
+                    <td className="px-5 py-4 tabular-nums">{t.duration ? `${t.duration} days` : "—"}</td>
+                    <td className="px-5 py-4 tabular-nums">{t.maxAltitude ? `${Number(t.maxAltitude).toLocaleString("en-US")} m` : "—"}</td>
+                    <td className="px-5 py-4">{DIFFICULTY[t.difficulty] || "—"}</td>
+                    <td className="px-5 py-4">{t.bestSeason || "Spring & autumn"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
       {/* WHY A LOCAL OPERATOR (long-form, SEO) */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl">
@@ -321,7 +461,10 @@ export default async function B2BPartnersPage() {
         </div>
         <div>
           <p className={KICKER}>Why a local operator</p>
-          <h2 className={`${H2} mt-3`}>Work directly with the team that guides your clients</h2>
+          <h2 className={`${H2} mt-3`}>Why work with a local Nepal operator?</h2>
+          <p className="mt-4 text-lg leading-relaxed font-semibold text-[#1a2e1f]">
+            Because Nepal&apos;s rules require it for most treks, and because it removes the reseller between you and the team on the ground.
+          </p>
           <div className="mt-5 flex flex-col gap-4 text-lg leading-relaxed">
             <p>
               Many Nepal trips sold abroad pass through several resellers before they reach the people who actually run
@@ -338,6 +481,14 @@ export default async function B2BPartnersPage() {
               and{" "}
               <Link prefetch={false} href="/trips/tsum-valley-trek" className="text-[#2E7D32] font-semibold underline underline-offset-4">Tsum Valley</Link>,
               where a licensed operator and special permits are mandatory.
+            </p>
+            <p className="text-base text-[#5a5a5a]">
+              Sources: the{" "}
+              <a href="https://ntb.gov.np" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Nepal Tourism Board</a>{" "}
+              requires trekkers in protected areas to hire a licensed guide; restricted-area permits are issued by Nepal&apos;s{" "}
+              <a href="https://www.immigration.gov.np" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Department of Immigration</a>{" "}
+              only through registered trekking agencies; we are a member of the{" "}
+              <a href="https://www.taan.org.np" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Trekking Agencies&apos; Association of Nepal</a>.
             </p>
           </div>
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -400,6 +551,7 @@ export default async function B2BPartnersPage() {
         <div className="text-center">
           <p className={KICKER}>Partner FAQ</p>
           <h2 className={`${H2} mt-3`}>B2B partnership questions</h2>
+          <p className="mt-3 text-sm text-[#6B6B6B]">Updated October 2026 by the Nature Heaven partnerships team</p>
         </div>
         <div className="mt-10 flex flex-col gap-3">
           {FAQS.map((f) => (
