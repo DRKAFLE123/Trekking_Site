@@ -56,8 +56,9 @@ export async function generateMetadata({ params }: TripDetailPageProps): Promise
       heroImageUrl = "/opengraph-image"; // brand-generated 1200x630 fallback
     }
 
-    const title = trek.metaTitle || `${trek.title} - ${trek.duration} Days`;
-    const description = trek.metaDescription || `Join our private, customizable ${trek.duration}-day ${trek.title}. Guided by native Sherpa experts with optimized adaptation schedules.`;
+    const trekName = (trek.title || "").replace(/\s*[-–—]?\s*\d+\s*days?\s*$/i, "").trim();
+    const title = trek.metaTitle || `${trekName} - ${trek.duration} Days`;
+    const description = trek.metaDescription || `Join our private, customizable ${trek.duration}-day ${trekName}, guided by native Sherpa experts with a safe acclimatization schedule.`;
     const openGraphImages = heroImageUrl ? [{ url: heroImageUrl, alt: trek.title }] : [];
 
     return {

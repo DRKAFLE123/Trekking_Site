@@ -36,7 +36,9 @@ interface Departure {
   };
 }
 
-export default function UpcomingDepartures() {
+// asPageHeading: the /upcoming-departures page uses this section as its H1; on the homepage it is an H2.
+export default function UpcomingDepartures({ asPageHeading = false }: { asPageHeading?: boolean }) {
+  const Heading = asPageHeading ? "h1" : "h2";
   const [departures, setDepartures] = useState<Departure[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -182,9 +184,9 @@ export default function UpcomingDepartures() {
             <span className="text-secondary uppercase font-bold text-xs tracking-[0.2em] mb-3 block">
               Guaranteed Small Group Slots
             </span>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4 text-primary">
+            <Heading className="font-serif text-3xl md:text-5xl font-bold mb-4 text-primary">
               Upcoming Departures
-            </h2>
+            </Heading>
             <div className="h-0.5 w-16 bg-secondary mx-auto mb-6"></div>
             <p className="text-sm md:text-base text-charcoal/80 font-sans">
               Join one of our scheduled private group tours this season. Tightly

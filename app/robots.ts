@@ -32,7 +32,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
           '/admin/*',
           '/api/',           // Server routes, never indexable content
           '/blogs/preview/', // Draft preview routes
-          '/_next/',         // Build artifacts
+          // /_next/ must stay crawlable: Google needs the JS/CSS to render pages.
         ],
       },
       sitemap: 'https://natureheaventreks.com/sitemap.xml',
@@ -45,7 +45,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       rules: {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/admin/*', '/api/', '/blogs/preview/', '/_next/'],
+        disallow: ['/admin', '/admin/*', '/api/', '/blogs/preview/'],
       },
       sitemap: 'https://natureheaventreks.com/sitemap.xml',
       host: 'https://natureheaventreks.com',

@@ -10,7 +10,7 @@ export const metadata = {
 export default function UpcomingDeparturesPage() {
   return (
     <div className="w-full pt-28 pb-16 bg-[#fcfbfa]">
-      <UpcomingDepartures />
+      <UpcomingDepartures asPageHeading />
     </div>
   );
 }

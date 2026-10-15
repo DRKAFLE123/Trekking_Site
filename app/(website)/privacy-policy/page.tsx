@@ -20,6 +20,7 @@ import PrivacyAccordion from "./PrivacyAccordion";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/privacy-policy" },
   title: "Privacy Policy | Nature Heaven Trekking & Expedition",
   description:
     "Read the Privacy Policy of Nature Heaven Trekking & Expedition to understand how we collect, use, protect, and handle your personal data.",

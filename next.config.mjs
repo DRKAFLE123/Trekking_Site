@@ -98,6 +98,8 @@ const nextConfig = {
       { source: "/wp-admin/:path*", destination: "/admin/login", permanent: true },
       { source: "/wp-login.php", destination: "/admin/login", permanent: true },
       { source: "/responsible-tourism", destination: "/csr", permanent: true },
+      // CMS doc that backs /contact-us also resolves under /contact-us/[slug]: duplicate page.
+      { source: "/contact-us/contact-us", destination: "/contact-us", permanent: true },
       { source: "/terms-conditions", destination: "/terms-and-condition", permanent: true },
     ];
   },

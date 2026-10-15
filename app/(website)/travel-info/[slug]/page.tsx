@@ -7,6 +7,7 @@ import { renderLexical } from "@/lib/lexical-renderer";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
+import { BreadcrumbJsonLd, JsonLd } from "@/components/seo/JsonLd";
 
 function extractYoutubeId(url: string) {
   if (!url) return null;
@@ -71,6 +72,19 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
 
   return (
     <div className="bg-[#f8f5f0] min-h-screen pb-20">
+      <BreadcrumbJsonLd trail={[[page.title, `/travel-info/${slug}`]]} />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: page.title,
+        description: page.seoDescription || page.excerpt || undefined,
+        image: (page.heroImage as any)?.url || undefined,
+        datePublished: (page as any).createdAt,
+        dateModified: (page as any).updatedAt,
+        mainEntityOfPage: `https://natureheaventreks.com/travel-info/${slug}`,
+        author: { "@type": "Organization", name: "Nature Heaven Treks & Expedition", url: "https://natureheaventreks.com" },
+        publisher: { "@type": "Organization", name: "Nature Heaven Treks & Expedition", logo: { "@type": "ImageObject", url: "https://natureheaventreks.com/logo/emblem.svg" } },
+      }} />
       {/* Hero Section */}
       <div className="relative h-[300px] md:h-[400px] w-full bg-[#1a2e1f]">
         {(page.heroImage as any)?.url ? (

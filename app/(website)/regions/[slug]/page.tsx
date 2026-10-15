@@ -11,6 +11,7 @@ import config from "@/payload/payload.config";
 import { TREK_CARD_SELECT } from "@/lib/payload-select";
 import TrekCard from "@/components/TrekCard";
 import cloudinaryLoader, { getMediaUrl } from "@/lib/cloudinary-loader";
+import { BreadcrumbJsonLd, clipDescription } from "@/components/seo/JsonLd";
 
 
 export const revalidate = 60; // Revalidate every minute
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: RegionDetailPageProps): Promi
     const base = /region$/i.test(region.name) ? `${region.name} Trekking` : region.name;
     const branded = `${base} | Nature Heaven Treks & Expedition`;
     const title = branded.length <= 60 ? branded : base;
-    const description = region.description || `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`;
+    const description = clipDescription(region.description || '') || `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`;
 
     return {
       title,
@@ -109,6 +110,7 @@ export default async function RegionDetailPage({ params }: RegionDetailPageProps
 
   return (
     <div className="bg-[#fcfbfa] min-h-screen">
+      <BreadcrumbJsonLd trail={[["Regions", "/regions"], [region.name, `/regions/${region.slug}`]]} />
       {/* Hero Header */}
       <section className="relative w-full h-[55vh] min-h-[350px] bg-primary overflow-hidden flex items-end">
         {/* Background Image and overlay */}
@@ -144,7 +146,7 @@ export default async function RegionDetailPage({ params }: RegionDetailPageProps
           </Link>
           
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black max-w-4xl leading-tight">
-            {region.name} Region
+            {region.name}
           </h1>
           <p className="text-xs sm:text-sm font-semibold text-bgOffWhite/90 max-w-xl leading-relaxed">
             {region.description}

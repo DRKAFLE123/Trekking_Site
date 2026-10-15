@@ -12,6 +12,7 @@ import TermsAccordion from "./TermsAccordion";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/terms-and-condition" },
   title: "Terms & Conditions | Nature Heaven Trekking & Expedition",
   description:
     "Read the booking terms and conditions for Nature Heaven Trekking & Expedition. Learn about deposits, cancellation policies, and traveler responsibility.",

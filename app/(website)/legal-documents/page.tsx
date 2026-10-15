@@ -12,6 +12,7 @@ import CertificateGallery from "./CertificateGallery";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/legal-documents" },
   title: "Legal Documents | Nature Heaven Treks & Expedition",
   description: "Verify the legal registration, licensing, and association memberships of Nature Heaven Trekking & Expedition under the Government of Nepal.",
 };

@@ -107,7 +107,8 @@ async function buildEntries(): Promise<Entry[]> {
         safeFind("regions", "/regions", "monthly", 0.7),
         safeFind("companyPages", "/company", "monthly", 0.6),
         safeFind("pages", "/travel-info", "monthly", 0.5),
-        safeFind("contactPages", "/contact-us", "monthly", 0.5),
+        // The "contact-us" doc backs /contact-us itself; /contact-us/contact-us is a 301 duplicate.
+        safeFind("contactPages", "/contact-us", "monthly", 0.5, { slug: { not_equals: "contact-us" } }),
       ]);
 
     // These seven CMS company pages are also served at root-level static routes

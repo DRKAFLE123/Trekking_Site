@@ -10,6 +10,7 @@ import { Trek, Region } from "@/types";
 import { FaClock, FaMapMarkerAlt, FaWhatsapp, FaPaperPlane, FaRegCompass, FaChevronRight, FaAward, FaCalendarAlt } from "react-icons/fa";
 import TrekCard from "@/components/TrekCard";
 import CountryInquiryForm from "./CountryInquiryForm";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
 type Params = Promise<{ slug: string }>;
 
@@ -157,6 +158,7 @@ export default async function CountryPage({ params }: { params: Params }) {
 
   return (
     <div className="w-full">
+      <BreadcrumbJsonLd trail={[["Countries", "/countries"], [country.name, `/countries/${slug.toLowerCase()}`]]} />
       {/* 1. Hero Cover */}
       <section className="relative w-full h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
