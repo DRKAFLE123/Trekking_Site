@@ -178,6 +178,16 @@ const basicInfoSection = {
   ],
 };
 
+// The admin edits highlights as one textarea (one per line); store them as the
+// highlights array. Only when the textarea was sent, so API writes of the array still work.
+export const linesToHighlights = (text: string) =>
+  text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((highlight) => ({ highlight }));
+
+const highlightsFromText = ({ data }: any) => {
+  if (typeof data?.highlightsText === 'string') data.highlights = linesToHighlights(data.highlightsText);
+  return data;
+};
+
 const overviewSection = {
   type: 'collapsible' as const,
   label: '📖 Overview & Highlights',
@@ -187,12 +197,27 @@ const overviewSection = {
   },
   fields: [
     {
+      name: 'highlightsText',
+      type: 'textarea' as const,
+      label: 'Trek Highlights',
+      virtual: true,
+      admin: {
+        readOnly: false,
+        rows: 10,
+        description: 'One highlight per line. Press Enter to start the next highlight. Empty lines are ignored.',
+        placeholder: 'Stand at Everest Base Camp (5,364m)\nSunrise over Everest from Kala Patthar\nVisit Tengboche Monastery',
+      },
+      hooks: {
+        afterRead: [({ siblingData }: any) =>
+          (siblingData?.highlights || []).map((h: any) => h?.highlight).filter(Boolean).join('\n')],
+      },
+    },
+    {
       name: 'highlights',
       type: 'array' as const,
       label: 'Trek Highlights',
-      admin: {
-        description: 'Key selling points shown as a bullet list. Add one highlight per row.',
-      },
+      // Edited through highlightsText below; kept as an array so the site, PDF and API read it unchanged.
+      admin: { hidden: true },
       labels: {
         singular: 'Highlight',
         plural: 'Highlights',
@@ -982,6 +1007,7 @@ export const treks: CollectionConfig = {
     description: 'Manage all trek packages. Each section below corresponds to a section on the trek detail page.',
   },
   hooks: {
+    beforeValidate: [highlightsFromText],
     afterChange: [revalidateTrek],
     afterDelete: [revalidateTrekDelete],
   },
