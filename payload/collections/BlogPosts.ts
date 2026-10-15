@@ -235,6 +235,15 @@ export const blogPosts: CollectionConfig = {
       }
     },
     {
+      // Shows the post's public address (natureheaventreks.com/blogs/<slug>) with Open / Copy.
+      name: 'publicUrl',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: { Field: '@components/payload/PublicUrlField#PublicUrlField' },
+      },
+    },
+    {
       name: 'author',
       type: 'relationship',
       relationTo: 'teamMembers',

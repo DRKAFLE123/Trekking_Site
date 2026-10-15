@@ -128,6 +128,7 @@ export const CustomPreviewToggle = () => {
             <line x1="1" y1="1" x2="23" y2="23"></line>
           </svg>
         )}
+        Live view
       </button>
 
       {/* Split button */}
@@ -145,6 +146,26 @@ export const CustomPreviewToggle = () => {
         </svg>
         Split
       </button>
+
+      {/* Preview in a new tab, like WordPress: the draft exactly as visitors will see it */}
+      <a
+        href={livePreviewURL}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Open the draft in a new tab exactly as it will look on the website (not published)"
+        style={{
+          ...getBtnStyle(false),
+          borderLeft: '1px solid #cbd5e1',
+          textDecoration: 'none',
+        }}
+      >
+        Preview
+        <svg stroke="currentColor" fill="none" strokeWidth="2.2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="12" width="12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M14 3h7v7"></path>
+          <path d="M10 14 21 3"></path>
+          <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"></path>
+        </svg>
+      </a>
     </div>
   );
 };

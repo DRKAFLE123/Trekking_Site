@@ -1,6 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { FaArrowLeft, FaCalendarAlt, FaUser, FaRegClock, FaEye } from "react-icons/fa";
@@ -18,6 +19,9 @@ interface BlogPreviewPageProps {
 export async function generateMetadata({ params }: BlogPreviewPageProps): Promise<Metadata> {
   const { slug } = await params;
   const payload = await getPayload({ config });
+  // Drafts are only for logged-in admins (same session cookie as /admin).
+  const { user: viewer } = await payload.auth({ headers: await headers() });
+  if (!viewer) return { title: "Preview", robots: { index: false, follow: false } };
   
   let blog = null;
   const res = await payload.find({
@@ -92,6 +96,9 @@ export async function generateMetadata({ params }: BlogPreviewPageProps): Promis
 export default async function BlogPreviewPage({ params }: BlogPreviewPageProps) {
   const { slug } = await params;
   const payload = await getPayload({ config });
+  // Unpublished drafts must not be readable by the public: require an admin session.
+  const { user: viewer } = await payload.auth({ headers: await headers() });
+  if (!viewer) notFound();
   
   let blog = null;
   const res = await payload.find({

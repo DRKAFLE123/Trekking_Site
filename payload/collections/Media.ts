@@ -193,10 +193,11 @@ export const media: CollectionConfig = {
       const url: string | undefined =
         doc?.url || doc?.sizes?.thumbnail?.url || doc?.thumbnailURL;
       if (!url || typeof url !== 'string') return null;
-      // Cloudinary supports on-the-fly resizing — request a small, square
-      // crop so the list thumbnail loads fast.
+      // The rich-text editor shows this same thumbnail at ~450-900 px, so a
+      // 120 px square crop looked blurry and cut images off. Keep the original
+      // shape (c_limit) at a size that stays sharp; lists crop it with CSS.
       if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
-        return url.replace('/upload/', '/upload/w_120,h_120,c_fill,q_auto,f_auto/');
+        return url.replace('/upload/', '/upload/c_limit,w_1000,q_auto,f_auto/');
       }
       return url;
     },

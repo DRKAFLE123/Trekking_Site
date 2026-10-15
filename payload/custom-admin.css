@@ -2636,3 +2636,30 @@ input[type="checkbox"] {
 }
 
 
+
+/* Rich-text editor images: show them like the published post (full content width,
+   natural aspect ratio, rounded) instead of Payload's fixed 450 px box. */
+.LexicalEditorTheme__upload__contents--landscape img,
+.LexicalEditorTheme__upload__contents--landscape svg {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+}
+.LexicalEditorTheme__upload__contents--portrait img,
+.LexicalEditorTheme__upload__contents--portrait svg {
+  min-height: 0 !important;
+  max-height: 500px !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+.LexicalEditorTheme__upload__contents,
+.LexicalEditorTheme__upload__card,
+.LexicalEditorTheme__upload__media {
+  max-width: 100% !important;
+}
+.LexicalEditorTheme__upload__media img {
+  object-fit: contain !important;
+  border-radius: 12px;
+  display: block;
+}
