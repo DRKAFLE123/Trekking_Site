@@ -13,7 +13,7 @@ import { BLOG_CARD_SELECT } from "@/lib/payload-select";
 // post links in its HTML. Server-rendering restores the internal linking.
 
 export const metadata: Metadata = {
-  title: "Trekking Guides & Travel Tips | Nature Heaven Trekking & Expedition",
+  title: "Nepal Trekking Blog: Guides & Travel Tips",
   description: "Read expert trekking guidelines, physical training tips, packing checklists, and cultural insights for traveling in Nepal.",
   alternates: { canonical: "/blogs" },
 };

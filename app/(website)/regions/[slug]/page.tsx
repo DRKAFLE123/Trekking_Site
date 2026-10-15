@@ -39,7 +39,11 @@ export async function generateMetadata({ params }: RegionDetailPageProps): Promi
     const rawImage = getMediaUrl(region.coverImage);
     const coverUrl = rawImage ? cloudinaryLoader({ src: rawImage, width: 1200 }) : "/opengraph-image";
 
-    const title = `${region.name} Region Trekking | Nature Heaven Trekking & Expedition`;
+    // Region names already end in "Region" ("Annapurna Region"); activity pages
+    // ("River Rafting in Nepal") aren't treks. Brand only when it fits in ~60 chars.
+    const base = /region$/i.test(region.name) ? `${region.name} Trekking` : region.name;
+    const branded = `${base} | Nature Heaven Treks & Expedition`;
+    const title = branded.length <= 60 ? branded : base;
     const description = region.description || `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`;
 
     return {

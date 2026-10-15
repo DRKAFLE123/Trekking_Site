@@ -13,7 +13,7 @@ import { Faq } from "@/types";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Why Choose Us & Travel Information | Nature Heaven Trekking & Expedition",
+  title: "Why Choose Nature Heaven Treks & Expedition",
   description: "Get comprehensive travel advice for Nepal: tourist visa instructions, travel insurance requirements, packing checklists, and FAQs.",
   alternates: { canonical: "/why-us" },
 };

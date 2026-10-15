@@ -58,7 +58,7 @@ export const CountriesPageSettings: CollectionConfig = {
                   type: 'text',
                   label: 'Browser Tab Title',
                   defaultValue:
-                    'Trekking Destinations by Country | Nature Heaven Trekking & Expedition',
+                    'Trekking Destinations by Country',
                 },
               ],
             },

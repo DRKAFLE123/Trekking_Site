@@ -7,7 +7,7 @@ import VideoGalleryPageClient from "./VideoGalleryPageClient";
 export const revalidate = 60; // Revalidate every minute
 
 export const metadata: Metadata = {
-  title: "Himalayan Video Gallery | Nature Heaven Trekking & Expedition",
+  title: "Himalayan Video Gallery | Nature Heaven Treks & Expedition",
   description: "Watch video highlights from our Everest Base Camp, Annapurna, Mardi Himal and Manaslu treks in the Nepal Himalayas.",
   alternates: { canonical: "/video-gallery" },
 };

@@ -244,6 +244,10 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
   // ── Normalize data from CMS ────────────────────────────────────────────────
   const dayByDayItinerary = trek.dayByDayItinerary || [];
 
+  // Trek name without the duration ("Everest Base Camp Trek - 14 Days" -> "Everest Base Camp Trek"),
+  // used in section headings so each one carries the trek's keyword.
+  const trekName = (trek.title || "").replace(/\s*[-–—]?\s*\d+\s*days?\s*$/i, "").trim();
+
   const highlightsList = (trek.highlights || []).map((h: any) =>
     typeof h === "string" ? h : h?.highlight
   ).filter(Boolean);
@@ -794,7 +798,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
                 <div id="highlights" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm scroll-mt-24">
                   <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
                     <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-[#F5A623] flex items-center justify-center shrink-0 shadow-sm"><FaStar className="text-lg" /></span>
-                    Trek Highlights
+                    {trekName} Highlights
                   </h2>
                   <ul className="flex flex-col divide-y divide-[#F0F0F0]">
                     {highlightsList.map((h, idx) => (
@@ -809,7 +813,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
 
               {/* Overview details second */}
               <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">Trip Overview</h2>
+                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">{trekName} Overview</h2>
                 <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
                   {trek.overview ? renderLexical(trek.overview) : <p>Detailed trek overview coming soon.</p>}
                 </div>
@@ -834,7 +838,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               <div id="trip-briefing" className="bg-[#fdf7ec] rounded-2xl border border-[#f1e6cf] p-6 md:p-10 shadow-sm scroll-mt-24">
                 <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] mb-6 flex items-center gap-3">
                   <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaRegCalendarCheck className="text-base" /></span>
-                  {trek.briefingInfoTitle || 'Online Trip Briefing'}
+                  {trek.briefingInfoTitle || `${trekName} Online Briefing`}
                 </h2>
                 <div className="prose max-w-none text-sm md:text-base leading-relaxed text-[#3D3D3D]">
                   {renderLexical(trek.briefingInfo)}
@@ -845,7 +849,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             {/* ── PHOTO GALLERY (conditionally rendered) ─────────────────── */}
             {hasGallery && (
               <div id="gallery" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
-                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">Photo Gallery</h2>
+                <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4">{trekName} Photo Gallery</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {galleryList.slice(0, 3).map((img, idx) => (
                     <div key={idx} className="relative aspect-square md:aspect-[4/3] rounded-xl overflow-hidden shadow-sm group bg-slate-100" onClick={() => {
@@ -878,7 +882,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             <div id="schedule" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
               <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-3 border-b border-[#E5E5E5] pb-4">
                 <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaRegCalendarCheck className="text-base" /></span>
-                Plan Your Trek Schedule
+                Plan Your {trekName} Dates
               </h2>
 
               <div className="bg-[#eef5fb] border border-[#dce8f3] rounded-2xl p-5">
@@ -961,7 +965,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             {dayByDayItinerary.length > 0 && (
               <div id="itinerary" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
                 <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4 flex-wrap gap-4">
-                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Detailed Itinerary</h2>
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">{trekName} Itinerary</h2>
                   <div className="flex items-center gap-3 text-xs font-bold text-[#2E7D32]">
                     <button onClick={expandAllDays} className="hover:underline">Expand All</button>
                     <span className="h-3 w-px bg-[#E5E5E5]" />
@@ -1147,7 +1151,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
             {(!!mapImageUrl || (trek.gpsCoordinates && trek.gpsCoordinates.length > 0)) && (
               <div id="map" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
                 <div className="flex items-center justify-between gap-4 border-b border-[#E5E5E5] pb-4 flex-wrap">
-                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">Trek Route Map</h2>
+                  <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E]">{trekName} Route Map</h2>
                   {mapImageUrl && (
                     <button type="button" onClick={handleDownloadMap} className="inline-flex items-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 shrink-0">
                       <FaDownload /> Download Map
@@ -1203,7 +1207,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
               <div id="info" className="bg-white rounded-2xl border border-[#E5E5E5] p-6 md:p-10 shadow-sm flex flex-col gap-6 scroll-mt-24">
                 <h2 className="font-serif text-2xl md:text-3xl font-black text-[#1A1A2E] border-b border-[#E5E5E5] pb-4 flex items-center gap-3">
                   <span className="w-10 h-10 rounded-full bg-[#2E7D32] text-white flex items-center justify-center shrink-0 shadow-sm"><FaInfoCircle className="text-base" /></span>
-                  {trek.title} — Important Trip Info
+                  {trekName} — Important Trip Info
                 </h2>
 
                 <div className="flex flex-col gap-3">
@@ -1519,7 +1523,7 @@ export default function TrekDetailClient({ trek, similarTreks, testimonials, faq
 
             return (
               <>
-                <h2 className="font-serif text-3xl md:text-4xl font-black text-[#1a2e1f] mb-8">FAQs For {trek.title}</h2>
+                <h2 className="font-serif text-3xl md:text-4xl font-black text-[#1a2e1f] mb-8">{trekName} FAQs</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 items-start">
                   {/* Sticky category nav */}
                   <nav className="hidden lg:block lg:sticky lg:top-[80px] self-start">

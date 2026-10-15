@@ -20,7 +20,7 @@ const DEFAULTS = {
   heroDescription:
     "Three countries, one Himalaya. Nepal for the legendary Everest and Annapurna circuits, Tibet for the high-altitude monasteries and remote north face, Bhutan for pristine kingdom valleys and Buddhist culture.",
   metaTitle:
-    "Trekking Destinations by Country | Nature Heaven Trekking & Expedition",
+    "Trekking Destinations by Country",
   metaDescription:
     "Discover private Himalayan trekking experiences across Nepal, Tibet, and Bhutan — three distinct cultures, terrains, and routes curated by native Sherpa guides.",
   ctaKicker: "Cross-border itinerary?",

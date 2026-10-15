@@ -56,7 +56,7 @@ export const RegionsPageSettings: CollectionConfig = {
                   type: 'text',
                   label: 'Browser Tab Title',
                   defaultValue:
-                    'Trekking Regions of the Himalayas | Nature Heaven Trekking & Expedition',
+                    'Trekking Regions of Nepal | Nature Heaven Treks & Expedition',
                 },
               ],
             },

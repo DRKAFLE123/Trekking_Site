@@ -7,7 +7,7 @@ import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Himalayan Photo Gallery | Nature Heaven Trekking & Expedition",
+  title: "Himalayan Photo Gallery | Nature Heaven Treks & Expedition",
   description:
     "Explore stunning photographs from our Everest, Annapurna, Manaslu, Langtang, and other private Himalayan treks — captured by our native Sherpa guides and clients.",
   alternates: { canonical: "/gallery" },

@@ -83,7 +83,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // WebSite schema on the homepage, sitemap page) — mixed variants make Google
   // distrust the site name and show the bare URL instead.
   const brandName = "Nature Heaven Treks & Expedition";
-  const defaultTitle = `${brandName} | Private Trekking Agency Nepal`;
+  const defaultTitle = `${brandName} | Private Trekking in Nepal`;
   const defaultDescription =
     "Nature Heaven Treks & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.";
 

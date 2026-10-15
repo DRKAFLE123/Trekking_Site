@@ -10,7 +10,7 @@ import { Trek, Region } from "@/types";
 export const revalidate = 60; // Revalidate every minute
 
 export const metadata: Metadata = {
-  title: "Trekking Packages in Nepal | Nature Heaven Trekking & Expedition",
+  title: "Nepal Trekking Packages | Nature Heaven Treks & Expedition",
   description: "Browse our private, customized trekking packages in Everest, Annapurna, and Manaslu. Search by difficulty, duration, and region to find your perfect hike.",
   alternates: { canonical: "/trips" },
 };

@@ -20,7 +20,7 @@ import CmsLexicalPage from "@/components/CmsLexicalPage";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Exclusive Private Treks in Nepal | Nature Heaven Trekking & Expedition",
+  title: "Private Treks in Nepal | Nature Heaven Treks & Expedition",
   description: "Enjoy fully personalized private treks in Nepal with flexible itineraries, dedicated native Sherpa guides, and customized schedules built for your pace.",
   alternates: { canonical: "/private-treks" },
 };

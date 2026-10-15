@@ -18,7 +18,7 @@ const DEFAULTS = {
   heroTitle: "Trekking Regions of the Himalayas",
   heroDescription:
     "From the iconic Everest and Annapurna massifs to remote, restricted areas like Upper Mustang and Dolpa — pick the terrain that matches your ambition.",
-  metaTitle: "Trekking Regions of the Himalayas | Nature Heaven Trekking & Expedition",
+  metaTitle: "Trekking Regions of Nepal | Nature Heaven Treks & Expedition",
   metaDescription:
     "Browse every Himalayan trekking region we operate in — Everest, Annapurna, Manaslu, Langtang, Mustang, Dolpa, Makalu, Kanchenjunga, and more. Pick your terrain.",
   ctaKicker: "Not sure where to go?",

@@ -7,7 +7,7 @@ import FAQsPageClient from "./FAQsPageClient";
 export const revalidate = 60; // Revalidate every minute
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions (FAQs) | Nature Heaven Trekking & Expedition",
+  title: "Nepal Trekking FAQs | Nature Heaven Treks & Expedition",
   description: "Get answers to your questions about trekking in Nepal. Learn about visa processes, physical fitness, travel insurance, and packing lists.",
   alternates: { canonical: "/faqs" },
 };

@@ -9,7 +9,7 @@ import CmsLexicalPage from "@/components/CmsLexicalPage";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Nepal Visa Information — On-Arrival Guide | Nature Heaven Trekking",
+  title: "Nepal Visa Information: On-Arrival Guide",
   description:
     "Everything you need to know about obtaining a Nepal tourist visa on arrival: fees, requirements, passport validity, and special country exemptions.",
   alternates: { canonical: "/visa-info" },
