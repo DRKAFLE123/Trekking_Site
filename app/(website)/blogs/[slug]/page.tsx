@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
       metaImageUrl = "/opengraph-image"; // brand-generated 1200x630 fallback
     }
 
-    const title = blog.seo?.metaTitle || `${blog.title} | Nature Heaven Chronicles`;
+    const title = blog.seo?.metaTitle || blog.title;
     const description = blog.seo?.metaDescription || blog.excerpt;
     const openGraphImages = metaImageUrl ? [{ url: metaImageUrl, alt: blog.title }] : [];
 

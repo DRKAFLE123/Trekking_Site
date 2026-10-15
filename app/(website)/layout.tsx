@@ -88,7 +88,10 @@ export async function generateMetadata(): Promise<Metadata> {
     "Nature Heaven Treks & Expedition is Nepal's leading agency specializing in 100% private, personalized trekking packages in Everest, Annapurna, and Manaslu regions.";
 
   return {
-    title: { default: defaultTitle, template: `%s | ${brandName}` },
+    // No brand suffix template: pages that want the brand write it themselves (it was
+    // doubling it on 53 pages). Blog posts and treks lead with their keyword title only;
+    // Google shows the site name above each result from the WebSite schema anyway.
+    title: defaultTitle,
     description: defaultDescription,
     metadataBase: new URL(siteUrl),
     // Deliberately no `alternates.canonical` here — Next.js inherits root

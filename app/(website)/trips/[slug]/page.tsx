@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: TripDetailPageProps): Promise
       heroImageUrl = "/opengraph-image"; // brand-generated 1200x630 fallback
     }
 
-    const title = trek.metaTitle || `${trek.title} - ${trek.duration} Days | Nature Heaven Trekking & Expedition`;
+    const title = trek.metaTitle || `${trek.title} - ${trek.duration} Days`;
     const description = trek.metaDescription || `Join our private, customizable ${trek.duration}-day ${trek.title}. Guided by native Sherpa experts with optimized adaptation schedules.`;
     const openGraphImages = heroImageUrl ? [{ url: heroImageUrl, alt: trek.title }] : [];
 
