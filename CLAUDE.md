@@ -31,6 +31,10 @@ Read this first in every new chat. Update **Progress** at the end of every work 
    promise only what the article actually covers.
 
 ## Gotchas (learned the hard way)
+- **Hostinger deploys do NOT run database migrations.** Any code that adds/changes CMS fields needs
+  `npx payload migrate` run against the live DB **before** the push, or every query on that collection fails
+  (28 Oct 2026: A0 broke all trek pages and the treks/regions/siteSettings APIs until the code was reverted).
+  Order: write migration → Aryan runs (or approves) `npx payload migrate` → verify → push code.
 - `payload.update` on a **blog post that has a newer unsaved draft** flips the post to draft = it disappears from
   the live site. Check versions first (`payload.findVersions`), or restore the last published version after.
   Treks and pages have no drafts, so they're safe.
@@ -65,7 +69,8 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - [x] Master plan, keyword clusters, blog inventory (28 Oct)
 - [x] A1 CTR rewrites: 7 posts updated in the CMS 28 Oct (Kathmandu post kept: CTR already 7.5%).
       Final list + checks in `seo-plan/a1-final.tsv`. Re-check their CTR in GSC around 11 Nov.
-- [~] A0 Google titles/descriptions editable in the CMS. Code committed (ee2ae0a, migration 20261028_120000_page_seo),
+- [ ] A0 REVERTED 28 Oct (5caaef0) because the migration never ran on deploy. To redo: run the migration first, then
+      `git revert 5caaef0` and push. Original code: ee2ae0a, migration 20261028_120000_page_seo;
       company pages' seoTitle/seoDescription filled 28 Oct. **After deploy:** run
       `PHASE=post node --env-file=.env scripts/.out/a0-fill.mjs` (fills Site Settings → Page SEO + region SEO fields
       from `seo-plan/a0-current-seo.tsv`), then check no live title changed.
