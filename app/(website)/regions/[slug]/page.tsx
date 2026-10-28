@@ -44,9 +44,8 @@ export async function generateMetadata({ params }: RegionDetailPageProps): Promi
     // ("River Rafting in Nepal") aren't treks. Brand only when it fits in ~60 chars.
     const base = /region$/i.test(region.name) ? `${region.name} Trekking` : region.name;
     const branded = `${base} | Nature Heaven Treks & Expedition`;
-    // CMS fields (Regions → Google title/description) win; the rule above is the fallback.
-    const title = (region as any).metaTitle?.trim() || (branded.length <= 60 ? branded : base);
-    const description = (region as any).metaDescription?.trim() || clipDescription(region.description || '') || `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`;
+    const title = branded.length <= 60 ? branded : base;
+    const description = clipDescription(region.description || '') || `Explore private, customized trekking routes in the beautiful ${region.name} region of the Nepal Himalayas. Guided by local experts.`;
 
     return {
       title,

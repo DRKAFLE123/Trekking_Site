@@ -33,8 +33,6 @@ import UpcomingDepartures from "@/components/UpcomingDepartures";
 import FAQAccordion from "@/components/FAQAccordion";
 import TestimonialMarquee from "@/components/TestimonialMarquee";
 
-import type { Metadata } from "next";
-import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 3600; // CMS edits purge this page immediately (payload/hooks/revalidate.ts); this is only the fallback
 
 /** "Everest Base Camp Trek - 14 Days" -> "Everest Base Camp Trek" */
@@ -46,14 +44,9 @@ const shortTitle = (t: string) => (t || "").replace(/\s*-\s*\d+\s*Days?\s*$/i, "
 // Absolute with trailing slash: that is the form Google records as the homepage
 // canonical, and the WebSite schema `url` must match it exactly for the site
 // name feature. Next would otherwise emit it without the slash.
-const baseMetadata: Metadata = {
+export const metadata = {
   alternates: { canonical: "https://natureheaventreks.com/" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return pageSeoMetadata("/", baseMetadata);
-}
 
 export default async function HomePage() {
   let bestSellers: Trek[] = [];

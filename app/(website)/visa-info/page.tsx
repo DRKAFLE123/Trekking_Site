@@ -6,20 +6,14 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import CmsLexicalPage from "@/components/CmsLexicalPage";
 
-import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "Nepal Visa Information: On-Arrival Guide",
   description:
     "Everything you need to know about obtaining a Nepal tourist visa on arrival: fees, requirements, passport validity, and special country exemptions.",
   alternates: { canonical: "/visa-info" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return pageSeoMetadata("/visa-info", baseMetadata);
-}
 
 async function getCmsPage() {
   try {

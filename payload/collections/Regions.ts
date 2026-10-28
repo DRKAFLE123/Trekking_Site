@@ -62,18 +62,6 @@ export const regions: CollectionConfig = {
       type: 'textarea',
     },
     {
-      name: 'metaTitle',
-      type: 'text',
-      label: 'Google title (SEO)',
-      admin: { description: 'Up to 60 characters. Leave blank to use "<Region name> Trekking | Nature Heaven Treks & Expedition".' },
-    },
-    {
-      name: 'metaDescription',
-      type: 'textarea',
-      label: 'Google description (SEO)',
-      admin: { description: '140 to 155 characters. Leave blank to use the region description.' },
-    },
-    {
       name: 'coverImage',
       type: 'upload',
       relationTo: 'media',

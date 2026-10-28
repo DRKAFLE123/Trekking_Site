@@ -6,20 +6,14 @@ import config from "@/payload/payload.config";
 import { Trek } from "@/types";
 import PlanTripForm from "./PlanTripForm";
 
-import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60; // Revalidate every minute
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "Plan a Custom Nepal Trek | Nature Heaven Treks & Expedition",
   description:
     "Tell us your dates, group size, and preferred region. Our Sherpa specialists design a fully private, custom itinerary across Everest, Annapurna, Manaslu, Tibet, or Bhutan — and get back within 6–12 hours.",
   alternates: { canonical: "/plan-a-trip" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return pageSeoMetadata("/plan-a-trip", baseMetadata);
-}
 
 export default async function PlanATripPage() {
   let treks: Trek[] = [];

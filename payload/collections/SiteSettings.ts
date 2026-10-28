@@ -54,22 +54,6 @@ export const SiteSettings: CollectionConfig = {
       },
     },
     {
-      name: 'pageSeo',
-      type: 'array',
-      label: 'Page SEO (Google title & description)',
-      labels: { singular: 'Page', plural: 'Pages' },
-      admin: {
-        description: 'Google title and description for pages that have no SEO fields of their own (Home, Trips, Blogs, FAQs, galleries, Plan a Trip, departures, B2B, country pages). Treks, blog posts, regions, company and travel-info pages have their own SEO fields.',
-        initCollapsed: true,
-        components: { RowLabel: '@components/payload/PageSeoRowLabel#PageSeoRowLabel' },
-      },
-      fields: [
-        { name: 'path', type: 'text', required: true, label: 'Page address', admin: { description: 'e.g. / or /trips or /countries/nepal' } },
-        { name: 'metaTitle', type: 'text', label: 'Google title', admin: { description: 'Up to 60 characters, main keyword first.' } },
-        { name: 'metaDescription', type: 'textarea', label: 'Google description', admin: { description: '140 to 155 characters.' } },
-      ],
-    },
-    {
       name: 'heroVideoUrl',
       type: 'text',
       admin: {

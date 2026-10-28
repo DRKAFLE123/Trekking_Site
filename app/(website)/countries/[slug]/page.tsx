@@ -11,7 +11,6 @@ import { FaClock, FaMapMarkerAlt, FaWhatsapp, FaPaperPlane, FaRegCompass, FaChev
 import TrekCard from "@/components/TrekCard";
 import CountryInquiryForm from "./CountryInquiryForm";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { pageSeoMetadata } from "@/lib/cms-seo";
 
 type Params = Promise<{ slug: string }>;
 
@@ -23,8 +22,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
   const title = `${country.name} Treks & Tours | Nature Heaven Trekking & Expedition`;
   const description = country.description;
-  // Edited in the CMS (Site Settings → Page SEO, path /countries/<slug>); these values are the fallback.
-  return pageSeoMetadata(`/countries/${slug.toLowerCase()}`, {
+  return {
     title,
     description,
     alternates: { canonical: `/countries/${slug.toLowerCase()}` },
@@ -41,10 +39,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       description,
       images: [country.heroImage],
     },
-  });
+  };
 }
-
-export const revalidate = 3600;
 
 interface CountryData {
   name: string;

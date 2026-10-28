@@ -4,19 +4,13 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import FAQsPageClient from "./FAQsPageClient";
 
-import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60; // Revalidate every minute
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "Nepal Trekking FAQs | Nature Heaven Treks & Expedition",
   description: "Get answers to your questions about trekking in Nepal. Learn about visa processes, physical fitness, travel insurance, and packing lists.",
   alternates: { canonical: "/faqs" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return pageSeoMetadata("/faqs", baseMetadata);
-}
 
 const DEFAULT_FAQS = [
   {

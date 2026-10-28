@@ -6,23 +6,17 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import { BLOG_CARD_SELECT } from "@/lib/payload-select";
 
-import { pageSeoMetadata } from "@/lib/cms-seo";
 // Reading searchParams below opts this route into dynamic rendering. That is
 // deliberate: BlogsPageContent calls useSearchParams(), and on a statically
 // prerendered route Next bails that Suspense boundary out to client-only
 // rendering — which shipped /blogs with the "Loading..." fallback and ZERO
 // post links in its HTML. Server-rendering restores the internal linking.
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "Nepal Trekking Blog: Guides & Travel Tips",
   description: "Read expert trekking guidelines, physical training tips, packing checklists, and cultural insights for traveling in Nepal.",
   alternates: { canonical: "/blogs" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return pageSeoMetadata("/blogs", baseMetadata);
-}
 
 export default async function BlogsPage({
   searchParams,

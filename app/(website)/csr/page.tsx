@@ -9,19 +9,13 @@ import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
 
-import { docSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "Responsible Tourism | Nature Heaven Trekking & Expedition",
   description: "Learn about our corporate social responsibility initiatives: supporting schools, ensuring porter welfare, and operating eco-friendly treks.",
   alternates: { canonical: "/csr" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return docSeoMetadata("companyPages", "csr", baseMetadata);
-}
 
 function extractYoutubeId(url: string) {
   if (!url) return null;

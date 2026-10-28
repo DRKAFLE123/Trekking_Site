@@ -17,20 +17,14 @@ import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
 import PrivacyAccordion from "./PrivacyAccordion";
 
-import { docSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   alternates: { canonical: "/privacy-policy" },
   title: "Privacy Policy | Nature Heaven Trekking & Expedition",
   description:
     "Read the Privacy Policy of Nature Heaven Trekking & Expedition to understand how we collect, use, protect, and handle your personal data.",
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return docSeoMetadata("companyPages", "privacy-policy", baseMetadata);
-}
 
 async function getPageData() {
   try {

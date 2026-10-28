@@ -9,19 +9,13 @@ import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
 import CertificateGallery from "./CertificateGallery";
 
-import { docSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   alternates: { canonical: "/legal-documents" },
   title: "Legal Documents | Nature Heaven Treks & Expedition",
   description: "Verify the legal registration, licensing, and association memberships of Nature Heaven Trekking & Expedition under the Government of Nepal.",
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return docSeoMetadata("companyPages", "legal-documents", baseMetadata);
-}
 
 async function getPageData() {
   try {

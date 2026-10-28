@@ -18,20 +18,14 @@ import config from "@/payload/payload.config";
 import { getMediaUrl } from "@/lib/cloudinary-loader";
 import { renderLexical } from "@/lib/lexical-renderer";
 
-import { docSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "Meet Our Team | Nature Heaven Trekking & Expedition",
   description:
     "Get to know the guides, operations officers, and safety coordinators of Nature Heaven Trekking & Expedition. Led by veteran Sherpa climbers.",
   alternates: { canonical: "/our-team" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return docSeoMetadata("companyPages", "our-team", baseMetadata);
-}
 
 // Classify team members into departments based on their role
 function classifyDepartment(role: string): string {

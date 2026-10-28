@@ -17,19 +17,13 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import CmsLexicalPage from "@/components/CmsLexicalPage";
 
-import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "Private Treks in Nepal | Nature Heaven Treks & Expedition",
   description: "Enjoy fully personalized private treks in Nepal with flexible itineraries, dedicated native Sherpa guides, and customized schedules built for your pace.",
   alternates: { canonical: "/private-treks" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return pageSeoMetadata("/private-treks", baseMetadata);
-}
 
 // Try to load this page from the CMS first. When a `companyPages` document
 // with slug `private-treks` exists, we render the dynamic Lexical content

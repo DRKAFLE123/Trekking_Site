@@ -8,19 +8,13 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
 
-import { docSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-const baseMetadata: Metadata = {
+export const metadata: Metadata = {
   title: "About Us | Nature Heaven Trekking & Expedition",
   description: "Learn about Nature Heaven Trekking & Expedition, a Nepal-based private trekking agency founded by native Everest summits guides.",
   alternates: { canonical: "/about-us" },
 };
-
-// Google title/description are edited in the CMS; baseMetadata is the fallback.
-export async function generateMetadata(): Promise<Metadata> {
-  return docSeoMetadata("companyPages", "about-us", baseMetadata);
-}
 
 function extractYoutubeId(url: string) {
   if (!url) return null;
