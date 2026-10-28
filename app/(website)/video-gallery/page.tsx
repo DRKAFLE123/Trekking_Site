@@ -4,13 +4,19 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import VideoGalleryPageClient from "./VideoGalleryPageClient";
 
+import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60; // Revalidate every minute
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Himalayan Video Gallery | Nature Heaven Treks & Expedition",
   description: "Watch video highlights from our Everest Base Camp, Annapurna, Mardi Himal and Manaslu treks in the Nepal Himalayas.",
   alternates: { canonical: "/video-gallery" },
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return pageSeoMetadata("/video-gallery", baseMetadata);
+}
 
 export default async function VideoGalleryPage() {
   let videos: any[] = [];

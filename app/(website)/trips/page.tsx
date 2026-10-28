@@ -7,13 +7,19 @@ import config from "@/payload/payload.config";
 import { TREK_CARD_SELECT } from "@/lib/payload-select";
 import { Trek, Region } from "@/types";
 
+import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60; // Revalidate every minute
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Nepal Trekking Packages | Nature Heaven Treks & Expedition",
   description: "Browse our private, customized trekking packages in Everest, Annapurna, and Manaslu. Search by difficulty, duration, and region to find your perfect hike.",
   alternates: { canonical: "/trips" },
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return pageSeoMetadata("/trips", baseMetadata);
+}
 
 // Reading searchParams opts the route into dynamic rendering. TripsPageContent
 // calls useSearchParams(); on a statically prerendered route Next bails that

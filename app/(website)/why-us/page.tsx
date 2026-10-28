@@ -10,13 +10,19 @@ import ScrollSpyTOC from "@/components/ScrollSpyTOC";
 import FAQAccordion from "@/components/FAQAccordion";
 import { Faq } from "@/types";
 
+import { docSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Why Choose Nature Heaven Treks & Expedition",
   description: "Get comprehensive travel advice for Nepal: tourist visa instructions, travel insurance requirements, packing checklists, and FAQs.",
   alternates: { canonical: "/why-us" },
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return docSeoMetadata("companyPages", "why-us", baseMetadata);
+}
 
 function extractYoutubeId(url: string) {
   if (!url) return null;

@@ -13,6 +13,7 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import CmsLexicalPage from "@/components/CmsLexicalPage";
 
+import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
 async function getCmsPage() {
@@ -31,12 +32,17 @@ async function getCmsPage() {
   }
 }
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Travel Insurance for Nepal Trekking | Nature Heaven Trekking",
   description:
     "Comprehensive guide to mandatory travel insurance for high-altitude trekking in Nepal. Learn what coverage you need, recommended providers, and helicopter evacuation policies.",
   alternates: { canonical: "/travel-insurance" },
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return pageSeoMetadata("/travel-insurance", baseMetadata);
+}
 
 const mustHave = [
   "High-altitude trekking coverage (explicitly up to 6,000m / 19,685ft)",
