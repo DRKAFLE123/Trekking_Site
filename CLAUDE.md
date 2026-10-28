@@ -34,7 +34,11 @@ Read this first in every new chat. Update **Progress** at the end of every work 
 - **Hostinger deploys do NOT run database migrations.** Any code that adds/changes CMS fields needs
   `npx payload migrate` run against the live DB **before** the push, or every query on that collection fails
   (28 Oct 2026: A0 broke all trek pages and the treks/regions/siteSettings APIs until the code was reverted).
-  Order: write migration → Aryan runs (or approves) `npx payload migrate` → verify → push code.
+  `npx payload migrate` itself fails on Node 24 here (ERR_REQUIRE_ASYNC_MODULE), so apply migrations with a small
+  pg script that runs the SQL and inserts into `payload_migrations` (example: `scripts/apply-page-seo-migration.mjs`,
+  batch 19). Order: write migration → run the apply script → verify columns exist → push code → re-check every
+  sitemap URL (a broken build prerenders trek pages as 404 and they cache for 24 h).
+- Git converts .tsv files to CRLF; strip `` before using them as data (`sed -i 's/$//' file`).
 - `payload.update` on a **blog post that has a newer unsaved draft** flips the post to draft = it disappears from
   the live site. Check versions first (`payload.findVersions`), or restore the last published version after.
   Treks and pages have no drafts, so they're safe.
@@ -69,8 +73,9 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - [x] Master plan, keyword clusters, blog inventory (28 Oct)
 - [x] A1 CTR rewrites: 7 posts updated in the CMS 28 Oct (Kathmandu post kept: CTR already 7.5%).
       Final list + checks in `seo-plan/a1-final.tsv`. Re-check their CTR in GSC around 11 Nov.
-- [ ] A0 REVERTED 28 Oct (5caaef0) because the migration never ran on deploy. To redo: run the migration first, then
-      `git revert 5caaef0` and push. Original code: ee2ae0a, migration 20261028_120000_page_seo;
+- [x] A0 live 28 Oct (68462d2, migration 20261028_120000_page_seo applied directly). Outage ~1 h on 28 Oct:
+      trek pages 404 until the DB was migrated and the site rebuilt. Verified: 187/187 URLs 200, 41/41 titles unchanged
+      (`node scripts/.out/a0-verify.mjs`). Old notes:
       company pages' seoTitle/seoDescription filled 28 Oct. **After deploy:** run
       `PHASE=post node --env-file=.env scripts/.out/a0-fill.mjs` (fills Site Settings → Page SEO + region SEO fields
       from `seo-plan/a0-current-seo.tsv`), then check no live title changed.
@@ -80,9 +85,9 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       added 26 trek/region links where a post names the trek. Posts with no trek link 17 → 7.
       Skipped post 57 (pending draft; still has 2 bad links). Scripts: scripts/.out/a2-links.mjs (check),
       a2-apply.ts (fix). Pending drafts on published posts: 57, 51, 42, 37 (ask before touching).
-- [ ] Unpublished posts that Google still shows (404 now): travel-insurance-for-trekking-in-nepal (id 54, draft),
-      everest-without-oxygen-records-climbers-how-it-s-possible (id 46, draft); essential-packing-list-for-trekking-in-nepal
-      (not in CMS). Decide: republish or 301.
+- [x] 28 Oct: posts 54 (travel insurance) and 46 (Everest without oxygen) improved (facts checked, answer-first block,
+      FAQs, links, fresher stats) and republished; essential-packing-list 301 → /packing-list.
+      Open: post 54 links twice to himalayanguardian.com bookings with a referral code (sponsored? ask Aryan).
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
