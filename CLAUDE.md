@@ -65,9 +65,19 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - [x] Master plan, keyword clusters, blog inventory (28 Oct)
 - [x] A1 CTR rewrites: 7 posts updated in the CMS 28 Oct (Kathmandu post kept: CTR already 7.5%).
       Final list + checks in `seo-plan/a1-final.tsv`. Re-check their CTR in GSC around 11 Nov.
-- [ ] A0 Move hardcoded page titles/descriptions (static pages, region/country/trek fallbacks set in code on 15 Oct)
-      into CMS fields, so the client can edit them (rule 7). Needs Aryan's OK (backend change).
-- [ ] A2 Internal links blog → trek pages (10 posts with none first)
+- [~] A0 Google titles/descriptions editable in the CMS. Code committed (ee2ae0a, migration 20261028_120000_page_seo),
+      company pages' seoTitle/seoDescription filled 28 Oct. **After deploy:** run
+      `PHASE=post node --env-file=.env scripts/.out/a0-fill.mjs` (fills Site Settings → Page SEO + region SEO fields
+      from `seo-plan/a0-current-seo.tsv`), then check no live title changed.
+      Where to edit now: treks/blogs/travel-info pages → their SEO fields; company pages → seoTitle/seoDescription;
+      regions → Google title/description; everything else → Site Settings → Page SEO (by path).
+- [x] A2 28 Oct: fixed 15 broken/redirecting/malformed links in posts (were invisible to the audit: absolute URLs),
+      added 26 trek/region links where a post names the trek. Posts with no trek link 17 → 7.
+      Skipped post 57 (pending draft; still has 2 bad links). Scripts: scripts/.out/a2-links.mjs (check),
+      a2-apply.ts (fix). Pending drafts on published posts: 57, 51, 42, 37 (ask before touching).
+- [ ] Unpublished posts that Google still shows (404 now): travel-insurance-for-trekking-in-nepal (id 54, draft),
+      everest-without-oxygen-records-climbers-how-it-s-possible (id 46, draft); essential-packing-list-for-trekking-in-nepal
+      (not in CMS). Decide: republish or 301.
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
