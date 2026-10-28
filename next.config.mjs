@@ -100,6 +100,8 @@ const nextConfig = {
       { source: "/responsible-tourism", destination: "/csr", permanent: true },
       // CMS doc that backs /contact-us also resolves under /contact-us/[slug]: duplicate page.
       { source: "/contact-us/contact-us", destination: "/contact-us", permanent: true },
+      // Old article Google still shows; the site has a full packing list page.
+      { source: "/blogs/essential-packing-list-for-trekking-in-nepal", destination: "/packing-list", permanent: true },
       { source: "/terms-conditions", destination: "/terms-and-condition", permanent: true },
     ];
   },
