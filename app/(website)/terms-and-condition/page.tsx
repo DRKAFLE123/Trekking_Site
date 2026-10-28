@@ -9,14 +9,20 @@ import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
 import TermsAccordion from "./TermsAccordion";
 
+import { docSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   alternates: { canonical: "/terms-and-condition" },
   title: "Terms & Conditions | Nature Heaven Trekking & Expedition",
   description:
     "Read the booking terms and conditions for Nature Heaven Trekking & Expedition. Learn about deposits, cancellation policies, and traveler responsibility.",
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return docSeoMetadata("companyPages", "terms-and-condition", baseMetadata);
+}
 
 async function getPageData() {
   try {

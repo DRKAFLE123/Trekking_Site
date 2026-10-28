@@ -25,6 +25,7 @@ import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { CustomPreviewToggle as CustomPreviewToggle_7d350139a411617631c957efccd30350 } from '@components/payload/CustomPreviewToggle'
 import { PublicUrlField as PublicUrlField_b2f1c0a9e4d84c7a9f0e6a1d3c5b7e91 } from '@components/payload/PublicUrlField'
+import { PageSeoRowLabel as PageSeoRowLabel_7d3e9a1c5b2f4e8a9c6d0b1f3e5a7c92 } from '@components/payload/PageSeoRowLabel'
 import { CustomAvatar as CustomAvatar_fa663cea947baa70c7600128b68f007e } from '@components/payload/CustomAvatar'
 import { Icon as Icon_de14fae400a34f23367164b41d4042ed } from '@components/payload/Icon'
 import { AdminHeaderLogo as AdminHeaderLogo_0220b9ced08e14c8e98bdad5447cc02f } from '@components/payload/AdminHeaderLogo'
@@ -62,6 +63,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@components/payload/CustomPreviewToggle#CustomPreviewToggle": CustomPreviewToggle_7d350139a411617631c957efccd30350,
   "@components/payload/PublicUrlField#PublicUrlField": PublicUrlField_b2f1c0a9e4d84c7a9f0e6a1d3c5b7e91,
+  "@components/payload/PageSeoRowLabel#PageSeoRowLabel": PageSeoRowLabel_7d3e9a1c5b2f4e8a9c6d0b1f3e5a7c92,
   "@components/payload/CustomAvatar#CustomAvatar": CustomAvatar_fa663cea947baa70c7600128b68f007e,
   "@components/payload/Icon#Icon": Icon_de14fae400a34f23367164b41d4042ed,
   "@components/payload/AdminHeaderLogo#AdminHeaderLogo": AdminHeaderLogo_0220b9ced08e14c8e98bdad5447cc02f,

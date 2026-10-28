@@ -5,14 +5,20 @@ import config from "@/payload/payload.config";
 import CmsLexicalPage from "@/components/CmsLexicalPage";
 import PackingListStatic from "./PackingListStatic";
 
+import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Trekking Packing List | Nature Heaven Trekking & Expedition",
   description:
     "Comprehensive packing checklist for trekking in Nepal, from base layers and footwear to permits and personal medication.",
   alternates: { canonical: "/packing-list" },
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return pageSeoMetadata("/packing-list", baseMetadata);
+}
 
 async function getCmsPage() {
   try {

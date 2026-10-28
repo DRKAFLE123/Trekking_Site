@@ -11,6 +11,7 @@ import {
   IconCheck, IconWallet, IconBuilding,
 } from "@/components/b2b/B2BIcons";
 
+import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 3600;
 
 const SITE = "https://natureheaventreks.com";
@@ -21,7 +22,7 @@ const TITLE = "B2B Trekking Partner in Nepal | Licensed Ground Handler";
 const DESCRIPTION =
   "B2B trekking partner in Nepal for tour operators, agencies and DMCs: licensed ground handling, net rates, white-label private treks, permits and 24/7 support.";
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: { absolute: `${TITLE}` },
   description: DESCRIPTION,
   alternates: { canonical: PATH },
@@ -35,6 +36,11 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [OG_IMAGE] },
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return pageSeoMetadata("/b2b-partners", baseMetadata);
+}
 
 const IMG = {
   hero: "https://res.cloudinary.com/dslrn3soo/image/upload/v1790229500/summit-trail-trekking/Annapurna_Expedition_-40_Days-2_nul10a.jpg",

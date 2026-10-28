@@ -4,14 +4,20 @@ import config from "@/payload/payload.config";
 import { TREK_LINK_POPULATE } from "@/lib/payload-select";
 import PhotoGalleryMasonry from "@/components/PhotoGalleryMasonry";
 
+import { pageSeoMetadata } from "@/lib/cms-seo";
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Himalayan Photo Gallery | Nature Heaven Treks & Expedition",
   description:
     "Explore stunning photographs from our Everest, Annapurna, Manaslu, Langtang, and other private Himalayan treks — captured by our native Sherpa guides and clients.",
   alternates: { canonical: "/gallery" },
 };
+
+// Google title/description are edited in the CMS; baseMetadata is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return pageSeoMetadata("/gallery", baseMetadata);
+}
 
 export default async function GalleryPage() {
   let galleryItems: any[] = [];
