@@ -24,6 +24,11 @@ Read this first in every new chat. Update **Progress** at the end of every work 
 4. Never enter passwords or tokens; never upload the backup anywhere (it lives on Aryan's external disk).
 5. Don't merge Hostinger's automatic vulnerability PRs. URLs never change. PayPal and bank transfer must keep working.
 6. Commit messages end with the Co-Authored-By line given by the harness.
+7. **All content goes through the CMS** (titles, meta descriptions, page text, posts): update the Payload CMS, and
+   the site renders from it. Never hardcode content or SEO text in .ts/.tsx/.html/.js. If a page has no CMS field
+   for it, propose adding the field first.
+8. Validate facts on the web before publishing (prices, altitudes, rules, dates), and make every meta description
+   promise only what the article actually covers.
 
 ## Gotchas (learned the hard way)
 - `payload.update` on a **blog post that has a newer unsaved draft** flips the post to draft = it disappears from
@@ -58,7 +63,10 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 
 ### Progress (tick as done; newest notes at the bottom)
 - [x] Master plan, keyword clusters, blog inventory (28 Oct)
-- [ ] A1 CTR rewrites for 8 page-1/2 posts (list → Aryan approves → apply)
+- [x] A1 CTR rewrites: 7 posts updated in the CMS 28 Oct (Kathmandu post kept: CTR already 7.5%).
+      Final list + checks in `seo-plan/a1-final.tsv`. Re-check their CTR in GSC around 11 Nov.
+- [ ] A0 Move hardcoded page titles/descriptions (static pages, region/country/trek fallbacks set in code on 15 Oct)
+      into CMS fields, so the client can edit them (rule 7). Needs Aryan's OK (backend change).
 - [ ] A2 Internal links blog → trek pages (10 posts with none first)
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
