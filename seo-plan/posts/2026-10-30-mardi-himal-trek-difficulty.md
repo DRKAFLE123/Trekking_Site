@@ -34,9 +34,9 @@ training · winter conditions · vs ABC / Poon Hill. Cost and best-month get the
 
 | Field | Value |
 |---|---|
-| Title (H1) | Mardi Himal Trek Difficulty: How Hard Is It Really? |
+| Title (H1) | Mardi Himal Trek Difficulty: Day-by-Day Guide (2026/27) |
 | Slug | mardi-himal-trek-difficulty |
-| SEO title (49) | Mardi Himal Trek Difficulty: How Hard Is It Really? |
+| SEO title (54) | Mardi Himal Trek Difficulty: Day-by-Day Guide (2026/27) |
 | SEO description (155) | Mardi Himal is a moderate 4–7 day trek from 1,770m to 4,500m. The hardest day, altitude risk, fitness you need, winter conditions and who it suits. |
 | Category | Trekking |
 | Author | Krishna Ghimire |
@@ -52,7 +52,7 @@ the trek page field to "Moderate" so the two agree (Google notices contradiction
 
 ---
 
-# Mardi Himal Trek Difficulty: How Hard Is It Really?
+# Mardi Himal Trek Difficulty: Day-by-Day Guide (2026/27)
 
 **Quick answer:** the Mardi Himal trek is a moderate trek. There is no climbing or technical ground, but you gain
 about 2,700m of altitude in three days, reach 4,500m at Base Camp, and face one long, steep ridge day of 7–8 hours.
