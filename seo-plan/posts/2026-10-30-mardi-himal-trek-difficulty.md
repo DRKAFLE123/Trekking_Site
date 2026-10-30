@@ -86,6 +86,8 @@ Two things make Mardi Himal harder than its length suggests:
 1. **Fast altitude gain.** Almost all of the height is gained in three days.
 2. **The ridge above High Camp.** The trail narrows, climbs steeply in places and is exposed to wind. In snow or
    ice it needs care.
+3. **Simple lodges up high.** High Camp and Badal Danda are basic and cold at night, so you start the biggest day
+   less rested than you would like.
 
 What makes it easier than Everest Base Camp or the Annapurna Circuit: short days, good teahouses up to High Camp,
 a quick exit to Pokhara, and a maximum altitude well below the 5,000m-plus passes of the bigger treks.
@@ -115,19 +117,19 @@ a gain of more than 1,000m. That is where most people first feel the altitude.
 This is the schedule we use on our [Mardi Himal trek](https://natureheaventreks.com/trips/mardi-himal-trek). Days 1,
 2 and 7 are travel days (Kathmandu–Pokhara and back), so the real walking is days 3 to 6.
 
-**Day 3, Kande to Forest Camp (2,520m), 5–6 hours. Moderate.** A steady climb through villages, then rhododendron
+**Day 3, Kande to Forest Camp (2,520m), 5–6 hours, about +750m. Moderate.** A steady climb through villages, then rhododendron
 and oak forest. Stone steps for the first hour. Nobody feels the altitude yet, but the day is longer than people expect.
 
-**Day 4, Forest Camp to High Camp (3,580m) via Low Camp, 5–6 hours. Moderate to hard.** The trees thin out after
+**Day 4, Forest Camp to High Camp (3,580m) via Low Camp, 5–6 hours, about +1,060m. Moderate to hard.** The trees thin out after
 Low Camp and the trail climbs onto the open ridge. The gradient is steeper and the air thinner; this is the day to
 slow down and drink more.
 
-**Day 5, High Camp to Base Camp (4,500m) and down to Badal Danda (3,210m), 7–8 hours. Hard. The hardest day.**
-A 4–5am start, a 900m climb along the ridge, 30 minutes at Base Camp, then a 1,300m descent. You are walking at the
+**Day 5, High Camp to Base Camp (4,500m) and down to Badal Danda (3,210m), 7–8 hours and often more, about +920m then −1,290m. Hard. The hardest day.**
+A 4–5am start, a 920m climb along the ridge, 30 minutes at Base Camp, then a 1,300m descent. You are walking at the
 highest altitude of the trek on the least sleep. Many people stop at the Upper Viewpoint (about 4,250m) when the
 weather turns, and that is a perfectly good decision.
 
-**Day 6, Badal Danda to Siding (1,885m), 4–5 hours, then a 2-hour jeep to Pokhara. Moderate, hard on the knees.**
+**Day 6, Badal Danda to Siding (1,885m), 4–5 hours, about −1,325m, then a 2-hour jeep to Pokhara. Moderate, hard on the knees.**
 A long descent through forest and farmland. Trekking poles help more here than anywhere else on the trek.
 
 ## The hardest part: the ridge from High Camp to Base Camp
@@ -152,7 +154,8 @@ down the same day you reach Base Camp. It is not zero.
 
 Watch for a headache that does not go with water and rest, loss of appetite, nausea, dizziness or unusual
 tiredness at High Camp. The fix is always the same: do not go higher until symptoms clear, and go down if they get
-worse. Our guides carry a pulse oximeter and check everyone at High Camp.
+worse. Our guides carry a pulse oximeter and check everyone at High Camp. The reading is one signal; how you look, eat
+and sleep tells them as much.
 
 To lower the risk: walk slowly on Day 4, drink 3–4 litres a day, skip alcohol at High Camp, and choose the 7-day
 itinerary over the 4-day one. If you have had altitude problems before, read our guide on
@@ -181,7 +184,7 @@ We often add a night at Low Camp for older groups, which turns the 1,000m day in
 ## Fitness and training for Mardi Himal
 
 You do not need to be an athlete. You need to be comfortable walking 5–6 hours on hilly ground, two days in a row.
-If you can already do that, nothing more is required. If not, four to six weeks of preparation is enough:
+If you can already do that, nothing more is required. If not, four to eight weeks of preparation is enough:
 
 - Two or three walks a week of 1–2 hours, building to one 4–5 hour hill walk at the weekend.
 - Stairs or a stepper for leg strength; squats and lunges for the descents.
@@ -271,6 +274,15 @@ from Kathmandu (7 days in total), which includes Base Camp and a gentler descent
 ### What is the highest altitude on the Mardi Himal trek?
 
 Mardi Himal Base Camp at 4,500m. The highest place you sleep is High Camp at 3,580m.
+
+### Is the Mardi Himal ridge dangerous?
+
+Not in good weather. Above Low Camp the trail runs along a ridge with steep drops on both sides, but it is a walking
+path, not a scramble. In fog, strong wind, rain or ice the guide slows the group down or turns it around.
+
+### Do I need trekking poles for Mardi Himal?
+
+Strongly recommended. The two descents of roughly 1,300m each are the part most people's knees remember.
 
 ### Is Mardi Himal safe in December?
 
