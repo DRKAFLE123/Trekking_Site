@@ -94,7 +94,8 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
 - [ ] A6 Client stops self-clicking
-- [~] B Month 1 posts. Post 1 "Mardi Himal Trek Difficulty" drafted 30 Oct for Aryan's review:
+- [~] B Month 1 posts. Post 1 "Mardi Himal Trek Difficulty" is CMS draft **id 90** (30 Oct), waiting for Aryan to
+      review/publish in the admin. Converter: `scripts/.out/md-to-draft.ts` (FILE=<md> DRY=1 → then without DRY). Source file:
       `seo-plan/posts/2026-10-30-mardi-himal-trek-difficulty.md` (keyword research at top, CMS fields, body, sources).
       Workflow agreed 30 Oct: research → full post as a file → Aryan reviews → he says what to publish/delete → then CMS.
       Cadence promised to client: one new post every 3–4 days. Next candidates: Mardi Himal cost; Gosaikunda itinerary;
