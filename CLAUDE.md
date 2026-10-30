@@ -38,7 +38,9 @@ Read this first in every new chat. Update **Progress** at the end of every work 
   pg script that runs the SQL and inserts into `payload_migrations` (example: `scripts/apply-page-seo-migration.mjs`,
   batch 19). Order: write migration → run the apply script → verify columns exist → push code → re-check every
   sitemap URL (a broken build prerenders trek pages as 404 and they cache for 24 h).
-- Git converts .tsv files to CRLF; strip `` before using them as data (`sed -i 's/$//' file`).
+- Git converts .tsv files to CRLF; strip `
+` before using them as data (`sed -i 's/
+$//' file`).
 - `payload.update` on a **blog post that has a newer unsaved draft** flips the post to draft = it disappears from
   the live site. Check versions first (`payload.findVersions`), or restore the last published version after.
   Treks and pages have no drafts, so they're safe.
@@ -92,7 +94,12 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
 - [ ] A6 Client stops self-clicking
-- [ ] B Month 1 posts 1–8 (see plan table)
+- [~] B Month 1 posts. Post 1 "Mardi Himal Trek Difficulty" drafted 30 Oct for Aryan's review:
+      `seo-plan/posts/2026-10-30-mardi-himal-trek-difficulty.md` (keyword research at top, CMS fields, body, sources).
+      Workflow agreed 30 Oct: research → full post as a file → Aryan reviews → he says what to publish/delete → then CMS.
+      Cadence promised to client: one new post every 3–4 days. Next candidates: Mardi Himal cost; Gosaikunda itinerary;
+      Khopra Danda; Poon Hill for beginners; EBC/ABC/Langtang in December.
+      Note: trek page /trips/mardi-himal-trek says difficulty "easy"; post says moderate → fix the trek field.
 - [ ] C Trek page upgrades (cost table, permits, best time, FAQ)
 - [ ] D Off-site authority (GBP, TripAdvisor, directories, partners)
 - [ ] E Weekly GSC check / monthly client report
