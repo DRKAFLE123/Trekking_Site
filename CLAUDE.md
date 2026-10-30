@@ -97,6 +97,10 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - [x] 28 Oct: posts 54 (travel insurance) and 46 (Everest without oxygen) improved (facts checked, answer-first block,
       FAQs, links, fresher stats) and republished; essential-packing-list 301 → /packing-list.
       Open: post 54 links twice to himalayanguardian.com bookings with a referral code (sponsored? ask Aryan).
+- [~] 30 Oct: the 5 admin "drafts" prepared as reviewed draft versions (89 new; 57/51/42/37 are LIVE posts with a
+      draft on top: publishing replaces the live article). Details + URLs: `seo-plan/posts/2026-10-30-five-drafts-review.md`.
+      Script: `scripts/.out/fix5.ts`. Publish order suggested 37 → 51 → 42 → 89 → 57, one every 1–2 days.
+      Removed from 57's draft: media #792 (competitor "Hop Nepal" watermark; do not use anywhere) and #794 (AI image).
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
