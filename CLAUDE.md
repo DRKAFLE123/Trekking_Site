@@ -45,6 +45,9 @@ $//' file`).
   the live site. Check versions first (`payload.findVersions`), or restore the last published version after.
   Treks and pages have no drafts, so they're safe.
 - Blog post 8 had no author and couldn't be saved; any post without an author fails validation.
+- **Look at library photos before using them** (download at `c_limit,w_700` and Read them). File names and gallery
+  names lie: "Mardi Himal with ABC" photos were ABC sunrise shots; a "Khopra Danda" photo was cooking pots. Real Mardi
+  ridge photos are media #313/#314/#315 (dups #604/#606). Never write alt text for a photo you have not seen.
 - Scripts against the CMS: write TS in `scripts/.out/`, bundle with
   `npx esbuild <f>.ts --bundle --platform=node --format=esm --packages=external --banner:js="import {createRequire as __cr} from 'module';const require=__cr(import.meta.url);" --outfile=<f>.mjs`,
   run with `node --env-file=.env <f>.mjs` (DB env var is `DATABASE_URI`). Revalidation warnings in scripts are
