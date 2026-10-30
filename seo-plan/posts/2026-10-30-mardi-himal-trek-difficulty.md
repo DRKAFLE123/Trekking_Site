@@ -41,8 +41,8 @@ training · winter conditions · vs ABC / Poon Hill. Cost and best-month get the
 | Category | Trekking |
 | Author | Krishna Ghimire |
 | Excerpt | Mardi Himal is graded moderate: no technical climbing, but 2,700m of altitude gain in three days and one long, steep ridge day to Base Camp (4,500m). Here is exactly how hard each day is and who the trek suits. |
-| Cover image | media #212 (Fishtail, 1431×640) — alt: "Machhapuchhre (Fishtail) seen from the Mardi Himal ridge above High Camp" |
-| Inline images | #605 after "altitude profile" table — alt "Trekkers on the open ridge between Low Camp and High Camp, Mardi Himal trek"; #607 in "hardest part" section — alt "The narrow ridge trail from High Camp towards Mardi Himal Base Camp"; #628 in "season" section — alt "Rhododendron forest on the lower Mardi Himal trail in spring" |
+| Cover image | media #212 (Fishtail from the forest trail, 1431×640) — alt: "Machhapuchhre (Fishtail) seen from the lower Mardi Himal trail" |
+| Inline images | #315 after "altitude profile" table — alt "Trekker walking the snow-covered ridge above High Camp towards Mardi Himal Base Camp, Machhapuchhre ahead"; #313 in "hardest part" section — alt "The ridge from High Camp to Mardi Himal Base Camp under fresh snow, Machhapuchhre behind"; #314 in "season" section — alt "Footprints along the Mardi Himal ridge after winter snowfall" |
 | Links out (internal) | /trips/mardi-himal-trek ×2, /trips/poon-hill-trek, /trips/annapurna-base-camp-trek, /blogs/how-to-prevent-altitude-sickness-while-trekking-in-nepal, /blogs/rhododendron-forest-nepal, /packing-list, /travel-info/trekking-permits-and-fees |
 | Links out (external) | Nepal Tourism Board (guide rule), ACAP permit page |
 | Schema | Article (auto) + FAQ block below (auto if the site renders FAQ schema from H3 Q&A; check) |
