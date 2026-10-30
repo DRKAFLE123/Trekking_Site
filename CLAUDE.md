@@ -45,6 +45,10 @@ $//' file`).
   the live site. Check versions first (`payload.findVersions`), or restore the last published version after.
   Treks and pages have no drafts, so they're safe.
 - Blog post 8 had no author and couldn't be saved; any post without an author fails validation.
+- Blog post fields for every new post: `tags` (array of {tag}), `relatedTreks` (trek IDs; cards under the article),
+  and the in-article **Trek Card** which is a `trekCardBlock` block inside the body (not a field). Scripts:
+  `scripts/.out/tags-90.ts`, `trekcard-90.ts` (change the id). Trek IDs: Mardi 11, Poon Hill 15, ABC 3,
+  ABC short 37, Mardi+ABC 40, Khopra+Mardi 43.
 - **Look at library photos before using them** (download at `c_limit,w_700` and Read them). File names and gallery
   names lie: "Mardi Himal with ABC" photos were ABC sunrise shots; a "Khopra Danda" photo was cooking pots. Real Mardi
   ridge photos are media #313/#314/#315 (dups #604/#606). Never write alt text for a photo you have not seen.
