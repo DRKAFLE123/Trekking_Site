@@ -38,7 +38,9 @@ export default async function BlogsPage({
     const [blogsRes, siteSettingsRes] = await Promise.all([
       payload.find({
         collection: "blogPosts",
-        depth: 1,
+        // Depth 2 so author.photo arrives as an image, not an ID (the cards show it).
+        depth: 2,
+        populate: { teamMembers: { name: true, photo: true } },
         // Payload defaults to limit:10 when omitted, which silently hid 12 of
         // the 22 published posts — they were unreachable from /blogs entirely.
         limit: 500,
