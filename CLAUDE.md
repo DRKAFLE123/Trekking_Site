@@ -53,7 +53,7 @@ $//' file`).
   backwards; Everest View (38) repeats day 4; ABC short (37) says 9 days but lists 10; Langtang (6) says "easy" with a
   4,773m high point. /travel-info/guides-mandatory-for-trekkers states the guide rule flatly.
 - **Before every push compare the full head on all page types** (`scripts/.out/head-diff.mjs`). A0 passed a title-only check while removing og:/twitter: from 19 pages. In Next metadata, a key set to undefined wipes inherited values.
-- `next dev` currently refuses to start with a Next.js security-upgrade notice, so local runs are blocked until Aryan decides on the upgrade.
+- Test production locally with `npx next build --webpack` then `next start` on a fresh port (an old server may still hold the port and answer with the old build).
 - Blog post 8 had no author and couldn't be saved; any post without an author fails validation.
 - Blog post fields for every new post: `tags` (array of {tag}), `relatedTreks` (trek IDs; cards under the article),
   and the in-article **Trek Card** which is a `trekCardBlock` block inside the body (not a field). Scripts:
@@ -125,6 +125,11 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       foreign competitor review says what to change first: `seo-plan/posts/2026-11-03-foreign-competitor-review.md`.
       Local fixes NOT yet deployed: b47eb3a (19 pages lost OG tags since A0; favicon; site-name signals), e9b071e (author
       photo on /blogs). After deploy: `node scripts/.out/head-diff.mjs https://natureheaventreks.com file:seo-plan/.a1/head-before-b47.json`.
+- [x] 3 Nov: deployed OG fix, author photo, sharp icons (all 29 page types verified); security patch Next 16.4.4 + dompurify,
+      undici, happy-dom overrides (npm audit: 0 critical/high). Scheduler live: blog field "Publish on" + hourly GitHub Action
+      `.github/workflows/publish-scheduled.yml` calling `/api/cron/publish-scheduled`. Scheduled (09:00 Nepal): 92 on 6 Nov,
+      93 on 9 Nov, 94 on 12 Nov, 95 on 15 Nov. Before those dates apply the changes in the competitor review, especially 93
+      (keyword wrong) and 95 (Langtang status). The real publish path first runs on 6 Nov: check it that morning.
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
