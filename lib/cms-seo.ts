@@ -35,12 +35,14 @@ function merge(base: Metadata, seo: Seo): Metadata {
   const description = seo.description?.trim() || undefined;
   if (!title && !description) return base;
   const t = title ? { absolute: title } : base.title;
+  // Only set openGraph/twitter when the page defines them: a key set to undefined makes
+  // Next drop everything inherited from the layout (image, site name, card).
   return {
     ...base,
     title: t,
     description: description ?? base.description,
-    openGraph: base.openGraph ? { ...base.openGraph, ...(title && { title }), ...(description && { description }) } : base.openGraph,
-    twitter: base.twitter ? { ...base.twitter, ...(title && { title }), ...(description && { description }) } : base.twitter,
+    ...(base.openGraph && { openGraph: { ...base.openGraph, ...(title && { title }), ...(description && { description }) } }),
+    ...(base.twitter && { twitter: { ...base.twitter, ...(title && { title }), ...(description && { description }) } }),
   };
 }
 

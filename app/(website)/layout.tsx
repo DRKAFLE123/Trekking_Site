@@ -152,8 +152,12 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [seoImageUrl],
     },
     icons: {
-      icon: "/favicon.ico",
+      icon: [
+        { url: "/favicon.ico", sizes: "48x48" },
+        { url: "/icon1.png", sizes: "192x192", type: "image/png" },
+      ],
       shortcut: "/favicon.ico",
+      apple: "/apple-icon.png",
     },
     manifest: "/manifest.webmanifest",
   };
