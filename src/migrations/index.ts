@@ -28,6 +28,7 @@ import * as migration_20260927_140000_payload_390_reset_requested_at from './202
 import * as migration_20261010_180000_drop_unused_cms_fields from './20261010_180000_drop_unused_cms_fields';
 import * as migration_20261011_090000_inquiry_type_b2b_partner from './20261011_090000_inquiry_type_b2b_partner';
 import * as migration_20261028_120000_page_seo from './20261028_120000_page_seo';
+import * as migration_20261103_120000_blog_scheduled_publish from './20261103_120000_blog_scheduled_publish';
 
 export const migrations = [
   {
@@ -179,5 +180,10 @@ export const migrations = [
     up: migration_20261028_120000_page_seo.up,
     down: migration_20261028_120000_page_seo.down,
     name: '20261028_120000_page_seo',
+  },
+  {
+    up: migration_20261103_120000_blog_scheduled_publish.up,
+    down: migration_20261103_120000_blog_scheduled_publish.down,
+    name: '20261103_120000_blog_scheduled_publish',
   },
 ];

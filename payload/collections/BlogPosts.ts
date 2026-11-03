@@ -204,6 +204,16 @@ export const blogPosts: CollectionConfig = {
       },
     },
     {
+      name: 'scheduledPublishAt',
+      type: 'date',
+      label: 'Publish on (schedule)',
+      admin: {
+        position: 'sidebar',
+        date: { pickerAppearance: 'dayAndTime' },
+        description: 'Leave the post as a draft and set a date: it publishes by itself within about an hour of this time. Clear the date to cancel.',
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       required: true,

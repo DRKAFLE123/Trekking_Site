@@ -1,0 +1,18 @@
+name: Publish scheduled blog posts
+
+# Publishes blog posts whose "Publish on" date has passed. The hourly call is the only
+# clock the site has; the logic lives in app/api/cron/publish-scheduled/route.ts.
+on:
+  schedule:
+    - cron: "20 * * * *"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the site
+        run: |
+          curl --fail --silent --show-error --max-time 120 --retry 3 --retry-delay 30 \
+            -A "Mozilla/5.0 (compatible; NatureHeavenScheduler/1.0)" \
+            "https://natureheaventreks.com/api/cron/publish-scheduled?t=$(date +%s)"
