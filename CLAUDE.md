@@ -101,6 +101,11 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       draft on top: publishing replaces the live article). Details + URLs: `seo-plan/posts/2026-10-30-five-drafts-review.md`.
       Script: `scripts/.out/fix5.ts`. Publish order suggested 37 → 51 → 42 → 89 → 57, one every 1–2 days.
       Removed from 57's draft: media #792 (competitor "Hop Nepal" watermark; do not use anywhere) and #794 (AI image).
+- [x] 30 Oct: Mardi Himal difficulty (id 90) PUBLISHED by Aryan. 3 Nov: 11 published posts now link to it
+      (`scripts/.out/link-to-90.ts`). Site 187/187 OK on 3 Nov.
+- [~] 3 Nov: next 5 topics researched + publishing calendar (every 2 days from 4 Nov, alternating the 5 ready drafts
+      with 5 new posts): `seo-plan/posts/2026-11-03-next-5-topics-and-schedule.md`. New posts in order:
+      Mardi cost → EBC in December → Poon Hill beginners → ABC in winter → Best treks in December (hub).
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
