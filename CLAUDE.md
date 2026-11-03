@@ -52,6 +52,8 @@ $//' file`).
 - Trek page data errors seen 3 Nov, not yet fixed: Poon Hill (id 15) says 7 days but lists 9, and Day 3 "via Ulleri" is
   backwards; Everest View (38) repeats day 4; ABC short (37) says 9 days but lists 10; Langtang (6) says "easy" with a
   4,773m high point. /travel-info/guides-mandatory-for-trekkers states the guide rule flatly.
+- **Before every push compare the full head on all page types** (`scripts/.out/head-diff.mjs`). A0 passed a title-only check while removing og:/twitter: from 19 pages. In Next metadata, a key set to undefined wipes inherited values.
+- `next dev` currently refuses to start with a Next.js security-upgrade notice, so local runs are blocked until Aryan decides on the upgrade.
 - Blog post 8 had no author and couldn't be saved; any post without an author fails validation.
 - Blog post fields for every new post: `tags` (array of {tag}), `relatedTreks` (trek IDs; cards under the article),
   and the in-article **Trek Card** which is a `trekCardBlock` block inside the body (not a field). Scripts:
@@ -119,6 +121,10 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       it links to the others). Ready drafts: 37, 51, 42, 89, 57. Post 90 is LIVE with a corrected DRAFT on top (publish it).
       Waiting for Aryan's review, then he says "run the scheduler". After publishing post N, add 2-3 links to it from
       related posts. Script for a final check: `scripts/.out/verify-drafts.ts`.
+- [~] 3 Nov: published by Aryan: 91, 89, 57, 51, 42, 37. Draft 90 = live + corrected draft on top (Publish it). 92-95 on hold:
+      foreign competitor review says what to change first: `seo-plan/posts/2026-11-03-foreign-competitor-review.md`.
+      Local fixes NOT yet deployed: b47eb3a (19 pages lost OG tags since A0; favicon; site-name signals), e9b071e (author
+      photo on /blogs). After deploy: `node scripts/.out/head-diff.mjs https://natureheaventreks.com file:seo-plan/.a1/head-before-b47.json`.
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
