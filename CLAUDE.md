@@ -44,6 +44,14 @@ $//' file`).
 - `payload.update` on a **blog post that has a newer unsaved draft** flips the post to draft = it disappears from
   the live site. Check versions first (`payload.findVersions`), or restore the last published version after.
   Treks and pages have no drafts, so they're safe.
+- **Guide rule wording:** the 2023 licensed-guide requirement is disputed for the Annapurna region (some sources say
+  strictly enforced, others excluded or unenforced; no current official notice found as of Nov 2026). Never write
+  "legally required" or "not legally" for Annapurna treks; say it is reported as inconsistently applied, check on booking.
+  Restricted areas (Manaslu, Upper Mustang etc.) are different. Do not state company practice (e.g. "our guides carry...")
+  unless the trek page or Aryan confirms it.
+- Trek page data errors seen 3 Nov, not yet fixed: Poon Hill (id 15) says 7 days but lists 9, and Day 3 "via Ulleri" is
+  backwards; Everest View (38) repeats day 4; ABC short (37) says 9 days but lists 10; Langtang (6) says "easy" with a
+  4,773m high point. /travel-info/guides-mandatory-for-trekkers states the guide rule flatly.
 - Blog post 8 had no author and couldn't be saved; any post without an author fails validation.
 - Blog post fields for every new post: `tags` (array of {tag}), `relatedTreks` (trek IDs; cards under the article),
   and the in-article **Trek Card** which is a `trekCardBlock` block inside the body (not a field). Scripts:
@@ -106,6 +114,11 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - [~] 3 Nov: next 5 topics researched + publishing calendar (every 2 days from 4 Nov, alternating the 5 ready drafts
       with 5 new posts): `seo-plan/posts/2026-11-03-next-5-topics-and-schedule.md`. New posts in order:
       Mardi cost → EBC in December → Poon Hill beginners → ABC in winter → Best treks in December (hub).
+- [~] 3 Nov: all 5 new posts drafted in the CMS, each with its own research note in `seo-plan/posts/2026-11-03-*.md`:
+      91 Mardi cost, 92 EBC December, 93 Poon Hill beginners, 94 ABC winter, 95 Best treks December (hub, publish last:
+      it links to the others). Ready drafts: 37, 51, 42, 89, 57. Post 90 is LIVE with a corrected DRAFT on top (publish it).
+      Waiting for Aryan's review, then he says "run the scheduler". After publishing post N, add 2-3 links to it from
+      related posts. Script for a final check: `scripts/.out/verify-drafts.ts`.
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"

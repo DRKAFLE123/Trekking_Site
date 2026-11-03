@@ -71,7 +71,7 @@ hardest part.
 | Total ascent from Kande | about 2,730m |
 | Hardest day | High Camp → Base Camp → Badal Danda |
 | Altitude sickness risk | Low to moderate; real above High Camp |
-| Guide | Required for foreign trekkers in the Annapurna Conservation Area since April 2023 |
+| Guide | Licensed guide recommended; see the guide rule below |
 | Permits | ACAP (NPR 3,000) + TIMS card |
 
 ## How difficult is the Mardi Himal trek compared with other Nepal treks?
@@ -154,8 +154,7 @@ down the same day you reach Base Camp. It is not zero.
 
 Watch for a headache that does not go with water and rest, loss of appetite, nausea, dizziness or unusual
 tiredness at High Camp. The fix is always the same: do not go higher until symptoms clear, and go down if they get
-worse. Our guides carry a pulse oximeter and check everyone at High Camp. The reading is one signal; how you look, eat
-and sleep tells them as much.
+worse. Ask your guide to check you at High Camp. A pulse oximeter reading is one signal; how you look, eat and sleep tells them as much.
 
 To lower the risk: walk slowly on Day 4, drink 3–4 litres a day, skip alcohol at High Camp, and choose the 7-day
 itinerary over the 4-day one. If you have had altitude problems before, read our guide on
@@ -179,7 +178,7 @@ days and the altitude at High Camp are too much for most. Children under 10 are 
 Base Camp day optional: let the family decide at the viewpoint.
 
 **Trekkers in their 50s, 60s and 70s:** very common on this trail. Age matters less than knee health and fitness.
-We often add a night at Low Camp for older groups, which turns the 1,000m day into two easier ones.
+Adding a night at Low Camp turns the 1,000m day into two easier ones, which older trekkers often find worth it.
 
 ## Fitness and training for Mardi Himal
 
@@ -233,9 +232,7 @@ USD 22) and a TIMS card (NPR 1,000 through an agency, NPR 2,000 for independent 
 your agency before you leave Pokhara. Current fees and rules are on our
 [trekking permits page](https://natureheaventreks.com/travel-info/trekking-permits-and-fees).
 
-Since 1 April 2023, the Nepal Tourism Board requires foreign trekkers in national parks and conservation areas,
-including the whole Mardi Himal trail, to trek with a licensed guide. In practice this makes the trek safer rather
-than harder: the guide sets the pace, reads the weather on the ridge and decides when the viewpoint is far enough.
+Nepal announced in 2023 that foreign trekkers need a licensed guide on many trekking routes. Agency lists of those routes include the main Annapurna treks, though Mardi Himal's status is unclear, and enforcement in the Annapurna region is reported as inconsistent. We could not find a current official notice that settles it, so check when you book. In practice a guide makes this trek safer: the guide sets the pace, reads the weather on the ridge and decides when the viewpoint is far enough.
 
 Three choices that reduce the difficulty more than anything else:
 
@@ -263,8 +260,7 @@ Camp day is longer. Over the whole trip, ABC is more tiring simply because it is
 
 ### Can you do Mardi Himal without a guide?
 
-Not legally as a foreign trekker. Since April 2023 a licensed guide is required in Nepal's national parks and
-conservation areas, which includes the Mardi Himal trail inside the Annapurna Conservation Area.
+The rules are unclear. Nepal's 2023 guide requirement is reported as inconsistently applied in the Annapurna region, and we could not find a current official notice. We recommend a licensed guide, especially for the ridge above High Camp.
 
 ### How many days do you need for Mardi Himal?
 
@@ -292,7 +288,7 @@ at the viewpoint.
 
 ---
 
-*Written by Krishna Ghimire, senior trekking guide at Nature Heaven Treks & Expedition. Last updated 30 October 2026.*
+*Written by Krishna Ghimire, Senior Himalayan Specialist at Nature Heaven Treks & Expedition. Last updated 30 October 2026.*
 
 Ready to see Machhapuchhre up close? Check dates and prices for our
 [7-day Mardi Himal trek](https://natureheaventreks.com/trips/mardi-himal-trek).

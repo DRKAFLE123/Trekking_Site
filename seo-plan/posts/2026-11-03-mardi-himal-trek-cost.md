@@ -47,8 +47,7 @@ The biggest variables are how you travel Kathmandu–Pokhara and whether you hir
 | Guide + porter, pay as you go | 4–5 | USD 500–600 | As above, plus a porter |
 | Booked through an international tour site | 7–12 | USD 950–1,600 | Same trek, often resold with a margin |
 
-Since April 2023 foreign trekkers in the Annapurna Conservation Area must trek with a licensed guide, so a true
-"solo" budget no longer exists; the cheapest legal option is the guide-only line.
+Nepal announced a licensed-guide requirement for foreign trekkers in 2023. Enforcement in the Annapurna region is reported as inconsistent and we could not find a current official notice, so check when you book. We budget with a guide throughout, because that is what we recommend on the ridge above High Camp.
 
 ## 1. Permits: NPR 4,000 (about USD 30)
 
@@ -142,7 +141,7 @@ current discounted rate (list price USD 999), Kathmandu to Kathmandu. That cover
 - ACAP permit, TIMS card and all taxes
 
 Not included: visa, insurance, tips, drinks, hot showers, Wi-Fi and charging, personal gear, and extra hotel nights.
-Private departures run on any date; the price is per person for two or more and lower for larger groups.
+Contact us for your dates and group price.
 
 ## How to trek Mardi Himal cheaper
 
@@ -170,7 +169,7 @@ if you apply independently). Children under 10 are exempt from ACAP.
 ### How much does a guide cost for Mardi Himal?
 
 USD 25–35 per day for a licensed guide and USD 20–25 per day for a porter, including their food, lodging and
-insurance. A guide is required for foreign trekkers in the Annapurna Conservation Area.
+insurance.
 
 ### Can I do the Mardi Himal trek on a budget?
 
@@ -189,7 +188,7 @@ USD 15–40 per night in Pokhara.
 
 ---
 
-*Written by Krishna Ghimire, senior trekking guide at Nature Heaven Treks & Expedition. Prices checked November 2026.*
+*Written by Krishna Ghimire, Senior Himalayan Specialist at Nature Heaven Treks & Expedition. Prices checked November 2026.*
 
 See dates, the day-by-day itinerary and the full inclusions on our
 [7-day Mardi Himal trek](https://natureheaventreks.com/trips/mardi-himal-trek).
