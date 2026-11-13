@@ -20,10 +20,10 @@
 
 | Field | Value |
 |---|---|
-| Title (H1) | Annapurna Base Camp Trek in Winter: Snow & Avalanche Risk |
+| Title (H1) | Annapurna Base Camp Trek in December & Winter: Is It Safe? |
 | Slug | annapurna-base-camp-trek-in-winter |
-| SEO title (57) | Annapurna Base Camp Trek in Winter: Snow & Avalanche Risk |
-| SEO description | Can you trek to Annapurna Base Camp in winter? Conditions in December, January and February, temperatures, the avalanche section, and how to plan safely. |
+| SEO title (58) | Annapurna Base Camp Trek in December & Winter: Is It Safe? |
+| SEO description | Is the Annapurna Base Camp trek open in December, and is it safe in winter? Conditions by month, temperatures, the avalanche section and how to plan. |
 | Category | Trekking |
 | Author | Krishna Ghimire |
 | Excerpt | Annapurna Base Camp can be trekked in winter, and early December is often excellent. After heavy snow the section around Deurali is avalanche-prone, as January 2020 showed. Here is how to plan it. |
@@ -35,11 +35,11 @@
 
 ---
 
-# Annapurna Base Camp Trek in Winter: Snow & Avalanche Risk
+# Annapurna Base Camp Trek in December & Winter: Is It Safe?
 
 **Quick answer:** you can trek to Annapurna Base Camp in winter. Early December is often excellent, with clear skies and quiet trails. From mid-December to February, expect deep snow above Deurali, cold nights of about −8 to −12°C at the top, and a real avalanche risk after heavy snowfall. Allow at least two spare days, go with an experienced guide, and be ready to turn back.
 
-## Is the Annapurna Base Camp trek open in winter?
+## Is the Annapurna Base Camp trek open in December and winter?
 
 Yes. There is no seasonal closure, and many lodges stay open, though some owners close up and go down to Pokhara or their villages. The trail is occasionally closed for safety after a major snowfall or avalanche. After the January 2020 avalanche, the route stayed shut for about a month.
 
@@ -108,7 +108,7 @@ Most lodges on this route keep operating, but some close, and the ones that are 
 
 Our [trekking packing list](https://natureheaventreks.com/packing-list) covers the rest.
 
-## Is it safe to trek ABC in winter?
+## Is the Annapurna Base Camp trek dangerous in winter?
 
 In settled weather with a guide who knows the route, it is a reasonable trek for fit people. The danger is specific: heavy snow on the avalanche section, slips on ice, and cold with altitude. Make sure your [travel insurance](https://natureheaventreks.com/blogs/travel-insurance-for-trekking-in-nepal) covers helicopter evacuation up to at least 4,500m, and read up on [preventing altitude sickness](https://natureheaventreks.com/blogs/how-to-prevent-altitude-sickness-while-trekking-in-nepal).
 
@@ -118,9 +118,11 @@ Winter is not a good time for your first ever trek to ABC if you are nervous abo
 
 If the forecast looks bad, or you want less risk, these stay out of the avalanche section:
 
-- [Poon Hill trek](https://natureheaventreks.com/trips/poon-hill-trek): 3,210m, easy to moderate, with huge views. Our [beginner's guide](https://natureheaventreks.com/blogs/poon-hill-trek-for-beginners) covers it in detail.
+- [Poon Hill trek](https://natureheaventreks.com/trips/poon-hill-trek): 3,210m, easy to moderate, with huge views. Our [Poon Hill itinerary guide](https://natureheaventreks.com/blogs/poon-hill-trek-for-beginners) covers it in detail.
 - [Khopra Danda trek](https://natureheaventreks.com/trips/khopra-dada-trek): up to 3,660m on a quiet ridge facing Dhaulagiri and Annapurna South.
 - [Mardi Himal trek](https://natureheaventreks.com/trips/mardi-himal-trek): good in early December, but the ridge above High Camp can be blocked later. See the [difficulty guide](https://natureheaventreks.com/blogs/mardi-himal-trek-difficulty).
+
+Comparing routes for your dates? Our guide to the [best treks in Nepal in December](https://natureheaventreks.com/blogs/best-treks-in-nepal-in-december) compares seven routes by altitude and night temperature.
 
 ## Frequently asked questions
 
