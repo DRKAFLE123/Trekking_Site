@@ -19,8 +19,8 @@ Our angle: what the rule says (with the Kathmandu Post source), what happens reg
 | Category | Trekking |
 | Author | Krishna Ghimire |
 | Excerpt | Since April 2023 Nepal has required licensed guides for foreign trekkers in its parks and conservation areas, but the rule is not applied the same way everywhere. Here is the situation region by region in 2026. |
-| Cover image | IMAGE_COVER |
-| Inline images | IMAGE_INLINE |
+| Cover image | media #932 — alt: "Three trekkers near Everest Base Camp with Nuptse behind" |
+| Inline images | #712 in "region by region" section — alt "A trekker in fresh snow above a glacier in the Everest region"; #342 in "what a guide costs" section — alt "A Nature Heaven trekking group with its banner in a village on the Manaslu Circuit" |
 | Tags | Nepal Trekking Rules, Trekking Guide, Solo Trekking, Trek Permits, Nepal Trekking |
 | Related treks | 1 (EBC), 15 (Poon Hill), 3 (ABC), 2 (Manaslu) |
 | Trek card | trek 1 before the FAQ |
