@@ -137,6 +137,10 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       GitHub cron runs only 3-4 times/day (not hourly), so posts go live within ~8 h of their date.
       **Hostinger returns 504/307 when crawled fast** (~1 req/s, 53 of 195 failed); a slow crawl (0.7 s gap) was clean.
 - [~] 13 Nov GSC review (28 days) + plan: `seo-plan/2026-11-13-gsc-review-and-plan.md`. Self-clicking still going on.
+- [~] 13 Nov steps done: 95 draft gets dated Dec 2026 trail status (still scheduled 15 Nov). Step 3 LIVE in CMS: titles for
+      Bhutan tour (trek 54), helicopter post 21 (+ facts, price, old contact block removed), safety post 44 (+ Nov status table).
+      Step 4 = DRAFTS on top of live posts 21, 27, 61 (Everest enquiry links/cards): Aryan publishes; do not script-update them.
+      Trek 54 still has Everest text in accommodation/meals: waiting for Bhutan hotel/meal facts from client.
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
