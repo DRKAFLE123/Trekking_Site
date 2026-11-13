@@ -130,6 +130,11 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       `.github/workflows/publish-scheduled.yml` calling `/api/cron/publish-scheduled`. Scheduled (09:00 Nepal): 92 on 6 Nov,
       93 on 9 Nov, 94 on 12 Nov, 95 on 15 Nov. Before those dates apply the changes in the competitor review, especially 93
       (keyword wrong) and 95 (Langtang status). The real publish path first runs on 6 Nov: check it that morning.
+- [x] 13 Nov status check: scheduler worked (92 on 6 Nov, 93 on 9 Nov, 94 on 12 Nov published; 95 due 15 Nov). 195/195 sitemap
+      URLs 200, head unchanged on 29 page types, Google now has our favicon, npm audit 0 critical/high. Not done: 93 and 94
+      went live WITHOUT the competitor-review changes; 95 still has outdated Langtang text; post 90 correction unpublished.
+      GitHub cron runs only 3-4 times/day (not hourly), so posts go live within ~8 h of their date.
+      **Hostinger returns 504/307 when crawled fast** (~1 req/s, 53 of 195 failed); a slow crawl (0.7 s gap) was clean.
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
