@@ -94,7 +94,7 @@ const missing = IMAGES.filter((im) => !placed.has(im.id)); if (missing.length) c
     const ex = exists.docs[0] as any;
     if (process.env.UPDATE === String(ex.id) && (ex._status === "draft" || process.env.ON_TOP === "1")) { // refresh a DRAFT, or ON_TOP=1: save a draft on top of a live post
       if (!DRY) await payload.update({ collection: "blogPosts", id: ex.id, depth: 0, draft: true, overrideAccess: true,
-        data: { title, body: root, excerpt, seo: { ...(ex.seo || {}), metaTitle, metaDescription } } as any });
+        data: { title, body: root, excerpt, coverImage: coverId, seo: { ...(ex.seo || {}), metaTitle, metaDescription, metaImage: coverId } } as any });
       console.log(`${DRY ? "DRY would update" : "UPDATED"} draft id ${ex.id}`); process.exit(0);
     }
     console.log("ALREADY EXISTS id", ex.id, "- not creating twice (set UPDATE=<id> to refresh a draft)"); process.exit(0);
