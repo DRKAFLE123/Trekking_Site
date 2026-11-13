@@ -135,6 +135,7 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       went live WITHOUT the competitor-review changes; 95 still has outdated Langtang text; post 90 correction unpublished.
       GitHub cron runs only 3-4 times/day (not hourly), so posts go live within ~8 h of their date.
       **Hostinger returns 504/307 when crawled fast** (~1 req/s, 53 of 195 failed); a slow crawl (0.7 s gap) was clean.
+- [~] 13 Nov GSC review (28 days) + plan: `seo-plan/2026-11-13-gsc-review-and-plan.md`. Self-clicking still going on.
 - [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
 - [ ] A4 Thin post culture-festivals (109 words): expand or merge
 - [ ] A5 Author box / sameAs / "Last updated"
