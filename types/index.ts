@@ -257,6 +257,7 @@ export interface BlogPost {
     bio?: string;
   };
   publishedAt: string;
+  updatedAt?: string;
   readTime?: string;
   coverImage?: string; // Cloudinary public ID or URL
   excerpt: string;

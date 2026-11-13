@@ -44,7 +44,8 @@ export default async function BlogsPage({
         // Payload defaults to limit:10 when omitted, which silently hid 12 of
         // the 22 published posts — they were unreachable from /blogs entirely.
         limit: 500,
-        sort: "-publishedAt",
+        // Most recently updated first, so refreshed articles surface at the top.
+        sort: "-updatedAt",
         where: { _status: { equals: "published" } },
         // Cards only; the full article body is fetched on the detail page.
         select: BLOG_CARD_SELECT,

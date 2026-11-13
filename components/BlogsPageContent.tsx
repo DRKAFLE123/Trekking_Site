@@ -145,6 +145,11 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
       year: "numeric",
     });
   };
+  // "Updated <date>" when the post was edited more than a day after publishing.
+  const cardDate = (b: BlogPost) =>
+    b.updatedAt && new Date(b.updatedAt).getTime() - new Date(b.publishedAt).getTime() > 864e5
+      ? `Updated ${formatDate(b.updatedAt)}`
+      : formatDate(b.publishedAt);
 
   // Extract cover page fields from CMS dynamically
   const activeBlogSettings = blogSettings || siteSettings?.blogsPageSettings;
@@ -242,7 +247,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                   {/* Meta row */}
                   <div className="flex items-center gap-2.5 text-[10px] text-muted font-bold tracking-wider uppercase">
                     <span>
-                      {formatDate(featuredPost.publishedAt)}
+                      {cardDate(featuredPost)}
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
@@ -420,7 +425,7 @@ export default function BlogsPageContent({ blogs, siteSettings, blogSettings }: 
                       {/* Meta */}
                       <div className="flex items-center gap-2 text-[10px] text-muted font-bold tracking-wider uppercase">
                         <span>
-                          {formatDate(blog.publishedAt)}
+                          {cardDate(blog)}
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1">

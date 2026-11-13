@@ -301,6 +301,19 @@ export default function BlogDetailClient({
                   </span>
                 </div>
 
+                {/* Matches the Article schema's dateModified; shown when edited a day or more after publishing. */}
+                {blog.updatedAt && new Date(blog.updatedAt).getTime() - new Date(blog.publishedAt).getTime() > 864e5 && (
+                  <div className="flex items-center gap-2">
+                    <FaCalendarAlt className="text-secondary" />
+                    <span>
+                      Updated:{" "}
+                      <strong className="text-primary font-semibold">
+                        {new Date(blog.updatedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                      </strong>
+                    </span>
+                  </div>
+                )}
+
                 {blog.readTime && (
                   <>
                     <div className="h-4 w-px bg-primary/10 hidden sm:block"></div>
