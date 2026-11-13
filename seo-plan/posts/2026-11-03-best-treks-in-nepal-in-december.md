@@ -23,7 +23,7 @@
 | Title (H1) | Best Treks in Nepal in December: 7 Routes That Work |
 | Slug | best-treks-in-nepal-in-december |
 | SEO title (51) | Best Treks in Nepal in December: 7 Routes That Work |
-| SEO description | The 7 best treks in Nepal in December compared by altitude, days and night temperature, plus which treks to avoid in winter and what to pack. |
+| SEO description | The 7 best treks in Nepal in December 2026 compared by altitude and night temperature, with current trail status, treks to avoid and what to pack. |
 | Category | Trekking |
 | Author | Krishna Ghimire |
 | Excerpt | December is dry and clear in Nepal, and the trails are quiet. Poon Hill, Khopra Danda and Everest View are the safest choices; EBC and ABC work best early in the month. Here are all seven compared. |
@@ -38,6 +38,19 @@
 # Best Treks in Nepal in December: 7 Routes That Work
 
 **Quick answer:** December is a very good month to trek in Nepal if you pick the right route. It is dry, clear and quiet. The safest choices stay below about 4,000m: Poon Hill, Khopra Danda and Everest View. Mardi Himal, Langtang, Annapurna Base Camp and Everest Base Camp also work, best in the first half of the month. Avoid high passes such as Thorong La and Larkya La.
+
+## Trail status for December 2026
+
+After the August 2026 floods, some routes changed. This is what was reported as of 13 November 2026:
+
+| Route | Status | Source |
+|---|---|---|
+| Langtang Valley and Gosaikunda | Open. Treks now start from Dhunche or Thulo Syabru, because the road and bridge at Syabrubesi were damaged. | [TAAN advisory, reported 23 Oct](https://english.onlinekhabar.com/?p=596492); Onlinekhabar, 29 Oct |
+| Manaslu Circuit | Open again from Machha Khola after partial repairs, with a short bypass near Yaru Bagar. TAAN advises care. | TAAN advisory, 23 Oct |
+| Tsum Valley | Closed on 23 Oct after a bridge collapse; reopening was expected within about a week. Check before booking. | TAAN advisory, 23 Oct |
+| Annapurna and Everest regions | No flood closures reported. | TAAN status notice, Aug 2026 |
+
+Cyclone Arnab led the authorities to pause high-altitude trekking from 29 to 31 October; that pause has ended. Conditions change quickly in winter, so we confirm the latest status for your route when you book.
 
 ## December treks compared
 
@@ -69,7 +82,7 @@ The [Khopra Danda trek](https://natureheaventreks.com/trips/khopra-dada-trek) cl
 
 ## 3. Everest View: Everest without the extreme cold
 
-Our 7-day [Everest View trek](https://natureheaventreks.com/trips/everest-view-trek) flies to Lukla, walks to Namche Bazaar and climbs to the Everest View Hotel at 3,880m. Nights in Namche are about −4 to −6°C, cold but manageable, and you sleep in some of the best lodges in the region. The one risk is delayed Lukla flights, so keep a spare day.
+Our 7-day [Everest View trek](https://natureheaventreks.com/trips/everest-view-trek) flies to Lukla, walks to Namche Bazaar and climbs to the Everest View Hotel at 3,880m. Nights in Namche are about −4 to −6°C, cold but manageable, and you sleep in some of the best lodges in the region. The one risk is delayed Lukla flights, so keep a spare day. In winter, most Lukla flights leave from Kathmandu, not Ramechhap, but airlines confirm this only close to the date.
 
 ## 4. Mardi Himal: big views, one hard day
 
@@ -77,7 +90,7 @@ Our 7-day [Everest View trek](https://natureheaventreks.com/trips/everest-view-t
 
 ## 5. Langtang Valley: close to Kathmandu
 
-The [Langtang Valley trek](https://natureheaventreks.com/trips/langtang-valley-trek) starts with a road journey from Kathmandu, with no flight to worry about. Trails are quiet and sunny, with light snow around Kyanjin Gompa (3,870m), where nights are often below −5°C. Some lodges higher up close for winter, so check first. Climbing Kyanjin Ri (4,773m) depends on conditions. Our [beginner's guide to Langtang](https://natureheaventreks.com/blogs/langtang-valley-trek-a-complete-beginner-s-guide) covers the route.
+The [Langtang Valley trek](https://natureheaventreks.com/trips/langtang-valley-trek) starts with a road journey from Kathmandu, with no flight to worry about. Since the August 2026 flood, the drive ends at Dhunche or Thulo Syabru instead of Syabrubesi, and the trail joins the usual route at Bamboo and Lama Hotel. TAAN declared the valley open again in late October. Trails are quiet and sunny, with light snow around Kyanjin Gompa (3,870m), where nights are often below −5°C. Some lodges higher up close for winter, so check first. Climbing Kyanjin Ri (4,773m) depends on conditions. Our [beginner's guide to Langtang](https://natureheaventreks.com/blogs/langtang-valley-trek-a-complete-beginner-s-guide) covers the route.
 
 ## 6. Annapurna Base Camp: best in early December
 
@@ -92,7 +105,7 @@ The [Everest Base Camp trek](https://natureheaventreks.com/trips/everest-base-ca
 Passes are the problem. Heavy snow can block them, and rescue is harder in winter.
 
 - **Annapurna Circuit over Thorong La (5,416m):** sometimes crossed in winter if there is little snow, but risky from December to February. Do not plan a trip that depends on it.
-- **Manaslu Circuit over Larkya La (5,106m):** very cold, with temperatures reported below −16°C at the pass, and harder still at the end of the month.
+- **Manaslu Circuit over Larkya La (5,106m):** very cold, with temperatures reported below −16°C at the pass, and harder still at the end of the month. Parts of the approach were also still under repair after the floods in late October.
 - **Cho La and the Everest Three Passes:** heavy snow can make the passes impassable without mountaineering equipment.
 - **Gosaikunda via Laurebina Pass:** early to mid-December is fine; snow arrives later in the month.
 
@@ -149,6 +162,7 @@ Tell us your dates, and we will suggest the right route: [plan your trip](https:
 ---
 
 ## Sources checked (for Aryan; not to publish)
+- **13 Nov update (status box, Langtang, Manaslu, Lukla):** Onlinekhabar 23 Oct (TAAN advisory: Langtang, Kyanjin, Gosaikunda "fully open"; drive via Trishuli, Betrawati to Dhunche or Thulosyafru; Manaslu reopened after partial repairs from Machhakhola, Yarubagar bypass; Chum/Tsum closed, bridge collapse, reopening in about a week). Nomad Lawyer 23 Oct (same advisory, dated 22 Oct). Onlinekhabar/RSS 29 Oct (Langtang reached from Dhunche via Thulo Bharkhu, Brabal, Thulo Syaphru). treklangtang.com 4 Nov (Syabrubesi route still closed). Cyclone Arnab: Xinhua 27 Oct, TAAN via nepalnews; pause 29–31 Oct. Placesnepal 28 Aug (TAAN: Annapurna, Everest none reported). Lukla winter from Kathmandu: several operators, no CAAN notice; worded as "most", "confirmed close to the date". **No November TAAN notice found; re-check Tsum before publishing.**
 - Kathmandu rain 26 mm (climate-data.org, 1991–2021), other sources lower; highs 17–20°C, lows 3–6°C. Worded loosely. Daylight: astronomical.
 - Route temperatures: same sources as the three linked posts.
 - Thorong La, Larkya La (−16°C), Cho La, Gosaikunda: magicalnepal, bestheritagetour, mosaicadventure, nepalhiking; operator guidance.

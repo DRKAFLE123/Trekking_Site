@@ -54,6 +54,7 @@ $//' file`).
   4,773m high point. /travel-info/guides-mandatory-for-trekkers states the guide rule flatly.
 - **Before every push compare the full head on all page types** (`scripts/.out/head-diff.mjs`). A0 passed a title-only check while removing og:/twitter: from 19 pages. In Next metadata, a key set to undefined wipes inherited values.
 - Test production locally with `npx next build --webpack` then `next start` on a fresh port (an old server may still hold the port and answer with the old build).
+- Refreshing a draft with `md-to-draft` (UPDATE=id) + `post-extras` **clears its "Publish on" date**: re-run `SET="id=..." sched.mjs` after and check.
 - Blog post 8 had no author and couldn't be saved; any post without an author fails validation.
 - Blog post fields for every new post: `tags` (array of {tag}), `relatedTreks` (trek IDs; cards under the article),
   and the in-article **Trek Card** which is a `trekCardBlock` block inside the body (not a field). Scripts:
