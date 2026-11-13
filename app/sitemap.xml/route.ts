@@ -1,3 +1,4 @@
+import { MERGED_PAGES } from "@/lib/merged-pages";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 
@@ -46,7 +47,6 @@ const STATIC_ROUTES: Array<{
   { path: "/gallery", changeFrequency: "monthly", priority: 0.6 },
   { path: "/video-gallery", changeFrequency: "monthly", priority: 0.55 },
   { path: "/visa-info", changeFrequency: "monthly", priority: 0.6 },
-  { path: "/travel-insurance", changeFrequency: "monthly", priority: 0.6 },
   { path: "/packing-list", changeFrequency: "monthly", priority: 0.6 },
   { path: "/faqs", changeFrequency: "monthly", priority: 0.5 },
   { path: "/csr", changeFrequency: "yearly", priority: 0.4 },
@@ -124,7 +124,8 @@ async function buildEntries(): Promise<Entry[]> {
       ...blogs,
       ...regions,
       ...companyPages.filter((e) => !STATIC_COMPANY.has(e.url.split("/").pop() || "")),
-      ...pages,
+      // Merged docs 301 elsewhere (lib/merged-pages.ts), so they are not listed.
+      ...pages.filter((e) => !MERGED_PAGES[e.url.split("/").pop() || ""]),
       ...contactPages,
     ];
   } catch (err) {

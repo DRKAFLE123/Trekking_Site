@@ -103,6 +103,9 @@ const nextConfig = {
       // Old article Google still shows; the site has a full packing list page.
       { source: "/blogs/essential-packing-list-for-trekking-in-nepal", destination: "/packing-list", permanent: true },
       { source: "/terms-conditions", destination: "/terms-and-condition", permanent: true },
+      // Insurance pages merged into the full guide (13 Nov 2026); see lib/merged-pages.ts.
+      { source: "/travel-insurance", destination: "/blogs/travel-insurance-for-trekking-in-nepal", permanent: true },
+      { source: "/travel-info/travel-insurance", destination: "/blogs/travel-insurance-for-trekking-in-nepal", permanent: true },
     ];
   },
   async headers() {

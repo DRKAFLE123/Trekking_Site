@@ -209,7 +209,7 @@ export default function Footer() {
                   <>
                     <li><Link prefetch={false} href="/why-us" className="hover:text-secondary-light transition duration-300">Why Choose Us</Link></li>
                     <li><Link prefetch={false} href="/visa-info" className="hover:text-secondary-light transition duration-300">Nepal Visa Info</Link></li>
-                    <li><Link prefetch={false} href="/travel-insurance" className="hover:text-secondary-light transition duration-300">Travel Insurance</Link></li>
+                    <li><Link prefetch={false} href="/blogs/travel-insurance-for-trekking-in-nepal" className="hover:text-secondary-light transition duration-300">Travel Insurance</Link></li>
                     <li><Link prefetch={false} href="/packing-list" className="hover:text-secondary-light transition duration-300">Packing List</Link></li>
                     <li><Link prefetch={false} href="/faqs" className="hover:text-secondary-light transition duration-300">FAQs</Link></li>
                   </>
@@ -302,7 +302,7 @@ export default function Footer() {
           <ul className="flex flex-col gap-2.5 text-xs text-white/80">
             <li><Link prefetch={false} href="/why-us" className="hover:text-secondary-light transition duration-300">Why Choose Us</Link></li>
             <li><Link prefetch={false} href="/visa-info" className="hover:text-secondary-light transition duration-300">Nepal Visa Info</Link></li>
-            <li><Link prefetch={false} href="/travel-insurance" className="hover:text-secondary-light transition duration-300">Travel Insurance</Link></li>
+            <li><Link prefetch={false} href="/blogs/travel-insurance-for-trekking-in-nepal" className="hover:text-secondary-light transition duration-300">Travel Insurance</Link></li>
             <li><Link prefetch={false} href="/packing-list" className="hover:text-secondary-light transition duration-300">Packing List</Link></li>
             <li><Link prefetch={false} href="/faqs" className="hover:text-secondary-light transition duration-300">FAQs</Link></li>
           </ul>

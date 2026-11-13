@@ -292,7 +292,7 @@ export default function PackingListStatic() {
         <div className="flex flex-wrap gap-3">
           {[
             { href: "/visa-info", label: "Nepal Visa Info" },
-            { href: "/travel-insurance", label: "Travel Insurance" },
+            { href: "/blogs/travel-insurance-for-trekking-in-nepal", label: "Travel Insurance" },
             { href: "/faqs", label: "FAQs" },
           ].map((l) => (
             <Link

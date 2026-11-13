@@ -329,7 +329,7 @@ export default function FAQsPageClient({ faqs, treks }: FAQsPageClientProps) {
         <div className="flex flex-wrap gap-3">
           {[
             { href: "/visa-info", label: "Visa Information" },
-            { href: "/travel-insurance", label: "Travel Insurance" },
+            { href: "/blogs/travel-insurance-for-trekking-in-nepal", label: "Travel Insurance" },
             { href: "/packing-list", label: "Packing List" },
             { href: "/why-us", label: "Why Choose Us" },
           ].map((l) => (

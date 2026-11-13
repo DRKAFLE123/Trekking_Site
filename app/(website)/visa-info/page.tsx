@@ -276,7 +276,7 @@ export default async function VisaInfoPage() {
             <div className="bg-white border border-[#E5E5E5] rounded-2xl p-5 shadow-sm flex flex-col gap-2.5">
               <h4 className="text-xs font-bold text-[#6B6B6B] uppercase tracking-wider mb-1">Related Pages</h4>
               {[
-                { href: "/travel-insurance", label: "Travel Insurance Guide" },
+                { href: "/blogs/travel-insurance-for-trekking-in-nepal", label: "Travel Insurance Guide" },
                 { href: "/packing-list", label: "Packing List & Gear" },
                 { href: "/faqs", label: "Frequently Asked Questions" },
                 { href: "/why-us", label: "Why Choose Us" },

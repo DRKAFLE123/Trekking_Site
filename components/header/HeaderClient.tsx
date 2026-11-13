@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FaBars, FaTimes, FaWhatsapp, FaChevronDown, FaSearch, FaPaperPlane, FaBullhorn } from "react-icons/fa";
 import type { NavData, MenuItem, Rep } from "./types";
+import { travelInfoHref } from "@/lib/merged-pages";
 
 // Interactive half of the header. All menu panels are always in the DOM and
 // toggled with CSS classes — never conditionally rendered — so the links are
@@ -184,7 +185,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
             <div key={col.title}>
               <div className="text-[11px] font-bold uppercase tracking-[0.14em] border-b border-black/[0.06] pb-2 mb-2 px-3" style={{ color: AMBER }}>{col.title}</div>
               <ul>{col.items.map((i) => (
-                <li key={i.slug}><Link prefetch={false} href={`/travel-info/${i.slug}`} className={linkCls} onClick={() => setOpen(null)}>{i.title}</Link></li>
+                <li key={i.slug}><Link prefetch={false} href={travelInfoHref(i.slug)} className={linkCls} onClick={() => setOpen(null)}>{i.title}</Link></li>
               ))}</ul>
             </div>
           ))}
@@ -378,7 +379,7 @@ export default function HeaderClient({ data }: { data: NavData }) {
                 const isOpen = drawerSection === key;
                 let rows: { label: string; href: string }[] = [];
                 if (m.kind === "treks") rows = [...data.countries.map((c) => ({ label: c.name, href: `/countries/${c.slug}` })), ...data.regions.map((r) => ({ label: r.name, href: `/regions/${r.slug}` })), { label: "All trips", href: "/trips" }];
-                if (m.kind === "travel-info") rows = data.travelInfo.flatMap((c) => c.items.map((it) => ({ label: it.title, href: `/travel-info/${it.slug}` })));
+                if (m.kind === "travel-info") rows = data.travelInfo.flatMap((c) => c.items.map((it) => ({ label: it.title, href: travelInfoHref(it.slug) })));
                 if (m.kind === "company") rows = data.company;
                 if (m.kind === "custom") rows = m.items || [];
                 if (m.kind === "top-treks") rows = data.topTreks.map((t) => ({ label: t.title, href: `/trips/${t.slug}` }));

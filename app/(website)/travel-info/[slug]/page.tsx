@@ -8,6 +8,7 @@ import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 import ScrollSpyTOC from "@/components/ScrollSpyTOC";
 import { BreadcrumbJsonLd, JsonLd } from "@/components/seo/JsonLd";
+import { travelInfoHref } from "@/lib/merged-pages";
 
 function extractYoutubeId(url: string) {
   if (!url) return null;
@@ -276,7 +277,7 @@ export default async function TravelInfoPage({ params }: { params: Promise<{ slu
                   {allPages.map((p: any) => (
                     <li key={p.slug}>
                       <Link 
-                        href={`/travel-info/${p.slug}`}
+                        href={travelInfoHref(p.slug)}
                         className={`block px-3 py-2 rounded-lg text-sm font-semibold transition ${
                           p.slug === page.slug 
                             ? 'bg-[#1a2e1f] text-white' 
