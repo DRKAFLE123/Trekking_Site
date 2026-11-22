@@ -431,6 +431,18 @@ export default async function HomePage() {
           addressLocality: "Kathmandu",
           addressCountry: "NP",
         },
+        // Profiles that confirm this business (CMS: social links, TripAdvisor URL, review platform links).
+        sameAs: [
+          ...new Set(
+            [
+              siteSettings?.socialLinks?.facebook,
+              siteSettings?.socialLinks?.instagram,
+              siteSettings?.socialLinks?.youtube,
+              trust.tripAdvisorUrl,
+              ...((siteSettings?.reviewPlatforms || []) as any[]).map((r) => r?.url),
+            ].filter((u): u is string => typeof u === "string" && u.startsWith("http")),
+          ),
+        ],
       },
     ],
   };
