@@ -159,6 +159,14 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
 - Open for Aryan/client (13 Nov): trek 49 "EBC with Heli Tour" (US$1,200) duplicates trek 24 heli tour (US$1,300): merge?
       Trek page fixes still needed: Poon Hill 7 vs 9 days, EBC inclusions say Tengboche 2 nights, Langtang "easy"/4,998m,
       Khopra 3,700 vs 3,660, Bhutan tour Everest text. Late Nov: GSC re-check of A1 posts and Tilicho/geography/Tibetan titles.
+- [x] 22 Nov: scheduler published 96 (16 Nov), 97 (19), 98 (22) on time. A3/A4 deployed (f7b0fa5), posts 40 and 8 unpublished.
+      GSC 404 report (192 URLs, old WordPress addresses on this domain): 138 already redirected, 54 new 301s added to
+      legacy-redirects.json (ddd4a91); live re-test 192/192 -> 200. Kailash trip page is "crawled, not indexed" (thin: upgrade).
+      Reviews: CMS Google card 4.9 / 15 reviews + Maps link, "Certificate of Excellence" badge removed (retired programme),
+      TAAN footer badge -> taan.org.np/members/2152 (Reg 609542259). TravelAgency schema sameAs from CMS (d85d8b0).
+      Waiting for Aryan: TripAdvisor rating/count (site blocks bots), Facebook card numbers (5.0 unverified), GBP share link,
+      homepage "Why" defaults (hard-coded "Award Winner/TripAdvisor Choice Award", "Oxygen Supported", "Eco") are unverified
+      claims shown because the CMS list is empty. Next.js 16.4.4 flagged by build as having a known vulnerability (upgrade).
 - [ ] A6 Client stops self-clicking
 - [~] B Month 1 posts. Post 1 "Mardi Himal Trek Difficulty" is CMS draft **id 90** (30 Oct), waiting for Aryan to
       review/publish in the admin. Converter: `scripts/.out/md-to-draft.ts` (FILE=<md> DRY=1 → then without DRY). Source file:
