@@ -106,6 +106,9 @@ const nextConfig = {
       // Insurance pages merged into the full guide (13 Nov 2026); see lib/merged-pages.ts.
       { source: "/travel-insurance", destination: "/blogs/travel-insurance-for-trekking-in-nepal", permanent: true },
       { source: "/travel-info/travel-insurance", destination: "/blogs/travel-insurance-for-trekking-in-nepal", permanent: true },
+      // Duplicate and thin posts merged (13 Nov 2026).
+      { source: "/blogs/best-time-to-visit-nepal-season-by-season-guide", destination: "/blogs/best-time-to-visit-nepal", permanent: true },
+      { source: "/blogs/culture-festivals-himalayan-trails-nepal", destination: "/travel-info/know-festival-in-nepal", permanent: true },
     ];
   },
   async headers() {

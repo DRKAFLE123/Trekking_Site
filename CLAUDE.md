@@ -144,9 +144,21 @@ Targets: 100–300 real Google clicks/month by end of Nov 2026, 1,000–2,000 by
       Verified: head 29/29 unchanged, 196/196 sitemap URLs 200. Script to publish drafts now: `scripts/.out/publish-now.ts`.
       Next: links to 95 from 92/94; step 5 (rework 93, 94); step 6 (merge insurance pages, Manaslu cost); then 5-10 new posts.
       Trek 54 still has Everest text in accommodation/meals: waiting for Bhutan hotel/meal facts from client.
-- [ ] A3 Merge the "best time to visit Nepal" duplicates + 301
-- [ ] A4 Thin post culture-festivals (109 words): expand or merge
-- [ ] A5 Author box / sameAs / "Last updated"
+- [x] 13 Nov (Aryan gave full approval, then went out): published 93 (Poon Hill rebuilt as itinerary guide), 94 (ABC December
+      title), 85 (Manaslu cost rewrite: permits, Indian/Nepali rates, flood status). Clean-up: old-domain text in 72/79/86,
+      post 21 QR WhatsApp link -> wa.me/9779851218358, post 21 headings, post 61 junk outbound links removed.
+      Insurance merge LIVE (cbafe23): /travel-insurance and /travel-info/travel-insurance 301 -> post 54 (lib/merged-pages.ts,
+      footer/menu/FAQ/packing/visa links point to post 54). Verified 194/194 sitemap URLs 200.
+- [x] 13 Nov: 5 new posts written (research notes in seo-plan/posts/2026-11-1x/2x-*.md) and SCHEDULED 09:00 Nepal:
+      96 trekking-in-nepal-without-a-guide (16 Nov), 97 everest-base-camp-trek-cost (19), 98 best-treks-in-nepal-for-beginners (22),
+      99 everest-helicopter-tour-cost (25), 100 poon-hill-vs-mardi-himal (28). Later posts link to earlier ones (order matters).
+- [x] A3 13 Nov: post 40 (best-time season-by-season) 301 -> post 48; post 48 cleaned (duplicate H1, empty heading) and retitled.
+- [x] A4 13 Nov: post 8 (107 words) 301 -> /travel-info/know-festival-in-nepal. Posts 40 and 8 unpublished after the 301s went live.
+- [~] A5 13 Nov: article schema author now has jobTitle, url (/our-team), worksFor, sameAs from the CMS team member. "Updated" date shown.
+      Open: Krishna's role in CMS is "CEO/Expedition and Trekking Guide" but post bylines say "Senior Himalayan Specialist".
+- Open for Aryan/client (13 Nov): trek 49 "EBC with Heli Tour" (US$1,200) duplicates trek 24 heli tour (US$1,300): merge?
+      Trek page fixes still needed: Poon Hill 7 vs 9 days, EBC inclusions say Tengboche 2 nights, Langtang "easy"/4,998m,
+      Khopra 3,700 vs 3,660, Bhutan tour Everest text. Late Nov: GSC re-check of A1 posts and Tilicho/geography/Tibetan titles.
 - [ ] A6 Client stops self-clicking
 - [~] B Month 1 posts. Post 1 "Mardi Himal Trek Difficulty" is CMS draft **id 90** (30 Oct), waiting for Aryan to
       review/publish in the admin. Converter: `scripts/.out/md-to-draft.ts` (FILE=<md> DRY=1 → then without DRY). Source file:

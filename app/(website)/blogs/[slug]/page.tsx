@@ -205,8 +205,16 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     image: coverUrl ? [coverUrl] : undefined,
     datePublished: blog.publishedAt || undefined,
     dateModified: (blog as any).updatedAt || blog.publishedAt || undefined,
+    // Author details come from the CMS team member (role, social links).
     author: blog.author?.name
-      ? { "@type": "Person", name: blog.author.name }
+      ? {
+          "@type": "Person",
+          name: blog.author.name,
+          jobTitle: (blog.author as any).role || undefined,
+          url: `${SITE_URL}/our-team`,
+          worksFor: { "@type": "Organization", name: BRAND, url: SITE_URL },
+          sameAs: Object.values((blog.author as any).socialLinks || {}).filter((u) => typeof u === "string" && u.startsWith("http")),
+        }
       : { "@type": "Organization", name: BRAND },
     publisher: {
       "@type": "Organization",
